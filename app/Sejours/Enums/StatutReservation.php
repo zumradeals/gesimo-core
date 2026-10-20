@@ -59,6 +59,8 @@ enum StatutReservation: string
 
         return match ($this) {
             self::EnAttente => [self::Confirmee, self::Expiree, self::Annulee],
+            // Un paiement arrivé après l'expiration peut redonner les dates si elles sont encore libres (la base le vérifie).
+            self::Expiree => [self::Confirmee],
             self::Confirmee => [self::ArriveeEnregistree, self::Annulee, self::Litige],
             self::ArriveeEnregistree => [self::Terminee, self::Litige],
             self::Litige => [self::Terminee, self::Annulee],
