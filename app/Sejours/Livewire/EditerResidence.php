@@ -42,6 +42,7 @@ class EditerResidence extends Component
 
     public string $pourcentageAcompte = '';
 
+    /** Seule la politique « flexible » existe pour l'instant : les règles d'une politique stricte ne sont pas définies. */
     public string $politiqueAnnulation = 'flexible';
 
     // Logement en cours de saisie
@@ -90,7 +91,7 @@ class EditerResidence extends Component
             $this->reglement = (string) $residence->reglement;
             $this->modePaiement = $residence->mode_paiement;
             $this->pourcentageAcompte = (string) $residence->pourcentage_acompte;
-            $this->politiqueAnnulation = $residence->politique_annulation;
+            $this->politiqueAnnulation = 'flexible';
         } else {
             Gate::authorize('create', Residence::class);
         }
@@ -110,7 +111,7 @@ class EditerResidence extends Component
             'reglement' => 'nullable|string|max:3000',
             'modePaiement' => 'required|in:total,acompte',
             'pourcentageAcompte' => 'nullable|integer|between:1,100',
-            'politiqueAnnulation' => 'required|in:flexible,stricte',
+            'politiqueAnnulation' => 'required|in:flexible',
         ], [
             'latitude.required_with' => 'Indiquez aussi la longitude.',
             'longitude.required_with' => 'Indiquez aussi la latitude.',
@@ -149,9 +150,10 @@ class EditerResidence extends Component
         }
 
         $residence = $this->residence();
+        $identiteModifiee = $this->identiteChange($residence, $champs);
         $residence->update($champs);
-        Audit::enregistrer('residence.modifiee', $residence);
-        $this->message = 'Résidence enregistrée.';
+        Audit::enregistrer('residence.modifiee', $residence, ['identite_modifiee' => $identiteModifiee]);
+        $this->message = 'Résidence enregistrée.'.($identiteModifiee ? $this->repasserEnVerification($residence) : '');
 
         return null;
     }
@@ -298,7 +300,7 @@ class EditerResidence extends Component
                 $this->{$propriete} = null;
             }
         }
-        $this->message = 'Pièces enregistrées.';
+        $this->message = 'Pièces enregistrées.'.($this->residence()->statut_verification === 'verifiee' ? $this->repasserEnVerification($this->residence()) : '');
     }
 
     public function soumettre(): void
@@ -352,6 +354,34 @@ class EditerResidence extends Component
             'maxPhotos' => Photos::MAX_PAR_RESIDENCE,
             'nbPhotos' => $residence ? Photo::where('residence_id', $residence->id)->count() : 0,
         ]);
+    }
+
+    /** Nom, commune, quartier ou position GPS modifiés : la personne qui a validé la résidence doit la revoir. */
+    private function identiteChange(Residence $residence, array $nouveaux): bool
+    {
+        if ($residence->statut_verification !== 'verifiee') {
+            return false;
+        }
+        foreach (['nom', 'commune', 'quartier'] as $champ) {
+            if ((string) $residence->{$champ} !== (string) $nouveaux[$champ]) {
+                return true;
+            }
+        }
+        foreach (['latitude', 'longitude'] as $champ) {
+            if ((string) $residence->{$champ} !== (string) ($nouveaux[$champ] ?? '') && (float) $residence->{$champ} !== (float) ($nouveaux[$champ] ?? 0)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private function repasserEnVerification(Residence $residence): string
+    {
+        $residence->update(['statut_verification' => 'en_attente', 'badge_verifie' => false, 'soumise_le' => now(), 'motif_refus' => null]);
+        Audit::enregistrer('residence.reverification_demandee', $residence);
+
+        return ' Comme vous avez modifié des informations d\'identité, la résidence est repassée en vérification : elle est invisible jusqu\'à sa nouvelle validation (vos réservations déjà confirmées ne changent pas).';
     }
 
     private function residence(): Residence

@@ -44,12 +44,9 @@
                     @if($plancher !== null)<span class="aide">Minimum autorisé : {{ $plancher }} % (la commission et les frais de paiement doivent être couverts).</span>@endif
                     @error('pourcentageAcompte')<p class="erreur-champ">{{ $message }}</p>@enderror</div>
             @endif
-            <div class="champ">
-                <span class="etiquette">Annulation</span>
-                <div class="flex flex-wrap gap-2">
-                    <label class="puce {{ $politiqueAnnulation === 'flexible' ? 'puce-active' : '' }}"><input type="radio" class="sr-only" wire:model.live="politiqueAnnulation" value="flexible">Flexible (conseillée)</label>
-                    <label class="puce {{ $politiqueAnnulation === 'stricte' ? 'puce-active' : '' }}"><input type="radio" class="sr-only" wire:model.live="politiqueAnnulation" value="stricte">Plus stricte</label>
-                </div>
+            <div class="rounded-xl bg-marque-50 p-3 text-[15px]">
+                <p class="font-bold">Annulation : politique flexible</p>
+                <p class="aide !text-[14px]">Remboursement intégral jusqu'à 24 h avant l'arrivée ; moins de 24 h avant, une nuit est retenue ; absence sans annulation : aucun remboursement. Une politique plus stricte pourra être proposée plus tard.</p>
             </div>
             <button class="btn btn-bloc" wire:loading.attr="disabled">{{ $residence ? 'Enregistrer la résidence' : 'Enregistrer et continuer' }}</button>
         </form>
