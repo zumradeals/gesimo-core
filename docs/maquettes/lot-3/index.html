@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GESIMO Séjours — Maquettes du Lot 3</title>
+<style>
+:root{--vert:#0f766e;--vert-clair:#e6f4f2;--texte:#1b2430;--gris:#5b6675;--bord:#d5dbe3;--fond:#f4f6f8;--rouge:#b42318;--rouge-clair:#fdecea;--orange:#b54708;--orange-clair:#fff4e5;--bleu:#175cd3;--bleu-clair:#e8f0fe}
+*{box-sizing:border-box}
+a{text-decoration:none;color:inherit}
+body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;color:var(--texte);background:#e9edf1;line-height:1.45}
+.barre{position:sticky;top:0;z-index:10;background:#fff;border-bottom:1px solid var(--bord);padding:10px 12px}
+.barre h1{font-size:16px;margin:0 0 8px}
+.onglets{display:flex;flex-wrap:wrap;gap:6px}
+.onglets button,.vues button{border:1px solid var(--bord);background:#fff;border-radius:999px;padding:7px 12px;font-size:13px;cursor:pointer}
+.onglets button.actif,.vues button.actif{background:var(--vert);color:#fff;border-color:var(--vert)}
+.vues{display:flex;gap:6px;margin-top:8px;align-items:center;font-size:13px;color:var(--gris)}
+.scene{padding:14px 8px 40px;display:flex;flex-direction:column;align-items:center;gap:16px}
+.cadre{width:390px;max-width:100%;background:var(--fond);border:2px solid #9aa5b3;border-radius:22px;overflow:hidden;container-type:inline-size;transition:width .2s;position:relative}
+.scene.ordi{padding:0 0 40px;gap:0}.scene.ordi .cadre{width:100%;border:0;border-radius:0;min-height:80vh}.scene.ordi .notes{width:100%;border-radius:0;border-left:0;border-right:0}
+.ecran{display:none}.ecran.actif{display:block}
+.notes{width:min(1100px,100%);background:#fff;border:1px solid var(--bord);border-radius:10px;padding:12px 16px;font-size:14px}
+.notes h2{font-size:16px;margin:0 0 6px}.notes h3{font-size:13px;margin:10px 0 2px;color:var(--vert);text-transform:uppercase;letter-spacing:.04em}
+.notes ul{margin:2px 0 0;padding-left:20px}
+
+/* barre du bas (téléphone) et barre du haut (ordinateur) */
+.tabbar{position:sticky;bottom:0;display:grid;grid-auto-flow:column;grid-auto-columns:1fr;background:#fff;border-top:1px solid var(--bord);box-shadow:0 -4px 16px #1b24300f;z-index:5}
+.tabbar a{display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 2px 10px;font-size:11.5px;color:var(--gris);font-weight:600;min-height:58px;justify-content:center}
+.tabbar a svg{width:24px;height:24px}
+.tabbar a.on{color:var(--vert)}.tabbar a.on svg{stroke-width:2.4}
+.topnav{display:none;align-items:center;gap:6px;background:#fff;border-bottom:1px solid var(--bord);padding:0 32px;height:64px}
+.topnav .logo{font-weight:800;color:var(--vert);font-size:19px;margin-right:22px;display:flex;align-items:center;gap:8px}
+.topnav .logo i{width:30px;height:30px;border-radius:9px;background:var(--vert);display:inline-block}
+.topnav a{padding:9px 14px;border-radius:10px;font-weight:600;color:var(--gris);display:flex;gap:8px;align-items:center;font-size:15px}
+.topnav a svg{width:20px;height:20px}
+.topnav a.on{background:var(--vert-clair);color:var(--vert)}
+.topnav .droite{margin-left:auto;display:flex;gap:8px;align-items:center}
+.hero{background:linear-gradient(135deg,#0f766e,#1aa395 60%,#e7c27d);color:#fff;border-radius:18px;padding:18px}
+.hero h2{margin:0 0 4px;font-size:22px}.hero p{margin:0;opacity:.95}
+.resultats{display:grid;gap:14px}
+/* éléments d'interface */
+.entete{background:linear-gradient(135deg,#0f766e,#14958a);color:#fff;padding:12px 14px;display:flex;justify-content:space-between;align-items:center;font-weight:700}
+.entete small{font-weight:400;opacity:.9}
+.corps{padding:14px 14px 96px;display:grid;gap:14px}
+.carte{background:#fff;border:1px solid var(--bord);border-radius:16px;padding:14px;box-shadow:0 1px 2px #1b24300d,0 4px 14px #1b243008}
+.carte h2,.carte h3{margin:0 0 6px;font-size:16px}
+.champ{display:grid;gap:4px}.champ label{font-weight:600;font-size:15px}
+.champ input,.champ select,.champ textarea{width:100%;min-height:50px;border:1.5px solid var(--bord);border-radius:10px;padding:10px 12px;font-size:17px;background:#fff;font-family:inherit}
+.aide{font-size:13px;color:var(--gris)}
+.btn{display:flex;align-items:center;justify-content:center;min-height:54px;width:100%;border-radius:12px;border:0;background:var(--vert);color:#fff;font-size:18px;font-weight:700;padding:10px 14px;cursor:pointer;text-align:center}
+.btn.second{background:#fff;color:var(--vert);border:2px solid var(--vert)}
+.btn.danger{background:#fff;color:var(--rouge);border:2px solid var(--rouge)}
+.btn.gris{background:#c9d0d9;color:#4a5361}
+.erreur{background:var(--rouge-clair);color:var(--rouge);border:1px solid #f4b8b1;border-radius:10px;padding:10px 12px;font-size:15px}
+.info{background:var(--bleu-clair);color:var(--bleu);border:1px solid #b9d1fb;border-radius:10px;padding:10px 12px;font-size:15px}
+.attention{background:var(--orange-clair);color:var(--orange);border:1px solid #f7d4a6;border-radius:10px;padding:10px 12px;font-size:15px}
+.badge{display:inline-block;border-radius:999px;padding:3px 10px;font-size:13px;font-weight:700}
+.b-attente{background:var(--orange-clair);color:var(--orange)}.b-conf{background:#e3f6e8;color:#116b2b}.b-hors{background:var(--bleu-clair);color:var(--bleu)}.b-gris{background:#e7eaee;color:#4a5361}.b-rouge{background:var(--rouge-clair);color:var(--rouge)}.b-verif{background:#e3f6e8;color:#116b2b}
+.prix{font-size:22px;font-weight:800}.prix small{font-size:14px;font-weight:400;color:var(--gris)}
+.ligne{display:flex;justify-content:space-between;gap:10px;padding:6px 0;border-bottom:1px dashed var(--bord)}.ligne:last-child{border:0}
+.photo{background:linear-gradient(135deg,#bfe0db,#f1e9d8);border-radius:10px;height:150px;display:flex;align-items:center;justify-content:center;color:#5a7370;font-size:14px}
+.deux{display:grid;gap:12px}.trois{display:grid;gap:12px}
+.puces{display:flex;flex-wrap:wrap;gap:6px}.puce{border:1.5px solid var(--bord);background:#fff;border-radius:999px;padding:8px 12px;font-size:15px}.puce.on{background:var(--vert-clair);border-color:var(--vert);color:var(--vert);font-weight:700}
+.onglet2{display:grid;grid-template-columns:1fr 1fr;gap:0;background:#fff;border-radius:12px;border:1px solid var(--bord);overflow:hidden}.onglet2 div{padding:13px;text-align:center;font-weight:700}.onglet2 .on{background:var(--vert);color:#fff}
+.calendrier{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;font-size:13px;text-align:center}
+.calendrier .j{background:#fff;border:1px solid var(--bord);border-radius:6px;min-height:46px;padding:2px;display:flex;flex-direction:column;justify-content:center}
+.calendrier .e{font-weight:700;color:var(--gris);border:0;background:none;min-height:0}
+.calendrier .res{background:#cfeedd;border-color:#8fd3ac}.calendrier .att{background:#ffe7c2;border-color:#f3c27a}.calendrier .hors{background:#d6e4ff;border-color:#9cb9f5}.calendrier .blo{background:#e0e3e8;border-color:#b3bac5;text-decoration:line-through}
+.legende{display:flex;flex-wrap:wrap;gap:8px;font-size:13px}.legende span::before{content:"";display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:5px;vertical-align:-1px;background:var(--c);border:1px solid #0003}
+.pasapas{display:flex;gap:6px;font-size:13px;color:var(--gris)}.pasapas b{color:var(--vert)}
+.tableau{width:100%;border-collapse:collapse;font-size:15px}.tableau th,.tableau td{text-align:left;padding:8px;border-bottom:1px solid var(--bord)}
+.cacher-ordi{display:block}.montrer-ordi{display:none}
+@container (min-width:1100px){.resultats{grid-template-columns:1fr 1fr 1fr}.trois{grid-template-columns:repeat(3,1fr)}}
+@container (min-width:720px){
+ .entete{display:none}.tabbar{display:none}.topnav{display:flex}
+ .corps{padding:28px 40px 48px;gap:20px}
+ .resultats{grid-template-columns:1fr 1fr}
+ .large2{grid-template-columns:380px 1fr}
+ .btn{min-width:200px}
+ .deux{grid-template-columns:1fr 1fr}.trois{grid-template-columns:1fr 1fr 1fr}
+ .btn{width:auto;min-width:230px;display:inline-flex}
+ .cacher-ordi{display:none}.montrer-ordi{display:block}
+ .large2{grid-template-columns:320px 1fr;align-items:start}
+ .calendrier .j{min-height:64px}
+ .photo{height:230px}
+}
+
+.stat{display:grid;gap:2px}.stat b{font-size:22px}.stat span{font-size:13px;color:var(--gris)}
+.grille-stat{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@container (min-width:720px){.grille-stat{grid-template-columns:repeat(4,1fr)}}
+.tableau td.d,.tableau th.d{text-align:right;white-space:nowrap}
+.defile{overflow-x:auto}
+.recu{background:#fff;border:1px dashed #9aa5b3;border-radius:10px;padding:18px;max-width:640px}
+.etat{display:grid;gap:8px;text-align:center;justify-items:center;padding:22px 14px}
+.etat .rond{width:64px;height:64px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:32px}
+.rond.ok{background:#e3f6e8;color:#116b2b}.rond.ko{background:var(--rouge-clair);color:var(--rouge)}.rond.att{background:var(--orange-clair);color:var(--orange)}
+.moyens{display:flex;flex-wrap:wrap;gap:8px}.moyens span{border:1.5px solid var(--bord);border-radius:10px;padding:8px 12px;font-weight:700;background:#fff}
+.neg{color:var(--rouge)}.pos{color:#116b2b}
+.sep{height:1px;background:var(--bord);margin:6px 0}
+</style>
+</head>
+<body>
+<div class="barre">
+ <h1>GESIMO Séjours — Maquettes du Lot 3 <span style="font-weight:400;color:var(--gris)">(version à valider — rien n'est encore programmé)</span></h1>
+ <div class="onglets" id="onglets"></div>
+ <div class="vues"><span>Voir en :</span><button id="v-mobile" class="actif">Téléphone</button><button id="v-ordi">Ordinateur</button></div>
+</div>
+<div class="scene" id="scene">
+ <div class="cadre" id="cadre">
+<header class="topnav" id="topnav"></header>
+
+<!-- c1 Paiement -->
+<section class="ecran" id="c1" data-role="client" data-menu="Mes réservations" data-titre="1. Page de paiement">
+ <div class="entete">Paiement <small>Awa Koné</small></div>
+ <div class="corps">
+  <div class="pasapas">1. Récapitulatif › <b>2. Paiement</b> › 3. Confirmation</div>
+  <div class="attention">MODE TEST : aucun vrai argent n'est débité. <span class="aide">(ce bandeau n'existe qu'en mode test)</span></div>
+  <div class="deux">
+   <div class="carte"><h2>Votre séjour</h2>
+    <div class="ligne"><span>Logement</span><b>Chambre climatisée 1</b></div>
+    <div class="ligne"><span>Résidence</span><span>Les Palmiers, Cocody</span></div>
+    <div class="ligne"><span>Dates</span><span>11 → 14 déc. 2026 (3 nuits)</span></div>
+    <div class="ligne"><span>Total du séjour</span><span>55 000 FCFA</span></div>
+    <div class="ligne"><span>À régler au gérant à l'arrivée</span><span>38 500 FCFA</span></div></div>
+   <div class="carte"><h2>À payer maintenant</h2>
+    <div class="prix">16 500 FCFA <small>acompte (30 %)</small></div>
+    <p class="aide">Pour une résidence en « paiement total », ce montant est le prix complet du séjour.</p>
+    <div class="sep"></div>
+    <p style="margin:6px 0 4px"><b>Moyens de paiement</b> (vous choisissez sur la page sécurisée GeniusPay)</p>
+    <div class="moyens"><span>Wave</span><span>Orange Money</span><span>MTN Money</span><span>Carte bancaire</span></div></div>
+  </div>
+  <div class="attention">⏱ Il vous reste <b>1 h 42</b> pour payer. Passé ce délai, les dates sont libérées.</div>
+  <button class="btn">Payer 16 500 FCFA</button>
+  <p class="aide">Vous quittez GESIMO pour la page de paiement sécurisée de GeniusPay, puis vous revenez ici. Nous ne voyons jamais votre numéro de carte ni votre code secret.</p>
+  <div class="erreur">Le délai de garde est terminé : ces dates ne sont plus réservées pour vous. Refaites une réservation.</div>
+  <div class="erreur">Le paiement n'a pas pu démarrer. Rien n'a été débité. Réessayez dans un instant.</div>
+  <div class="erreur">Le paiement en ligne est momentanément indisponible. Vos dates restent gardées : réessayez plus tard.</div>
+ </div>
+</section>
+
+<!-- c2 Retour -->
+<section class="ecran" id="c2" data-role="client" data-menu="Mes réservations" data-titre="2. Retour de paiement">
+ <div class="entete">Paiement <small>Awa Koné</small></div>
+ <div class="corps">
+  <p class="aide" style="margin:0">Cinq situations possibles au retour de la page de paiement. Aucune réservation n'est confirmée sur la seule foi de ce retour : le serveur vérifie auprès de GeniusPay.</p>
+  <div class="trois">
+   <div class="carte etat"><div class="rond ok">✔</div><h2>Paiement reçu</h2><p>Votre réservation est <b>confirmée</b>. Un e-mail vous a été envoyé.</p><button class="btn">Voir ma confirmation</button></div>
+   <div class="carte etat"><div class="rond att">⏳</div><h2>Vérification en cours…</h2><p>Nous vérifions votre paiement auprès de GeniusPay. <b>Ne payez pas une deuxième fois.</b> Cette page se met à jour toute seule.</p><button class="btn second">Vérifier maintenant</button><p class="aide">Toujours rien après quelques minutes ? Ne vous inquiétez pas : dès que le paiement est confirmé, vous recevez un e-mail. Sinon, vos dates sont libérées et vous n'êtes pas débité.</p></div>
+   <div class="carte etat"><div class="rond ko">✖</div><h2>Paiement non abouti</h2><p>Le paiement a échoué ou a été annulé. <b>Vous n'avez pas été débité.</b></p><p class="aide">Vos dates sont gardées jusqu'à 16 h 42.</p><button class="btn">Réessayer le paiement</button></div>
+  </div>
+  <h2 style="margin:6px 0 0;font-size:17px">Paiement arrivé après la fin du délai de garde</h2>
+  <div class="deux">
+   <div class="carte etat"><div class="rond ok">✔</div><p><b>Bonne nouvelle :</b> les dates étaient encore libres. Votre réservation est <b>confirmée</b>.</p></div>
+   <div class="carte etat"><div class="rond ko">↩</div><p>Les dates avaient été reprises par quelqu'un d'autre. Votre paiement de <b>16 500 FCFA est remboursé</b> automatiquement.</p><p class="aide">Le remboursement peut prendre un peu de temps selon votre opérateur.</p></div>
+  </div>
+ </div>
+</section>
+
+<!-- c3 Confirmation -->
+<section class="ecran" id="c3" data-role="client" data-menu="Mes réservations" data-titre="3. Confirmation">
+ <div class="entete">Réservation confirmée <small>Awa Koné</small></div>
+ <div class="corps">
+  <div class="pasapas">1. Récapitulatif › 2. Paiement › <b>3. Confirmation</b></div>
+  <div class="carte etat" style="background:#f2fbf4"><div class="rond ok">✔</div><h2>Votre réservation est confirmée</h2><p>Réservation n° <b>123</b> · un e-mail de confirmation est parti vers awa@exemple.com</p></div>
+  <div class="deux">
+   <div class="carte"><h2>Votre séjour</h2>
+    <div class="ligne"><span>Logement</span><b>Chambre climatisée 1</b></div>
+    <div class="ligne"><span>Résidence</span><span>Les Palmiers, Cocody · Riviera</span></div>
+    <div class="ligne"><span>Arrivée</span><span>ven. 11 déc. 2026</span></div>
+    <div class="ligne"><span>Départ</span><span>lun. 14 déc. 2026</span></div>
+    <div class="ligne"><span>Déjà payé en ligne</span><b class="pos">16 500 FCFA</b></div>
+    <div class="ligne"><span>Reste à payer au gérant à l'arrivée</span><b>38 500 FCFA</b></div></div>
+   <div class="carte"><h2>Contact du gérant</h2>
+    <p style="margin:2px 0"><b>Kouadio</b></p><p style="margin:2px 0">07 00 00 00 02</p>
+    <p class="aide">Position : <a style="color:var(--vert);font-weight:700">Voir sur la carte</a></p>
+    <div class="sep"></div>
+    <p class="aide" style="margin:0">Règlement : pas de fêtes, arrivée à partir de 14 h.</p></div>
+  </div>
+  <div class="deux"><button class="btn">Télécharger mon reçu</button><button class="btn second">Mes réservations</button></div>
+  <div class="carte" style="border-style:dashed"><h3>Aperçu de l'e-mail de confirmation</h3>
+   <p class="aide" style="margin:0">Objet : « Réservation confirmée — Chambre climatisée 1, 11 → 14 déc. »<br>Contenu : les dates, le montant payé, le reste à régler au gérant, le contact du gérant et le lien vers le reçu.</p></div>
+ </div>
+</section>
+
+<!-- c4 Reçu -->
+<section class="ecran" id="c4" data-role="client" data-menu="Mes réservations" data-titre="4. Reçu">
+ <div class="entete">Reçu <small>Awa Koné</small></div>
+ <div class="corps">
+  <div class="recu">
+   <div class="ligne" style="border:0"><b style="font-size:18px;color:var(--vert)">GESIMO Séjours</b><span class="aide">Reçu de paiement</span></div>
+   <div class="ligne"><span>Reçu n°</span><b>R-000123</b></div>
+   <div class="ligne"><span>Date du paiement</span><span>20 oct. 2026, 14 h 32</span></div>
+   <div class="ligne"><span>Client</span><span>Awa Koné · 07 01 02 03 04</span></div>
+   <div class="ligne"><span>Moyen de paiement</span><span>Wave · réf. MTX-A1B2C3D4E5</span></div>
+   <div class="sep"></div>
+   <div class="ligne"><span>Séjour : Chambre climatisée 1, Résidence Les Palmiers (Cocody)</span><span></span></div>
+   <div class="ligne"><span>Du 11 au 14 déc. 2026 (3 nuits)</span><span>55 000 FCFA</span></div>
+   <div class="ligne"><b>Acompte payé en ligne</b><b>16 500 FCFA</b></div>
+   <div class="ligne"><span>Reste à régler au gérant à l'arrivée</span><span>38 500 FCFA</span></div>
+   <p class="aide">Paiement encaissé par GESIMO via GeniusPay. GESIMO est une plateforme de mise en relation ; le solde est réglé directement au gérant.</p>
+  </div>
+  <div class="deux"><button class="btn">Télécharger / imprimer (PDF)</button><button class="btn second">Retour</button></div>
+  <div class="info">Le reçu est une page propre, prête à imprimer : le bouton ouvre la fenêtre d'impression, où vous choisissez « Enregistrer en PDF ». Aucune bibliothèque supplémentaire n'est nécessaire.</div>
+  <div class="erreur">Ce reçu n'est disponible qu'après la confirmation du paiement.</div>
+ </div>
+</section>
+
+<!-- c5 Annulation -->
+<section class="ecran" id="c5" data-role="client" data-menu="Mes réservations" data-titre="5. Annuler">
+ <div class="entete">Annuler ma réservation <small>Awa Koné</small></div>
+ <div class="corps">
+  <div class="carte"><span class="badge b-conf">Confirmée</span><h3 style="margin-top:6px">Chambre climatisée 1 · Les Palmiers</h3><div class="aide">11 → 14 déc. 2026 · 3 nuits · séjour payé en totalité : 55 000 FCFA</div></div>
+  <p class="aide" style="margin:0">Le montant remboursé est calculé et affiché <b>avant</b> que vous confirmiez. Trois cas possibles :</p>
+  <div class="trois">
+   <div class="carte" style="border-color:#8fd3ac"><span class="badge b-conf">Plus de 24 h avant l'arrivée</span>
+    <div class="prix" style="margin:8px 0">Remboursé : 55 000 FCFA</div>
+    <p class="aide" style="margin:0">Remboursement intégral. Il arrive sur le moyen de paiement utilisé.</p></div>
+   <div class="carte" style="border-color:#f3c27a"><span class="badge b-attente">Moins de 24 h avant l'arrivée</span>
+    <div class="ligne"><span>Une nuit retenue</span><span>20 000 FCFA</span></div>
+    <div class="prix" style="margin:4px 0">Remboursé : 35 000 FCFA</div>
+    <p class="aide" style="margin:0">Si votre acompte est inférieur à une nuit, l'acompte est retenu en entier et rien n'est remboursé.</p></div>
+   <div class="carte" style="border-color:#f4b8b1"><span class="badge b-rouge">Absence sans annulation</span>
+    <div class="prix" style="margin:8px 0">Remboursé : 0 FCFA</div>
+    <p class="aide" style="margin:0">Si vous ne vous présentez pas et n'avez pas annulé, aucun remboursement n'est possible.</p></div>
+  </div>
+  <div class="attention">Cette annulation est <b>définitive</b>. Les dates seront de nouveau proposées à d'autres voyageurs.</div>
+  <div class="deux"><button class="btn danger">Confirmer l'annulation (remboursé : 55 000 FCFA)</button><button class="btn second">Garder ma réservation</button></div>
+  <div class="erreur">Cette réservation ne peut plus être annulée (le séjour a commencé).</div>
+  <div class="info">Après confirmation : « Annulation enregistrée. Votre remboursement de 55 000 FCFA est en cours. » Si GeniusPay ne répond pas, la demande reste « à traiter » et l'équipe GESIMO la finalise ; vous êtes prévenu par e-mail.</div>
+ </div>
+</section>
+
+<!-- g1 Arrivées -->
+<section class="ecran" id="g1" data-role="gerant" data-menu="Arrivées" data-titre="6. Arrivées et départs">
+ <div class="entete">Arrivées et départs <small>Kouadio</small></div>
+ <div class="corps">
+  <div class="deux">
+   <div class="champ"><label>Résidence</label><select><option>Les Palmiers (Cocody)</option></select></div>
+   <div class="champ"><label>Jour</label><input value="Vendredi 11 décembre 2026"></div>
+  </div>
+  <h2 style="margin:4px 0 0;font-size:18px">Arrivées du jour (2)</h2>
+  <div class="deux">
+   <div class="carte"><span class="badge b-conf">Confirmée</span><h3 style="margin-top:6px">Awa Koné · Chambre climatisée 1</h3>
+    <div class="aide">2 personnes · 3 nuits · 07 01 02 03 04</div>
+    <div class="ligne"><span>À encaisser vous-même à l'arrivée</span><b>38 500 FCFA</b></div>
+    <button class="btn" style="margin-top:6px">Enregistrer l'arrivée</button>
+    <button class="btn danger" style="margin-top:8px">Client absent</button></div>
+   <div class="carte"><span class="badge b-attente">En attente de paiement</span><h3 style="margin-top:6px">M. Diallo · Studio Palmier</h3>
+    <div class="aide">3 personnes · 2 nuits</div>
+    <div class="erreur" style="margin-top:6px">Acompte non payé : cette réservation n'est pas confirmée. Ne faites pas entrer le client avant la confirmation.</div></div>
+  </div>
+  <h2 style="margin:4px 0 0;font-size:18px">Dans la résidence (1)</h2>
+  <div class="carte"><span class="badge b-conf">Arrivée enregistrée</span><h3 style="margin-top:6px">Mme Bamba · Chambre 2 · départ aujourd'hui</h3>
+   <button class="btn" style="margin-top:6px">Enregistrer le départ</button></div>
+  <div class="info"><b>Ce que ça déclenche :</b> l'arrivée enregistrée rend votre part « à reverser » par GESIMO (voir « Argent »). Le départ termine le séjour. « Client absent » : le client n'est pas remboursé et votre part est aussi « à reverser ».</div>
+  <div class="attention">« Client absent » est définitif : le client ne sera pas remboursé. Confirmer ?</div>
+  <div class="erreur">Vous n'avez pas le droit d'enregistrer des arrivées pour cette résidence.</div>
+  <div class="erreur">L'arrivée ne peut être enregistrée qu'à partir de la date d'arrivée prévue.</div>
+ </div>
+</section>
+
+<!-- g2 Sommes dues -->
+<section class="ecran" id="g2" data-role="gerant" data-menu="Argent" data-titre="7. Sommes dues">
+ <div class="entete">Argent <small>Kouadio</small></div>
+ <div class="corps">
+  <div class="grille-stat">
+   <div class="carte stat"><b class="pos">11 000 FCFA</b><span>GESIMO vous doit (à reverser)</span></div>
+   <div class="carte stat"><b>31 500 FCFA</b><span>Déjà reversé</span></div>
+   <div class="carte stat"><b>9 000 FCFA</b><span>Commissions retenues</span></div>
+   <div class="carte stat"><b>38 500 FCFA</b><span>À encaisser vous-même (arrivées à venir)</span></div>
+  </div>
+  <div class="carte defile"><h2>Séjours</h2>
+   <table class="tableau">
+    <tr><th>Séjour</th><th class="d">Encaissé par GESIMO</th><th class="d">Commission</th><th class="d">Votre part</th><th>État</th></tr>
+    <tr><td>Awa Koné · 11 déc.<br><span class="aide">Chambre climatisée 1</span></td><td class="d">16 500</td><td class="d">5 500</td><td class="d"><b>11 000</b></td><td><span class="badge b-attente">À reverser</span><br><span class="aide">arrivée enregistrée</span></td></tr>
+    <tr><td>M. Traoré · 4 déc.<br><span class="aide">Studio Palmier</span></td><td class="d">35 000</td><td class="d">3 500</td><td class="d"><b>31 500</b></td><td><span class="badge b-conf">Reversé</span><br><span class="aide">MM-48213 · 6 déc.</span></td></tr>
+    <tr><td>Mme Bamba · 20 déc.<br><span class="aide">Chambre 2 · à venir</span></td><td class="d">16 500</td><td class="d">—</td><td class="d">—</td><td><span class="badge b-hors">Après l'arrivée</span><br><span class="aide">part prévue : 11 000</span></td></tr>
+   </table>
+   <p class="aide">Montants en FCFA. Vous ne voyez que vos propres séjours. La commission est retenue par GESIMO sur l'argent encaissé.</p></div>
+  <div class="info">Règle du cahier : GESIMO vous reverse votre part <b>après l'arrivée du client</b>, par Mobile Money. Le solde du séjour (hors acompte) est payé directement à vous par le client à l'arrivée, sans commission supplémentaire.</div>
+ </div>
+</section>
+
+<!-- a1 Reversements -->
+<section class="ecran" id="a1" data-role="admin" data-menu="Reversements" data-titre="8. Reversements (admin)">
+ <div class="entete">Reversements <small>Admin</small></div>
+ <div class="corps">
+  <div class="info">GESIMO ne verse rien automatiquement : vous envoyez l'argent par Mobile Money <b>en dehors de la plateforme</b>, puis vous l'enregistrez ici (référence et date).</div>
+  <div class="deux large2">
+   <div class="carte"><h3>À reverser (2 gérants)</h3>
+    <div class="ligne"><span><b>Kouadio</b><br><span class="aide">1 séjour · 07 00 00 00 02</span></span><b>11 000</b></div>
+    <div class="ligne"><span><b>Mme Yao</b><br><span class="aide">2 séjours · 05 22 33 44 55</span></span><b>48 200</b></div>
+    <div class="ligne"><b>Total</b><b>59 200 FCFA</b></div></div>
+   <div class="carte"><h2>Reverser à Kouadio</h2>
+    <div class="aide">Numéro Mobile Money du gérant : 07 00 00 00 02</div>
+    <table class="tableau" style="margin:6px 0"><tr><th>Séjour</th><th class="d">Part</th></tr><tr><td>Awa Koné · 11 déc. · arrivée enregistrée le 11 déc.</td><td class="d">11 000</td></tr></table>
+    <div class="ligne"><b>Montant à envoyer</b><b>11 000 FCFA</b></div>
+    <div class="champ" style="margin-top:8px"><label>Référence de l'envoi Mobile Money</label><input placeholder="Ex. MM-48213"></div>
+    <div class="champ" style="margin-top:8px"><label>Date de l'envoi</label><input value="20/10/2026"></div>
+    <div style="margin-top:10px"><button class="btn">J'ai envoyé l'argent : enregistrer</button></div>
+    <div class="erreur" style="margin-top:8px">La référence Mobile Money est obligatoire.</div>
+    <div class="erreur" style="margin-top:8px">Ce reversement a déjà été enregistré par quelqu'un d'autre.</div>
+    <p class="aide">Une fois enregistré, il ne se modifie plus (écriture comptable). Une erreur se corrige par une nouvelle écriture.</p></div>
+  </div>
+  <div class="carte defile"><h3>Historique des reversements</h3>
+   <table class="tableau"><tr><th>Date</th><th>Gérant</th><th>Référence</th><th class="d">Montant</th><th>Par</th></tr>
+   <tr><td>6 déc.</td><td>Kouadio</td><td>MM-48213</td><td class="d">31 500</td><td>Admin</td></tr>
+   <tr><td>1 déc.</td><td>Mme Yao</td><td>MM-47990</td><td class="d">64 000</td><td>Admin</td></tr></table></div>
+ </div>
+</section>
+
+<!-- a2 Paiements et écritures -->
+<section class="ecran" id="a2" data-role="admin" data-menu="Paiements" data-titre="9. Paiements et écritures">
+ <div class="entete">Paiements <small>Admin</small></div>
+ <div class="corps">
+  <div class="onglet2" style="max-width:420px"><div class="on">Paiements</div><div>Écritures comptables</div></div>
+  <div class="carte defile">
+   <div class="deux" style="margin-bottom:8px"><div class="champ"><label>État</label><select><option>Tous</option><option>Réussi</option><option>En attente</option><option>Échoué</option></select></div><div class="champ"><label>Période</label><input value="Décembre 2026"></div></div>
+   <table class="tableau">
+    <tr><th>Date</th><th>Référence GeniusPay</th><th>Réservation</th><th class="d">Montant</th><th class="d">Frais</th><th>État</th></tr>
+    <tr><td>20 oct. 14:32</td><td>MTX-A1B2C3D4E5</td><td>#123 Awa Koné</td><td class="d">16 500</td><td class="d">495</td><td><span class="badge b-conf">Réussi</span></td></tr>
+    <tr><td>20 oct. 11:05</td><td>MTX-Z9Y8X7W6V5</td><td>#121 M. Diallo</td><td class="d">35 000</td><td class="d">1 050</td><td><span class="badge b-rouge">Échoué</span></td></tr>
+    <tr><td>19 oct. 17:40</td><td>MTX-Q1W2E3R4T5</td><td>#118 Mme Bamba</td><td class="d">16 500</td><td class="d">495</td><td><span class="badge b-attente">En attente</span></td></tr>
+   </table>
+   <p class="aide">Les paiements ne se modifient jamais : seul leur état avance. Aucun secret n'apparaît ici.</p></div>
+  <div class="carte defile"><h3>Écritures comptables (exemple pour la réservation #123, arrivée enregistrée)</h3>
+   <table class="tableau">
+    <tr><th>Date</th><th>Type</th><th>Réservation</th><th class="d">Montant</th><th>Par</th></tr>
+    <tr><td>20 oct.</td><td>Encaissement</td><td>#123</td><td class="d pos">+16 500</td><td>Système</td></tr>
+    <tr><td>11 déc.</td><td>Commission</td><td>#123</td><td class="d">5 500</td><td>Kouadio (arrivée)</td></tr>
+    <tr><td>11 déc.</td><td>Part du gérant</td><td>#123</td><td class="d">11 000</td><td>Kouadio (arrivée)</td></tr>
+    <tr><td>12 déc.</td><td>Reversement</td><td>#123</td><td class="d">11 000</td><td>Admin (MM-48213)</td></tr>
+   </table>
+   <p class="aide">Aucune écriture ne se modifie ni ne se supprime. Une correction est une nouvelle écriture.</p></div>
+ </div>
+</section>
+
+<!-- a3 Contrôle -->
+<section class="ecran" id="a3" data-role="admin" data-menu="Contrôle" data-titre="10. Rapprochement et alertes">
+ <div class="entete">Contrôle <small>Admin</small></div>
+ <div class="corps">
+  <div class="carte" style="border-color:#8fd3ac;background:#f2fbf4"><b>✔ Tout concorde</b> <span class="aide">— dernier contrôle : aujourd'hui 15 h 02</span></div>
+  <div class="grille-stat">
+   <div class="carte stat"><b>1 275 000</b><span>Encaissé (paiements réussis)</span></div>
+   <div class="carte stat"><b>55 000</b><span>Remboursé</span></div>
+   <div class="carte stat"><b>182 000</b><span>Commissions</span></div>
+   <div class="carte stat"><b>738 000</b><span>Parts des gérants</span></div>
+  </div>
+  <div class="carte"><h3>Calcul</h3>
+   <div class="ligne"><span>Encaissé</span><span>1 275 000</span></div>
+   <div class="ligne"><span>− Remboursé − Commissions − Parts des gérants</span><span>− 975 000</span></div>
+   <div class="ligne"><b>= Fonds encore détenus (séjours pas encore arrivés)</b><b>300 000 FCFA</b></div>
+   <p class="aide">Ces 300 000 FCFA correspondent aux paiements des séjours confirmés dont le client n'est pas encore arrivé.</p></div>
+  <div class="carte"><h3>Exemple d'écart signalé</h3>
+   <div class="erreur">Paiement MTX-Q1W2E3R4T5 (16 500 FCFA) réussi chez GeniusPay mais sans écriture d'encaissement dans GESIMO. <button class="btn second" style="min-height:40px;font-size:15px;margin-top:6px;width:auto;min-width:0">Corriger par une nouvelle écriture</button></div></div>
+  <h2 style="margin:4px 0 0;font-size:18px">À traiter (3)</h2>
+  <div class="deux">
+   <div class="carte"><span class="badge b-attente">Paiement tardif</span><h3 style="margin-top:6px">#119 M. Koffi · 16 500 FCFA</h3><p class="aide" style="margin:0">Payé après l'expiration. Dates reprises : remboursement demandé à GeniusPay, en cours.</p></div>
+   <div class="carte"><span class="badge b-rouge">Remboursement en échec</span><h3 style="margin-top:6px">#117 Awa Koné · 55 000 FCFA</h3><p class="aide" style="margin:0">GeniusPay n'a pas répondu.</p>
+    <div style="display:grid;gap:8px;margin-top:8px"><button class="btn">Réessayer le remboursement</button><button class="btn second">Je l'ai fait à la main : enregistrer</button></div></div>
+   <div class="carte"><span class="badge b-rouge">Message refusé</span><h3 style="margin-top:6px">2 messages de GeniusPay avec une fausse signature</h3><p class="aide" style="margin:0">Ils ont été ignorés. Aucune réservation n'a été confirmée.</p></div>
+  </div>
+ </div>
+</section>
+
+  <nav class="tabbar" id="tabbar"></nav>
+ </div>
+ <div class="notes" id="notes"></div>
+</div>
+<template id="notes-data">
+<div data-n="c1"><h2>1. Page de paiement</h2>
+<h3>But</h3><p>Faire payer l'acompte ou le total, pendant la durée de garde, via la page sécurisée GeniusPay.</p>
+<h3>Ce que voit le client</h3><ul><li>Résumé, <b>montant à payer maintenant</b> et reste à régler au gérant ; temps restant ; moyens de paiement (Wave, Orange Money, MTN Money, carte).</li><li>En mode test, un bandeau « aucun vrai argent n'est débité ».</li></ul>
+<h3>Actions</h3><ul><li>« Payer » : le serveur crée le paiement chez GeniusPay (avec la référence de la réservation, ce qui évite un double paiement) puis le client est envoyé sur la page de GeniusPay.</li></ul>
+<h3>Messages d'erreur</h3><ul><li>Délai de garde terminé · paiement impossible à démarrer (rien n'est débité) · paiement en ligne indisponible (clés non réglées).</li></ul></div>
+<div data-n="c2"><h2>2. Retour de paiement</h2>
+<h3>But</h3><p>Dire au client où en est son paiement, sans jamais croire le navigateur.</p>
+<h3>Ce que voit le client</h3><ul><li><b>Reçu</b> : réservation confirmée.</li><li><b>Vérification en cours</b> : le serveur interroge GeniusPay ; page qui se met à jour ; message « ne payez pas deux fois ».</li><li><b>Non abouti</b> : échec ou annulation, aucun débit, possibilité de réessayer tant que les dates sont gardées.</li><li><b>Paiement tardif</b> : si les dates sont encore libres → confirmée ; sinon → remboursement automatique.</li></ul>
+<h3>Actions</h3><ul><li>Voir la confirmation · Vérifier maintenant · Réessayer.</li></ul></div>
+<div data-n="c3"><h2>3. Confirmation de réservation</h2>
+<h3>But</h3><p>Rassurer et donner tout le nécessaire pour le séjour.</p>
+<h3>Ce que voit le client</h3><ul><li>Dates, montant payé, reste à payer au gérant, contact du gérant et lien carte (si position GPS). E-mail identique envoyé.</li></ul>
+<h3>Actions</h3><ul><li>Télécharger le reçu · Mes réservations.</li></ul>
+<h3>Remarque</h3><ul><li>Le modèle de données n'a pas de champ « adresse exacte » : on montre le quartier, le contact du gérant et la carte.</li></ul></div>
+<div data-n="c4"><h2>4. Reçu</h2>
+<h3>But</h3><p>Preuve de paiement téléchargeable (F-C5).</p>
+<h3>Ce que voit le client</h3><ul><li>N° de reçu, date, moyen et référence de paiement, séjour, acompte payé, reste à régler au gérant. Mention : paiement encaissé par GESIMO via GeniusPay (formulation à valider par un juriste, section 8 du cahier).</li></ul>
+<h3>Actions</h3><ul><li>Télécharger / imprimer en PDF (page prête à imprimer, sans bibliothèque supplémentaire).</li></ul>
+<h3>Erreur</h3><ul><li>Reçu seulement après confirmation du paiement ; chaque client ne voit que ses reçus.</li></ul></div>
+<div data-n="c5"><h2>5. Annulation par le client</h2>
+<h3>But</h3><p>Annuler en voyant exactement ce qui sera remboursé, avant de confirmer (RG-6 à RG-8).</p>
+<h3>Ce que voit le client</h3><ul><li>Le montant remboursé selon le moment : intégral (plus de 24 h avant), une nuit retenue (moins de 24 h), rien (absence sans annulation).</li></ul>
+<h3>Actions</h3><ul><li>Confirmer l'annulation · Garder ma réservation.</li></ul>
+<h3>Messages</h3><ul><li>Annulation impossible une fois le séjour commencé · remboursement « en cours » puis « effectué » ; si GeniusPay ne répond pas, la demande est reprise par l'équipe.</li></ul>
+<h3>Si le gérant annule (ou logement indisponible)</h3><ul><li>Remboursement intégral au client (RG-10).</li></ul></div>
+<div data-n="g1"><h2>6. Arrivées et départs (minimum du Lot 3)</h2>
+<h3>But</h3><p>Enregistrer l'arrivée (qui rend la part du gérant « à reverser ») et le départ.</p>
+<h3>Ce que voit le gérant ou le personnel autorisé</h3><ul><li>Les arrivées du jour, les personnes présentes, les départs ; ce que le client doit encore payer à l'arrivée.</li></ul>
+<h3>Actions</h3><ul><li>Enregistrer l'arrivée · Enregistrer le départ · Client absent (pas de remboursement).</li></ul>
+<h3>Messages d'erreur</h3><ul><li>Acompte non payé → pas de check-in · pas de droit · avant la date d'arrivée.</li></ul>
+<h3>Hors lot</h3><ul><li>Pièce d'identité du client : Lot 4.</li></ul></div>
+<div data-n="g2"><h2>7. Sommes dues (gérant)</h2>
+<h3>But</h3><p>Voir clairement ce que GESIMO doit au gérant et ce qu'il a reçu.</p>
+<h3>Ce que voit le gérant</h3><ul><li>À reverser, déjà reversé, commissions retenues, solde à encaisser lui-même ; le détail séjour par séjour. <b>Uniquement ses propres montants.</b></li></ul>
+<h3>Actions</h3><ul><li>Consultation seulement.</li></ul></div>
+<div data-n="a1"><h2>8. Reversement (admin)</h2>
+<h3>But</h3><p>Enregistrer un reversement Mobile Money fait à la main (RG-15).</p>
+<h3>Ce que voit l'admin</h3><ul><li>Les gérants à reverser et les séjours concernés, le montant exact, le numéro Mobile Money.</li></ul>
+<h3>Actions</h3><ul><li>Saisir la référence et la date, puis enregistrer : une écriture inaltérable est créée.</li></ul>
+<h3>Messages d'erreur</h3><ul><li>Référence obligatoire · reversement déjà enregistré.</li></ul>
+<h3>Droits</h3><ul><li>Admin et super-administrateur seulement ; chaque reversement est journalisé.</li></ul></div>
+<div data-n="a2"><h2>9. Paiements et écritures (admin)</h2>
+<h3>But</h3><p>Voir tout l'argent qui entre et chaque mouvement comptable (F-A3).</p>
+<h3>Ce que voit l'admin</h3><ul><li>Deux tableaux : paiements (avec les frais GeniusPay) et écritures comptables, avec filtres.</li></ul>
+<h3>Actions</h3><ul><li>Filtrer, consulter. Aucune modification possible.</li></ul></div>
+<div data-n="a3"><h2>10. Rapprochement et alertes (admin)</h2>
+<h3>But</h3><p>Comparer les paiements et les écritures et signaler toute différence (point 8 du lot).</p>
+<h3>Ce que voit l'admin</h3><ul><li>Encaissé, remboursé, commissions, parts des gérants, fonds détenus ; « Tout concorde » ou la liste des écarts.</li><li>« À traiter » : paiements tardifs, remboursements en échec, messages refusés (fausse signature).</li></ul>
+<h3>Actions</h3><ul><li>Réessayer un remboursement · enregistrer un remboursement fait à la main · corriger par une nouvelle écriture.</li></ul></div>
+</template>
+<script>
+const I={rech:'<path d="m21 21-4.3-4.3M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z"/>',cal:'<path d="M8 2v4M16 2v4M3 10h18M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Z"/>',liste:'<path d="M9 6h11M9 12h11M9 18h11M4 6h.01M4 12h.01M4 18h.01"/>',bat:'<path d="M4 21V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v16M16 9h2a2 2 0 0 1 2 2v10M2 21h20M8 7h4M8 11h4M8 15h4"/>',moi:'<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z"/>',ok:'<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10ZM9 12l2 2 4-4"/>',cle:'<path d="M15 7a4 4 0 1 1-4 4M11 11 3 19v2h3v-2h2v-2h2l1-1"/>',argent:'<path d="M3 7h18v10H3zM12 14a2 2 0 1 0 0-4 2 2 0 0 0 0 4ZM6 10v.01M18 14v.01"/>',porte:'<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/>',carte:'<path d="M3 6h18v12H3zM3 10h18"/>',balance:'<path d="M12 3v18M5 7h14M5 7l-3 7a3 3 0 0 0 6 0L5 7ZM19 7l-3 7a3 3 0 0 0 6 0l-3-7Z"/>'};
+const MENUS={
+ client:[['Chercher','rech',null],['Mes réservations','liste','c1'],['Mon compte','moi',null]],
+ gerant:[['Arrivées','porte','g1'],['Calendrier','cal',null],['Argent','argent','g2'],['Résidences','bat',null],['Mon compte','moi',null]],
+ admin:[['À vérifier','ok',null],['Paiements','carte','a2'],['Reversements','argent','a1'],['Contrôle','balance','a3'],['Mon compte','moi',null]]};
+function svg(n){return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'+I[n]+'</svg>';}
+const ecrans=[...document.querySelectorAll('.ecran')];
+function menus(id){
+ const e=document.getElementById(id);const r=e.dataset.role;const m=MENUS[r];
+ const lien=(t,i,c)=>'<a href="#'+(c||id)+'" class="'+(t===e.dataset.menu?'on':'')+'" onclick="'+(c?'montrer(\''+c+'\')':'')+';return false">'+svg(i)+'<span>'+t+'</span></a>';
+ document.getElementById('tabbar').innerHTML=m.map(x=>lien(...x)).join('');
+ document.getElementById('topnav').innerHTML='<span class="logo"><i></i>GESIMO</span>'+m.map(x=>lien(...x)).join('')+'<span class="droite"><span class="aide">'+({client:'Awa Koné (client)',gerant:'Kouadio (gérant)',admin:'Admin GESIMO'})[r]+'</span></span>';
+}
+const notes=document.getElementById('notes-data').content;
+const barre=document.getElementById('onglets');
+function montrer(id){
+ menus(id);
+ ecrans.forEach(e=>e.classList.toggle('actif',e.id===id));
+ [...barre.children].forEach(b=>b.classList.toggle('actif',b.dataset.id===id));
+ const n=notes.querySelector('[data-n="'+id+'"]');
+ document.getElementById('notes').innerHTML=n?n.innerHTML:'';
+ history.replaceState(null,'','#'+id); window.scrollTo(0,0);
+}
+ecrans.forEach(e=>{const b=document.createElement('button');b.textContent=e.dataset.titre;b.dataset.id=e.id;b.onclick=()=>montrer(e.id);barre.appendChild(b);});
+const scene=document.getElementById('scene');
+function vue(ordi){scene.classList.toggle('ordi',ordi);document.getElementById('v-ordi').classList.toggle('actif',ordi);document.getElementById('v-mobile').classList.toggle('actif',!ordi);}
+document.getElementById('v-ordi').onclick=()=>vue(true);document.getElementById('v-mobile').onclick=()=>vue(false);
+vue(window.innerWidth>=900);montrer((location.hash||'#c1').slice(1));
+</script>
+</body>
+</html>
