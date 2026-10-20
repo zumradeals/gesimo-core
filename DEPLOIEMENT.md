@@ -72,6 +72,12 @@ sudo -u www-data php artisan gesimo:parametre email.expediteur_nom "GESIMO Séjo
 
 (`email.chiffrement` vaut `tls` par défaut ; mettre `ssl` pour le port 465.)
 
+### Adresse de l'équipe (formulaire de contact)
+```bash
+sudo -u www-data php artisan gesimo:parametre contact.email contact@votre-domaine.ci
+```
+Les messages du formulaire « Contact » sont toujours gardés en base ; s'ils sont aussi envoyés par e-mail à cette adresse (réglages e-mail de l'étape 4 requis). Les e-mails de rappel d'arrivée partent chaque jour à 9 h par la tâche planifiée (déjà installée).
+
 ## 4 bis. Brancher le paiement GeniusPay (Lot 3)
 
 ⚠️ **Sécurité d'abord** : la clé secrète « sandbox » a été visible sur une capture d'écran. Dans le tableau de bord GeniusPay,
