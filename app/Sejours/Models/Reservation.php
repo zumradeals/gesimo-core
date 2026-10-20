@@ -3,6 +3,7 @@
 namespace App\Sejours\Models;
 
 use App\Noyau\Models\Utilisateur;
+use App\Sejours\Enums\StatutReservation;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -12,7 +13,7 @@ class Reservation extends Model
 
     protected $fillable = [
         'unite_id', 'client_id', 'nom_client', 'telephone_client', 'date_arrivee', 'date_depart',
-        'montant_total', 'acompte', 'solde', 'statut', 'origine', 'expire_le', 'cree_par',
+        'montant_total', 'acompte', 'solde', 'statut', 'origine', 'expire_le', 'cree_par', 'nombre_personnes',
     ];
 
     protected function casts(): array
@@ -24,6 +25,7 @@ class Reservation extends Model
             'montant_total' => 'integer',
             'acompte' => 'integer',
             'solde' => 'integer',
+            'statut' => StatutReservation::class,
         ];
     }
 
