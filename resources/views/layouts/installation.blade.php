@@ -6,6 +6,8 @@
     <meta name="robots" content="noindex">
     <meta name="theme-color" content="#0f766e">
     <title>{{ isset($title) ? $title.' — ' : '' }}Installation</title>
+    @livewireStyles
+    @livewireScriptConfig
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="min-h-screen">

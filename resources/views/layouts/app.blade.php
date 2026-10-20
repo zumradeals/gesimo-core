@@ -18,6 +18,8 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="{{ \Illuminate\Support\Str::limit(explode(' ', \App\Parametres\Services\Marque::nom())[0], 12, '') }}">
     <title>{{ isset($title) ? $title.' — ' : '' }}{{ \App\Parametres\Services\Marque::nom() }}</title>
+    @livewireStyles
+    @livewireScriptConfig
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="min-h-screen">
