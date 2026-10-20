@@ -22,6 +22,7 @@ use App\Paiement\Livewire\PaiementsEtEcritures;
 use App\Paiement\Livewire\RetourPaiement;
 use App\Paiement\Livewire\ReversementsAdmin;
 use App\Paiement\Livewire\SommesDues;
+use App\Parametres\Livewire\EspaceParametres;
 use App\Sejours\Http\TelechargerDocument;
 use App\Sejours\Livewire\Admin\ListeVerifications;
 use App\Sejours\Livewire\Admin\LitigesAdmin;
@@ -113,6 +114,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
     Route::livewire('/litiges', LitigesAdmin::class)->name('admin.litiges');
     Route::livewire('/journal', PageJournal::class)->name('admin.journal');
     Route::livewire('/messages', ModelesEmails::class)->name('admin.messages');
+    Route::livewire('/reglages/{rubrique?}', EspaceParametres::class)->name('admin.reglages');
     Route::livewire('/residences', ListeVerifications::class)->name('admin.residences');
     Route::livewire('/residences/{residence}', ValiderResidence::class)->name('admin.residence');
     Route::get('/documents/{document}', TelechargerDocument::class)->name('admin.document');

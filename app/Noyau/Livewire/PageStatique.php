@@ -2,6 +2,7 @@
 
 namespace App\Noyau\Livewire;
 
+use App\Parametres\Services\Parametres;
 use Livewire\Component;
 
 /** Pages d'information (à propos, FAQ, conditions…). Une seule classe, un texte par page dans resources/views/pages. */
@@ -24,8 +25,13 @@ class PageStatique extends Component
         $this->page = $page;
     }
 
+    /** Pages dont le texte peut être remplacé dans les Paramètres (Général). */
+    private const REGLAGES = ['a-propos' => 'general.a_propos', 'conditions' => 'general.conditions', 'confidentialite' => 'general.confidentialite'];
+
     public function render()
     {
-        return view('livewire.noyau.page-statique')->title(self::PAGES[$this->page]);
+        $texte = isset(self::REGLAGES[$this->page]) ? trim((string) Parametres::obtenir(self::REGLAGES[$this->page])) : '';
+
+        return view('livewire.noyau.page-statique', ['texte' => $texte !== '' ? $texte : null])->title(self::PAGES[$this->page]);
     }
 }

@@ -10,14 +10,14 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="theme-color" content="#0f766e">
-    <title>{{ isset($title) ? $title.' — ' : '' }}GESIMO Séjours</title>
+    <title>{{ isset($title) ? $title.' — ' : '' }}{{ \App\Parametres\Services\Marque::nom() }}</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="min-h-screen">
     {{-- Ordinateur : barre du haut, pleine largeur --}}
     <header class="sticky top-0 z-30 hidden h-16 items-center gap-2 border-b border-trait bg-white px-8 lg:flex">
         <a href="{{ route('accueil') }}" class="mr-6 flex items-center gap-2 text-xl font-extrabold text-marque-600">
-            <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-marque-600 text-base text-white">G</span> GESIMO
+            @if($logo = \App\Parametres\Services\Marque::logoUrl())<img src="{{ $logo }}" alt="" class="h-8 w-auto rounded">@else<span class="flex h-8 w-8 items-center justify-center rounded-lg bg-marque-600 text-base text-white">G</span>@endif {{ \Illuminate\Support\Str::limit(\App\Parametres\Services\Marque::nom(), 24) }}
         </a>
         @foreach($menu as $m)
             <a href="{{ route($m['route']) }}" class="flex items-center gap-2 rounded-xl px-4 py-2 text-[15px] font-semibold {{ $estActif($m) ? 'bg-marque-50 text-marque-600' : 'text-gris-doux hover:bg-fond' }}">
@@ -36,7 +36,7 @@
 
     {{-- Téléphone : barre du haut simple --}}
     <header class="sticky top-0 z-30 flex h-14 items-center justify-between bg-gradient-to-r from-marque-600 to-marque-500 px-4 text-white lg:hidden">
-        <a href="{{ route('accueil') }}" class="text-lg font-extrabold">GESIMO</a>
+        <a href="{{ route('accueil') }}" class="text-lg font-extrabold">{{ \Illuminate\Support\Str::limit(\App\Parametres\Services\Marque::nom(), 16) }}</a>
         <span class="max-w-[60%] truncate text-[15px] font-semibold">{{ $title ?? '' }}</span>
     </header>
 
