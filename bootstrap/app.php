@@ -1,6 +1,9 @@
 <?php
 
+use App\Noyau\Console\CreerSuperAdmin;
 use App\Noyau\Http\Middleware\VerifierRole;
+use App\Parametres\Console\DefinirParametre;
+use App\Sejours\Console\ExpirerReservations;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -12,7 +15,14 @@ return Application::configure(basePath: dirname(__DIR__))
         commands: __DIR__.'/../routes/console.php',
         health: '/up',
     )
+    ->withCommands([
+        CreerSuperAdmin::class,
+        ExpirerReservations::class,
+        DefinirParametre::class,
+    ])
     ->withMiddleware(function (Middleware $middleware): void {
+        $middleware->redirectGuestsTo(fn () => route('connexion'));
+        $middleware->redirectUsersTo(fn () => route('accueil'));
         $middleware->alias(['role' => VerifierRole::class]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

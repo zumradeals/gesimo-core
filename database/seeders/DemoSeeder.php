@@ -45,8 +45,9 @@ class DemoSeeder extends Seeder
                 'quartier' => 'Riviera (démo)',
                 'reglement' => 'DÉMO : règlement de démonstration.',
                 'statut_verification' => 'verifiee',
-                'mode_paiement' => 'acompte',
-                'pourcentage_acompte' => 30,
+                'soumise_le' => now(),
+                'badge_verifie' => true,
+                'mode_paiement' => 'total',
             ]);
 
             MembreResidence::create([
@@ -66,8 +67,8 @@ class DemoSeeder extends Seeder
                     ['unite_id' => $unite->id, 'equipement_id' => $wifi],
                 ]);
                 DB::table('tarif')->insert([
-                    'unite_id' => $unite->id, 'type_periode' => 'standard', 'libelle' => 'DÉMO Prix normal',
-                    'prix_nuit' => $prix, 'created_at' => now(), 'updated_at' => now(),
+                    ['unite_id' => $unite->id, 'type_periode' => 'standard', 'libelle' => 'DÉMO Prix normal', 'prix_nuit' => $prix, 'created_at' => now(), 'updated_at' => now()],
+                    ['unite_id' => $unite->id, 'type_periode' => 'week_end', 'libelle' => 'DÉMO Prix week-end', 'prix_nuit' => $prix + 5000, 'created_at' => now(), 'updated_at' => now()],
                 ]);
             }
 
@@ -75,7 +76,7 @@ class DemoSeeder extends Seeder
             Reservation::create([
                 'unite_id' => $unite->id, 'client_id' => $comptes['client']->id,
                 'date_arrivee' => now()->addDays(10)->toDateString(), 'date_depart' => now()->addDays(12)->toDateString(),
-                'montant_total' => 30000, 'acompte' => 9000, 'solde' => 21000,
+                'nombre_personnes' => 2, 'montant_total' => 30000, 'acompte' => 30000, 'solde' => 0,
                 'statut' => 'confirmee', 'origine' => 'plateforme', 'cree_par' => $comptes['client']->id,
             ]);
         });
