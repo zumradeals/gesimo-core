@@ -11,8 +11,10 @@ use App\Parametres\Services\Parametres;
 use App\Parametres\Services\Reglages;
 use App\Parametres\Services\TestsConnexion;
 use App\Sejours\Services\ReservationService;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Storage;
 use Livewire\Livewire;
 
 function superAdmin(): Utilisateur
@@ -278,4 +280,47 @@ it('aucun réglage fonctionnel ne dépend d\'un fichier .env en dehors de la bas
 it('un visiteur non connecté est renvoyé vers la connexion', function () {
     $this->get('/admin/reglages')->assertRedirect(route('connexion'));
     $this->get('/admin/mises-en-avant')->assertRedirect(route('connexion'));
+});
+
+it('le logo : une image PNG/JPG légère est acceptée ; un fichier dangereux ou trop lourd est refusé', function () {
+    Storage::fake('public');
+    $su = superAdmin();
+
+    page($su, 'general')->set('logo', UploadedFile::fake()->create('virus.php', 10, 'text/x-php'))->call('enregistrer')->assertHasErrors('logo');
+    page($su, 'general')->set('logo', UploadedFile::fake()->create('logo.svg', 10, 'image/svg+xml'))->call('enregistrer')->assertHasErrors('logo');
+    page($su, 'general')->set('logo', UploadedFile::fake()->image('gros.png')->size(2048))->call('enregistrer')->assertHasErrors('logo');
+    expect(Parametres::obtenir('general.logo'))->toBeNull();
+
+    page($su, 'general')->set('logo', UploadedFile::fake()->image('logo.png', 200, 200)->size(100))->call('enregistrer')->assertHasNoErrors();
+    $chemin = Parametres::obtenir('general.logo');
+    Storage::disk('public')->assertExists($chemin);
+    expect($chemin)->toStartWith('logo/');
+    $this->get('/a-propos')->assertSee('<img', false);
+});
+
+it('le nom et les textes légaux saisis dans Général remplacent les valeurs provisoires du site', function () {
+    $su = superAdmin();
+    $this->get('/conditions')->assertSee('Brouillon de travail', false);
+
+    page($su, 'general')->set('valeurs.general__nom', 'Ma Plateforme')->set('valeurs.general__conditions', "Article 1 : texte validé.\nArticle 2 : suite.")->call('enregistrer')->assertSee('Réglages enregistrés');
+    $this->get('/conditions')->assertSee('Article 1 : texte validé.')->assertDontSee('Brouillon de travail', false);
+    $this->get('/a-propos')->assertSee('Ma Plateforme');
+    $this->get('/confidentialite')->assertSee('Brouillon de travail', false); // vide : le texte provisoire reste
+
+    // Le texte saisi est affiché comme du texte : aucun code ne s'exécute.
+    page($su, 'general')->set('valeurs.general__confidentialite', '<script>alert(1)</script>')->call('enregistrer');
+    $this->get('/confidentialite')->assertDontSee('<script>alert(1)</script>', false)->assertSee('&lt;script&gt;', false);
+});
+
+it('aucun secret saisi dans les Paramètres n\'apparaît dans le journal du serveur', function () {
+    $su = superAdmin();
+    $journal = storage_path('logs/laravel.log');
+    @unlink($journal);
+    page($su, 'paiement')->call('remplacer', 'geniuspay.sandbox.cle_secrete')->set('secrets.geniuspay__sandbox__cle_secrete', 'sk_sandbox_JOURNAL-SECRET-4242')->set('motDePasse', 'faux')->call('enregistrer');
+    page($su, 'paiement')->call('remplacer', 'geniuspay.sandbox.cle_secrete')->set('secrets.geniuspay__sandbox__cle_secrete', 'sk_sandbox_JOURNAL-SECRET-4242')->set('motDePasse', 'mot-de-passe-secret-1')->call('enregistrer');
+    configurerGeniusPay('sandbox');
+    fauxGeniusPay();
+    app(TestsConnexion::class)->paiement($su);
+
+    expect(file_exists($journal) ? file_get_contents($journal) : '')->not->toContain('JOURNAL-SECRET-4242')->not->toContain(CLE_SECRETE_TEST);
 });

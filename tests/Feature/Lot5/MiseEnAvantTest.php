@@ -3,6 +3,7 @@
 use App\Noyau\Enums\Role;
 use App\Paiement\Exceptions\PaiementImpossible;
 use App\Paiement\Livewire\AcheterMiseEnAvant;
+use App\Paiement\Livewire\Controle;
 use App\Paiement\Livewire\MisesEnAvantAdmin;
 use App\Paiement\Livewire\MisesEnAvantGerant;
 use App\Paiement\Models\AlerteAdmin;
@@ -241,5 +242,5 @@ it('les écrans d\'argent de l\'admin s\'affichent avec des paiements de mise en
     foreach (['admin.paiements', 'admin.controle', 'admin.reversements', 'admin.tableau', 'admin.mises-en-avant'] as $route) {
         $this->actingAs($admin)->get(route($route))->assertOk();
     }
-    Livewire::actingAs($admin)->test(\App\Paiement\Livewire\Controle::class)->assertSee('Tout concorde');
+    Livewire::actingAs($admin)->test(Controle::class)->assertSee('Tout concorde');
 });

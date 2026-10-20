@@ -47,66 +47,48 @@ cat /root/gesimo-secrets.txt
 
 Copiez ce contenu dans un endroit sûr **hors du serveur** (gestionnaire de mots de passe, coffre). **Sans cette clé, les secrets enregistrés sont perdus.**
 
-## 3. Créer votre compte super-administrateur
+## 3. L'assistant d'installation (créer votre compte et régler l'essentiel)
 
-```bash
-cd /var/www/gesimo && sudo -u www-data php artisan gesimo:creer-super-admin
-```
+1. Sur le serveur, générez votre **code d'installation** (affiché une seule fois, notez-le) :
+   ```bash
+   cd /var/www/gesimo && sudo -u www-data php artisan gesimo:installation
+   ```
+2. Ouvrez **https://gesimo.dgafrique.com/installation** dans votre navigateur, saisissez le code, puis suivez les 5 étapes :
+   votre compte super-administrateur → général (nom, e-mail de contact) → e-mail → paiement GeniusPay (mode test) → fin.
+3. Chaque étape peut être passée : tout se complète ensuite dans **Réglages** (onglet en bas de l'écran / en haut sur ordinateur).
+4. Une fois « Terminer l'installation » cliqué, l'assistant disparaît définitivement.
 
-Le terminal vous demande votre nom, téléphone (10 chiffres), e-mail, puis un mot de passe (il ne s'affiche pas à l'écran).
+Le code empêche un inconnu de créer le compte à votre place avant vous. Aucun réglage ne se saisit plus dans un fichier : tout est dans l'espace **Réglages**.
 
-## 4. Régler l'envoi d'e-mails
+> Secours en ligne de commande (si le navigateur n'est pas disponible) : `sudo -u www-data php artisan gesimo:creer-super-admin`
+> puis `sudo -u www-data php artisan gesimo:parametre <réglage> [valeur] [--secret]`.
 
-Tant que ce réglage n'est pas fait, **aucun e-mail n'est envoyé** (liens de connexion, invitations du personnel) : ils sont seulement écrits dans un journal.
-La connexion par téléphone + mot de passe fonctionne sans e-mail. L'écran Paramètres arrivera dans un prochain lot ; en attendant :
-
-```bash
-cd /var/www/gesimo
-sudo -u www-data php artisan gesimo:parametre email.hote smtp.votre-fournisseur.com
-sudo -u www-data php artisan gesimo:parametre email.port 587
-sudo -u www-data php artisan gesimo:parametre email.utilisateur votre-identifiant
-sudo -u www-data php artisan gesimo:parametre email.mot_de_passe --secret     # le mot de passe est demandé, masqué
-sudo -u www-data php artisan gesimo:parametre email.expediteur_adresse ne-pas-repondre@dgafrique.com
-sudo -u www-data php artisan gesimo:parametre email.expediteur_nom "GESIMO Séjours"
-```
-
-(`email.chiffrement` vaut `tls` par défaut ; mettre `ssl` pour le port 465.)
-
-### Adresse de l'équipe (formulaire de contact)
-```bash
-sudo -u www-data php artisan gesimo:parametre contact.email contact@votre-domaine.ci
-```
-Les messages du formulaire « Contact » sont toujours gardés en base ; s'ils sont aussi envoyés par e-mail à cette adresse (réglages e-mail de l'étape 4 requis). Les e-mails de rappel d'arrivée partent chaque jour à 9 h par la tâche planifiée (déjà installée).
-
-## 4 bis. Brancher le paiement GeniusPay (Lot 3)
+## 4. Brancher GeniusPay et les e-mails depuis « Réglages »
 
 ⚠️ **Sécurité d'abord** : la clé secrète « sandbox » a été visible sur une capture d'écran. Dans le tableau de bord GeniusPay,
-**régénérez-la** avant de continuer, et ne l'envoyez plus jamais par message.
+**régénérez-la** avant de la saisir, et ne l'envoyez plus jamais par message.
 
-1. Dans GeniusPay (mode test), créez un **webhook** :
-   - adresse : `https://gesimo.dgafrique.com/webhooks/geniuspay`
-   - événements : paiement réussi, échoué, annulé, remboursé (`payment.success`, `payment.failed`, `payment.cancelled`, `payment.refunded`)
-   - copiez le secret affiché (il commence par `whsec_`).
-2. Sur le serveur, enregistrez les réglages (les secrets sont demandés au clavier, chiffrés en base, jamais affichés) :
-```bash
-cd /var/www/gesimo
-sudo -u www-data php artisan gesimo:parametre geniuspay.mode sandbox
-sudo -u www-data php artisan gesimo:parametre geniuspay.sandbox.cle_publique --secret
-sudo -u www-data php artisan gesimo:parametre geniuspay.sandbox.cle_secrete --secret
-sudo -u www-data php artisan gesimo:parametre geniuspay.sandbox.webhook_secret --secret
-sudo -u www-data php artisan gesimo:parametre commission.pourcentage 10
-```
-   (`10` = 10 % : **à vous de choisir le vrai taux**. Tant qu'il n'est pas réglé, le paiement en ligne reste fermé.)
-3. Facultatif : `paiement.frais_pourcentage` (frais GeniusPay estimés, pour le calcul de l'acompte minimum).
-4. Passage en réel plus tard : refaire l'étape 2 avec `geniuspay.live.*`, puis `geniuspay.mode live` (compte GeniusPay vérifié requis).
+- **Réglages ▸ Notifications** : serveur d'e-mail (hôte, port, utilisateur, mot de passe masqué, adresse d'expédition), puis **Tester la connexion** (un e-mail de test vous est envoyé : « Réussi » ou « Échec » avec l'explication).
+- **Réglages ▸ Général** : nom, logo, e-mail de contact de l'équipe (les messages du formulaire « Contact » y arrivent), textes légaux validés par votre juriste.
+- **Réglages ▸ Paiement** : dans GeniusPay (mode test), créez un **webhook** vers `https://gesimo.dgafrique.com/webhooks/geniuspay`
+  avec les événements `payment.success`, `payment.failed`, `payment.cancelled`, `payment.refunded` ; copiez le secret (`whsec_…`).
+  Puis saisissez clé publique, clé secrète et secret du webhook (ils sont chiffrés et jamais réaffichés), le **taux de commission**
+  (à vous de le choisir : tant qu'il n'est pas réglé, le paiement en ligne reste fermé) et les frais GeniusPay estimés.
+  Enregistrer demande votre mot de passe. **Tester la connexion** demande à GeniusPay le solde du compte (lecture seule).
+- **Réglages ▸ Mise en avant** : les offres (nom, durée, prix) proposées aux gérants.
+- **Réglages ▸ Réservation / Sécurité** : durée du blocage, acompte par défaut, délai d'annulation gratuite, durée de session, tentatives de connexion.
+- Le passage au mode **Réel** se fait plus tard dans Réglages ▸ Paiement (clés réelles + compte GeniusPay vérifié).
+- Les rappels d'arrivée partent chaque jour à 9 h par la tâche planifiée (déjà installée).
 
 ### Liste de tests à faire sur le vrai bac à sable
-1. Réserver un logement, aller au paiement, payer en test → la réservation passe à « Confirmée » (page de confirmation + reçu).
-2. Payer puis fermer la page avant le retour → la réservation est quand même confirmée (le webhook suffit).
-3. Abandonner le paiement → la réservation reste « En attente » puis expire.
-4. Annuler une réservation payée → le remboursement est demandé ; vérifier dans GeniusPay et dans Admin ▸ Contrôle.
-5. Admin ▸ Contrôle : aucun écart ; Admin ▸ Reversements : verser au gérant et marquer « fait ».
-6. Envoyer un faux webhook (`curl -X POST https://gesimo.dgafrique.com/webhooks/geniuspay -d '{}'`) → réponse 401, rien ne change.
+1. Réglages ▸ Tests : « Test e-mail » et « Test paiement » doivent répondre « Réussi ».
+2. Réserver un logement, aller au paiement, payer en test → la réservation passe à « Confirmée » (page de confirmation + reçu + e-mail).
+3. Payer puis fermer la page avant le retour → la réservation est quand même confirmée (le webhook suffit).
+4. Abandonner le paiement → la réservation reste « En attente » puis expire.
+5. Annuler une réservation payée → le remboursement est demandé ; vérifier dans GeniusPay et dans Admin ▸ Contrôle.
+6. Admin ▸ Contrôle : aucun écart ; Admin ▸ Reversements : verser au gérant et marquer « fait ».
+7. Gérant ▸ Mises en avant : acheter une offre, payer en test → l'annonce apparaît en tête de recherche avec « Sponsorisé ».
+8. Envoyer un faux webhook (`curl -X POST https://gesimo.dgafrique.com/webhooks/geniuspay -d '{}'`) → réponse 401, rien ne change.
 
 ## 5. Vérifier que tout marche
 
