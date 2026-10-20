@@ -23,6 +23,9 @@ class Connexion
 
     public const PAUSE_SECONDES = 300;
 
+    /** Plafond par numéro, quelle que soit l'adresse d'où viennent les essais (protège contre les attaques réparties). */
+    public const ESSAIS_MAX_PAR_NUMERO = 20;
+
     public const VALIDITE_LIEN_MINUTES = 15;
 
     public const VALIDITE_CODE_MINUTES = 10;
@@ -45,7 +48,7 @@ class Connexion
         $bon = Hash::check($motDePasse, $utilisateur?->mot_de_passe ?? self::empreinteFactice()) && $utilisateur?->mot_de_passe !== null;
 
         if (! $bon) {
-            RateLimiter::hit($cle, self::PAUSE_SECONDES);
+            $this->echec($cle, $telephone);
             throw new ConnexionRefusee('Téléphone ou mot de passe incorrect.');
         }
 
@@ -132,13 +135,13 @@ class Connexion
             ->where('tentatives', '<', self::ESSAIS_MAX)->latest('id')->first();
 
         if ($jeton === null) {
-            RateLimiter::hit($cle, self::PAUSE_SECONDES);
+            $this->echec($cle, $telephone);
             throw new ConnexionRefusee('Code incorrect ou expiré. Demandez un nouveau code.');
         }
 
         $jeton->increment('tentatives');
         if (! hash_equals($jeton->empreinte, $this->empreinte(trim($code)))) {
-            RateLimiter::hit($cle, self::PAUSE_SECONDES);
+            $this->echec($cle, $telephone);
             throw new ConnexionRefusee('Code incorrect ou expiré. Demandez un nouveau code.');
         }
 
@@ -183,9 +186,18 @@ class Connexion
         return $utilisateur;
     }
 
+    private function echec(string $cle, string $telephone): void
+    {
+        RateLimiter::hit($cle, self::PAUSE_SECONDES);
+        RateLimiter::hit("connexion-numero:{$telephone}", 900);
+    }
+
     private function verrouiller(string $telephone, string $ip): string
     {
         $cle = $this->cle('connexion', $telephone, $ip);
+        if (RateLimiter::tooManyAttempts("connexion-numero:{$telephone}", self::ESSAIS_MAX_PAR_NUMERO)) {
+            throw new ConnexionRefusee("Trop d'essais. Réessayez dans quelques minutes.");
+        }
         if (RateLimiter::tooManyAttempts($cle, self::ESSAIS_MAX)) {
             $minutes = max(1, (int) ceil(RateLimiter::availableIn($cle) / 60));
             throw new ConnexionRefusee("Trop d'essais. Réessayez dans {$minutes} minute".($minutes > 1 ? 's' : '').'.');

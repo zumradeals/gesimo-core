@@ -89,6 +89,18 @@ it('limite les tentatives : après 5 échecs, même le bon mot de passe est refu
     expect($service->parMotDePasse($u->telephone, 'un-bon-mot-de-passe', '10.0.0.3')->id)->toBe($u->id);
 });
 
+it('limite aussi les essais par numéro, même si l\'attaquant change d\'adresse à chaque fois', function () {
+    $u = compteAvecMotDePasse();
+    $service = app(Connexion::class);
+
+    foreach (range(1, 20) as $i) {
+        expect(fn () => $service->parMotDePasse($u->telephone, 'faux', "10.9.0.{$i}"))->toThrow(ConnexionRefusee::class, 'Téléphone ou mot de passe incorrect.');
+    }
+
+    expect(fn () => $service->parMotDePasse($u->telephone, 'un-bon-mot-de-passe', '10.9.9.9'))->toThrow(ConnexionRefusee::class, 'Trop d\'essais');
+    expect(auth()->check())->toBeFalse();
+});
+
 it('refuse un compte suspendu, et un compte sans mot de passe', function () {
     $suspendu = compteAvecMotDePasse();
     $suspendu->update(['statut' => 'suspendu']);
