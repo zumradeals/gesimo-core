@@ -38,7 +38,7 @@ it('un client affiche et annule sa réservation depuis « Mes réservations »',
     expect($reservation->client_id)->toBe($client->id);
 
     Livewire::actingAs($client)->test(MesReservations::class)->assertSee('En attente')->assertSee('Dates gardées encore')
-        ->call('annuler', $reservation->id)->assertSee('Annulée');
+        ->call('annuler', $reservation->id)->assertSee('Réservation annulée.');
     expect($reservation->fresh()->statut->value)->toBe('annulee');
 });
 
@@ -155,7 +155,7 @@ it('chaque rôle voit son propre menu : barre d\'onglets en bas sur téléphone,
     $this->get('/')->assertOk()->assertSee('Se connecter')->assertSee('aria-label="Menu principal"', false)->assertDontSee('Mes réservations');
     $this->actingAs(creerUtilisateur(Role::Client))->get('/')->assertSee('Mes réservations')->assertSee('Chercher')->assertDontSee('Calendrier');
     $this->actingAs(creerUtilisateur(Role::Gerant))->get('/gerant/residences')->assertSee('Calendrier')->assertSee('Résidences')->assertSee('Arrivées')->assertSee('Argent')->assertDontSee('Mes réservations');
-    $this->actingAs(creerUtilisateur(Role::Admin))->get('/admin/residences')->assertSee('À vérifier')->assertSee('Paiements')->assertSee('Reversements')->assertSee('Contrôle');
+    $this->actingAs(creerUtilisateur(Role::Admin))->get('/admin/residences')->assertSee('Accueil')->assertSee('Paiements')->assertSee('Reversements')->assertSee('Contrôle');
 });
 
 it('toutes les pages s\'affichent sans erreur pour la bonne personne', function () {

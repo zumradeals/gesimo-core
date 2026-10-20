@@ -94,7 +94,7 @@ class Connexion extends Component
     private function destination(Utilisateur $utilisateur)
     {
         $defaut = match (true) {
-            $utilisateur->estAdmin() => route('admin.residences'),
+            $utilisateur->estAdmin() => route('admin.tableau'),
             $utilisateur->aRole(Role::Gerant) => route('gerant.calendrier'),
             default => route('accueil'),
         };
