@@ -8,6 +8,7 @@ use App\Noyau\Livewire\Connexion;
 use App\Noyau\Livewire\ConnexionParLien;
 use App\Noyau\Livewire\Contact;
 use App\Noyau\Livewire\Inscription;
+use App\Noyau\Livewire\Installation;
 use App\Noyau\Livewire\PageStatique;
 use App\Noyau\Livewire\Profil;
 use App\Noyau\Services\Connexion as ServiceConnexion;
@@ -53,6 +54,9 @@ Route::middleware('guest')->group(function () {
     Route::livewire('/connexion', Connexion::class)->name('connexion');
     Route::livewire('/inscription', Inscription::class)->name('inscription');
 });
+// Assistant d'installation du premier lancement (404 une fois terminé)
+Route::livewire('/installation', Installation::class)->name('installation');
+
 // Pages d'information
 Route::livewire('/contact', Contact::class)->name('contact');
 foreach (['a-propos', 'faq', 'conditions', 'confidentialite'] as $page) {

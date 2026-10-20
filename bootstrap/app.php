@@ -2,6 +2,7 @@
 
 use App\Noyau\Console\CreerSuperAdmin;
 use App\Noyau\Console\EnvoyerRappelsArrivee;
+use App\Noyau\Console\GenererCodeInstallation;
 use App\Noyau\Http\Middleware\AppliquerReglages;
 use App\Noyau\Http\Middleware\VerifierRole;
 use App\Parametres\Console\DefinirParametre;
@@ -20,6 +21,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withCommands([
         CreerSuperAdmin::class,
         EnvoyerRappelsArrivee::class,
+        GenererCodeInstallation::class,
         ExpirerReservations::class,
         DefinirParametre::class,
     ])

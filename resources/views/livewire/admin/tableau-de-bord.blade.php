@@ -1,6 +1,9 @@
 @php $fr = fn (int $m) => \App\Noyau\Services\Format::fcfa($m); $rien = $nbAValider + $nbLitiges + $nbAlertes === 0; @endphp
 <div class="grid gap-4">
     <h1 class="text-2xl font-extrabold">Tableau de bord</h1>
+    @if(auth()->user()->estSuperAdmin() && ! \App\Noyau\Services\Installation::estTerminee())
+        <x-ui.alerte type="attention">L'installation n'est pas terminée. <a class="font-bold underline" href="{{ route('installation') }}">Terminer l'installation</a></x-ui.alerte>
+    @endif
     <div class="grid grid-cols-2 gap-3 md:grid-cols-4">
         <a href="{{ route('admin.residences') }}" class="carte"><b class="text-2xl">{{ $nbAValider }}</b><p class="aide">Résidences à valider</p></a>
         <a href="{{ route('admin.litiges') }}" class="carte"><b class="text-2xl">{{ $nbLitiges }}</b><p class="aide">Litiges ouverts</p></a>

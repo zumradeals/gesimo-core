@@ -147,6 +147,9 @@ Installation terminée.
   Site        : https://${DOMAINE}
   Secrets     : ${SECRETS}   (contient la CLÉ MAÎTRE : copiez-la dans un endroit sûr, HORS du serveur)
 
-Prochaine étape — créer le compte du super-administrateur :
-  cd ${DOSSIER} && sudo -u www-data php artisan gesimo:creer-super-admin
+Prochaine étape — l'assistant d'installation :
+  1) Générer votre code d'installation (affiché une seule fois) :
+       cd ${DOSSIER} && sudo -u www-data php artisan gesimo:installation
+  2) Ouvrir https://${DOMAINE}/installation dans votre navigateur et suivre les étapes
+     (création de votre compte super-administrateur, puis réglages essentiels).
 FIN
