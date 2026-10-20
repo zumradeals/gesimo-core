@@ -2,6 +2,10 @@
  * Application installable, mode hors connexion et mises à jour (Lot 6).
  * Aucun appel réseau n'est jamais rejoué automatiquement : c'est ce qui empêche un double paiement.
  */
+// Ce fichier est chargé APRÈS l'affichage de la page (voir app.js) : les événements « page prête » ont déjà eu lieu.
+const quandPret = (f) => (document.readyState === 'loading' ? document.addEventListener('DOMContentLoaded', f) : f());
+const quandCharge = (f) => (document.readyState === 'complete' ? f() : window.addEventListener('load', f));
+
 const sansStockage = (f, defaut = null) => { try { return f(); } catch (e) { return defaut; } };
 const lire = () => sansStockage(() => JSON.parse(localStorage.getItem('gesimo:pwa') || '{}'), {});
 const ecrire = (d) => sansStockage(() => localStorage.setItem('gesimo:pwa', JSON.stringify(d)));
@@ -52,7 +56,7 @@ function proposerMiseAJour() {
 }
 
 if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost' || location.hostname === '127.0.0.1')) {
-  window.addEventListener('load', () => {
+  quandCharge(() => {
     navigator.serviceWorker.register('/sw.js', { scope: '/' }).then((reg) => {
       registration = reg;
       proposerMiseAJour();
@@ -94,7 +98,7 @@ function majEtatReseau() {
 }
 window.addEventListener('offline', majEtatReseau);
 window.addEventListener('online', majEtatReseau);
-document.addEventListener('DOMContentLoaded', () => {
+quandPret(() => {
   if (navigator.onLine) sansStockage(() => localStorage.setItem('gesimo:vu:' + location.pathname, String(Date.now())));
   majEtatReseau();
 });
@@ -157,7 +161,7 @@ function proposerInstallation() {
   };
 }
 
-document.addEventListener('DOMContentLoaded', () => {
+quandPret(() => {
   const d = lire();
   d.pages = (d.pages || 0) + 1;
   if (!sansStockage(() => sessionStorage.getItem('gesimo:session'))) { sansStockage(() => sessionStorage.setItem('gesimo:session', '1')); d.visites = (d.visites || 0) + 1; }

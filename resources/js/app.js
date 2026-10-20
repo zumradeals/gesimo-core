@@ -1,5 +1,9 @@
-// Livewire (et Alpine, qu'il embarque) sont compilés ici : voir config/livewire.php.
-import { Livewire } from '../../vendor/livewire/livewire/dist/livewire.esm';
-import './pwa';
+// La page s'affiche d'abord (HTML + styles, environ 12 Ko) ; le reste (Livewire, Alpine, mode hors connexion, environ 100 Ko)
+// se télécharge ensuite. Sur un réseau lent, c'est ce qui fait apparaître la page en moins de 3 secondes.
+const demarrer = () => import('./demarrage');
 
-Livewire.start();
+if (document.readyState === 'complete') {
+    demarrer();
+} else {
+    window.addEventListener('load', demarrer);
+}

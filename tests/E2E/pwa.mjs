@@ -16,7 +16,7 @@ const ctx = await browser.newContext({ viewport: { width: 360, height: 740 }, de
 const page = await ctx.newPage();
 const cdp = await ctx.newCDPSession(page);
 // Réseau coupé « pour de vrai » : le relais refuse toute connexion (y compris celles du service worker, que Playwright ne bloque pas) et le navigateur passe hors ligne.
-const reseau = async (coupe) => { await fetch(commande + (coupe ? '/coupe' : '/ok')); await ctx.setOffline(coupe); };
+const reseau = async (coupe) => { await fetch(commande + (coupe ? '/coupe' : '/ok')); await ctx.setOffline(coupe); if (!coupe) await pause(1500); /* la page « hors connexion » se recharge toute seule au retour du réseau */ };
 const texte = async () => (await page.locator('body').innerText()).replace(/\s+/g, ' ');
 const caches = () => page.evaluate(async () => { const o = {}; for (const n of await caches.keys()) { o[n] = (await (await caches.open(n)).keys()).map((r) => new URL(r.url).pathname); } return o; });
 
@@ -60,6 +60,7 @@ try {
   assert.ok(!Object.values(avant).flat().some((p) => /payer|paiement|recu|compte|connexion$/.test(p) && p !== '/hors-connexion')); ok('aucune page de paiement, de reçu ou de compte n\'est enregistrée');
   await reseau(true);
   await page.goto(base + '/mes-reservations').catch(() => {});
+  await page.waitForSelector('#pwa-hors', { timeout: 8000 });
   const t = await texte();
   assert.match(t, /Mes réservations/); assert.match(t, /Hors connexion/); ok('réseau coupé : « Mes réservations » reste lisible, avec le bandeau');
   const grise = await page.evaluate(() => [...document.querySelectorAll('[data-reseau]')].every((e) => getComputedStyle(e).pointerEvents === 'none'));
@@ -70,7 +71,7 @@ try {
   await reseau(false);
   await page.goto(base + '/mes-reservations', { waitUntil: 'networkidle' });
   await reseau(true); await pause(300); await reseau(false);
-  await pause(300); assert.match(await texte(), /Connexion rétablie/); ok('retour du réseau : « Connexion rétablie » avec « Actualiser »');
+  await page.waitForSelector('#pwa-retour', { timeout: 8000 }); assert.match(await texte(), /Connexion rétablie/); ok('retour du réseau : « Connexion rétablie » avec « Actualiser »');
   await page.screenshot({ path: dossier + '/connexion-retablie.png' });
 
   // --- 4. action impossible sans réseau : message clair, rien de perdu, rien de renvoyé tout seul -----------------
