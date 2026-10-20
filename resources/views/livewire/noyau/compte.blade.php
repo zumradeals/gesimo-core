@@ -36,7 +36,7 @@
         @if($estGerant)
             <a href="{{ route('gerant.personnel') }}" class="btn btn-second btn-bloc"><x-ui.icone nom="equipe" classe="h-5 w-5" /> Mon personnel</a>
             <a href="{{ route('gerant.aide') }}" class="btn btn-second btn-bloc"><x-ui.icone nom="aide" classe="h-5 w-5" /> Aide du gérant</a>
-            <span class="btn btn-bloc cursor-default !bg-slate-200 !text-slate-500 hover:!bg-slate-200">⭐ Mise en avant : bientôt</span>
+            <a href="{{ route('gerant.mises-en-avant') }}" class="btn btn-second btn-bloc">⭐ Mises en avant</a>
         @endif
         <a href="{{ route('faq') }}" class="btn btn-second btn-bloc"><x-ui.icone nom="aide" classe="h-5 w-5" /> Aide et questions</a>
         <form method="POST" action="{{ route('deconnexion') }}">@csrf

@@ -74,7 +74,16 @@ class Rapprochement
             }
         }
 
-        $encaisse = (int) DB::table('paiement')->where('statut', 'reussi')->sum('montant');
+        // Mises en avant : chaque paiement réussi doit avoir son écriture de revenu (hors fonds détenus pour des tiers).
+        $ecrituresMea = DB::table('ecriture_comptable')->where('type', 'mise_en_avant')->whereNull('correction_de')->get()->keyBy('paiement_id');
+        foreach (DB::table('paiement')->where('statut', 'reussi')->whereNotNull('mise_en_avant_id')->get(['id', 'reference_geniuspay', 'montant']) as $p) {
+            $e = $ecrituresMea->get($p->id);
+            if ($e === null || (int) $e->montant !== (int) $p->montant) {
+                $anomalies->push(['type' => 'mise_en_avant_sans_ecriture', 'message' => "Mise en avant : paiement {$p->reference_geniuspay} ({$p->montant} FCFA) sans écriture de revenu correcte.", 'action' => null, 'id' => $p->id]);
+            }
+        }
+
+        $encaisse = (int) DB::table('paiement')->where('statut', 'reussi')->whereNotNull('reservation_id')->sum('montant');
         $ecrEnc = (int) DB::table('ecriture_comptable')->where('type', 'encaissement')->sum('montant');
         $remb = (int) DB::table('ecriture_comptable')->where('type', 'remboursement')->sum('montant');
         $comm = (int) DB::table('ecriture_comptable')->where('type', 'commission')->sum('montant');
@@ -89,7 +98,7 @@ class Rapprochement
         }
 
         return [
-            'totaux' => ['encaisse' => $encaisse, 'rembourse' => $remb, 'commissions' => $comm, 'parts' => $parts, 'reverse' => (int) DB::table('ecriture_comptable')->where('type', 'reversement')->sum('montant')],
+            'totaux' => ['encaisse' => $encaisse, 'rembourse' => $remb, 'commissions' => $comm, 'parts' => $parts, 'reverse' => (int) DB::table('ecriture_comptable')->where('type', 'reversement')->sum('montant'), 'mises_en_avant' => (int) DB::table('ecriture_comptable')->where('type', 'mise_en_avant')->sum('montant')],
             'detenus' => $detenus,
             'anomalies' => $anomalies,
         ];

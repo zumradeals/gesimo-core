@@ -62,6 +62,7 @@ class FicheLogement extends Component
             'total' => $total,
             'libre' => $libre,
             'erreur' => $erreur,
+            'sponsorise' => in_array($unite->residence_id, \App\Paiement\Services\MiseEnAvantService::residencesEnAvant(), true),
             'resumeAvis' => app(AvisService::class)->resume($unite->residence_id),
             'avis' => Avis::whereHas('reservation.unite', fn ($q) => $q->where('residence_id', $unite->residence_id))->with('client')->latest('id')->limit(5)->get(),
         ]);

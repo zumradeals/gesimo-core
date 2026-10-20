@@ -29,7 +29,9 @@
     <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         <a href="{{ route('admin.reservations') }}" class="btn btn-second btn-bloc">Toutes les réservations</a>
         <a href="{{ route('admin.litiges') }}" class="btn btn-second btn-bloc">Litiges</a>
+        <a href="{{ route('admin.mises-en-avant') }}" class="btn btn-second btn-bloc">Mises en avant</a>
         <a href="{{ route('admin.journal') }}" class="btn btn-second btn-bloc">Journal d'audit</a>
+        @can('modifier-parametres')<a href="{{ route('admin.reglages') }}" class="btn btn-second btn-bloc">Réglages</a>@endcan
         @can('modifier-parametres')<a href="{{ route('admin.messages') }}" class="btn btn-second btn-bloc">Modèles d'e-mails</a>@endcan
     </div>
 </div>

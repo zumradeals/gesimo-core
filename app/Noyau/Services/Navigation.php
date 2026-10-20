@@ -21,16 +21,21 @@ class Navigation
 
         $menu = [];
         if ($u->estAdmin()) {
-            $menu[] = ['libelle' => 'Accueil', 'icone' => 'maison', 'route' => 'admin.tableau', 'actif' => ['admin.tableau', 'admin.reservations', 'admin.litiges', 'admin.journal', 'admin.messages', 'admin.residences', 'admin.residence']];
+            $menu[] = ['libelle' => 'Accueil', 'icone' => 'maison', 'route' => 'admin.tableau', 'actif' => ['admin.tableau', 'admin.reservations', 'admin.litiges', 'admin.journal', 'admin.messages', 'admin.mises-en-avant', 'admin.residences', 'admin.residence']];
             $menu[] = ['libelle' => 'Paiements', 'icone' => 'carte', 'route' => 'admin.paiements', 'actif' => ['admin.paiements']];
             $menu[] = ['libelle' => 'Reversements', 'icone' => 'argent', 'route' => 'admin.reversements', 'actif' => ['admin.reversements']];
             $menu[] = ['libelle' => 'Contrôle', 'icone' => 'balance', 'route' => 'admin.controle', 'actif' => ['admin.controle']];
+            if ($u->estSuperAdmin()) {
+                // Six onglets sur un téléphone de 360 px : « Reversements » devient « Verser » pour tenir.
+                $menu[2]['libelle'] = 'Verser';
+                $menu[] = ['libelle' => 'Réglages', 'icone' => 'cle', 'route' => 'admin.reglages', 'actif' => ['admin.reglages']];
+            }
         }
         if ($u->aRole(Role::Gerant)) {
             $menu[] = ['libelle' => 'Arrivées', 'icone' => 'porte', 'route' => 'gerant.arrivees', 'actif' => ['gerant.arrivees']];
             $menu[] = ['libelle' => 'Calendrier', 'icone' => 'calendrier', 'route' => 'gerant.calendrier', 'actif' => ['gerant.calendrier', 'gerant.telephone', 'gerant.reservations', 'gerant.probleme']];
             $menu[] = ['libelle' => 'Argent', 'icone' => 'argent', 'route' => 'gerant.argent', 'actif' => ['gerant.argent']];
-            $menu[] = ['libelle' => 'Résidences', 'icone' => 'batiment', 'route' => 'gerant.residences', 'actif' => ['gerant.residences', 'gerant.residence.nouvelle', 'gerant.residence', 'gerant.personnel', 'gerant.aide']];
+            $menu[] = ['libelle' => 'Résidences', 'icone' => 'batiment', 'route' => 'gerant.residences', 'actif' => ['gerant.residences', 'gerant.residence.nouvelle', 'gerant.residence', 'gerant.personnel', 'gerant.aide', 'gerant.mises-en-avant', 'gerant.mise-en-avant.acheter', 'gerant.mise-en-avant.retour']];
         } elseif ($u->aRole(Role::Personnel)) {
             $menu[] = ['libelle' => 'Arrivées', 'icone' => 'porte', 'route' => 'gerant.arrivees', 'actif' => ['gerant.arrivees']];
             $menu[] = ['libelle' => 'Calendrier', 'icone' => 'calendrier', 'route' => 'gerant.calendrier', 'actif' => ['gerant.calendrier']];

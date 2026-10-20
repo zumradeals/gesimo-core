@@ -48,7 +48,8 @@
             <div>
                 <h1 class="text-2xl font-extrabold">{{ $u->nom }}</h1>
                 <p class="aide">{{ $r->nom }} · {{ $r->commune }} · jusqu'à {{ $u->capacite }} pers.
-                    @if($r->badge_verifie) <span class="ml-1 rounded-full bg-green-100 px-2 py-0.5 text-[12px] font-bold text-green-800">✔ Vérifié GESIMO</span> @endif</p>
+                    @if($r->badge_verifie) <span class="ml-1 rounded-full bg-green-100 px-2 py-0.5 text-[12px] font-bold text-green-800">✔ Vérifié GESIMO</span> @endif
+                    @if($sponsorise) <span class="ml-1 rounded-full bg-amber-100 px-2 py-0.5 text-[12px] font-bold text-amber-800">⭐ Sponsorisé</span> @endif</p>
             </div>
 
             <div class="grid grid-cols-2 gap-3">

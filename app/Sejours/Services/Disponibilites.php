@@ -2,6 +2,7 @@
 
 namespace App\Sejours\Services;
 
+use App\Paiement\Services\MiseEnAvantService;
 use App\Sejours\Models\Unite;
 use Carbon\CarbonInterface;
 use Illuminate\Database\Query\Builder;
@@ -44,10 +45,17 @@ class Disponibilites
             ->limit($limite)
             ->get();
 
-        return $unites
-            ->map(fn (Unite $u) => ['unite' => $u, 'total' => $this->tarifs->total($u, $arrivee, $depart)])
+        $enAvant = MiseEnAvantService::residencesEnAvant();
+
+        $resultats = $unites
+            ->map(fn (Unite $u) => ['unite' => $u, 'total' => $this->tarifs->total($u, $arrivee, $depart), 'sponsorise' => in_array($u->residence_id, $enAvant, true)])
             ->filter(fn (array $l) => $l['total'] !== null && ($budgetMax === null || $l['total'] <= $budgetMax))
-            ->sortBy('total')
+            ->values();
+
+        // RG-19 : les annonces « Sponsorisé » passent en premier, dans un ordre qui change à chaque visite (équité) ;
+        // les autres suivent, du moins cher au plus cher.
+        return $resultats->where('sponsorise', true)->shuffle()
+            ->concat($resultats->where('sponsorise', false)->sortBy('total'))
             ->values();
     }
 

@@ -25,12 +25,15 @@ return new class extends Migration
             $table->text('suspension_motif')->nullable();
             $table->index(['statut', 'date_debut', 'date_fin']);
         });
+        // Une mise en avant payée n'est écrite qu'une seule fois dans le livre de comptes (revenu de GESIMO).
+        DB::statement("CREATE UNIQUE INDEX ecriture_mise_en_avant_unique ON ecriture_comptable (paiement_id) WHERE type = 'mise_en_avant' AND correction_de IS NULL");
         DB::statement('ALTER TABLE mise_en_avant DROP CONSTRAINT mise_en_avant_statut_valide');
         DB::statement("ALTER TABLE mise_en_avant ADD CONSTRAINT mise_en_avant_statut_valide CHECK (statut IN ('en_attente_paiement', 'active', 'suspendue', 'terminee', 'annulee'))");
     }
 
     public function down(): void
     {
+        DB::statement('DROP INDEX IF EXISTS ecriture_mise_en_avant_unique');
         DB::statement("UPDATE mise_en_avant SET statut = 'annulee' WHERE statut = 'suspendue'");
         DB::statement('ALTER TABLE mise_en_avant DROP CONSTRAINT mise_en_avant_statut_valide');
         DB::statement("ALTER TABLE mise_en_avant ADD CONSTRAINT mise_en_avant_statut_valide CHECK (statut IN ('en_attente_paiement', 'active', 'terminee', 'annulee'))");

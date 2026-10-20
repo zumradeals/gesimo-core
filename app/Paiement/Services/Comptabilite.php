@@ -32,6 +32,15 @@ class Comptabilite
         );
     }
 
+    /** Revenu de GESIMO : une mise en avant payée (aucune commission, aucune part de gérant). */
+    public static function miseEnAvant(Paiement $paiement, ?Utilisateur $auteur = null): ?EcritureComptable
+    {
+        return self::ecrire(
+            ['paiement_id' => $paiement->id, 'type' => 'mise_en_avant', 'correction_de' => null],
+            ['mise_en_avant_id' => $paiement->mise_en_avant_id, 'montant' => $paiement->montant, 'cree_par' => $auteur?->id],
+        );
+    }
+
     public static function commission(Reservation $reservation, int $montant, ?Utilisateur $auteur = null, ?string $motif = null): ?EcritureComptable
     {
         return self::ecrire(

@@ -6,6 +6,7 @@ use App\Noyau\Messagerie\Messagerie;
 use App\Noyau\Models\Utilisateur;
 use App\Paiement\Exceptions\PaiementImpossible;
 use App\Paiement\Models\EvenementPaiement as EvenementEnregistre;
+use App\Paiement\Models\MiseEnAvant;
 use App\Paiement\Models\Paiement;
 use App\Paiement\Models\Remboursement;
 use App\Paiement\Services\Fournisseur\DemandePaiement;
@@ -90,6 +91,55 @@ class PaiementService
             ]));
         } catch (UniqueConstraintViolationException) {
             return Paiement::where('reference_geniuspay', $cree->reference)->firstOrFail(); // même transaction rejouée
+        }
+    }
+
+    /** Paiement d'une mise en avant : même circuit sécurisé qu'une réservation (page GeniusPay, message signé, vérification directe). */
+    public function demarrerMiseEnAvant(MiseEnAvant $mea, Utilisateur $gerant): Paiement
+    {
+        Gate::forUser($gerant)->authorize('update', $mea->residence);
+        if ($mea->statut !== 'en_attente_paiement') {
+            throw new PaiementImpossible('Cette mise en avant est déjà payée ou annulée.');
+        }
+        if (! $this->fournisseur->estConfigure()) {
+            throw new PaiementImpossible('Le paiement en ligne n\'est pas encore disponible. Réessayez plus tard.');
+        }
+        if ($mea->prix < self::MONTANT_MINIMUM) {
+            throw new PaiementImpossible('Ce montant est trop faible pour un paiement en ligne.');
+        }
+        $ouvert = Paiement::where('mise_en_avant_id', $mea->id)->where('statut', 'en_attente')->where('mode', $this->fournisseur->mode())
+            ->whereNotNull('checkout_url')->where('lien_expire_le', '>', now())->latest('id')->first();
+        if ($ouvert !== null) {
+            return $ouvert;
+        }
+
+        $tentative = Paiement::where('mise_en_avant_id', $mea->id)->count() + 1;
+        $cree = $this->fournisseur->creerPaiement(new DemandePaiement(
+            montant: $mea->prix,
+            description: "Mise en avant {$mea->offre} : {$mea->residence->nom}",
+            referenceExterne: "gesimo-mea-{$mea->id}-{$tentative}",
+            nomClient: $gerant->nom,
+            emailClient: $gerant->email,
+            telephoneClient: '+225'.$gerant->telephone,
+            urlSucces: route('gerant.mise-en-avant.retour', $mea),
+            urlErreur: route('gerant.mise-en-avant.retour', $mea),
+            metadata: ['mise_en_avant_id' => $mea->id, 'application' => 'gesimo-sejours'],
+        ));
+
+        try {
+            return DB::transaction(fn () => Paiement::create([
+                'mise_en_avant_id' => $mea->id,
+                'reference_geniuspay' => $cree->reference,
+                'reference_externe' => "gesimo-mea-{$mea->id}-{$tentative}",
+                'montant' => $mea->prix,
+                'frais' => min($cree->frais, $mea->prix),
+                'mode' => $this->fournisseur->mode(),
+                'checkout_url' => $cree->urlPaiement,
+                'lien_expire_le' => $cree->expireLe,
+                'donnees_brutes' => $cree->brut,
+            ]));
+        } catch (UniqueConstraintViolationException) {
+            return Paiement::where('reference_geniuspay', $cree->reference)->firstOrFail();
         }
     }
 
@@ -197,6 +247,13 @@ class PaiementService
     /** @param list<Remboursement> $aExecuter */
     private function appliquerReussite(Paiement $paiement, array &$aExecuter): string
     {
+        if ($paiement->mise_en_avant_id !== null) {
+            $paiement->statut = 'reussi';
+            $paiement->save();
+
+            return app(MiseEnAvantService::class)->activer($paiement);
+        }
+
         $reservation = Reservation::whereKey($paiement->reservation_id)->lockForUpdate()->first();
         $paiement->statut = 'reussi';
         $paiement->save();
