@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GESIMO Séjours — Maquettes du Lot 5</title>
+<style>
+:root{--vert:#0f766e;--vert-clair:#e6f4f2;--texte:#1b2430;--gris:#5b6675;--bord:#d5dbe3;--fond:#f4f6f8;--rouge:#b42318;--rouge-clair:#fdecea;--orange:#b54708;--orange-clair:#fff4e5;--bleu:#175cd3;--bleu-clair:#e8f0fe}
+*{box-sizing:border-box}
+a{text-decoration:none;color:inherit}
+body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;color:var(--texte);background:#e9edf1;line-height:1.45}
+.barre{position:sticky;top:0;z-index:10;background:#fff;border-bottom:1px solid var(--bord);padding:10px 12px}
+.barre h1{font-size:16px;margin:0 0 8px}
+.onglets{display:flex;flex-wrap:wrap;gap:6px}
+.onglets button,.vues button{border:1px solid var(--bord);background:#fff;border-radius:999px;padding:7px 12px;font-size:13px;cursor:pointer}
+.onglets button.actif,.vues button.actif{background:var(--vert);color:#fff;border-color:var(--vert)}
+.vues{display:flex;gap:6px;margin-top:8px;align-items:center;font-size:13px;color:var(--gris)}
+.scene{padding:14px 8px 40px;display:flex;flex-direction:column;align-items:center;gap:16px}
+.cadre{width:390px;max-width:100%;background:var(--fond);border:2px solid #9aa5b3;border-radius:22px;overflow:hidden;container-type:inline-size;transition:width .2s;position:relative}
+.scene.ordi{padding:0 0 40px;gap:0}.scene.ordi .cadre{width:100%;border:0;border-radius:0;min-height:80vh}.scene.ordi .notes{width:100%;border-radius:0;border-left:0;border-right:0}
+.ecran{display:none}.ecran.actif{display:block}
+.notes{width:min(1100px,100%);background:#fff;border:1px solid var(--bord);border-radius:10px;padding:12px 16px;font-size:14px}
+.notes h2{font-size:16px;margin:0 0 6px}.notes h3{font-size:13px;margin:10px 0 2px;color:var(--vert);text-transform:uppercase;letter-spacing:.04em}
+.notes ul{margin:2px 0 0;padding-left:20px}
+
+/* barre du bas (téléphone) et barre du haut (ordinateur) */
+.tabbar{position:sticky;bottom:0;display:grid;grid-auto-flow:column;grid-auto-columns:1fr;background:#fff;border-top:1px solid var(--bord);box-shadow:0 -4px 16px #1b24300f;z-index:5}
+.tabbar a{display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 2px 10px;font-size:11.5px;color:var(--gris);font-weight:600;min-height:58px;justify-content:center}
+.tabbar a svg{width:24px;height:24px}
+.tabbar a.on{color:var(--vert)}.tabbar a.on svg{stroke-width:2.4}
+.topnav{display:none;align-items:center;gap:6px;background:#fff;border-bottom:1px solid var(--bord);padding:0 32px;height:64px}
+.topnav .logo{font-weight:800;color:var(--vert);font-size:19px;margin-right:22px;display:flex;align-items:center;gap:8px}
+.topnav .logo i{width:30px;height:30px;border-radius:9px;background:var(--vert);display:inline-block}
+.topnav a{padding:9px 14px;border-radius:10px;font-weight:600;color:var(--gris);display:flex;gap:8px;align-items:center;font-size:15px}
+.topnav a svg{width:20px;height:20px}
+.topnav a.on{background:var(--vert-clair);color:var(--vert)}
+.topnav .droite{margin-left:auto;display:flex;gap:8px;align-items:center}
+.hero{background:linear-gradient(135deg,#0f766e,#1aa395 60%,#e7c27d);color:#fff;border-radius:18px;padding:18px}
+.hero h2{margin:0 0 4px;font-size:22px}.hero p{margin:0;opacity:.95}
+.resultats{display:grid;gap:14px}
+/* éléments d'interface */
+.entete{background:linear-gradient(135deg,#0f766e,#14958a);color:#fff;padding:12px 14px;display:flex;justify-content:space-between;align-items:center;font-weight:700}
+.entete small{font-weight:400;opacity:.9}
+.corps{padding:14px 14px 96px;display:grid;gap:14px}
+.carte{background:#fff;border:1px solid var(--bord);border-radius:16px;padding:14px;box-shadow:0 1px 2px #1b24300d,0 4px 14px #1b243008}
+.carte h2,.carte h3{margin:0 0 6px;font-size:16px}
+.champ{display:grid;gap:4px}.champ label{font-weight:600;font-size:15px}
+.champ input,.champ select,.champ textarea{width:100%;min-height:50px;border:1.5px solid var(--bord);border-radius:10px;padding:10px 12px;font-size:17px;background:#fff;font-family:inherit}
+.aide{font-size:13px;color:var(--gris)}
+.btn{display:flex;align-items:center;justify-content:center;min-height:54px;width:100%;border-radius:12px;border:0;background:var(--vert);color:#fff;font-size:18px;font-weight:700;padding:10px 14px;cursor:pointer;text-align:center}
+.btn.second{background:#fff;color:var(--vert);border:2px solid var(--vert)}
+.btn.danger{background:#fff;color:var(--rouge);border:2px solid var(--rouge)}
+.btn.gris{background:#c9d0d9;color:#4a5361}
+.erreur{background:var(--rouge-clair);color:var(--rouge);border:1px solid #f4b8b1;border-radius:10px;padding:10px 12px;font-size:15px}
+.info{background:var(--bleu-clair);color:var(--bleu);border:1px solid #b9d1fb;border-radius:10px;padding:10px 12px;font-size:15px}
+.attention{background:var(--orange-clair);color:var(--orange);border:1px solid #f7d4a6;border-radius:10px;padding:10px 12px;font-size:15px}
+.badge{display:inline-block;border-radius:999px;padding:3px 10px;font-size:13px;font-weight:700}
+.b-attente{background:var(--orange-clair);color:var(--orange)}.b-conf{background:#e3f6e8;color:#116b2b}.b-hors{background:var(--bleu-clair);color:var(--bleu)}.b-gris{background:#e7eaee;color:#4a5361}.b-rouge{background:var(--rouge-clair);color:var(--rouge)}.b-verif{background:#e3f6e8;color:#116b2b}
+.prix{font-size:22px;font-weight:800}.prix small{font-size:14px;font-weight:400;color:var(--gris)}
+.ligne{display:flex;justify-content:space-between;gap:10px;padding:6px 0;border-bottom:1px dashed var(--bord)}.ligne:last-child{border:0}
+.photo{background:linear-gradient(135deg,#bfe0db,#f1e9d8);border-radius:10px;height:150px;display:flex;align-items:center;justify-content:center;color:#5a7370;font-size:14px}
+.deux{display:grid;gap:12px}.trois{display:grid;gap:12px}
+.puces{display:flex;flex-wrap:wrap;gap:6px}.puce{border:1.5px solid var(--bord);background:#fff;border-radius:999px;padding:8px 12px;font-size:15px}.puce.on{background:var(--vert-clair);border-color:var(--vert);color:var(--vert);font-weight:700}
+.onglet2{display:grid;grid-template-columns:1fr 1fr;gap:0;background:#fff;border-radius:12px;border:1px solid var(--bord);overflow:hidden}.onglet2 div{padding:13px;text-align:center;font-weight:700}.onglet2 .on{background:var(--vert);color:#fff}
+.calendrier{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;font-size:13px;text-align:center}
+.calendrier .j{background:#fff;border:1px solid var(--bord);border-radius:6px;min-height:46px;padding:2px;display:flex;flex-direction:column;justify-content:center}
+.calendrier .e{font-weight:700;color:var(--gris);border:0;background:none;min-height:0}
+.calendrier .res{background:#cfeedd;border-color:#8fd3ac}.calendrier .att{background:#ffe7c2;border-color:#f3c27a}.calendrier .hors{background:#d6e4ff;border-color:#9cb9f5}.calendrier .blo{background:#e0e3e8;border-color:#b3bac5;text-decoration:line-through}
+.legende{display:flex;flex-wrap:wrap;gap:8px;font-size:13px}.legende span::before{content:"";display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:5px;vertical-align:-1px;background:var(--c);border:1px solid #0003}
+.pasapas{display:flex;gap:6px;font-size:13px;color:var(--gris)}.pasapas b{color:var(--vert)}
+.tableau{width:100%;border-collapse:collapse;font-size:15px}.tableau th,.tableau td{text-align:left;padding:8px;border-bottom:1px solid var(--bord)}
+.cacher-ordi{display:block}.montrer-ordi{display:none}
+@container (min-width:1100px){.resultats{grid-template-columns:1fr 1fr 1fr}.trois{grid-template-columns:repeat(3,1fr)}}
+@container (min-width:720px){
+ .entete{display:none}.tabbar{display:none}.topnav{display:flex}
+ .corps{padding:28px 40px 48px;gap:20px}
+ .resultats{grid-template-columns:1fr 1fr}
+ .large2{grid-template-columns:380px 1fr}
+ .btn{min-width:200px}
+ .deux{grid-template-columns:1fr 1fr}.trois{grid-template-columns:1fr 1fr 1fr}
+ .btn{width:auto;min-width:230px;display:inline-flex}
+ .cacher-ordi{display:none}.montrer-ordi{display:block}
+ .large2{grid-template-columns:320px 1fr;align-items:start}
+ .calendrier .j{min-height:64px}
+ .photo{height:230px}
+}
+
+.stat{display:grid;gap:2px}.stat b{font-size:22px}.stat span{font-size:13px;color:var(--gris)}
+.grille-stat{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@container (min-width:720px){.grille-stat{grid-template-columns:repeat(4,1fr)}}
+.tableau td.d,.tableau th.d{text-align:right;white-space:nowrap}
+.defile{overflow-x:auto}
+.recu{background:#fff;border:1px dashed #9aa5b3;border-radius:10px;padding:18px;max-width:640px}
+.etat{display:grid;gap:8px;text-align:center;justify-items:center;padding:22px 14px}
+.etat .rond{width:64px;height:64px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:32px}
+.rond.ok{background:#e3f6e8;color:#116b2b}.rond.ko{background:var(--rouge-clair);color:var(--rouge)}.rond.att{background:var(--orange-clair);color:var(--orange)}
+.moyens{display:flex;flex-wrap:wrap;gap:8px}.moyens span{border:1.5px solid var(--bord);border-radius:10px;padding:8px 12px;font-weight:700;background:#fff}
+.neg{color:var(--rouge)}.pos{color:#116b2b}
+.sep{height:1px;background:var(--bord);margin:6px 0}
+details{border-bottom:1px dashed var(--bord);padding:8px 0}summary{cursor:pointer;min-height:36px}.cadre .hero{margin:0}
+</style>
+</head>
+<body>
+<div class="barre">
+ <h1>GESIMO Séjours — Maquettes du Lot 5 <span style="font-weight:400;color:var(--gris)">(version à valider — rien n'est encore programmé)</span></h1>
+ <div class="onglets" id="onglets"></div>
+ <div class="vues"><span>Voir en :</span><button id="v-mobile" class="actif">Téléphone</button><button id="v-ordi">Ordinateur</button></div>
+</div>
+<div class="scene" id="scene">
+ <div class="cadre" id="cadre">
+<header class="topnav" id="topnav"></header>
+
+<section class="ecran" id="i1" data-role="install" data-menu="" data-titre="I1. Installation — étape 1 : code et compte">
+ <div class="entete">Installation <small></small></div>
+ <div class="corps">
+<div class="pasapas"><b>1. Compte</b> › 2. Général › 3. E-mail › 4. Paiement › 5. Fin</div>
+<div class="carte"><h2>Bienvenue sur GESIMO Séjours 👋</h2><p class="aide">Cette installation ne se fait qu'une seule fois. Elle crée le compte du super-administrateur puis règle l'essentiel.</p>
+<div class="champ"><label>Code d'installation</label><input placeholder="XXXX-XXXX-XXXX"><span class="aide">Ce code a été affiché sur le serveur à la fin de l'installation. Il empêche un inconnu de prendre le contrôle du site avant vous.</span></div></div>
+<div class="carte"><h3>Vos informations (super-administrateur)</h3><div class="champ"><label>Nom complet</label><input value="Koné Djakaridja"></div><div class="champ"><label>Téléphone</label><input value="07 00 00 00 00"></div><div class="champ"><label>E-mail</label><input value="vous@exemple.ci"></div><div class="champ"><label>Mot de passe</label><input value=""></div><div class="champ"><label>Retapez le mot de passe</label><input value=""></div><button class="btn" style="margin-top:8px">Créer mon compte et continuer</button></div>
+<div class="erreur">Ce code d'installation n'est pas le bon. Vérifiez-le sur le serveur. (5 essais, puis pause de 15 minutes.)</div>
+ </div>
+</section>
+
+<section class="ecran" id="i2" data-role="install" data-menu="" data-titre="I2. Installation — étapes 2 et 3 : général et e-mail">
+ <div class="entete">Installation <small></small></div>
+ <div class="corps">
+<div class="pasapas">1. Compte › <b>2. Général</b> › <b>3. E-mail</b> › 4. Paiement › 5. Fin</div>
+<div class="carte"><h3>Général</h3><div class="champ"><label>Nom de la plateforme</label><input value="GESIMO Séjours"></div><div class="champ"><label>E-mail de contact de l'équipe</label><input value="contact@exemple.ci"><span class="aide">Les messages du formulaire « Contact » arrivent ici.</span></div></div>
+<div class="carte"><h3>Envoi d'e-mails <span class="aide">(confirmations, rappels)</span></h3><div class="champ"><label>Serveur (hôte)</label><input value="smtp.exemple.ci"></div><div class="champ"><label>Port</label><input value="587"></div><div class="champ"><label>Utilisateur</label><input value="envoi@exemple.ci"></div><div class="champ"><label>Mot de passe du serveur d'e-mail 🔒</label><div style="display:flex;gap:8px"><input value="••••••••••••" disabled><button class="btn second" style="min-width:0;width:auto;padding:0 14px">Remplacer</button></div><span class="aide">Pas encore saisi. La valeur n'est jamais réaffichée.</span></div><button class="btn second">Tester l'envoi</button><div class="info" style="margin-top:6px">✔ E-mail de test envoyé à vous@exemple.ci. Vérifiez votre boîte.</div><div class="erreur" style="margin-top:6px">✖ Échec : le serveur a refusé la connexion (mot de passe ou port incorrect). Rien n'a été envoyé.</div></div>
+<div class="deux"><button class="btn second">Passer pour l'instant</button><button class="btn">Continuer</button></div>
+ </div>
+</section>
+
+<section class="ecran" id="i3" data-role="install" data-menu="" data-titre="I3. Installation — étapes 4 et 5 : paiement et fin">
+ <div class="entete">Installation <small></small></div>
+ <div class="corps">
+<div class="pasapas">1. Compte › 2. Général › 3. E-mail › <b>4. Paiement</b> › <b>5. Fin</b></div>
+<div class="carte"><h3>Paiement GeniusPay</h3><div class="attention">Commencez en <b>mode test</b> : aucun vrai argent n'est débité.</div><div class="champ"><label>Mode</label><input value="Test"></div><div class="champ"><label>Clé publique (test)</label><input value="pk_sandbox_…"></div><div class="champ"><label>Clé secrète (test) 🔒</label><div style="display:flex;gap:8px"><input value="••••••••••••" disabled><button class="btn second" style="min-width:0;width:auto;padding:0 14px">Remplacer</button></div><span class="aide">Pas encore saisie. La valeur n'est jamais réaffichée.</span></div><div class="champ"><label>Secret du webhook (test) 🔒</label><div style="display:flex;gap:8px"><input value="••••••••••••" disabled><button class="btn second" style="min-width:0;width:auto;padding:0 14px">Remplacer</button></div><span class="aide">Pas encore saisi. La valeur n'est jamais réaffichée.</span></div><div class="champ"><label>Taux de commission GESIMO (%)</label><input value="10"><span class="aide">Obligatoire pour ouvrir le paiement en ligne.</span></div><div class="champ"><label>Frais GeniusPay estimés (%)</label><input value="2"><span class="aide">Sert à calculer l'acompte minimum.</span></div><div class="info">Acompte minimum calculé : <b>12 %</b> (commission + frais)</div></div>
+<div class="carte" style="border-color:#8fd3ac;background:#f2fbf4"><h3>✔ Presque terminé</h3><ul class="aide"><li>Compte super-administrateur : fait</li><li>Général : fait</li><li>E-mail : à compléter plus tard</li><li>Paiement : fait (mode test)</li></ul><button class="btn">Terminer l'installation</button><p class="aide">Après cela, l'assistant disparaît définitivement. Tout reste modifiable dans « Réglages ».</p></div>
+ </div>
+</section>
+
+<section class="ecran" id="s1" data-role="superadmin" data-menu="Réglages" data-titre="S1. Paramètres — accueil">
+ <div class="entete">Réglages <small>Super-admin</small></div>
+ <div class="corps">
+<div class="carte"><h2>Réglages de la plateforme</h2><p class="aide">Tout se règle ici, sans toucher à aucun fichier technique. Chaque changement est tracé.</p></div>
+<div class="trois">
+<div class="carte"><h3>🏷 Général</h3><p class="aide">Nom, logo, coordonnées, textes légaux</p><span class="badge b-conf">À jour</span></div>
+<div class="carte"><h3>📅 Réservation</h3><p class="aide">Blocage 120 min · annulation 24 h</p><span class="badge b-conf">À jour</span></div>
+<div class="carte"><h3>💳 Paiement</h3><p class="aide">Mode test · commission 10 %</p><span class="badge b-attente">Clés à vérifier</span></div>
+<div class="carte"><h3>✉ Notifications</h3><p class="aide">E-mail · SMS désactivé</p><span class="badge b-conf">À jour</span></div>
+<div class="carte"><h3>⭐ Mise en avant</h3><p class="aide">2 offres : 7 j et 30 j</p><span class="badge b-conf">À jour</span></div>
+<div class="carte"><h3>🔒 Sécurité</h3><p class="aide">Session 120 min · 5 essais</p><span class="badge b-conf">À jour</span></div></div>
+<div class="grille-stat"><a class="btn second" style="min-width:0">Tester les connexions</a><a class="btn second" style="min-width:0">Historique des modifications</a></div>
+ </div>
+</section>
+
+<section class="ecran" id="s2" data-role="superadmin" data-menu="Réglages" data-titre="S2. Rubrique Général">
+ <div class="entete">Réglages <small>Super-admin</small></div>
+ <div class="corps">
+<div class="puces"><span class="puce on">Général</span><span class="puce ">Réservation</span><span class="puce ">Paiement</span><span class="puce ">Notifications</span><span class="puce ">Mise en avant</span><span class="puce ">Sécurité</span><span class="puce ">Historique</span></div><div class="deux"><div class="carte"><h3>Identité</h3><div class="champ"><label>Nom de la plateforme</label><input value="GESIMO Séjours"></div><div class="champ"><label>Logo</label><div style="display:flex;gap:10px;align-items:center"><div class="photo" style="width:72px;height:72px">Logo</div><button class="btn second" style="min-width:0;width:auto;padding:0 14px">Changer</button></div><span class="aide">Image PNG ou JPG, 1 Mo maximum.</span></div><div class="champ"><label>E-mail de contact</label><input value="contact@exemple.ci"></div><div class="champ"><label>Téléphone de contact</label><input value="07 00 00 00 00"></div><div class="champ"><label>Adresse</label><input value="Abidjan, Cocody"></div></div>
+<div class="carte"><h3>Textes</h3><div class="champ"><label>À propos</label><textarea rows="3">GESIMO met en relation…</textarea><span class="aide">Affiché sur la page « À propos ».</span></div><div class="champ"><label>Conditions générales</label><textarea rows="3">Texte validé par le juriste…</textarea><span class="aide">Remplace le brouillon du site dès qu'il est rempli.</span></div><div class="champ"><label>Politique de confidentialité</label><textarea rows="3"></textarea><span class="aide">Vide : le brouillon du site reste affiché.</span></div></div></div><button class="btn">Enregistrer</button>
+ </div>
+</section>
+
+<section class="ecran" id="s3" data-role="superadmin" data-menu="Réglages" data-titre="S3. Rubrique Réservation">
+ <div class="entete">Réglages <small>Super-admin</small></div>
+ <div class="corps">
+<div class="puces"><span class="puce ">Général</span><span class="puce on">Réservation</span><span class="puce ">Paiement</span><span class="puce ">Notifications</span><span class="puce ">Mise en avant</span><span class="puce ">Sécurité</span><span class="puce ">Historique</span></div><div class="carte md"><div class="champ"><label>Durée du blocage des dates (minutes)</label><input value="120"><span class="aide">Défaut 120. Entre 15 et 1 440. Les réservations déjà en attente gardent leur durée.</span></div><div class="champ"><label>Acompte par défaut (%)</label><input value="30"><span class="aide">Proposé aux nouvelles résidences. Au minimum : 12 % (commission + frais).</span></div><div class="champ"><label>Politique d'annulation par défaut</label><select><option>Flexible (remboursement intégral jusqu'à 24 h avant)</option></select><span class="aide">D'autres politiques seront ajoutées plus tard.</span></div><div class="champ"><label>Délai d'annulation gratuite (heures avant l'arrivée)</label><input value="24"><span class="aide">Les réservations déjà faites gardent leur délai.</span></div><div class="champ"><label>Heure d'arrivée supposée</label><input value="14:00"><span class="aide">Sert à calculer le délai ci-dessus.</span></div><div class="info">Un changement s'applique <b>aux nouvelles réservations seulement</b>. Les réservations existantes gardent les conditions en vigueur le jour où elles ont été créées.</div><button class="btn">Enregistrer</button></div>
+<div class="erreur">Durée de blocage : entrez un nombre de minutes entre 15 et 1 440.</div><div class="erreur">Acompte par défaut : il ne peut pas être inférieur à 12 % (commission 10 % + frais 2 %).</div>
+ </div>
+</section>
+
+<section class="ecran" id="s4" data-role="superadmin" data-menu="Réglages" data-titre="S4. Rubrique Paiement (réglages sensibles)">
+ <div class="entete">Réglages <small>Super-admin</small></div>
+ <div class="corps">
+<div class="puces"><span class="puce ">Général</span><span class="puce ">Réservation</span><span class="puce on">Paiement</span><span class="puce ">Notifications</span><span class="puce ">Mise en avant</span><span class="puce ">Sécurité</span><span class="puce ">Historique</span></div><div class="deux"><div class="carte"><h3>GeniusPay</h3><div class="champ"><label>Mode</label><select><option>Test (aucun vrai argent)</option><option>Réel</option></select><span class="aide">Le passage en « Réel » demande que votre compte GeniusPay soit vérifié.</span></div><p style="margin:2px 0"><b>Clés du mode test</b></p><div class="champ"><label>Clé publique</label><input value="pk_sandbox_…"></div><div class="champ"><label>Clé secrète 🔒</label><div style="display:flex;gap:8px"><input value="••••••••••••" disabled><button class="btn second" style="min-width:0;width:auto;padding:0 14px">Remplacer</button></div><span class="aide">Enregistré. La valeur n'est jamais réaffichée.</span></div><div class="champ"><label>Secret du webhook 🔒</label><div style="display:flex;gap:8px"><input value="••••••••••••" disabled><button class="btn second" style="min-width:0;width:auto;padding:0 14px">Remplacer</button></div><span class="aide">Enregistré. La valeur n'est jamais réaffichée.</span></div><p class="aide">Adresse à donner à GeniusPay : <b>https://gesimo.dgafrique.com/webhooks/geniuspay</b></p><button class="btn second">Tester la connexion</button></div>
+<div class="carte"><h3>Commission et acompte</h3><div class="champ"><label>Taux de commission (%)</label><input value="10"><span class="aide">Appliqué aux nouvelles réservations, figé à la création de chacune.</span></div><div class="champ"><label>Frais GeniusPay estimés (%)</label><input value="2"></div><div class="info">Plancher d'acompte calculé : <b>12 %</b> = 10 + 2, arrondi au-dessus.</div><div class="attention">8 résidences ont un acompte sous 15 % : leurs nouvelles réservations utiliseront le plancher.</div><div class="attention"><b>Réglage sensible.</b> Pour enregistrer, retapez votre mot de passe.<div class="champ" style="margin-top:6px"><label>Votre mot de passe</label><input type="password" value="••••••••"></div></div><button class="btn">Enregistrer</button></div></div>
+<div class="erreur">Commission : entrez un pourcentage entre 0 et 100 (pas de valeur négative).</div><div class="erreur">Mot de passe incorrect. Rien n'a été modifié.</div>
+ </div>
+</section>
+
+<section class="ecran" id="s5" data-role="superadmin" data-menu="Réglages" data-titre="S5. Rubrique Notifications">
+ <div class="entete">Réglages <small>Super-admin</small></div>
+ <div class="corps">
+<div class="puces"><span class="puce ">Général</span><span class="puce ">Réservation</span><span class="puce ">Paiement</span><span class="puce on">Notifications</span><span class="puce ">Mise en avant</span><span class="puce ">Sécurité</span><span class="puce ">Historique</span></div><div class="deux"><div class="carte"><h3>Serveur d'e-mail</h3><div class="champ"><label>Serveur (hôte)</label><input value="smtp.exemple.ci"></div><div class="champ"><label>Port</label><input value="587"></div><div class="champ"><label>Chiffrement</label><select><option>TLS (port 587)</option><option>SSL (port 465)</option></select></div><div class="champ"><label>Utilisateur</label><input value="envoi@exemple.ci"></div><div class="champ"><label>Mot de passe 🔒</label><div style="display:flex;gap:8px"><input value="••••••••••••" disabled><button class="btn second" style="min-width:0;width:auto;padding:0 14px">Remplacer</button></div><span class="aide">Enregistré. La valeur n'est jamais réaffichée.</span></div><div class="champ"><label>Nom de l'expéditeur</label><input value="GESIMO Séjours"></div><div class="champ"><label>Adresse de l'expéditeur</label><input value="ne-pas-repondre@exemple.ci"></div><button class="btn second">Tester la connexion</button></div>
+<div class="carte"><h3>SMS</h3><div class="champ"><label>Connexion par code SMS</label><select><option>Désactivée (par défaut)</option><option>Activée</option></select><span class="aide">Désactivée : connexion par mot de passe ou lien e-mail. L'activation demande un fournisseur SMS (pas encore branché).</span></div><div class="sep"></div><h3>Modèles de messages</h3><p class="aide">Les 6 e-mails envoyés par la plateforme (confirmation, rappel, annulation, reversement, litige).</p><button class="btn second">Modifier les modèles</button></div></div><button class="btn">Enregistrer</button>
+ </div>
+</section>
+
+<section class="ecran" id="s6" data-role="superadmin" data-menu="Réglages" data-titre="S6. Rubrique Mise en avant">
+ <div class="entete">Réglages <small>Super-admin</small></div>
+ <div class="corps">
+<div class="puces"><span class="puce ">Général</span><span class="puce ">Réservation</span><span class="puce ">Paiement</span><span class="puce ">Notifications</span><span class="puce on">Mise en avant</span><span class="puce ">Sécurité</span><span class="puce ">Historique</span></div><div class="carte md"><h3>Offres proposées aux gérants</h3><p class="aide">Chaque offre : une durée et un tarif. Les mises en avant déjà achetées gardent leur prix.</p>
+<table class="tableau"><tr><th>Nom</th><th class="d">Durée (jours)</th><th class="d">Prix (FCFA)</th><th></th></tr>
+<tr><td>Une semaine</td><td class="d">7</td><td class="d">10 000</td><td><a class="aide">Retirer</a></td></tr><tr><td>Un mois</td><td class="d">30</td><td class="d">30 000</td><td><a class="aide">Retirer</a></td></tr></table>
+<button class="btn second" style="margin-top:8px">+ Ajouter une offre</button><button class="btn" style="margin-top:8px">Enregistrer</button></div>
+<div class="erreur">Prix : au moins 200 FCFA (minimum de GeniusPay), nombre entier. Durée : de 1 à 365 jours.</div>
+ </div>
+</section>
+
+<section class="ecran" id="s7" data-role="superadmin" data-menu="Réglages" data-titre="S7. Rubrique Sécurité (réglages sensibles)">
+ <div class="entete">Réglages <small>Super-admin</small></div>
+ <div class="corps">
+<div class="puces"><span class="puce ">Général</span><span class="puce ">Réservation</span><span class="puce ">Paiement</span><span class="puce ">Notifications</span><span class="puce ">Mise en avant</span><span class="puce on">Sécurité</span><span class="puce ">Historique</span></div><div class="carte md"><div class="champ"><label>Durée de session (minutes)</label><input value="120"><span class="aide">Au bout de ce temps sans activité, il faut se reconnecter. Entre 15 et 1 440.</span></div><div class="champ"><label>Tentatives de connexion autorisées</label><input value="5"><span class="aide">Après ce nombre d'échecs, une pause est imposée. Entre 3 et 10.</span></div><div class="champ"><label>Durée de la pause (minutes)</label><input value="15"><span class="aide">Entre 1 et 120.</span></div><div class="attention"><b>Réglage sensible.</b> Pour enregistrer, retapez votre mot de passe.<div class="champ" style="margin-top:6px"><label>Votre mot de passe</label><input type="password" value="••••••••"></div></div><button class="btn">Enregistrer</button></div>
+ </div>
+</section>
+
+<section class="ecran" id="s8" data-role="superadmin" data-menu="Réglages" data-titre="S8. Test de connexion">
+ <div class="entete">Test <small>Super-admin</small></div>
+ <div class="corps">
+<div class="carte"><h2>Tester les connexions</h2><p class="aide">Chaque test est sans danger : aucun vrai paiement, aucune donnée modifiée.</p></div>
+<div class="deux"><div class="carte"><h3>✉ E-mail</h3><p class="aide">Envoie un message de test à votre adresse (vous@exemple.ci).</p><button class="btn">Lancer le test e-mail</button>
+<div class="info" style="margin-top:8px">✔ <b>Réussi.</b> Message envoyé à vous@exemple.ci à 15 h 02.</div><div class="erreur" style="margin-top:8px">✖ <b>Échec.</b> Le serveur d'e-mail ne répond pas (délai dépassé). Vérifiez le serveur et le port.</div></div>
+<div class="carte"><h3>💳 Paiement (GeniusPay)</h3><p class="aide">Demande à GeniusPay le solde du compte pour vérifier que les clés sont acceptées (lecture seule).</p><button class="btn">Lancer le test paiement</button>
+<div class="info" style="margin-top:8px">✔ <b>Réussi.</b> Clés acceptées par GeniusPay (mode test).</div><div class="erreur" style="margin-top:8px">✖ <b>Échec.</b> GeniusPay a refusé les clés. Vérifiez la clé secrète et le mode (test/réel).</div><div class="attention" style="margin-top:8px">Secret du webhook : enregistré. GeniusPay doit envoyer un vrai message pour le vérifier.</div></div></div>
+ </div>
+</section>
+
+<section class="ecran" id="s9" data-role="superadmin" data-menu="Réglages" data-titre="S9. Historique des modifications">
+ <div class="entete">Historique <small>Super-admin</small></div>
+ <div class="corps">
+<div class="puces"><span class="puce ">Général</span><span class="puce ">Réservation</span><span class="puce ">Paiement</span><span class="puce ">Notifications</span><span class="puce ">Mise en avant</span><span class="puce ">Sécurité</span><span class="puce on">Historique</span></div><div class="puces"><span class="puce on">Tout</span><span class="puce">Paiement</span><span class="puce">Sécurité</span><span class="puce">Réservation</span></div>
+<div class="defile"><table class="tableau"><tr><th>Quand</th><th>Qui</th><th>Réglage</th><th>Avant</th><th>Après</th></tr>
+<tr><td>20 oct. 15:02</td><td>Koné D.</td><td>commission.pourcentage</td><td>10</td><td>12</td></tr>
+<tr><td>20 oct. 14:58</td><td>Koné D.</td><td>geniuspay.sandbox.cle_secrete 🔒</td><td colspan="2"><i>secret modifié (valeur jamais conservée)</i></td></tr>
+<tr><td>20 oct. 14:40</td><td>Koné D.</td><td>reservation.duree_blocage_minutes</td><td>120</td><td>90</td></tr></table></div><p class="aide">Lecture seule : l'historique ne peut ni se modifier ni se supprimer (verrouillé dans la base de données).</p>
+ </div>
+</section>
+
+<section class="ecran" id="m1" data-role="gerant" data-menu="Résidences" data-titre="M1. Gérant : acheter une mise en avant">
+ <div class="entete">Mise en avant <small>Kouadio</small></div>
+ <div class="corps">
+<div class="hero"><h2>Faites passer votre résidence en tête ⭐</h2><p>Votre annonce apparaît en premier dans les recherches, avec la mention « Sponsorisé ».</p></div>
+<div class="carte"><h3>1. Choisissez la résidence</h3><div class="champ"><select><option>Les Palmiers · Cocody</option></select></div></div>
+<div class="carte"><h3>2. Choisissez la durée</h3><div class="deux"><div class="puce on" style="display:block;border-radius:14px;padding:12px"><b>Une semaine</b><br>7 jours · <b>10 000 FCFA</b></div><div class="puce" style="display:block;border-radius:14px;padding:12px"><b>Un mois</b><br>30 jours · <b>30 000 FCFA</b></div></div>
+<p class="aide">La mise en avant commence dès que le paiement est confirmé. Si une mise en avant est déjà en cours, la nouvelle période commence juste après.</p><div class="attention">Une mise en avant payée n'est pas remboursable.</div></div>
+<button class="btn">Payer 10 000 FCFA</button>
+<div class="erreur">Seule une résidence vérifiée par GESIMO peut être mise en avant.</div>
+ </div>
+</section>
+
+<section class="ecran" id="m2" data-role="gerant" data-menu="Résidences" data-titre="M2. Gérant : mes mises en avant">
+ <div class="entete">Mise en avant <small>Kouadio</small></div>
+ <div class="corps">
+<div class="carte"><div style="display:flex;justify-content:space-between"><b>Les Palmiers</b><span class="badge b-conf">En cours</span></div><div class="ligne"><span>Période</span><span>12 oct. → 19 oct. 2026</span></div><div class="ligne"><span>Payé</span><span>10 000 FCFA</span></div><p class="aide">Plus que 3 jours. Annonce « Sponsorisé » en tête des recherches.</p></div><div class="carte"><div style="display:flex;justify-content:space-between"><b>Les Palmiers</b><span class="badge b-hors">Programmée</span></div><div class="ligne"><span>Période</span><span>19 oct. → 18 nov. 2026</span></div><div class="ligne"><span>Payé</span><span>30 000 FCFA</span></div></div><div class="carte"><div style="display:flex;justify-content:space-between"><b>Villa Soleil</b><span class="badge b-gris">Terminée</span></div><p class="aide">1 → 8 sept. 2026 · 10 000 FCFA</p></div><div class="carte"><div style="display:flex;justify-content:space-between"><b>Villa Soleil</b><span class="badge b-attente">Suspendue par GESIMO</span></div><p class="aide">Votre annonce n'est plus mise en avant. Contactez l'équipe pour plus d'informations.</p></div><button class="btn">+ Nouvelle mise en avant</button>
+ </div>
+</section>
+
+<section class="ecran" id="m3" data-role="admin" data-menu="Accueil" data-titre="M3. Admin : gérer les mises en avant">
+ <div class="entete">Mises en avant <small>Admin</small></div>
+ <div class="corps">
+<div class="puces"><span class="puce on">En cours (3)</span><span class="puce">Programmées (1)</span><span class="puce">Terminées</span><span class="puce">Suspendues (1)</span></div>
+<div class="defile"><table class="tableau"><tr><th>Résidence</th><th>Période</th><th class="d">Prix</th><th>Statut</th><th></th></tr>
+<tr><td>Les Palmiers</td><td>12→19 oct.</td><td class="d">10 000</td><td><span class="badge b-conf">En cours</span></td><td><button class="btn danger" style="min-height:40px;font-size:14px;width:auto;min-width:0">Suspendre</button></td></tr>
+<tr><td>Villa Soleil</td><td>1→31 oct.</td><td class="d">30 000</td><td><span class="badge b-attente">Suspendue</span></td><td><button class="btn second" style="min-height:40px;font-size:14px;width:auto;min-width:0">Reprendre</button></td></tr></table></div>
+<div class="carte"><h3>Suspendre : Les Palmiers</h3><div class="champ"><label>Motif (gardé dans le journal)</label><textarea rows="2"></textarea></div><button class="btn danger">Suspendre la mise en avant</button><p class="aide">L'annonce redevient normale tout de suite. <b>Aucun remboursement automatique</b> : la période n'est pas prolongée ; « Reprendre » la remet en avant jusqu'à sa date de fin.</p></div>
+ </div>
+</section>
+
+<section class="ecran" id="m4" data-role="public" data-menu="Chercher" data-titre="M4. Résultats avec annonces « Sponsorisé »">
+ <div class="entete">Résultats <small></small></div>
+ <div class="corps">
+<div class="aide"><b>12 logements libres</b> à ces dates</div><div class="resultats">
+<div class="carte" style="border:2px solid #e0a100"><span class="badge b-attente">⭐ Sponsorisé</span><div class="photo" style="margin-top:6px">Photo</div><b>Chambre climatisée 1</b> <span class="badge b-conf">Vérifié</span><div class="aide">Les Palmiers · Cocody</div><div class="prix">55 000 FCFA <small>au total</small></div></div>
+<div class="carte" style="border:2px solid #e0a100"><span class="badge b-attente">⭐ Sponsorisé</span><div class="photo" style="margin-top:6px">Photo</div><b>Studio Akwaba</b><div class="aide">Akwaba · Cocody</div><div class="prix">72 000 FCFA <small>au total</small></div></div>
+<div class="carte"><div class="photo">Photo</div><b>Appartement 2 pièces</b><div class="aide">Villa Soleil · Cocody</div><div class="prix">96 000 FCFA <small>au total</small></div></div></div>
+<p class="aide">Les annonces sponsorisées passent en premier, dans un ordre qui change à chaque visite (pour être équitable) ; seules celles qui correspondent à la recherche et sont libres apparaissent. Les autres suivent, dans l'ordre habituel.</p>
+ </div>
+</section>
+
+  <nav class="tabbar" id="tabbar"></nav>
+ </div>
+ <div class="notes" id="notes"></div>
+</div>
+<template id="notes-data">
+<div data-n="i1"><h2>I1. Installation — étape 1 : code et compte</h2><h3>But</h3><p>Créer le super-administrateur au premier lancement (RG-23) sans risque de prise de contrôle.</p><h3>Ce que voit l'utilisateur</h3><ul><li>Code d'installation, puis les informations du compte ; barre de progression en 5 étapes.</li></ul><h3>Actions</h3><ul><li>Créer le compte → étape 2. Si le compte existe déjà (créé en ligne de commande), l'assistant passe directement à l'étape 2 après connexion.</li></ul><h3>Messages d'erreur et états vides</h3><ul><li>Mot de passe < 8 caractères, e-mail ou téléphone déjà utilisé : message sous le champ.</li><li>Une fois l'installation terminée, cette adresse affiche « Page introuvable » : l'assistant ne peut plus être relancé.</li></ul></div>
+<div data-n="i2"><h2>I2. Installation — étapes 2 et 3 : général et e-mail</h2><h3>But</h3><p>Saisie guidée du minimum pour que le site fonctionne.</p><h3>Ce que voit l'utilisateur</h3><ul><li>Chaque étape peut être passée : l'espace Paramètres permet de tout compléter plus tard.</li></ul><h3>Actions</h3><ul><li>Enregistrer et continuer · tester l'envoi · passer.</li></ul><h3>Messages d'erreur et états vides</h3><ul><li>Test d'e-mail : réussite ou échec affichés clairement, sans jamais montrer le mot de passe.</li></ul></div>
+<div data-n="i3"><h2>I3. Installation — étapes 4 et 5 : paiement et fin</h2><h3>But</h3><p>Régler le paiement et clôturer l'installation.</p><h3>Ce que voit l'utilisateur</h3><ul><li>Récapitulatif de ce qui est fait ou à compléter, bouton « Terminer ».</li></ul><h3>Actions</h3><ul><li>Terminer : l'assistant est verrouillé pour toujours (marque en base) ; vous arrivez sur le tableau de bord.</li></ul><h3>Messages d'erreur et états vides</h3><ul><li>Commission vide ou négative : refusée avec un message clair.</li></ul></div>
+<div data-n="s1"><h2>S1. Paramètres — accueil</h2><h3>But</h3><p>Point d'entrée unique de l'espace Paramètres (F-A7), réservé au super-administrateur.</p><h3>Ce que voit l'utilisateur</h3><ul><li>6 rubriques avec leur état (« À jour », « À compléter », « Clés à vérifier »), accès au test de connexion et à l'historique.</li><li>Nouveau onglet « Réglages » dans le menu du super-administrateur uniquement.</li></ul><h3>Actions</h3><ul><li>Ouvrir une rubrique.</li></ul><h3>Messages d'erreur et états vides</h3><ul><li>Un autre rôle (admin, gérant, client…) reçoit « Accès interdit » : vérifié côté serveur.</li></ul></div>
+<div data-n="s2"><h2>S2. Rubrique Général</h2><h3>But</h3><p>Régler l'identité et les textes (RG-20).</p><h3>Ce que voit l'utilisateur</h3><ul><li>Nom, logo, coordonnées, textes. Les textes légaux remplacent les brouillons dès qu'ils sont remplis (on pourra donc y coller le texte validé par le juriste).</li></ul><h3>Actions</h3><ul><li>Enregistrer.</li></ul><h3>Messages d'erreur et états vides</h3><ul><li>Logo trop lourd ou mauvais format : message clair. Champ trop long : message sous le champ.</li></ul></div>
+<div data-n="s3"><h2>S3. Rubrique Réservation</h2><h3>But</h3><p>Régler les règles de réservation sans toucher aux réservations déjà créées.</p><h3>Ce que voit l'utilisateur</h3><ul><li>Quatre réglages + heure d'arrivée ; rappel que seules les nouvelles réservations sont concernées.</li></ul><h3>Actions</h3><ul><li>Enregistrer.</li></ul><h3>Messages d'erreur et états vides</h3><ul><li>Valeurs impossibles refusées : blocage nul ou hors limites, acompte sous le plancher ou > 100, délai négatif.</li></ul></div>
+<div data-n="s4"><h2>S4. Rubrique Paiement (réglages sensibles)</h2><h3>But</h3><p>Régler le paiement et la commission, avec protection renforcée (point 4 du lot).</p><h3>Ce que voit l'utilisateur</h3><ul><li>Clés masquées avec « Remplacer » (jamais réaffichées), mode test/réel, commission, frais, plancher calculé, mise en garde sur les résidences concernées.</li></ul><h3>Actions</h3><ul><li>Remplacer une clé · tester la connexion · enregistrer (mot de passe à ressaisir).</li></ul><h3>Messages d'erreur et états vides</h3><ul><li>Commission négative ou > 100 : refusée.</li><li>Mot de passe faux : rien n'est enregistré ; au bout de 5 essais, pause de 15 minutes.</li></ul></div>
+<div data-n="s5"><h2>S5. Rubrique Notifications</h2><h3>But</h3><p>Régler l'envoi des messages (serveur e-mail, SMS) et accéder aux modèles.</p><h3>Ce que voit l'utilisateur</h3><ul><li>Serveur d'e-mail avec mot de passe masqué, SMS désactivé par défaut, lien vers l'écran des modèles déjà livré au Lot 4.</li></ul><h3>Actions</h3><ul><li>Enregistrer · tester la connexion · modifier les modèles.</li></ul><h3>Messages d'erreur et états vides</h3><ul><li>Port invalide, adresse d'expéditeur invalide : message clair.</li><li>Activer le SMS sans fournisseur : refusé (« aucun fournisseur SMS n'est branché »).</li></ul></div>
+<div data-n="s6"><h2>S6. Rubrique Mise en avant</h2><h3>But</h3><p>Fixer durées et tarifs de la mise en avant (RG-18).</p><h3>Ce que voit l'utilisateur</h3><ul><li>Tableau des offres (4 au maximum).</li></ul><h3>Actions</h3><ul><li>Ajouter / retirer / modifier une offre, enregistrer.</li></ul><h3>Messages d'erreur et états vides</h3><ul><li>Prix nul, négatif ou décimal ; durée nulle : refusés avec un message clair.</li></ul></div>
+<div data-n="s7"><h2>S7. Rubrique Sécurité (réglages sensibles)</h2><h3>But</h3><p>Régler la durée de session et la protection contre les essais répétés.</p><h3>Ce que voit l'utilisateur</h3><ul><li>Trois réglages, avec limites affichées.</li></ul><h3>Actions</h3><ul><li>Enregistrer (mot de passe à ressaisir).</li></ul><h3>Messages d'erreur et états vides</h3><ul><li>Valeur hors limites : refusée. Mot de passe faux : rien n'est modifié.</li></ul></div>
+<div data-n="s8"><h2>S8. Test de connexion</h2><h3>But</h3><p>Savoir tout de suite si les réglages marchent (RG-21).</p><h3>Ce que voit l'utilisateur</h3><ul><li>Deux tests avec résultat « Réussi » ou « Échec » et une explication simple. Jamais de clé ni de mot de passe dans le résultat.</li></ul><h3>Actions</h3><ul><li>Lancer chaque test (limité à 10 par heure).</li></ul><h3>Messages d'erreur et états vides</h3><ul><li>Réglage manquant : « Complétez d'abord les réglages (clé secrète manquante). »</li></ul></div>
+<div data-n="s9"><h2>S9. Historique des modifications</h2><h3>But</h3><p>Voir qui a changé quoi, quand (RG-22).</p><h3>Ce que voit l'utilisateur</h3><ul><li>Journal filtrable ; pour un secret, seulement le fait qu'il a été modifié.</li></ul><h3>Actions</h3><ul><li>Filtrer, consulter.</li></ul><h3>Messages d'erreur et états vides</h3><ul><li>Aucune modification pour l'instant : « Aucun changement enregistré. »</li></ul></div>
+<div data-n="m1"><h2>M1. Gérant : acheter une mise en avant</h2><h3>But</h3><p>Acheter de la visibilité (RG-18).</p><h3>Ce que voit l'utilisateur</h3><ul><li>Résidence, offres (durées et tarifs venant des Paramètres), règle de démarrage, mention « non remboursable ».</li></ul><h3>Actions</h3><ul><li>Payer → page sécurisée GeniusPay → retour sur le suivi (même circuit que pour une réservation).</li></ul><h3>Messages d'erreur et états vides</h3><ul><li>Résidence non vérifiée : refusé. Paiement non abouti : « Vous n'avez pas été débité. Réessayez. »</li></ul></div>
+<div data-n="m2"><h2>M2. Gérant : mes mises en avant</h2><h3>But</h3><p>Suivre ses mises en avant.</p><h3>Ce que voit l'utilisateur</h3><ul><li>Cartes par période avec statut : en cours, programmée, terminée, suspendue.</li></ul><h3>Actions</h3><ul><li>Nouvelle mise en avant.</li></ul><h3>Messages d'erreur et états vides</h3><ul><li>Aucune : « Vous n'avez pas encore mis votre résidence en avant. »</li></ul></div>
+<div data-n="m3"><h2>M3. Admin : gérer les mises en avant</h2><h3>But</h3><p>Contrôler les mises en avant (F-A6).</p><h3>Ce que voit l'utilisateur</h3><ul><li>Liste par statut, revenus, boutons Suspendre / Reprendre avec motif.</li></ul><h3>Actions</h3><ul><li>Suspendre · reprendre.</li></ul><h3>Messages d'erreur et états vides</h3><ul><li>Motif vide : « Indiquez pourquoi vous suspendez. »</li></ul></div>
+<div data-n="m4"><h2>M4. Résultats avec annonces « Sponsorisé »</h2><h3>But</h3><p>Montrer les annonces sponsorisées sans tromper le client (RG-19).</p><h3>Ce que voit l'utilisateur</h3><ul><li>Mention « Sponsorisé » bien visible sur la carte et la fiche ; contour doré.</li></ul><h3>Actions</h3><ul><li>Ouvrir une fiche.</li></ul></div>
+</template>
+<script>
+const I={rech:'<path d="m21 21-4.3-4.3M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z"/>',cal:'<path d="M8 2v4M16 2v4M3 10h18M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Z"/>',liste:'<path d="M9 6h11M9 12h11M9 18h11M4 6h.01M4 12h.01M4 18h.01"/>',bat:'<path d="M4 21V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v16M16 9h2a2 2 0 0 1 2 2v10M2 21h20M8 7h4M8 11h4M8 15h4"/>',moi:'<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z"/>',ok:'<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10ZM9 12l2 2 4-4"/>',cle:'<path d="M15 7a4 4 0 1 1-4 4M11 11 3 19v2h3v-2h2v-2h2l1-1"/>',argent:'<path d="M3 7h18v10H3zM12 14a2 2 0 1 0 0-4 2 2 0 0 0 0 4ZM6 10v.01M18 14v.01"/>',porte:'<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/>',carte:'<path d="M3 6h18v12H3zM3 10h18"/>',balance:'<path d="M12 3v18M5 7h14M5 7l-3 7a3 3 0 0 0 6 0L5 7ZM19 7l-3 7a3 3 0 0 0 6 0l-3-7Z"/>',aide:'<path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3M12 17h.01M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20Z"/>',maison:'<path d="m3 11 9-8 9 8M5 10v10h14V10"/>'};
+const MENUS={
+ install:[],
+ public:[['Accueil','maison','m4'],['Chercher','rech','m4'],['Aide','aide','m4'],['Connexion','moi','m4']],
+ gerant:[['Arrivées','porte','m1'],['Calendrier','cal','m1'],['Argent','argent','m1'],['Résidences','bat','m1'],['Compte','moi','m1']],
+ admin:[['Accueil','maison','m3'],['Paiements','carte','m3'],['Reversements','argent','m3'],['Contrôle','balance','m3'],['Compte','moi','m3']],
+ superadmin:[['Accueil','maison','m3'],['Paiements','carte','m3'],['Verser','argent','m3'],['Contrôle','balance','m3'],['Réglages','cle','s1'],['Compte','moi','m3']]};
+const NOMS={install:'Installation',public:'Visiteur',client:'Awa Koné (client)',gerant:'Kouadio (gérant)',admin:'Admin GESIMO',superadmin:'Super-administrateur'};
+function svg(n){return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'+I[n]+'</svg>';}
+const ecrans=[...document.querySelectorAll('.ecran')];
+function menus(id){
+ const e=document.getElementById(id);const r=e.dataset.role;const m=MENUS[r];
+ const lien=(t,i,c)=>'<a href="#'+(c||id)+'" class="'+(t===e.dataset.menu?'on':'')+'" onclick="'+(c?'montrer(\''+c+'\')':'')+';return false">'+svg(i)+'<span>'+t+'</span></a>';
+ document.getElementById('tabbar').innerHTML=m.map(x=>lien(...x)).join('');
+ document.getElementById('topnav').innerHTML='<span class="logo"><i></i>GESIMO</span>'+m.map(x=>lien(...x)).join('')+'<span class="droite"><span class="aide">'+NOMS[r]+'</span></span>';
+}
+const notes=document.getElementById('notes-data').content;
+const barre=document.getElementById('onglets');
+function montrer(id){
+ menus(id);
+ ecrans.forEach(e=>e.classList.toggle('actif',e.id===id));
+ [...barre.children].forEach(b=>b.classList.toggle('actif',b.dataset.id===id));
+ const n=notes.querySelector('[data-n="'+id+'"]');
+ document.getElementById('notes').innerHTML=n?n.innerHTML:'';
+ history.replaceState(null,'','#'+id); window.scrollTo(0,0);
+}
+ecrans.forEach(e=>{const b=document.createElement('button');b.textContent=e.dataset.titre;b.dataset.id=e.id;b.onclick=()=>montrer(e.id);barre.appendChild(b);});
+const scene=document.getElementById('scene');
+function vue(ordi){scene.classList.toggle('ordi',ordi);document.getElementById('v-ordi').classList.toggle('actif',ordi);document.getElementById('v-mobile').classList.toggle('actif',!ordi);}
+document.getElementById('v-ordi').onclick=()=>vue(true);document.getElementById('v-mobile').onclick=()=>vue(false);
+vue(window.innerWidth>=900);montrer((location.hash||'#i1').slice(1));
+</script>
+</body>
+</html>
