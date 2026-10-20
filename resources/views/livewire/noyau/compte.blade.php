@@ -8,6 +8,9 @@
             @endforeach
         </div>
     </div>
+    @if($utilisateur->aRole(\App\Noyau\Enums\Role::Gerant))
+        <a href="{{ route('gerant.personnel') }}" class="btn btn-second btn-bloc"><x-ui.icone nom="equipe" classe="h-5 w-5" /> Mon personnel</a>
+    @endif
     <form method="POST" action="{{ route('deconnexion') }}">@csrf
         <button class="btn btn-danger btn-bloc"><x-ui.icone nom="sortie" classe="h-5 w-5" /> Se déconnecter</button>
     </form>

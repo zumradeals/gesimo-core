@@ -2,6 +2,7 @@
 
 namespace App\Sejours\Livewire;
 
+use App\Paiement\Services\AnnulationService;
 use App\Sejours\Enums\StatutReservation;
 use App\Sejours\Exceptions\ReservationImpossible;
 use App\Sejours\Models\BlocageCalendrier;
@@ -10,7 +11,6 @@ use App\Sejours\Models\Reservation;
 use App\Sejours\Models\Residence;
 use App\Sejours\Models\Unite;
 use App\Sejours\Services\BlocageService;
-use App\Sejours\Services\ReservationService;
 use Carbon\CarbonImmutable;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Support\Collection;
@@ -87,7 +87,7 @@ class CalendrierGerant extends Component
         $this->message = 'Blocage retiré.';
     }
 
-    public function annulerHorsPlateforme(int $id, ReservationService $service): void
+    public function annulerHorsPlateforme(int $id, AnnulationService $service): void
     {
         $this->reinitialiser();
         $reservation = Reservation::where('unite_id', $this->uniteChoisie()->id)->where('origine', 'hors_plateforme')->with('unite.residence')->findOrFail($id);
