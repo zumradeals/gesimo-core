@@ -308,17 +308,26 @@ it('personne d\'autre que le client, le gérant de la résidence ou l\'admin n\'
     expect($r->fresh()->statut)->toBe(StatutReservation::Confirmee);
 });
 
-it('le délai d\'annulation gratuite et l\'heure d\'arrivée sont des réglages', function () {
+it('le délai d\'annulation gratuite et l\'heure d\'arrivée sont des réglages, figés à la création de chaque réservation', function () {
     $r = reservationConfirmee($this);
     $this->travelTo(arriveeEn($r)->subHours(30)); // 30 h avant : gratuit avec 24 h
     expect(app(AnnulationService::class)->apercu($r, $r->client)['cas'])->toBe('integral');
 
-    Parametres::definir('annulation.delai_gratuit_heures', '48'); // 48 h : 30 h avant devient tardif
-    expect(app(AnnulationService::class)->apercu($r, $r->client)['cas'])->toBe('nuit_retenue');
+    // Le réglage change : la réservation déjà créée garde son délai de 24 h...
+    Parametres::definir('annulation.delai_gratuit_heures', '48');
+    expect(app(AnnulationService::class)->apercu($r->fresh(), $r->client)['cas'])->toBe('integral');
+    // ... une nouvelle réservation reçoit le nouveau délai : 30 h avant devient tardif.
+    $nouvelle = reservationConfirmee($this);
+    $this->travelTo(arriveeEn($nouvelle)->subHours(30));
+    expect($nouvelle->annulation_delai_heures)->toBe(48)
+        ->and(app(AnnulationService::class)->apercu($nouvelle, $nouvelle->client)['cas'])->toBe('nuit_retenue');
 
     Parametres::definir('annulation.delai_gratuit_heures', '24');
     Parametres::definir('annulation.heure_arrivee', '23:00'); // arrivée supposée à 23 h : 30 h avant 14 h = 39 h avant 23 h
-    expect(app(AnnulationService::class)->apercu($r, $r->client)['cas'])->toBe('integral');
+    $tardive = reservationConfirmee($this);
+    $this->travelTo(arriveeEn($tardive)->subHours(30));
+    expect($tardive->annulation_heure_arrivee)->toBe('23:00')
+        ->and(app(AnnulationService::class)->apercu($tardive, $tardive->client)['cas'])->toBe('integral');
 });
 
 it('l\'écran d\'annulation montre le montant remboursé AVANT la confirmation', function () {

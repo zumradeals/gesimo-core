@@ -3,6 +3,7 @@
 namespace App\Paiement\Services;
 
 use App\Parametres\Services\Parametres;
+use App\Parametres\Services\Reglages;
 
 /** Réglages d'argent lus dans les Paramètres (jamais dans un fichier technique). */
 class ReglagesPaiement
@@ -18,9 +19,7 @@ class ReglagesPaiement
     /** Délai d'annulation gratuite en heures avant l'arrivée (RG-6) : 24 par défaut. */
     public static function delaiAnnulationGratuiteHeures(): int
     {
-        $heures = Parametres::obtenir('annulation.delai_gratuit_heures', '24');
-
-        return is_numeric($heures) && (int) $heures >= 0 ? (int) $heures : 24;
+        return Reglages::entier('annulation.delai_gratuit_heures');
     }
 
     /** Heure d'arrivée supposée pour calculer le délai : 14 h par défaut. */

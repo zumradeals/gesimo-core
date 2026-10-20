@@ -8,6 +8,7 @@ use App\Noyau\Models\JetonConnexion;
 use App\Noyau\Models\Utilisateur;
 use App\Noyau\Services\Sms\FournisseurSms;
 use App\Parametres\Services\Parametres;
+use App\Parametres\Services\Reglages;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\RateLimiter;
@@ -19,9 +20,16 @@ use Illuminate\Support\Str;
  */
 class Connexion
 {
-    public const ESSAIS_MAX = 5;
+    /** Nombre d'essais et durée de la pause : réglages « Sécurité » (securite.connexion_*). */
+    public static function essaisMax(): int
+    {
+        return Reglages::entier('securite.connexion_essais_max');
+    }
 
-    public const PAUSE_SECONDES = 300;
+    public static function pauseSecondes(): int
+    {
+        return Reglages::entier('securite.connexion_pause_minutes') * 60;
+    }
 
     /** Plafond par numéro, quelle que soit l'adresse d'où viennent les essais (protège contre les attaques réparties). */
     public const ESSAIS_MAX_PAR_NUMERO = 20;
@@ -132,7 +140,7 @@ class Connexion
         $utilisateur = Utilisateur::where('telephone', $telephone)->first();
         $jeton = $utilisateur === null ? null : JetonConnexion::where('utilisateur_id', $utilisateur->id)
             ->where('type', 'code_sms')->whereNull('utilise_le')->where('expire_le', '>', now())
-            ->where('tentatives', '<', self::ESSAIS_MAX)->latest('id')->first();
+            ->where('tentatives', '<', self::essaisMax())->latest('id')->first();
 
         if ($jeton === null) {
             $this->echec($cle, $telephone);
@@ -188,7 +196,7 @@ class Connexion
 
     private function echec(string $cle, string $telephone): void
     {
-        RateLimiter::hit($cle, self::PAUSE_SECONDES);
+        RateLimiter::hit($cle, self::pauseSecondes());
         RateLimiter::hit("connexion-numero:{$telephone}", 900);
     }
 
@@ -198,7 +206,7 @@ class Connexion
         if (RateLimiter::tooManyAttempts("connexion-numero:{$telephone}", self::ESSAIS_MAX_PAR_NUMERO)) {
             throw new ConnexionRefusee("Trop d'essais. Réessayez dans quelques minutes.");
         }
-        if (RateLimiter::tooManyAttempts($cle, self::ESSAIS_MAX)) {
+        if (RateLimiter::tooManyAttempts($cle, self::essaisMax())) {
             $minutes = max(1, (int) ceil(RateLimiter::availableIn($cle) / 60));
             throw new ConnexionRefusee("Trop d'essais. Réessayez dans {$minutes} minute".($minutes > 1 ? 's' : '').'.');
         }

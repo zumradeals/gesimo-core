@@ -67,6 +67,14 @@ class GeniusPay implements FournisseurPaiement
         );
     }
 
+    public function tester(): void
+    {
+        $reponse = $this->appeler(fn (PendingRequest $r) => $r->get('/account/balance')); // lecture seule
+        if ($reponse->json('success') === false) {
+            throw new FournisseurIndisponible('Réponse inattendue du fournisseur de paiement.');
+        }
+    }
+
     public function lirePaiement(string $reference): EtatPaiement
     {
         $reference = $this->referenceSure($reference); // vérifiée AVANT l'appel : une référence piégée ne part jamais

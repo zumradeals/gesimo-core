@@ -5,7 +5,8 @@ namespace App\Sejours\Services;
 use App\Noyau\Models\Utilisateur;
 use App\Noyau\Services\Audit;
 use App\Paiement\Services\PlancherAcompte;
-use App\Parametres\Services\Parametres;
+use App\Paiement\Services\ReglagesPaiement;
+use App\Parametres\Services\Reglages;
 use App\Sejours\Enums\StatutReservation;
 use App\Sejours\Exceptions\ReservationImpossible;
 use App\Sejours\Models\Reservation;
@@ -25,9 +26,7 @@ class ReservationService
     /** Durée de garde d'une réservation en attente, lue dans les Paramètres (RG-2) : 2 heures par défaut. */
     public static function dureeGardeMinutes(): int
     {
-        $minutes = (int) Parametres::obtenir('reservation.duree_blocage_minutes', '120');
-
-        return $minutes > 0 ? $minutes : 120;
+        return Reglages::entier('reservation.duree_blocage_minutes');
     }
 
     /** Réservation provisoire : les dates sont gardées pour le client jusqu'à l'expiration. */
@@ -63,6 +62,10 @@ class ReservationService
             'origine' => 'plateforme',
             'expire_le' => now()->addMinutes(self::dureeGardeMinutes()),
             'cree_par' => $client->id,
+            // Conditions en vigueur à la création : un changement ultérieur des Paramètres ne les modifie pas.
+            'commission_pourcentage' => ReglagesPaiement::commissionPourcentage(),
+            'annulation_delai_heures' => ReglagesPaiement::delaiAnnulationGratuiteHeures(),
+            'annulation_heure_arrivee' => ReglagesPaiement::heureArrivee(),
         ]), $unite, $arrivee, $depart);
 
         return $reservation;

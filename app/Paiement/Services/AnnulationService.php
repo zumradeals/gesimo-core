@@ -51,8 +51,9 @@ class AnnulationService
         $maintenant ??= now();
         $reservation->loadMissing('unite.tarifs');
         $paye = Comptabilite::encaisse($reservation);
-        $limite = CarbonImmutable::parse($reservation->date_arrivee->toDateString().' '.ReglagesPaiement::heureArrivee())
-            ->subHours(ReglagesPaiement::delaiAnnulationGratuiteHeures());
+        // Le délai en vigueur à la création de la réservation (les anciennes réservations, sans mémoire, suivent le réglage actuel).
+        $limite = CarbonImmutable::parse($reservation->date_arrivee->toDateString().' '.($reservation->annulation_heure_arrivee ?? ReglagesPaiement::heureArrivee()))
+            ->subHours($reservation->annulation_delai_heures ?? ReglagesPaiement::delaiAnnulationGratuiteHeures());
         $nuit = (int) ($this->tarifs->detail($reservation->unite, $reservation->date_arrivee, $reservation->date_depart)[0]['prix'] ?? 0);
 
         $parLeClient = $acteur->id === $reservation->client_id;

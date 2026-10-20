@@ -17,6 +17,13 @@ interface FournisseurPaiement
     /** @throws FournisseurIndisponible|RequeteRefusee */
     public function creerPaiement(DemandePaiement $demande): PaiementCree;
 
+    /**
+     * Test de connexion (RG-21) : une demande en lecture seule, sans argent en jeu, qui prouve que les clés sont acceptées.
+     *
+     * @throws FournisseurIndisponible|RequeteRefusee
+     */
+    public function tester(): void;
+
     /** @throws FournisseurIndisponible|RequeteRefusee */
     public function lirePaiement(string $reference): EtatPaiement;
 

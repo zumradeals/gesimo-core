@@ -17,7 +17,7 @@ class Reservation extends Model
     protected $fillable = [
         'unite_id', 'client_id', 'nom_client', 'telephone_client', 'date_arrivee', 'date_depart',
         'montant_total', 'acompte', 'solde', 'statut', 'origine', 'expire_le', 'cree_par', 'nombre_personnes',
-        'commission_pourcentage', 'annulation_motif', 'annulee_le',
+        'commission_pourcentage', 'annulation_motif', 'annulee_le', 'annulation_delai_heures', 'annulation_heure_arrivee',
     ];
 
     protected function casts(): array

@@ -183,6 +183,10 @@ function fauxGeniusPay(array $etats = [], bool $remboursementPossible = true): o
 
         public bool $remboursementPossible = true;
 
+        public int $statutSolde = 200;
+
+        public int $appelsSolde = 0;
+
         public int $compteur = 0;
     };
     $etat->etats = $etats;
@@ -192,6 +196,11 @@ function fauxGeniusPay(array $etats = [], bool $remboursementPossible = true): o
         $chemin = parse_url($requete->url(), PHP_URL_PATH);
         $chemin = preg_replace('#^/api/v1/merchant#', '', $chemin);
 
+        if ($requete->method() === 'GET' && $chemin === '/account/balance') {
+            $etat->appelsSolde++;
+
+            return Http::response($etat->statutSolde === 200 ? ['success' => true, 'data' => ['balance' => 0, 'currency' => 'XOF']] : ['success' => false], $etat->statutSolde);
+        }
         if ($requete->method() === 'POST' && $chemin === '/payments') {
             $etat->compteur++;
             $reference = 'SANDBOX-'.str_pad((string) $etat->compteur, 4, '0', STR_PAD_LEFT);

@@ -29,6 +29,14 @@ class Parametres
         return $parametre->est_secret ? Crypt::decryptString($parametre->valeur) : $parametre->valeur;
     }
 
+    /** Vrai si le réglage a une valeur, sans jamais la déchiffrer (utile pour l'écran Paramètres : « Enregistré »). */
+    public static function estDefini(string $cle): bool
+    {
+        $valeur = Parametre::where('cle', $cle)->value('valeur');
+
+        return $valeur !== null && $valeur !== '';
+    }
+
     public static function definir(string $cle, ?string $valeur, ?Utilisateur $auteur = null, bool $secret = false, string $groupe = 'general'): Parametre
     {
         return DB::transaction(function () use ($cle, $valeur, $auteur, $secret, $groupe) {

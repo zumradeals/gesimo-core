@@ -14,9 +14,12 @@ class PlancherAcompte
     /** Pourcentage minimum (entier, arrondi au-dessus), ou null si commission et frais ne sont pas réglés. */
     public static function pourcentageMinimum(): ?int
     {
-        $commission = Parametres::obtenir('commission.pourcentage');
-        $frais = Parametres::obtenir('paiement.frais_pourcentage');
+        return self::calculer(Parametres::obtenir('commission.pourcentage'), Parametres::obtenir('paiement.frais_pourcentage'));
+    }
 
+    /** Plancher pour des valeurs données (pour contrôler un changement avant de l'enregistrer). */
+    public static function calculer(mixed $commission, mixed $frais): ?int
+    {
         if ($commission === null || $frais === null || ! is_numeric($commission) || ! is_numeric($frais)) {
             return null;
         }
