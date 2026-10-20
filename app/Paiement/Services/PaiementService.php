@@ -17,8 +17,10 @@ use App\Paiement\Services\Fournisseur\FournisseurPaiement;
 use App\Sejours\Enums\StatutReservation;
 use App\Sejours\Models\Reservation;
 use App\Sejours\Services\ReservationService;
+use Illuminate\Contracts\Cache\LockTimeoutException;
 use Illuminate\Database\QueryException;
 use Illuminate\Database\UniqueConstraintViolationException;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 
@@ -39,7 +41,31 @@ class PaiementService
         return $this->fournisseur->estConfigure() && ReglagesPaiement::commissionPourcentage() !== null;
     }
 
+    /**
+     * Un seul départ de paiement à la fois par réservation : deux appuis sur « Payer », un rechargement ou un retour
+     * en arrière en même temps ne créent jamais deux paiements (le second attend, puis reprend le premier).
+     */
+    private function exclusif(string $cle, callable $action): Paiement
+    {
+        $verrou = Cache::lock('paiement-'.$cle, 60);
+        try {
+            $verrou->block(15);
+        } catch (LockTimeoutException) {
+            throw new PaiementImpossible('Un paiement est déjà en cours de préparation. Patientez quelques secondes puis touchez « Vérifier », sans payer une deuxième fois.');
+        }
+        try {
+            return $action();
+        } finally {
+            $verrou->release();
+        }
+    }
+
     public function demarrer(Reservation $reservation, Utilisateur $client): Paiement
+    {
+        return $this->exclusif('resa-'.$reservation->id, fn () => $this->demarrerSansVerrou($reservation->fresh() ?? $reservation, $client));
+    }
+
+    private function demarrerSansVerrou(Reservation $reservation, Utilisateur $client): Paiement
     {
         Gate::forUser($client)->authorize('payer', $reservation);
         $reservation->loadMissing('unite.residence');
@@ -97,6 +123,12 @@ class PaiementService
     /** Paiement d'une mise en avant : même circuit sécurisé qu'une réservation (page GeniusPay, message signé, vérification directe). */
     public function demarrerMiseEnAvant(MiseEnAvant $mea, Utilisateur $gerant): Paiement
     {
+        return $this->exclusif('mea-'.$mea->id, fn () => $this->demarrerMiseEnAvantSansVerrou($mea->fresh() ?? $mea, $gerant));
+    }
+
+    private function demarrerMiseEnAvantSansVerrou(MiseEnAvant $mea, Utilisateur $gerant): Paiement
+    {
+        $mea->loadMissing('residence');
         Gate::forUser($gerant)->authorize('update', $mea->residence);
         if ($mea->statut !== 'en_attente_paiement') {
             throw new PaiementImpossible('Cette mise en avant est déjà payée ou annulée.');

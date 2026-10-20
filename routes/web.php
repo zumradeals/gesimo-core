@@ -1,5 +1,6 @@
 <?php
 
+use App\Noyau\Http\Pwa;
 use App\Noyau\Livewire\AccepterInvitation;
 use App\Noyau\Livewire\Admin\JournalAudit as PageJournal;
 use App\Noyau\Livewire\Admin\ModelesEmails;
@@ -58,6 +59,11 @@ Route::middleware('guest')->group(function () {
     Route::livewire('/connexion', Connexion::class)->name('connexion');
     Route::livewire('/inscription', Inscription::class)->name('inscription');
 });
+// Application installable (PWA)
+Route::get('/manifest.webmanifest', [Pwa::class, 'manifeste'])->name('pwa.manifeste');
+Route::get('/sw.js', [Pwa::class, 'serviceWorker'])->name('pwa.sw');
+Route::get('/hors-connexion', [Pwa::class, 'horsConnexion'])->name('pwa.hors-connexion');
+
 // Assistant d'installation du premier lancement (404 une fois terminé)
 Route::livewire('/installation', Installation::class)->name('installation');
 

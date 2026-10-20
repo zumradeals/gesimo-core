@@ -47,7 +47,7 @@
                 </div>
             </div>
             @if($erreur) <x-ui.alerte type="erreur">{{ $erreur }}</x-ui.alerte> @endif
-            <button class="btn btn-bloc" wire:loading.attr="disabled"><x-ui.icone nom="recherche" classe="h-5 w-5" /> Chercher</button>
+            <button data-reseau class="btn btn-bloc" wire:loading.attr="disabled"><x-ui.icone nom="recherche" classe="h-5 w-5" /> Chercher</button>
         </form>
 
         <section class="grid content-start gap-4">

@@ -27,6 +27,9 @@
     [x-cloak] { display: none !important; }
 }
 
+/* Sans réseau, les actions qui en ont besoin (payer, réserver, annuler…) sont grisées : elles porteraient à erreur. */
+html.hors-ligne [data-reseau] { opacity: .5; pointer-events: none; }
+
 @layer components {
     .carte { @apply rounded-2xl border border-trait bg-white p-4 shadow-sm lg:p-5; }
     .champ { @apply grid min-w-0 gap-1; }

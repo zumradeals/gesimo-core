@@ -76,7 +76,7 @@
                     @endif
                 </div>
                 @if($libre)
-                    <a href="{{ route('reserver', ['unite' => $u->id, 'arrivee' => $arrivee, 'depart' => $depart, 'personnes' => $personnes]) }}" class="btn btn-bloc">Réserver</a>
+                    <a href="{{ route('reserver', ['unite' => $u->id, 'arrivee' => $arrivee, 'depart' => $depart, 'personnes' => $personnes]) }}" data-reseau class="btn btn-bloc">Réserver</a>
                 @else
                     <x-ui.alerte type="erreur">Ces dates ne sont plus libres. Choisissez d'autres dates.</x-ui.alerte>
                 @endif

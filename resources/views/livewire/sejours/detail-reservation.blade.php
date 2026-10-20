@@ -24,21 +24,21 @@
                 @if($res->latitude !== null)<a class="font-semibold text-marque-600 underline" href="https://www.google.com/maps?q={{ $res->latitude }},{{ $res->longitude }}" target="_blank" rel="noopener">Voir sur la carte</a>@endif
             @endif
             @if($r->statut === $S::EnAttente)
-                <a href="{{ route('payer', $r) }}" class="btn btn-bloc">Payer {{ $fr($r->acompte) }}</a>
+                <a href="{{ route('payer', $r) }}" data-reseau class="btn btn-bloc">Payer {{ $fr($r->acompte) }}</a>
             @endif
             @if($paye > 0)<a href="{{ route('reservation.recu', $r) }}" target="_blank" class="btn btn-second btn-bloc">Télécharger le reçu</a>@endif
-            @if($r->statut === $S::Confirmee)<a href="{{ route('reservation.annuler', $r) }}" class="btn btn-danger btn-bloc">Annuler</a>@endif
+            @if($r->statut === $S::Confirmee)<a href="{{ route('reservation.annuler', $r) }}" data-reseau class="btn btn-danger btn-bloc">Annuler</a>@endif
             @if($r->statut === $S::Terminee)
                 @if($avis)
                     <x-ui.alerte type="succes">Merci pour votre avis : <x-ui.etoiles :note="$avis->note" /></x-ui.alerte>
                 @else
-                    <a href="{{ route('reservation.avis', $r) }}" class="btn btn-bloc">Donner mon avis</a>
+                    <a href="{{ route('reservation.avis', $r) }}" data-reseau class="btn btn-bloc">Donner mon avis</a>
                 @endif
             @elseif(in_array($r->statut, [$S::Confirmee, $S::ArriveeEnregistree], true))
                 <x-ui.alerte type="info">Après le séjour, vous pourrez donner votre avis ici.</x-ui.alerte>
             @endif
             @if(! $litigeOuvert && in_array($r->statut, [$S::Confirmee, $S::ArriveeEnregistree, $S::Terminee, $S::Annulee, $S::Litige], true) && $r->origine !== 'hors_plateforme')
-                <a href="{{ route('reservation.probleme', $r) }}" class="btn btn-second btn-bloc border-trait text-gris-doux">Signaler un problème</a>
+                <a href="{{ route('reservation.probleme', $r) }}" data-reseau class="btn btn-second btn-bloc border-trait text-gris-doux">Signaler un problème</a>
             @endif
         </div>
     </div>

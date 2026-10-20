@@ -49,26 +49,46 @@ class ReservationService
         }
         [$acompte, $solde] = $this->repartition($unite, $total);
 
-        $reservation = $this->enregistrer(fn () => Reservation::create([
-            'unite_id' => $unite->id,
-            'client_id' => $client->id,
-            'date_arrivee' => $arrivee->toDateString(),
-            'date_depart' => $depart->toDateString(),
-            'nombre_personnes' => $personnes,
-            'montant_total' => $total,
-            'acompte' => $acompte,
-            'solde' => $solde,
-            'statut' => StatutReservation::EnAttente,
-            'origine' => 'plateforme',
-            'expire_le' => now()->addMinutes(self::dureeGardeMinutes()),
-            'cree_par' => $client->id,
-            // Conditions en vigueur à la création : un changement ultérieur des Paramètres ne les modifie pas.
-            'commission_pourcentage' => ReglagesPaiement::commissionPourcentage(),
-            'annulation_delai_heures' => ReglagesPaiement::delaiAnnulationGratuiteHeures(),
-            'annulation_heure_arrivee' => ReglagesPaiement::heureArrivee(),
-        ]), $unite, $arrivee, $depart);
+        // Un double appui sur « Réserver » (ou un rechargement) ne crée pas une seconde réservation : on reprend la première.
+        if (($deja = $this->reservationIdentiqueEnAttente($client, $unite, $arrivee, $depart)) !== null) {
+            return $deja;
+        }
+
+        try {
+            $reservation = $this->enregistrer(fn () => Reservation::create([
+                'unite_id' => $unite->id,
+                'client_id' => $client->id,
+                'date_arrivee' => $arrivee->toDateString(),
+                'date_depart' => $depart->toDateString(),
+                'nombre_personnes' => $personnes,
+                'montant_total' => $total,
+                'acompte' => $acompte,
+                'solde' => $solde,
+                'statut' => StatutReservation::EnAttente,
+                'origine' => 'plateforme',
+                'expire_le' => now()->addMinutes(self::dureeGardeMinutes()),
+                'cree_par' => $client->id,
+                // Conditions en vigueur à la création : un changement ultérieur des Paramètres ne les modifie pas.
+                'commission_pourcentage' => ReglagesPaiement::commissionPourcentage(),
+                'annulation_delai_heures' => ReglagesPaiement::delaiAnnulationGratuiteHeures(),
+                'annulation_heure_arrivee' => ReglagesPaiement::heureArrivee(),
+            ]), $unite, $arrivee, $depart);
+        } catch (ReservationImpossible $e) {
+            // Deux envois en même temps : la base a refusé le second ; s'il vient de la même personne, on lui rend la première.
+            if (($deja = $this->reservationIdentiqueEnAttente($client, $unite, $arrivee, $depart)) !== null) {
+                return $deja;
+            }
+            throw $e;
+        }
 
         return $reservation;
+    }
+
+    private function reservationIdentiqueEnAttente(Utilisateur $client, Unite $unite, CarbonInterface $arrivee, CarbonInterface $depart): ?Reservation
+    {
+        return Reservation::where('client_id', $client->id)->where('unite_id', $unite->id)
+            ->whereDate('date_arrivee', $arrivee->toDateString())->whereDate('date_depart', $depart->toDateString())
+            ->where('statut', StatutReservation::EnAttente->value)->where('expire_le', '>', now())->latest('id')->first();
     }
 
     /** RG-5 : réservation prise par téléphone, gratuite, sans commission ; elle bloque seulement le calendrier. */

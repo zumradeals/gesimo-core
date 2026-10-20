@@ -4,6 +4,7 @@ use App\Noyau\Console\CreerSuperAdmin;
 use App\Noyau\Console\EnvoyerRappelsArrivee;
 use App\Noyau\Console\GenererCodeInstallation;
 use App\Noyau\Http\Middleware\AppliquerReglages;
+use App\Noyau\Http\Middleware\EntetesCache;
 use App\Noyau\Http\Middleware\VerifierRole;
 use App\Parametres\Console\DefinirParametre;
 use App\Sejours\Console\ExpirerReservations;
@@ -32,7 +33,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->redirectUsersTo(fn () => route('accueil'));
         $middleware->alias(['role' => VerifierRole::class]);
         // Avant la session : la durée de session vient des Paramètres.
-        $middleware->web(prepend: [AppliquerReglages::class]);
+        $middleware->web(prepend: [AppliquerReglages::class], append: [EntetesCache::class]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(
