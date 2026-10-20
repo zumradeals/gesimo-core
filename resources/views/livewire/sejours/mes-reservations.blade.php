@@ -1,5 +1,9 @@
 <div class="grid gap-4" wire:poll.30s>
     <h1 class="text-2xl font-extrabold">Mes réservations</h1>
+    <div class="grid max-w-md grid-cols-2 overflow-hidden rounded-xl border border-trait bg-white text-center font-bold">
+        <button wire:click="$set('onglet', 'avenir')" class="min-h-[48px] {{ $onglet === 'avenir' ? 'bg-marque-600 text-white' : '' }}">À venir ({{ $nbAVenir }})</button>
+        <button wire:click="$set('onglet', 'passees')" class="min-h-[48px] {{ $onglet === 'passees' ? 'bg-marque-600 text-white' : '' }}">Passées ({{ $nbPassees }})</button>
+    </div>
     @if(session('message')) <x-ui.alerte type="succes">{{ session('message') }}</x-ui.alerte> @endif
     @if($erreur) <x-ui.alerte type="erreur">{{ $erreur }}</x-ui.alerte> @endif
 
@@ -10,7 +14,7 @@
                 <x-ui.badge-statut :statut="$r->statut" />
                 <span class="aide">#{{ $r->id }}</span>
             </div>
-            <h2 class="text-lg font-extrabold">{{ $u->nom }} · {{ $res->nom }}</h2>
+            <h2 class="text-lg font-extrabold"><a href="{{ route('reservation.detail', $r) }}" class="underline decoration-trait underline-offset-4">{{ $u->nom }} · {{ $res->nom }}</a></h2>
             <p class="aide">{{ $r->date_arrivee->translatedFormat('j M Y') }} → {{ $r->date_depart->translatedFormat('j M Y') }} · {{ $r->nombre_nuits ?? $r->date_arrivee->diffInDays($r->date_depart) }} nuits</p>
             <p class="text-2xl font-extrabold">{{ \App\Noyau\Services\Format::fcfa($r->montant_total) }}</p>
 
@@ -38,7 +42,7 @@
     @empty
         <div class="carte grid place-items-center gap-3 py-10 text-center md:max-w-xl">
             <x-ui.icone nom="liste" classe="h-10 w-10 text-marque-500" />
-            <p class="text-lg font-semibold">Vous n'avez pas encore de réservation.</p>
+            <p class="text-lg font-semibold">{{ $onglet === 'passees' ? 'Aucun séjour passé.' : 'Aucune réservation à venir pour le moment.' }}</p>
             <a href="{{ route('accueil') }}" class="btn">Chercher un séjour</a>
         </div>
     @endforelse

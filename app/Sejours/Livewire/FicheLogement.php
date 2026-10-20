@@ -2,7 +2,9 @@
 
 namespace App\Sejours\Livewire;
 
+use App\Sejours\Models\Avis;
 use App\Sejours\Models\Unite;
+use App\Sejours\Services\AvisService;
 use App\Sejours\Services\Disponibilites;
 use App\Sejours\Services\TarifCalculateur;
 use Carbon\CarbonImmutable;
@@ -60,6 +62,8 @@ class FicheLogement extends Component
             'total' => $total,
             'libre' => $libre,
             'erreur' => $erreur,
+            'resumeAvis' => app(AvisService::class)->resume($unite->residence_id),
+            'avis' => Avis::whereHas('reservation.unite', fn ($q) => $q->where('residence_id', $unite->residence_id))->with('client')->latest('id')->limit(5)->get(),
         ]);
     }
 }

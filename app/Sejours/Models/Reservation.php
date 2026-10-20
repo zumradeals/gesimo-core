@@ -8,6 +8,7 @@ use App\Sejours\Enums\StatutReservation;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Reservation extends Model
 {
@@ -41,6 +42,11 @@ class Reservation extends Model
     public function paiements(): HasMany
     {
         return $this->hasMany(Paiement::class);
+    }
+
+    public function avis(): HasOne
+    {
+        return $this->hasOne(Avis::class);
     }
 
     public function client(): BelongsTo

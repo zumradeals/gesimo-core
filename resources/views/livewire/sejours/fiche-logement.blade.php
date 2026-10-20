@@ -34,6 +34,12 @@
                     @endif
                 </div>
             </div>
+            <div class="carte"><h3 class="mb-1 font-extrabold">Avis @if($resumeAvis['nombre'] > 0)<span class="font-normal text-gris-doux">({{ number_format($resumeAvis['moyenne'], 1, ',', '') }} / 5 · {{ $resumeAvis['nombre'] }} séjour{{ $resumeAvis['nombre'] > 1 ? 's' : '' }})</span>@endif</h3>
+                @forelse($avis as $a)
+                    <div class="border-b border-dashed border-trait py-2 last:border-0"><b>{{ \Illuminate\Support\Str::of($a->client->nom)->before(' ') }}</b> <x-ui.etoiles :note="$a->note" /> <span class="aide">{{ $a->created_at->translatedFormat('M Y') }}</span>@if($a->commentaire)<p class="aide !text-[15px]">« {{ $a->commentaire }} »</p>@endif</div>
+                @empty
+                    <p class="aide">Pas encore d'avis pour cette résidence.</p>
+                @endforelse</div>
             <div class="carte"><h3 class="mb-1 font-extrabold">Où ?</h3>
                 <p class="aide !text-[15px]">{{ $r->commune }}@if($r->quartier), {{ $r->quartier }}@endif. L'adresse exacte, la position GPS et le contact du gérant vous sont donnés après la confirmation de votre réservation.</p></div>
         </div>
