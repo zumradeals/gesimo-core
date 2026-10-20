@@ -5,5 +5,6 @@
 <div class="carte"><h2 class="font-extrabold">2. Ajoutez votre résidence</h2><p class="aide">Photos, prix, règlement et pièces.</p></div>
 <div class="carte"><h2 class="font-extrabold">3. Nous vérifions</h2><p class="aide">Puis vos logements apparaissent et reçoivent des réservations.</p></div></div>
 <div class="carte md:max-w-3xl"><h2 class="font-extrabold">Combien ça coûte ?</h2>
-<p class="aide">GESIMO retient une commission sur chaque réservation payée en ligne@if(($taux = \App\Paiement\Services\ReglagesPaiement::commissionPourcentage()) !== null) ({{ rtrim(rtrim(number_format($taux, 2, ',', ''), '0'), ',') }} %)@endif. Les réservations prises par téléphone sont gratuites.</p></div>
+@php $taux = \App\Paiement\Services\ReglagesPaiement::commissionPourcentage(); @endphp
+<p class="aide">GESIMO retient une commission sur chaque réservation payée en ligne @if($taux !== null)({{ rtrim(rtrim(number_format($taux, 2, ',', ''), '0'), ',') }} %)@endif. Les réservations prises par téléphone sont gratuites.</p></div>
 <a href="{{ route('inscription', ['profil' => 'gerant']) }}" class="btn md:w-auto">Créer mon compte gérant</a></div>

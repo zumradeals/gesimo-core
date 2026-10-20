@@ -3,6 +3,7 @@
 namespace App\Noyau\Models;
 
 use App\Noyau\Enums\Role;
+use App\Sejours\Models\Reservation;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -35,6 +36,11 @@ class Utilisateur extends Authenticatable
     public function roles(): HasMany
     {
         return $this->hasMany(RoleUtilisateur::class);
+    }
+
+    public function reservations(): HasMany
+    {
+        return $this->hasMany(Reservation::class, 'client_id');
     }
 
     public function estActif(): bool

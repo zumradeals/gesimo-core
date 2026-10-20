@@ -3,6 +3,7 @@
 use App\Noyau\Enums\Role;
 use App\Noyau\Models\Utilisateur;
 use App\Paiement\Models\Paiement;
+use App\Paiement\Services\ArriveeService;
 use App\Paiement\Services\PaiementService;
 use App\Parametres\Services\Parametres;
 use App\Sejours\Models\Reservation;
@@ -283,4 +284,16 @@ function payerEtConfirmer(TestCase $test, object $faux, Reservation $reservation
     recevoirWebhook($test, 'payment.success', $paiement->reference_geniuspay, $paiement->montant)->assertOk();
 
     return $paiement->fresh();
+}
+
+/** Une réservation payée, dont le client est arrivé aujourd'hui puis reparti : statut « Terminée ». */
+function reservationTerminee(TestCase $test, object $faux): Reservation
+{
+    $reservation = reservationAPayer(['arrivee' => CarbonImmutable::today(), 'nuits' => 2]);
+    payerEtConfirmer($test, $faux, $reservation);
+    $gerant = $reservation->unite->residence->gerant;
+    app(ArriveeService::class)->enregistrerArrivee($reservation->fresh(), $gerant);
+    app(ArriveeService::class)->enregistrerDepart($reservation->fresh(), $gerant);
+
+    return $reservation->fresh();
 }
