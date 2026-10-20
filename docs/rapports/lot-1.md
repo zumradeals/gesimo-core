@@ -28,7 +28,7 @@ Date : 20 octobre 2026 · Branche : `claude/sleepy-brahmagupta-t7j8ta`
 | Aucune valeur secrète dans le dépôt, `.env.example` fourni | Réussi | recherche de motifs de clés/jetons : aucun résultat ; `.env.example` sans valeur ; `.env` ignoré par Git |
 | Formatage Pint | Réussi | `pint --test` : passed |
 | Construction des fichiers du site | Réussi | `npm run build` OK |
-| Intégration continue sur GitHub | Non testé | voir le point 5 |
+| Intégration continue sur GitHub | Réussi | passage n°3 vert : formatage, 64 tests, migrations défaites puis rejouées, construction du site — https://github.com/zumradeals/gesimo-core/actions/runs/39458488870 (les passages n°1 et n°2 avaient échoué : dossier de tests vide dans la configuration, corrigé) |
 
 ## 3. Tests lancés (résultat réel)
 
@@ -61,7 +61,6 @@ Contrôle de sensibilité : j'ai retiré volontairement la contrainte anti-cheva
 
 ## 5. Risques et limites
 
-- **L'intégration continue n'a pas encore été vue au vert sur GitHub** : au moment de ce rapport, aucun passage n'était encore enregistré. Les tests ont été lancés ici, pas encore chez GitHub. Je le confirme dans mon message.
 - **Table d'occupation interne** : elle est tenue à jour par la base, mais une personne ayant un accès SQL complet pourrait y écrire directement. Les droits du compte de l'application seront à restreindre en production (hébergement, Lot 7).
 - **Droits d'écriture comptable** : l'immuabilité est assurée par des déclencheurs. Un super-utilisateur PostgreSQL pourrait les supprimer : à interdire à l'hébergeur par les droits du compte de l'application.
 - **Un secret en base n'est protégé que si `APP_KEY` l'est** : la sauvegarder à part. Perdre cette clé rend les secrets illisibles.
