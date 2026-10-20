@@ -2,9 +2,9 @@
 
 namespace App\Sejours\Livewire;
 
+use App\Paiement\Services\AnnulationService;
 use App\Sejours\Exceptions\ReservationImpossible;
 use App\Sejours\Models\Reservation;
-use App\Sejours\Services\ReservationService;
 use Livewire\Attributes\Title;
 use Livewire\Component;
 
@@ -13,7 +13,7 @@ class MesReservations extends Component
 {
     public ?string $erreur = null;
 
-    public function annuler(int $id, ReservationService $service): void
+    public function annuler(int $id, AnnulationService $service): void
     {
         $this->erreur = null;
         // Seulement parmi MES réservations : l'identifiant d'une autre personne donne « introuvable ».

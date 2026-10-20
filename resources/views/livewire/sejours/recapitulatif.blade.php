@@ -36,6 +36,6 @@
         @if(! $libre && ! $erreur) <x-ui.alerte type="erreur">Ces dates ne sont plus libres. Choisissez d'autres dates.</x-ui.alerte> @endif
 
         <button wire:click="garder" wire:loading.attr="disabled" class="btn btn-bloc sm:w-auto" @disabled(! $libre)>Garder ces dates {{ $duree }}</button>
-        <x-ui.alerte type="info">Le paiement en ligne arrive bientôt : pour l'instant, la réservation reste « En attente » puis expire si elle n'est pas confirmée.</x-ui.alerte>
+        <p class="aide">Ensuite, vous payez {{ \App\Noyau\Services\Format::fcfa($acompte) }} en ligne (Wave, Orange Money, MTN Money ou carte).</p>
     @endif
 </div>

@@ -16,12 +16,20 @@
 
             @if($r->statut === \App\Sejours\Enums\StatutReservation::EnAttente)
                 <x-ui.alerte type="attention"><x-ui.icone nom="horloge" classe="mr-1 inline h-5 w-5" /> Dates gardées encore <b>{{ $r->expire_le->diffForHumans(['parts' => 2, 'syntax' => \Carbon\CarbonInterface::DIFF_ABSOLUTE]) }}</b>.</x-ui.alerte>
+                @if(\App\Paiement\Models\Paiement::where('reservation_id', $r->id)->where('statut', 'en_attente')->exists())
+                    <a href="{{ route('paiement.retour', $r) }}" class="font-semibold text-marque-600 underline">Un paiement est en cours de vérification</a>
+                @endif
+                <a href="{{ route('payer', $r) }}" class="btn btn-bloc">Payer {{ \App\Noyau\Services\Format::fcfa($r->acompte) }}</a>
                 <button wire:click="annuler({{ $r->id }})" wire:confirm="Annuler cette réservation ?" class="btn btn-danger btn-bloc">Annuler cette réservation</button>
             @elseif(in_array($r->statut, [\App\Sejours\Enums\StatutReservation::Confirmee, \App\Sejours\Enums\StatutReservation::ArriveeEnregistree], true))
                 <div class="rounded-xl bg-marque-50 p-3 text-[15px]">
                     <p class="font-bold">Contact du gérant</p>
                     <p>{{ $res->gerant->nom }} · {{ \App\Noyau\Services\Telephone::afficher($res->gerant->telephone) }}</p>
                     @if($res->latitude !== null)<a class="font-semibold text-marque-600 underline" href="https://www.google.com/maps?q={{ $res->latitude }},{{ $res->longitude }}" target="_blank" rel="noopener">Voir sur la carte</a>@endif
+                </div>
+                <div class="grid gap-2 sm:grid-cols-2">
+                    <a href="{{ route('reservation.recu', $r) }}" target="_blank" class="btn btn-second btn-bloc">Reçu</a>
+                    @if($r->statut === \App\Sejours\Enums\StatutReservation::Confirmee)<a href="{{ route('reservation.annuler', $r) }}" class="btn btn-danger btn-bloc">Annuler</a>@endif
                 </div>
             @elseif($r->statut === \App\Sejours\Enums\StatutReservation::Expiree)
                 <p class="aide">Le délai de garde est passé : les dates ont été libérées.</p>

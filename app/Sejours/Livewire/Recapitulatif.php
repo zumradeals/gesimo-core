@@ -2,6 +2,7 @@
 
 namespace App\Sejours\Livewire;
 
+use App\Paiement\Services\PaiementService;
 use App\Sejours\Exceptions\ReservationImpossible;
 use App\Sejours\Models\Unite;
 use App\Sejours\Services\Disponibilites;
@@ -39,7 +40,7 @@ class Recapitulatif extends Component
     {
         $this->erreur = null;
         try {
-            $service->garderDates(
+            $reservation = $service->garderDates(
                 auth()->user(),
                 $this->unite,
                 CarbonImmutable::parse($this->arrivee),
@@ -50,6 +51,10 @@ class Recapitulatif extends Component
             $this->erreur = $e->getMessage();
 
             return null;
+        }
+
+        if (app(PaiementService::class)->disponible()) {
+            return redirect()->route('payer', $reservation);
         }
 
         session()->flash('message', 'Vos dates sont gardées. Elles seront libérées automatiquement si la réservation n\'est pas confirmée à temps.');
