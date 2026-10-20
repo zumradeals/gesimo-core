@@ -37,6 +37,9 @@ jobs:
       - name: Installer les dépendances PHP
         run: composer install --no-interaction --prefer-dist
 
+      - name: Préparer le fichier .env (sans valeur secrète)
+        run: cp .env.example .env
+
       - name: Contrôler le formatage du code
         run: vendor/bin/pint --test
 
