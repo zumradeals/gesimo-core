@@ -10,6 +10,7 @@ use App\Paiement\Services\MiseEnAvantService;
 use App\Paiement\Services\PaiementService;
 use App\Sejours\Models\Residence;
 use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Support\Collection;
 use Livewire\Attributes\Title;
 use Livewire\Component;
 
@@ -68,7 +69,7 @@ class AcheterMiseEnAvant extends Component
         ]);
     }
 
-    /** @return \Illuminate\Support\Collection<int, Residence> */
+    /** @return Collection<int, Residence> */
     private function residences(bool $seulementVerifiees = false)
     {
         return Residence::where('gerant_id', auth()->id())->orderBy('nom')->get();

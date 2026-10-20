@@ -7,7 +7,7 @@
 <div class="grid gap-4">
     <div class="flex gap-2 overflow-x-auto pb-1" role="tablist" aria-label="Rubriques des réglages">
         @foreach($onglets as $cle => $nom)
-            <a href="{{ route('admin.reglages', $cle === 'accueil' ? [] : ['rubrique' => $cle]) }}" class="puce shrink-0 {{ $rubrique === $cle ? 'puce-active' : '' }}">{{ $nom }}</a>
+            <a href="{{ route('admin.reglages', $cle === 'accueil' ? [] : ['rubrique' => $cle]) }}" class="puce shrink-0 {{ $rubrique === $cle ? 'puce-active' : '' }}" @if($rubrique === $cle) x-data x-init="$el.scrollIntoView({ inline: 'center', block: 'nearest' })" @endif>{{ $nom }}</a>
         @endforeach
     </div>
 

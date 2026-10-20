@@ -274,3 +274,8 @@ it('aucun réglage fonctionnel ne dépend d\'un fichier .env en dehors de la bas
     expect($cles)->toBe(['APP_DEBUG', 'APP_ENV', 'APP_KEY', 'DB_URL']);
     expect(file_get_contents(base_path('.env.example')))->not->toMatch('/(sk_|pk_|whsec_)[A-Za-z0-9]/');
 });
+
+it('un visiteur non connecté est renvoyé vers la connexion', function () {
+    $this->get('/admin/reglages')->assertRedirect(route('connexion'));
+    $this->get('/admin/mises-en-avant')->assertRedirect(route('connexion'));
+});

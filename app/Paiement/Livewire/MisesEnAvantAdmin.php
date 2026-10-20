@@ -5,6 +5,7 @@ namespace App\Paiement\Livewire;
 use App\Paiement\Exceptions\PaiementImpossible;
 use App\Paiement\Models\MiseEnAvant;
 use App\Paiement\Services\MiseEnAvantService;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Livewire\Attributes\Title;
 use Livewire\Attributes\Url;
@@ -78,7 +79,7 @@ class MisesEnAvantAdmin extends Component
                 'programmees' => (clone $base)->where('statut', 'active')->whereDate('date_debut', '>', $jour)->count(),
                 'suspendues' => (clone $base)->where('statut', 'suspendue')->count(),
             ],
-            'revenus' => (int) \Illuminate\Support\Facades\DB::table('ecriture_comptable')->where('type', 'mise_en_avant')->sum('montant'),
+            'revenus' => (int) DB::table('ecriture_comptable')->where('type', 'mise_en_avant')->sum('montant'),
         ]);
     }
 }

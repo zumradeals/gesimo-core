@@ -2,6 +2,7 @@
 
 namespace App\Sejours\Livewire;
 
+use App\Paiement\Services\MiseEnAvantService;
 use App\Sejours\Models\Avis;
 use App\Sejours\Models\Unite;
 use App\Sejours\Services\AvisService;
@@ -62,7 +63,7 @@ class FicheLogement extends Component
             'total' => $total,
             'libre' => $libre,
             'erreur' => $erreur,
-            'sponsorise' => in_array($unite->residence_id, \App\Paiement\Services\MiseEnAvantService::residencesEnAvant(), true),
+            'sponsorise' => in_array($unite->residence_id, MiseEnAvantService::residencesEnAvant(), true),
             'resumeAvis' => app(AvisService::class)->resume($unite->residence_id),
             'avis' => Avis::whereHas('reservation.unite', fn ($q) => $q->where('residence_id', $unite->residence_id))->with('client')->latest('id')->limit(5)->get(),
         ]);

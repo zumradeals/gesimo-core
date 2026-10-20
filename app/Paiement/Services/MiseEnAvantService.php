@@ -10,7 +10,6 @@ use App\Paiement\Models\Paiement;
 use App\Parametres\Services\Parametres;
 use App\Sejours\Models\Residence;
 use Carbon\CarbonImmutable;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 
 /**
