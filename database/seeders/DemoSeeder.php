@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Noyau\Enums\Role;
 use App\Noyau\Models\Utilisateur;
+use App\Paiement\Models\Paiement;
 use App\Sejours\Models\MembreResidence;
 use App\Sejours\Models\Reservation;
 use App\Sejours\Models\Residence;
@@ -73,12 +74,17 @@ class DemoSeeder extends Seeder
             }
 
             $unite = $residence->unites()->first();
-            Reservation::create([
+            // Une réservation en ligne naît « En attente » et n'est confirmée qu'avec un paiement réussi (règle de la base).
+            $reservation = Reservation::create([
                 'unite_id' => $unite->id, 'client_id' => $comptes['client']->id,
                 'date_arrivee' => now()->addDays(10)->toDateString(), 'date_depart' => now()->addDays(12)->toDateString(),
                 'nombre_personnes' => 2, 'montant_total' => 30000, 'acompte' => 30000, 'solde' => 0,
-                'statut' => 'confirmee', 'origine' => 'plateforme', 'cree_par' => $comptes['client']->id,
+                'statut' => 'en_attente', 'origine' => 'plateforme', 'expire_le' => now()->addHours(2), 'cree_par' => $comptes['client']->id,
             ]);
+            $paiement = Paiement::create(['reservation_id' => $reservation->id, 'reference_geniuspay' => 'DEMO-'.Str::random(10), 'montant' => 30000, 'mode' => 'sandbox']);
+            DB::table('paiement')->where('id', $paiement->id)->update(['statut' => 'reussi']);
+            $reservation->update(['statut' => 'confirmee', 'expire_le' => null, 'commission_pourcentage' => 10]);
+            DB::table('ecriture_comptable')->insert(['reservation_id' => $reservation->id, 'paiement_id' => $paiement->id, 'type' => 'encaissement', 'montant' => 30000, 'created_at' => now()]);
         });
 
         $this->command?->warn("Comptes DÉMO créés (adresses @demo.invalid). Mot de passe commun, affiché une seule fois : {$motDePasse}");

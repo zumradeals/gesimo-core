@@ -9,8 +9,8 @@ it('refuse deux réservations actives qui se chevauchent, même insérées direc
     insererReservationSql($unite, '2026-12-10', '2026-12-14');
 
     $code = codeRefusBase(fn () => DB::insert(
-        "INSERT INTO reservation (unite_id, client_id, date_arrivee, date_depart, montant_total, acompte, solde, statut, origine, created_at, updated_at)
-         VALUES (?, ?, '2026-12-12', '2026-12-16', 30000, 9000, 21000, 'confirmee', 'plateforme', now(), now())",
+        "INSERT INTO reservation (unite_id, client_id, date_arrivee, date_depart, montant_total, acompte, solde, statut, origine, expire_le, created_at, updated_at)
+         VALUES (?, ?, '2026-12-12', '2026-12-16', 30000, 9000, 21000, 'en_attente', 'plateforme', now() + interval '2 hours', now(), now())",
         [$unite->id, creerUtilisateur()->id],
     ));
 

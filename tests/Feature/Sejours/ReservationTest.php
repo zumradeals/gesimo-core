@@ -1,6 +1,7 @@
 <?php
 
 use App\Noyau\Enums\Role;
+use App\Paiement\Services\AnnulationService;
 use App\Parametres\Services\Parametres;
 use App\Sejours\Enums\StatutReservation;
 use App\Sejours\Exceptions\ReservationImpossible;
@@ -155,20 +156,11 @@ it('un client annule sa réservation en attente et libère les dates ; pas celle
     $vendredi = prochainVendredi();
     $reservation = service()->garderDates($client, $unite, $vendredi, $vendredi->addDays(2), 1);
 
-    expect(fn () => service()->annuler($reservation->fresh()->load('unite.residence'), creerUtilisateur(Role::Client)))->toThrow(AuthorizationException::class);
+    expect(fn () => app(AnnulationService::class)->annuler($reservation->fresh()->load('unite.residence'), creerUtilisateur(Role::Client)))->toThrow(AuthorizationException::class);
 
-    service()->annuler($reservation->fresh()->load('unite.residence'), $client);
+    app(AnnulationService::class)->annuler($reservation->fresh()->load('unite.residence'), $client);
     expect($reservation->fresh()->statut)->toBe(StatutReservation::Annulee);
     expect(service()->garderDates(creerUtilisateur(Role::Client), $unite, $vendredi, $vendredi->addDays(2), 1)->statut)->toBe(StatutReservation::EnAttente);
-});
-
-it('une réservation confirmée ne s\'annule pas ici (remboursements au Lot 3)', function () {
-    $client = creerUtilisateur(Role::Client);
-    $unite = creerLogement();
-    $vendredi = prochainVendredi();
-    $id = insererReservationSql($unite, $vendredi->toDateString(), $vendredi->addDay()->toDateString(), ['client_id' => $client->id]);
-
-    expect(fn () => service()->annuler(Reservation::with('unite.residence')->find($id), $client))->toThrow(ReservationImpossible::class, 'ne peut plus être annulée ici');
 });
 
 it('les transitions de statut permises par l\'application sont exactement celles de la base', function () {
@@ -206,6 +198,11 @@ it('les transitions de statut permises par l\'application sont exactement celles
 
                 [$a, $d] = $dates($i++);
                 $id = insererReservationSql($unite, $a, $d, $ligne + ['statut' => $depart->value, 'expire_le' => now()->addHour()]);
+                if ($cible === StatutReservation::Confirmee && ! $horsPlateforme) {
+                    // « Confirmée » exige un paiement réussi : on le fournit, pour ne tester que la liste des transitions.
+                    DB::table('paiement')->insert(['reservation_id' => $id, 'reference_geniuspay' => 'MATRICE-'.$id, 'montant' => 9000, 'statut' => 'en_attente', 'created_at' => now(), 'updated_at' => now()]);
+                    DB::table('paiement')->where('reservation_id', $id)->update(['statut' => 'reussi']);
+                }
                 $baseAccepte = codeRefusBase(fn () => DB::table('reservation')->where('id', $id)->update(['statut' => $cible->value])) === null;
 
                 expect($baseAccepte)->toBe($depart->peutPasserA($cible, $horsPlateforme), "{$depart->value} → {$cible->value} (hors plateforme : ".($horsPlateforme ? 'oui' : 'non').')');

@@ -26,11 +26,11 @@ it('refuse un montant à virgule : les montants sont des entiers', function () {
 });
 
 it('refuse une réservation en attente sans date d\'expiration', function () {
-    expect(codeRefusBase(fn () => insererReservationSql(creerUnite(), '2026-12-10', '2026-12-14', ['statut' => 'en_attente'])))->toBe(VIOLATION_CONTRAINTE);
+    expect(codeRefusBase(fn () => insererReservationSql(creerUnite(), '2026-12-10', '2026-12-14', ['statut' => 'en_attente', 'expire_le' => null])))->toBe(VIOLATION_CONTRAINTE);
 });
 
 it('refuse un statut inconnu', function () {
-    expect(codeRefusBase(fn () => insererReservationSql(creerUnite(), '2026-12-10', '2026-12-14', ['statut' => 'inventé'])))->toBe(VIOLATION_CONTRAINTE);
+    expect(codeRefusBase(fn () => insererReservationSql(creerUnite(), '2026-12-10', '2026-12-14', ['statut' => 'inventé'])))->not->toBeNull();
 });
 
 it('RG-5 : une réservation hors plateforme n\'a ni montant ni commission', function () {

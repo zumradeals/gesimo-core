@@ -9,6 +9,7 @@ use Carbon\CarbonInterface;
 use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Tests\TestCase;
 
 pest()->extend(TestCase::class)->use(RefreshDatabase::class)->in('Feature');
@@ -53,12 +54,23 @@ function creerUnite(?Residence $residence = null): Unite
     return $residence->unites()->create(['nom' => 'Chambre test', 'type' => 'chambre', 'capacite' => 2]);
 }
 
-/** Insertion SQL directe, sans passer par l'application : c'est la base qui doit se défendre. */
+/**
+ * Insertion SQL directe, sans passer par l'application : c'est la base qui doit se défendre.
+ *
+ * Une réservation en ligne naît toujours « En attente » ; pour obtenir un autre statut, on suit le chemin permis
+ * (avec un paiement réussi quand il faut « Confirmer »), exactement comme le ferait l'application.
+ */
 function insererReservationSql(Unite $unite, string $arrivee, string $depart, array $surcharges = []): int
 {
-    $client = $surcharges['client_id'] ?? creerUtilisateur(Role::Client)->id;
+    $statutVoulu = $surcharges['statut'] ?? 'confirmee';
+    $hors = ($surcharges['origine'] ?? 'plateforme') === 'hors_plateforme';
+    $chemins = [
+        'en_attente' => [], 'hors_plateforme' => [], 'confirmee' => ['confirmee'], 'arrivee_enregistree' => ['confirmee', 'arrivee_enregistree'],
+        'terminee' => $hors ? ['terminee'] : ['confirmee', 'arrivee_enregistree', 'terminee'], 'annulee' => ['annulee'], 'expiree' => ['expiree'], 'litige' => ['confirmee', 'litige'],
+    ];
+    $client = $hors ? null : ($surcharges['client_id'] ?? creerUtilisateur(Role::Client)->id);
 
-    return DB::table('reservation')->insertGetId($surcharges + [
+    $ligne = $surcharges + [
         'unite_id' => $unite->id,
         'client_id' => $client,
         'date_arrivee' => $arrivee,
@@ -66,11 +78,33 @@ function insererReservationSql(Unite $unite, string $arrivee, string $depart, ar
         'montant_total' => 30000,
         'acompte' => 9000,
         'solde' => 21000,
-        'statut' => 'confirmee',
         'origine' => 'plateforme',
         'created_at' => now(),
         'updated_at' => now(),
-    ]);
+    ];
+    $ligne['statut'] = $hors ? 'hors_plateforme' : 'en_attente';
+    if (! array_key_exists($statutVoulu, $chemins)) {
+        $ligne['statut'] = $statutVoulu; // statut inconnu : c'est la base qui doit le refuser
+    }
+    if (! $hors) {
+        $ligne['expire_le'] = array_key_exists('expire_le', $surcharges) ? $surcharges['expire_le'] : now()->addHours(2);
+    }
+
+    $id = DB::table('reservation')->insertGetId($ligne);
+
+    foreach ($chemins[$statutVoulu] ?? [] as $etape) {
+        if ($etape === 'confirmee' && ! $hors) {
+            // « Confirmée » exige un paiement réussi couvrant l'acompte.
+            DB::table('paiement')->insert([
+                'reservation_id' => $id, 'reference_geniuspay' => 'AUTO-'.Str::random(12), 'montant' => max(1, (int) $ligne['acompte']),
+                'statut' => 'en_attente', 'created_at' => now(), 'updated_at' => now(),
+            ]);
+            DB::table('paiement')->where('reservation_id', $id)->update(['statut' => 'reussi']);
+        }
+        DB::table('reservation')->where('id', $id)->update(['statut' => $etape]);
+    }
+
+    return $id;
 }
 
 /** Exécute une action qui doit être refusée par la base ; renvoie le code d'erreur PostgreSQL. */

@@ -154,8 +154,8 @@ it('le personnel ne peut pas retirer un blocage ni annuler une réservation de l
 it('chaque rôle voit son propre menu : barre d\'onglets en bas sur téléphone, barre du haut sur ordinateur', function () {
     $this->get('/')->assertOk()->assertSee('Se connecter')->assertSee('aria-label="Menu principal"', false)->assertDontSee('Mes réservations');
     $this->actingAs(creerUtilisateur(Role::Client))->get('/')->assertSee('Mes réservations')->assertSee('Chercher')->assertDontSee('Calendrier');
-    $this->actingAs(creerUtilisateur(Role::Gerant))->get('/gerant/residences')->assertSee('Calendrier')->assertSee('Résidences')->assertSee('Personnel')->assertDontSee('Mes réservations');
-    $this->actingAs(creerUtilisateur(Role::Admin))->get('/admin/residences')->assertSee('À vérifier');
+    $this->actingAs(creerUtilisateur(Role::Gerant))->get('/gerant/residences')->assertSee('Calendrier')->assertSee('Résidences')->assertSee('Arrivées')->assertSee('Argent')->assertDontSee('Mes réservations');
+    $this->actingAs(creerUtilisateur(Role::Admin))->get('/admin/residences')->assertSee('À vérifier')->assertSee('Paiements')->assertSee('Reversements')->assertSee('Contrôle');
 });
 
 it('toutes les pages s\'affichent sans erreur pour la bonne personne', function () {

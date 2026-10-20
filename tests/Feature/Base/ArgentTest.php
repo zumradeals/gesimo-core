@@ -23,7 +23,7 @@ it('refuse un paiement dont la référence est déjà enregistrée', function ()
 
     expect(codeRefusBase(fn () => insererPaiementSql($reservation, 'GP-0001')))->toBe(DOUBLON);
     expect(codeRefusBase(fn () => insererPaiementSql(reservationPourArgent(), 'GP-0001')))->toBe(DOUBLON);
-    expect(DB::table('paiement')->count())->toBe(1);
+    expect(DB::table('paiement')->where('reference_geniuspay', 'like', 'GP-%')->count())->toBe(1);
 });
 
 it('accepte des paiements de références différentes', function () {
@@ -66,7 +66,7 @@ it('refuse de supprimer un paiement', function () {
 
     expect(codeRefusBase(fn () => DB::table('paiement')->where('id', $paiement)->delete()))->toBe('23000');
     expect(codeRefusBase(fn () => DB::statement('TRUNCATE paiement CASCADE')))->toBe('23000');
-    expect(DB::table('paiement')->count())->toBe(1);
+    expect(DB::table('paiement')->where('id', $paiement)->exists())->toBeTrue();
 });
 
 it('refuse de modifier ou supprimer une écriture comptable', function () {
