@@ -63,7 +63,8 @@ enum StatutReservation: string
             self::Expiree => [self::Confirmee],
             self::Confirmee => [self::ArriveeEnregistree, self::Annulee, self::Litige],
             self::ArriveeEnregistree => [self::Terminee, self::Litige],
-            self::Litige => [self::Terminee, self::Annulee],
+            // À la clôture d'un litige, la réservation retrouve le statut qu'elle avait avant.
+            self::Litige => [self::Terminee, self::Annulee, self::Confirmee, self::ArriveeEnregistree],
             default => [],
         };
     }

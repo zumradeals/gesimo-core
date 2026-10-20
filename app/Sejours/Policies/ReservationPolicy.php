@@ -55,6 +55,18 @@ class ReservationPolicy
             && ($reservation->client_id === $utilisateur->getKey() || $this->estGerantDe($utilisateur, $reservation) || $utilisateur->estAdmin());
     }
 
+    /** Avis : le client du séjour (la base refuse tant que le séjour n'est pas terminé). */
+    public function donnerAvis(Utilisateur $utilisateur, Reservation $reservation): bool
+    {
+        return $utilisateur->estActif() && $reservation->client_id === $utilisateur->getKey();
+    }
+
+    /** Signaler un problème : le client du séjour ou le gérant de la résidence. */
+    public function ouvrirLitige(Utilisateur $utilisateur, Reservation $reservation): bool
+    {
+        return $utilisateur->estActif() && ($reservation->client_id === $utilisateur->getKey() || $this->estGerantDe($utilisateur, $reservation));
+    }
+
     /** Check-in et check-out : gérant, ou personnel autorisé par le gérant. */
     public function enregistrerArrivee(Utilisateur $utilisateur, Reservation $reservation): bool
     {

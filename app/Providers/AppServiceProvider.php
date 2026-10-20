@@ -39,6 +39,7 @@ class AppServiceProvider extends ServiceProvider
         Gate::define('voir-journal-audit', fn (Utilisateur $u) => $u->estActif() && $u->estAdmin());
         Gate::define('voir-verifications', fn (Utilisateur $u) => $u->estActif() && $u->estAdmin());
         Gate::define('gerer-paiements', fn (Utilisateur $u) => $u->estActif() && $u->estAdmin());
+        Gate::define('traiter-litiges', fn (Utilisateur $u) => $u->estActif() && $u->estAdmin());
         Gate::define('voir-comptabilite', fn (Utilisateur $u) => $u->estActif() && $u->estAdmin());
         Gate::define('enregistrer-reversement', fn (Utilisateur $u) => $u->estActif() && $u->estAdmin());
     }
