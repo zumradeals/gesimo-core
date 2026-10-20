@@ -2,8 +2,42 @@
 
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
+@source '../views';
+@source '../../app';
 
 @theme {
     /* Polices du système : aucune police à télécharger, utile sur connexion lente. */
-    --font-sans: ui-sans-serif, system-ui, sans-serif;
+    --font-sans: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+
+    --color-marque-50: #e9f7f5;
+    --color-marque-100: #c9ebe6;
+    --color-marque-500: #14958a;
+    --color-marque-600: #0f766e;
+    --color-marque-700: #0c5e58;
+    --color-sable-100: #f6efe0;
+    --color-fond: #f4f6f8;
+    --color-encre: #1b2430;
+    --color-gris-doux: #5b6675;
+    --color-trait: #d5dbe3;
+}
+
+@layer base {
+    html { -webkit-text-size-adjust: 100%; }
+    body { @apply bg-fond text-encre antialiased; }
+    [x-cloak] { display: none !important; }
+}
+
+@layer components {
+    .carte { @apply rounded-2xl border border-trait bg-white p-4 shadow-sm lg:p-5; }
+    .champ { @apply grid min-w-0 gap-1; }
+    .etiquette { @apply text-[15px] font-semibold; }
+    .saisie { @apply min-h-[50px] w-full min-w-0 max-w-full rounded-xl border-[1.5px] border-trait bg-white px-3 text-[17px] focus:border-marque-600 focus:outline-none focus:ring-2 focus:ring-marque-100; }
+    .aide { @apply text-[13px] text-gris-doux; }
+    .erreur-champ { @apply text-[14px] font-medium text-red-700; }
+    .btn { @apply inline-flex min-h-[54px] w-full items-center justify-center gap-2 rounded-xl bg-marque-600 px-5 text-[18px] font-bold text-white transition hover:bg-marque-700 focus:outline-none focus:ring-4 focus:ring-marque-100 disabled:opacity-60 sm:w-auto sm:min-w-[200px]; }
+    .btn-bloc { @apply w-full sm:w-full; }
+    .btn-second { @apply bg-white text-marque-600 border-2 border-marque-600 hover:bg-marque-50; }
+    .btn-danger { @apply bg-white text-red-700 border-2 border-red-700 hover:bg-red-50; }
+    .puce { @apply inline-flex min-h-[44px] cursor-pointer items-center rounded-full border-[1.5px] border-trait bg-white px-4 text-[15px]; }
+    .puce-active { @apply border-marque-600 bg-marque-50 font-bold text-marque-600; }
 }
