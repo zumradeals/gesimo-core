@@ -51,24 +51,33 @@ it('compte les statuts en attente, confirmée, arrivée enregistrée et hors pla
     expect(codeRefusBase(fn () => insererReservationSql($unite, '2026-12-11', '2026-12-13')))->toBe(CHEVAUCHEMENT);
 })->with(['en_attente', 'confirmee', 'arrivee_enregistree', 'hors_plateforme']);
 
-it('libère les dates quand la réservation est expirée, annulée, terminée ou en litige', function (string $statut) {
+it('libère les dates quand la réservation est expirée, annulée, terminée ou en litige', function (array $chemin) {
     $unite = creerUnite();
-    $id = insererReservationSql($unite, '2026-12-10', '2026-12-14');
+    $depart = array_shift($chemin);
+    $id = insererReservationSql($unite, '2026-12-10', '2026-12-14', $depart === 'en_attente'
+        ? ['statut' => 'en_attente', 'expire_le' => now()->addHours(2)]
+        : ['statut' => $depart]);
 
     expect(codeRefusBase(fn () => insererReservationSql($unite, '2026-12-11', '2026-12-13')))->toBe(CHEVAUCHEMENT);
 
-    DB::table('reservation')->where('id', $id)->update(['statut' => $statut]);
+    foreach ($chemin as $statut) { // chaque étape est un changement de statut permis
+        DB::table('reservation')->where('id', $id)->update(['statut' => $statut]);
+    }
 
     expect(codeRefusBase(fn () => insererReservationSql($unite, '2026-12-11', '2026-12-13')))->toBeNull();
-})->with(['expiree', 'annulee', 'terminee', 'litige']);
+})->with([
+    'expirée' => [['en_attente', 'expiree']],
+    'annulée' => [['confirmee', 'annulee']],
+    'terminée' => [['confirmee', 'arrivee_enregistree', 'terminee']],
+    'en litige' => [['confirmee', 'litige']],
+]);
 
-it('refuse de réactiver une réservation si ses dates ont été reprises entre-temps', function () {
+it('refuse de déplacer une réservation sur des dates déjà prises', function () {
     $unite = creerUnite();
-    $ancienne = insererReservationSql($unite, '2026-12-10', '2026-12-14');
-    DB::table('reservation')->where('id', $ancienne)->update(['statut' => 'annulee']);
     insererReservationSql($unite, '2026-12-10', '2026-12-14');
+    $autre = insererReservationSql($unite, '2026-12-20', '2026-12-22');
 
-    $code = codeRefusBase(fn () => DB::table('reservation')->where('id', $ancienne)->update(['statut' => 'confirmee']));
+    $code = codeRefusBase(fn () => DB::table('reservation')->where('id', $autre)->update(['date_arrivee' => '2026-12-13', 'date_depart' => '2026-12-15']));
 
     expect($code)->toBe(CHEVAUCHEMENT);
 });

@@ -59,18 +59,19 @@ it('fige les montants et l\'origine d\'une réservation après sa création', fu
     $id = insererReservationSql(creerUnite(), '2026-12-10', '2026-12-14');
 
     expect(codeRefusBase(fn () => DB::table('reservation')->where('id', $id)->update(['montant_total' => 1, 'acompte' => 1, 'solde' => 0])))->toBe(VIOLATION_INTEGRITE);
-    expect(codeRefusBase(fn () => DB::table('reservation')->where('id', $id)->update(['statut' => 'terminee'])))->toBeNull();
+    expect(codeRefusBase(fn () => DB::table('reservation')->where('id', $id)->update(['statut' => 'annulee'])))->toBeNull();
 });
 
 it('F-C7 : n\'accepte un avis qu\'après un séjour terminé, par le client du séjour', function () {
     $client = creerUtilisateur();
-    $id = insererReservationSql(creerUnite(), '2026-12-10', '2026-12-14', ['client_id' => $client->id]);
+    $id = insererReservationSql(creerUnite(), '2026-12-10', '2026-12-14', ['client_id' => $client->id, 'statut' => 'arrivee_enregistree']);
     $avis = fn (int $clientId) => DB::table('avis')->insert([
         'reservation_id' => $id, 'client_id' => $clientId, 'note' => 5, 'created_at' => now(), 'updated_at' => now(),
     ]);
 
     expect(codeRefusBase(fn () => $avis($client->id)))->toBe(VIOLATION_CONTRAINTE); // pas encore terminé
 
+    DB::table('reservation')->where('id', $id)->update(['statut' => 'arrivee_enregistree']);
     DB::table('reservation')->where('id', $id)->update(['statut' => 'terminee']);
 
     expect(codeRefusBase(fn () => $avis(creerUtilisateur()->id)))->toBe(VIOLATION_CONTRAINTE); // autre personne

@@ -4,12 +4,16 @@ use App\Noyau\Enums\Role;
 use App\Noyau\Models\Utilisateur;
 use App\Sejours\Models\Residence;
 use App\Sejours\Models\Unite;
+use Carbon\CarbonImmutable;
+use Carbon\CarbonInterface;
 use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
 use Tests\TestCase;
 
 pest()->extend(TestCase::class)->use(RefreshDatabase::class)->in('Feature');
+// Les tests de concurrence gèrent eux-mêmes la base : leurs données doivent être réellement enregistrées.
+pest()->extend(TestCase::class)->in('Concurrence');
 
 /** Crée une personne avec les rôles demandés. */
 function creerUtilisateur(Role ...$roles): Utilisateur
@@ -79,4 +83,22 @@ function codeRefusBase(Closure $action): ?string
     }
 
     return null;
+}
+
+/** Un logement réservable : résidence vérifiée, prix normal et prix week-end. */
+function creerLogement(int $prix = 15000, ?int $prixWeekEnd = 20000, array $residence = [], int $capacite = 3): Unite
+{
+    $unite = creerResidence(null, $residence)->unites()->create(['nom' => 'Chambre test', 'type' => 'chambre', 'capacite' => $capacite]);
+    $unite->tarifs()->create(['type_periode' => 'standard', 'prix_nuit' => $prix]);
+    if ($prixWeekEnd !== null) {
+        $unite->tarifs()->create(['type_periode' => 'week_end', 'prix_nuit' => $prixWeekEnd]);
+    }
+
+    return $unite->fresh();
+}
+
+/** Prochain vendredi (au moins dans 10 jours) : sert de date d'arrivée stable dans les tests. */
+function prochainVendredi(): CarbonImmutable
+{
+    return CarbonImmutable::now()->addDays(10)->next(CarbonInterface::FRIDAY)->startOfDay();
 }
