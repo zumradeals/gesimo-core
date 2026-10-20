@@ -1,6 +1,7 @@
 <?php
 
 use App\Noyau\Console\CreerSuperAdmin;
+use App\Noyau\Console\EnvoyerRappelsArrivee;
 use App\Noyau\Http\Middleware\VerifierRole;
 use App\Parametres\Console\DefinirParametre;
 use App\Sejours\Console\ExpirerReservations;
@@ -17,6 +18,7 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withCommands([
         CreerSuperAdmin::class,
+        EnvoyerRappelsArrivee::class,
         ExpirerReservations::class,
         DefinirParametre::class,
     ])

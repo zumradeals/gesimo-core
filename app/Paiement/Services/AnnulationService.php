@@ -2,6 +2,7 @@
 
 namespace App\Paiement\Services;
 
+use App\Noyau\Messagerie\Messagerie;
 use App\Noyau\Models\Utilisateur;
 use App\Noyau\Services\Audit;
 use App\Paiement\Models\Paiement;
@@ -82,6 +83,7 @@ class AnnulationService
             $this->reservations->changerStatut($reservation, StatutReservation::Annulee);
             $reservation->update(['annulation_motif' => $motif, 'annulee_le' => now()]);
             Audit::enregistrer('reservation.annulee', $reservation, ['motif' => $motif], $acteur);
+            $this->prevenir($reservation, 0);
 
             return $reservation->fresh();
         }
@@ -113,6 +115,7 @@ class AnnulationService
                 $aExecuter[] = $this->remboursements->demander($paiement, $verrouillee, $apercu['rembourse'], $motif === 'client' ? 'Annulation par le client' : 'Annulation par le gérant');
             }
             Audit::enregistrer('reservation.annulee', $verrouillee, ['motif' => $motif, 'rembourse' => $apercu['rembourse'], 'retenu' => $apercu['retenu']], $acteur);
+            $this->prevenir($verrouillee, $apercu['rembourse']);
         });
 
         foreach ($aExecuter as $remboursement) {
@@ -120,6 +123,15 @@ class AnnulationService
         }
 
         return $reservation->fresh();
+    }
+
+    /** E-mail d'annulation au client et au gérant. */
+    private function prevenir(Reservation $reservation, int $rembourse): void
+    {
+        $reservation->loadMissing('unite.residence.gerant', 'client');
+        $valeurs = Messagerie::valeursReservation($reservation, $rembourse);
+        Messagerie::envoyer('annulation', $reservation->client, $valeurs, $reservation);
+        Messagerie::envoyer('annulation', $reservation->unite->residence->gerant, $valeurs, $reservation);
     }
 
     /** « Client absent » (RG-8) : aucun remboursement ; tout ce qui a été encaissé est acquis (commission + part du gérant). */

@@ -2,6 +2,7 @@
 
 namespace App\Paiement\Services;
 
+use App\Noyau\Messagerie\Messagerie;
 use App\Noyau\Models\Utilisateur;
 use App\Paiement\Exceptions\PaiementImpossible;
 use App\Paiement\Models\EvenementPaiement as EvenementEnregistre;
@@ -251,6 +252,9 @@ class PaiementService
             'expire_le' => null,
             'commission_pourcentage' => $reservation->commission_pourcentage ?? ReglagesPaiement::commissionPourcentage() ?? 0,
         ]);
+
+        $paye = (int) $reservation->paiements()->where('statut', 'reussi')->sum('montant');
+        Messagerie::envoyer('confirmation', $reservation->client, Messagerie::valeursReservation($reservation, $paye), $reservation);
     }
 
     private function marquerEchoue(Paiement $paiement, EvenementPaiement $evenement): string

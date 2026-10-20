@@ -2,8 +2,10 @@
 
 namespace App\Paiement\Services;
 
+use App\Noyau\Messagerie\Messagerie;
 use App\Noyau\Models\Utilisateur;
 use App\Noyau\Services\Audit;
+use App\Noyau\Services\Format;
 use App\Paiement\Exceptions\PaiementImpossible;
 use App\Paiement\Models\Reversement;
 use Carbon\CarbonInterface;
@@ -42,6 +44,8 @@ class ReversementService
             }
             Comptabilite::reversement($reversement->fresh(), $admin);
             Audit::enregistrer('reversement.enregistre', $reversement, ['reference' => $reference, 'montant' => $reversement->montant], $admin);
+            $reservation = $reversement->reservation()->with('unite.residence')->first();
+            Messagerie::envoyer('reversement', $reversement->gerant, $reservation ? Messagerie::valeursReservation($reservation, $reversement->montant) : ['montant' => Format::fcfa($reversement->montant)], $reservation);
         });
 
         return $reversement->fresh();
