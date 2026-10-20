@@ -1,0 +1,14 @@
+[Unit]
+Description=GESIMO Séjours — traitement en arrière-plan (e-mails)
+After=network.target postgresql.service
+
+[Service]
+User=www-data
+Group=www-data
+WorkingDirectory=__DOSSIER__
+ExecStart=/usr/bin/php artisan queue:work --sleep=3 --tries=3 --max-time=3600
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
