@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GESIMO Séjours — Maquettes du Lot 6</title>
+<style>
+:root{--vert:#0f766e;--vert-clair:#e6f4f2;--texte:#1b2430;--gris:#5b6675;--bord:#d5dbe3;--fond:#f4f6f8;--rouge:#b42318;--rouge-clair:#fdecea;--orange:#b54708;--orange-clair:#fff4e5;--bleu:#175cd3;--bleu-clair:#e8f0fe}
+*{box-sizing:border-box}
+a{text-decoration:none;color:inherit}
+body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;color:var(--texte);background:#e9edf1;line-height:1.45}
+.barre{position:sticky;top:0;z-index:10;background:#fff;border-bottom:1px solid var(--bord);padding:10px 12px}
+.barre h1{font-size:16px;margin:0 0 8px}
+.onglets{display:flex;flex-wrap:wrap;gap:6px}
+.onglets button,.vues button{border:1px solid var(--bord);background:#fff;border-radius:999px;padding:7px 12px;font-size:13px;cursor:pointer}
+.onglets button.actif,.vues button.actif{background:var(--vert);color:#fff;border-color:var(--vert)}
+.vues{display:flex;gap:6px;margin-top:8px;align-items:center;font-size:13px;color:var(--gris)}
+.scene{padding:14px 8px 40px;display:flex;flex-direction:column;align-items:center;gap:16px}
+.cadre{width:390px;max-width:100%;background:var(--fond);border:2px solid #9aa5b3;border-radius:22px;overflow:hidden;container-type:inline-size;transition:width .2s;position:relative}
+.scene.ordi{padding:0 0 40px;gap:0}.scene.ordi .cadre{width:100%;border:0;border-radius:0;min-height:80vh}.scene.ordi .notes{width:100%;border-radius:0;border-left:0;border-right:0}
+.ecran{display:none}.ecran.actif{display:block}
+.notes{width:min(1100px,100%);background:#fff;border:1px solid var(--bord);border-radius:10px;padding:12px 16px;font-size:14px}
+.notes h2{font-size:16px;margin:0 0 6px}.notes h3{font-size:13px;margin:10px 0 2px;color:var(--vert);text-transform:uppercase;letter-spacing:.04em}
+.notes ul{margin:2px 0 0;padding-left:20px}
+
+/* barre du bas (téléphone) et barre du haut (ordinateur) */
+.tabbar{position:sticky;bottom:0;display:grid;grid-auto-flow:column;grid-auto-columns:1fr;background:#fff;border-top:1px solid var(--bord);box-shadow:0 -4px 16px #1b24300f;z-index:5}
+.tabbar a{display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 2px 10px;font-size:11.5px;color:var(--gris);font-weight:600;min-height:58px;justify-content:center}
+.tabbar a svg{width:24px;height:24px}
+.tabbar a.on{color:var(--vert)}.tabbar a.on svg{stroke-width:2.4}
+.topnav{display:none;align-items:center;gap:6px;background:#fff;border-bottom:1px solid var(--bord);padding:0 32px;height:64px}
+.topnav .logo{font-weight:800;color:var(--vert);font-size:19px;margin-right:22px;display:flex;align-items:center;gap:8px}
+.topnav .logo i{width:30px;height:30px;border-radius:9px;background:var(--vert);display:inline-block}
+.topnav a{padding:9px 14px;border-radius:10px;font-weight:600;color:var(--gris);display:flex;gap:8px;align-items:center;font-size:15px}
+.topnav a svg{width:20px;height:20px}
+.topnav a.on{background:var(--vert-clair);color:var(--vert)}
+.topnav .droite{margin-left:auto;display:flex;gap:8px;align-items:center}
+.hero{background:linear-gradient(135deg,#0f766e,#1aa395 60%,#e7c27d);color:#fff;border-radius:18px;padding:18px}
+.hero h2{margin:0 0 4px;font-size:22px}.hero p{margin:0;opacity:.95}
+.resultats{display:grid;gap:14px}
+/* éléments d'interface */
+.entete{background:linear-gradient(135deg,#0f766e,#14958a);color:#fff;padding:12px 14px;display:flex;justify-content:space-between;align-items:center;font-weight:700}
+.entete small{font-weight:400;opacity:.9}
+.corps{padding:14px 14px 96px;display:grid;gap:14px}
+.carte{background:#fff;border:1px solid var(--bord);border-radius:16px;padding:14px;box-shadow:0 1px 2px #1b24300d,0 4px 14px #1b243008}
+.carte h2,.carte h3{margin:0 0 6px;font-size:16px}
+.champ{display:grid;gap:4px}.champ label{font-weight:600;font-size:15px}
+.champ input,.champ select,.champ textarea{width:100%;min-height:50px;border:1.5px solid var(--bord);border-radius:10px;padding:10px 12px;font-size:17px;background:#fff;font-family:inherit}
+.aide{font-size:13px;color:var(--gris)}
+.btn{display:flex;align-items:center;justify-content:center;min-height:54px;width:100%;border-radius:12px;border:0;background:var(--vert);color:#fff;font-size:18px;font-weight:700;padding:10px 14px;cursor:pointer;text-align:center}
+.btn.second{background:#fff;color:var(--vert);border:2px solid var(--vert)}
+.btn.danger{background:#fff;color:var(--rouge);border:2px solid var(--rouge)}
+.btn.gris{background:#c9d0d9;color:#4a5361}
+.erreur{background:var(--rouge-clair);color:var(--rouge);border:1px solid #f4b8b1;border-radius:10px;padding:10px 12px;font-size:15px}
+.info{background:var(--bleu-clair);color:var(--bleu);border:1px solid #b9d1fb;border-radius:10px;padding:10px 12px;font-size:15px}
+.attention{background:var(--orange-clair);color:var(--orange);border:1px solid #f7d4a6;border-radius:10px;padding:10px 12px;font-size:15px}
+.badge{display:inline-block;border-radius:999px;padding:3px 10px;font-size:13px;font-weight:700}
+.b-attente{background:var(--orange-clair);color:var(--orange)}.b-conf{background:#e3f6e8;color:#116b2b}.b-hors{background:var(--bleu-clair);color:var(--bleu)}.b-gris{background:#e7eaee;color:#4a5361}.b-rouge{background:var(--rouge-clair);color:var(--rouge)}.b-verif{background:#e3f6e8;color:#116b2b}
+.prix{font-size:22px;font-weight:800}.prix small{font-size:14px;font-weight:400;color:var(--gris)}
+.ligne{display:flex;justify-content:space-between;gap:10px;padding:6px 0;border-bottom:1px dashed var(--bord)}.ligne:last-child{border:0}
+.photo{background:linear-gradient(135deg,#bfe0db,#f1e9d8);border-radius:10px;height:150px;display:flex;align-items:center;justify-content:center;color:#5a7370;font-size:14px}
+.deux{display:grid;gap:12px}.trois{display:grid;gap:12px}
+.puces{display:flex;flex-wrap:wrap;gap:6px}.puce{border:1.5px solid var(--bord);background:#fff;border-radius:999px;padding:8px 12px;font-size:15px}.puce.on{background:var(--vert-clair);border-color:var(--vert);color:var(--vert);font-weight:700}
+.onglet2{display:grid;grid-template-columns:1fr 1fr;gap:0;background:#fff;border-radius:12px;border:1px solid var(--bord);overflow:hidden}.onglet2 div{padding:13px;text-align:center;font-weight:700}.onglet2 .on{background:var(--vert);color:#fff}
+.calendrier{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;font-size:13px;text-align:center}
+.calendrier .j{background:#fff;border:1px solid var(--bord);border-radius:6px;min-height:46px;padding:2px;display:flex;flex-direction:column;justify-content:center}
+.calendrier .e{font-weight:700;color:var(--gris);border:0;background:none;min-height:0}
+.calendrier .res{background:#cfeedd;border-color:#8fd3ac}.calendrier .att{background:#ffe7c2;border-color:#f3c27a}.calendrier .hors{background:#d6e4ff;border-color:#9cb9f5}.calendrier .blo{background:#e0e3e8;border-color:#b3bac5;text-decoration:line-through}
+.legende{display:flex;flex-wrap:wrap;gap:8px;font-size:13px}.legende span::before{content:"";display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:5px;vertical-align:-1px;background:var(--c);border:1px solid #0003}
+.pasapas{display:flex;gap:6px;font-size:13px;color:var(--gris)}.pasapas b{color:var(--vert)}
+.tableau{width:100%;border-collapse:collapse;font-size:15px}.tableau th,.tableau td{text-align:left;padding:8px;border-bottom:1px solid var(--bord)}
+.cacher-ordi{display:block}.montrer-ordi{display:none}
+@container (min-width:1100px){.resultats{grid-template-columns:1fr 1fr 1fr}.trois{grid-template-columns:repeat(3,1fr)}}
+@container (min-width:720px){
+ .entete{display:none}.tabbar{display:none}.topnav{display:flex}
+ .corps{padding:28px 40px 48px;gap:20px}
+ .resultats{grid-template-columns:1fr 1fr}
+ .large2{grid-template-columns:380px 1fr}
+ .btn{min-width:200px}
+ .deux{grid-template-columns:1fr 1fr}.trois{grid-template-columns:1fr 1fr 1fr}
+ .btn{width:auto;min-width:230px;display:inline-flex}
+ .cacher-ordi{display:none}.montrer-ordi{display:block}
+ .large2{grid-template-columns:320px 1fr;align-items:start}
+ .calendrier .j{min-height:64px}
+ .photo{height:230px}
+}
+
+.stat{display:grid;gap:2px}.stat b{font-size:22px}.stat span{font-size:13px;color:var(--gris)}
+.grille-stat{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@container (min-width:720px){.grille-stat{grid-template-columns:repeat(4,1fr)}}
+.tableau td.d,.tableau th.d{text-align:right;white-space:nowrap}
+.defile{overflow-x:auto}
+.recu{background:#fff;border:1px dashed #9aa5b3;border-radius:10px;padding:18px;max-width:640px}
+.etat{display:grid;gap:8px;text-align:center;justify-items:center;padding:22px 14px}
+.etat .rond{width:64px;height:64px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:32px}
+.rond.ok{background:#e3f6e8;color:#116b2b}.rond.ko{background:var(--rouge-clair);color:var(--rouge)}.rond.att{background:var(--orange-clair);color:var(--orange)}
+.moyens{display:flex;flex-wrap:wrap;gap:8px}.moyens span{border:1.5px solid var(--bord);border-radius:10px;padding:8px 12px;font-weight:700;background:#fff}
+.neg{color:var(--rouge)}.pos{color:#116b2b}
+.sep{height:1px;background:var(--bord);margin:6px 0}
+details{border-bottom:1px dashed var(--bord);padding:8px 0}summary{cursor:pointer;min-height:36px}.cadre .hero{margin:0}
+</style>
+</head>
+<body>
+<div class="barre">
+ <h1>GESIMO Séjours — Maquettes du Lot 6 <span style="font-weight:400;color:var(--gris)">(version à valider — rien n'est encore programmé)</span></h1>
+ <div class="onglets" id="onglets"></div>
+ <div class="vues"><span>Voir en :</span><button id="v-mobile" class="actif">Téléphone</button><button id="v-ordi">Ordinateur</button></div>
+</div>
+<div class="scene" id="scene">
+ <div class="cadre" id="cadre">
+<header class="topnav" id="topnav"></header>
+
+<section class="ecran" id="w1" data-role="client" data-menu="Chercher" data-titre="W1. Invitation à installer l'application (Android)">
+ <div class="entete">Accueil <small>Awa Koné</small></div>
+ <div class="corps">
+<div class="hero"><h2>Votre résidence meublée à Abidjan</h2><p>Réservez en moins de 2 minutes.</p></div>
+<div class="carte"><h3>Où et quand ?</h3><div class="champ"><label>Commune</label><select><option>Cocody</option></select></div><button class="btn" style="margin-top:8px">Chercher un logement</button></div>
+<div class="carte" style="border:2px solid var(--vert);box-shadow:0 8px 30px #0f766e30"><div style="display:flex;gap:12px;align-items:center"><div style="width:52px;height:52px;border-radius:14px;background:var(--vert);color:#fff;font-weight:800;font-size:28px;display:flex;align-items:center;justify-content:center">G</div><div><b>Installer GESIMO sur votre téléphone</b><div class="aide">Un accès direct depuis l'écran d'accueil, et vos réservations même avec un réseau faible.</div></div></div>
+<div class="deux" style="margin-top:10px"><button class="btn">Installer</button><button class="btn second">Plus tard</button></div><p class="aide" style="margin:6px 0 0">Gratuit, sans téléchargement lourd. Vous pouvez la retirer à tout moment.</p></div>
+ </div>
+</section>
+
+<section class="ecran" id="w2" data-role="client" data-menu="Chercher" data-titre="W2. Installation sur iPhone (Safari)">
+ <div class="entete">Installer <small>Awa Koné</small></div>
+ <div class="corps">
+<div class="carte"><h2>Installer GESIMO sur votre iPhone</h2><p class="aide">Sur iPhone, l'installation se fait à la main, en 3 gestes :</p>
+<div class="ligne"><span><b>1.</b> Touchez le bouton <b>Partager</b> (le carré avec une flèche) en bas de Safari</span><span style="font-size:22px">⬆️</span></div>
+<div class="ligne"><span><b>2.</b> Choisissez <b>« Sur l'écran d'accueil »</b></span><span style="font-size:22px">➕</span></div>
+<div class="ligne"><span><b>3.</b> Touchez <b>« Ajouter »</b></span><span style="font-size:22px">✔️</span></div>
+<button class="btn second" style="margin-top:10px">J'ai compris</button><p class="aide">Ça ne marche que depuis Safari (pas depuis Chrome ou une application de messagerie).</p></div>
+<div class="info">Cette aide s'affiche seulement sur iPhone/iPad, à la place du bouton « Installer ».</div>
+ </div>
+</section>
+
+<section class="ecran" id="w3" data-role="public" data-menu="Accueil" data-titre="W3. Icône et écran de démarrage">
+ <div class="entete">Application <small></small></div>
+ <div class="corps">
+<div class="deux"><div class="carte" style="text-align:center"><h3>Icône sur l'écran d'accueil</h3><div style="display:flex;gap:18px;justify-content:center;margin:14px 0"><div><div style="width:84px;height:84px;border-radius:20px;background:linear-gradient(135deg,#0f766e,#1aa395);color:#fff;font-weight:800;font-size:50px;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 16px #0f766e44">G</div><div class="aide">Android</div></div><div><div style="width:84px;height:84px;border-radius:22px;background:linear-gradient(135deg,#0f766e,#1aa395);color:#fff;font-weight:800;font-size:50px;display:flex;align-items:center;justify-content:center">G</div><div class="aide">iPhone</div></div></div><p class="aide">Nom sous l'icône : <b>GESIMO</b> (repris du nom saisi dans Réglages)</p></div>
+<div class="carte" style="padding:0;overflow:hidden"><div style="background:linear-gradient(160deg,#0f766e,#14958a);color:#fff;height:360px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px"><div style="width:96px;height:96px;border-radius:24px;background:#fff;color:#0f766e;font-weight:800;font-size:58px;display:flex;align-items:center;justify-content:center">G</div><b style="font-size:24px">GESIMO Séjours</b><span style="opacity:.9">Votre séjour, en toute confiance</span></div></div></div>
+ </div>
+</section>
+
+<section class="ecran" id="w4" data-role="client" data-menu="Chercher" data-titre="W4. Hors connexion : page jamais consultée">
+ <div class="entete">Hors connexion <small>Awa Koné</small></div>
+ <div class="corps">
+<div class="carte etat" style="padding:40px 14px"><div class="rond att">📡</div><h2>Vous êtes hors connexion</h2><p>Cette page n'a pas encore été enregistrée sur votre téléphone. Dès que le réseau revient, elle s'ouvrira.</p><button class="btn">Réessayer</button><button class="btn second">Voir mes réservations enregistrées</button><p class="aide">Vos données ne sont pas perdues. Rien n'a été envoyé.</p></div>
+ </div>
+</section>
+
+<section class="ecran" id="w5" data-role="client" data-menu="Mes réservations" data-titre="W5. Hors connexion : « Mes réservations » lisible">
+ <div class="entete">Mes réservations <small>Awa Koné</small></div>
+ <div class="corps">
+<div class="attention" style="border-radius:0;margin:-14px -14px 0;display:flex;gap:8px;align-items:center">📡 <span><b>Hors connexion.</b> Vous voyez la dernière version enregistrée (aujourd'hui à 14 h 02).</span></div><div class="carte"><div style="display:flex;justify-content:space-between;gap:8px"><b>Chambre climatisée 1</b><span class="badge b-conf">Confirmée</span></div><div class="aide">Les Palmiers · 11 → 14 déc.</div><div class="prix" style="font-size:18px;margin-top:4px">55 000 <small>FCFA</small></div></div><div class="carte"><button class="btn" style="background:#c9d0d9;color:#4a5361" disabled>Annuler (réseau requis)</button><p class="aide" style="margin:6px 0 0">Annuler, payer ou réserver demande une connexion. Réessayez quand le réseau est de retour.</p></div>
+<div class="info">Les pages de paiement, les reçus et les pièces d'identité ne sont jamais enregistrés sur le téléphone.</div>
+ </div>
+</section>
+
+<section class="ecran" id="w6" data-role="client" data-menu="Chercher" data-titre="W6. Action impossible sans réseau">
+ <div class="entete">Réserver <small>Awa Koné</small></div>
+ <div class="corps">
+<div class="carte"><h3>Récapitulatif</h3><div class="ligne"><span>Logement</span><span>Chambre climatisée 1</span></div><div class="ligne"><span>Dates</span><span>11 → 14 déc.</span></div><div class="ligne"><span>Total</span><span>55 000 FCFA</span></div></div>
+<div class="erreur"><b>Pas de connexion.</b> Votre demande n'a <b>pas</b> été envoyée et vous n'avez <b>pas</b> été débité. Vos choix sont conservés : touchez « Réessayer » quand le réseau est de retour.</div><button class="btn">Réessayer</button><button class="btn second">Rester sur cette page</button>
+<div class="attention">Pour éviter un double paiement, rien n'est renvoyé automatiquement : c'est vous qui touchez « Réessayer ».</div>
+ </div>
+</section>
+
+<section class="ecran" id="w7" data-role="client" data-menu="Mes réservations" data-titre="W7. Retour du réseau">
+ <div class="entete">Mes réservations <small>Awa Koné</small></div>
+ <div class="corps">
+<div class="info" style="border-radius:0;margin:-14px -14px 0;display:flex;justify-content:space-between;gap:8px;align-items:center"><span>✔ <b>Connexion rétablie.</b></span><button class="btn second" style="min-height:40px;width:auto;min-width:0;font-size:15px">Actualiser</button></div><div class="carte"><div style="display:flex;justify-content:space-between;gap:8px"><b>Chambre climatisée 1</b><span class="badge b-conf">Confirmée</span></div><div class="aide">Les Palmiers · 11 → 14 déc.</div><div class="prix" style="font-size:18px;margin-top:4px">55 000 <small>FCFA</small></div></div>
+ </div>
+</section>
+
+<section class="ecran" id="w8" data-role="client" data-menu="Mes réservations" data-titre="W8. Nouvelle version disponible">
+ <div class="entete">Mes réservations <small>Awa Koné</small></div>
+ <div class="corps">
+<div class="carte" style="border:2px solid var(--vert)"><div style="display:flex;justify-content:space-between;gap:10px;align-items:center"><span>🔄 <b>Une nouvelle version est disponible.</b></span></div><div class="deux" style="margin-top:8px"><button class="btn">Mettre à jour</button><button class="btn second">Plus tard</button></div></div><div class="carte"><div style="display:flex;justify-content:space-between;gap:8px"><b>Chambre climatisée 1</b><span class="badge b-conf">Confirmée</span></div><div class="aide">Les Palmiers · 11 → 14 déc.</div><div class="prix" style="font-size:18px;margin-top:4px">55 000 <small>FCFA</small></div></div><div class="attention"><b>Sur un écran de paiement ou de réservation :</b> le message n'apparaît pas. Il attend que vous ayez terminé, pour ne jamais casser une réservation en cours.</div>
+ </div>
+</section>
+
+<section class="ecran" id="w9" data-role="client" data-menu="Mes réservations" data-titre="W9. Paiement déjà en cours (rechargement ou retour en arrière)">
+ <div class="entete">Paiement <small>Awa Koné</small></div>
+ <div class="corps">
+<div class="carte"><h3>Paiement en cours de vérification</h3><p>Vous avez déjà lancé le paiement de <b>16 500 FCFA</b> pour cette réservation. <b>Ne payez pas une deuxième fois.</b></p><button class="btn">Reprendre mon paiement</button><button class="btn second">Vérifier maintenant</button><p class="aide">« Reprendre » vous ramène sur la même page de paiement sécurisée : aucun second paiement n'est créé.</p></div>
+<div class="attention">Même si vous touchez deux fois « Payer », rechargez la page ou revenez en arrière, un seul paiement existe pour cette réservation.</div>
+ </div>
+</section>
+
+  <nav class="tabbar" id="tabbar"></nav>
+ </div>
+ <div class="notes" id="notes"></div>
+</div>
+<template id="notes-data">
+<div data-n="w1"><h2>W1. Invitation à installer l'application (Android)</h2><h3>But</h3><p>Proposer l'installation sans jamais déranger.</p><h3>Ce que voit l'utilisateur</h3><ul><li>Un encadré discret au-dessus du menu du bas, avec l'icône, une phrase claire, « Installer » et « Plus tard ».</li><li>Il apparaît seulement à partir de la 2e visite (ou après 3 pages vues), jamais sur les écrans de paiement, de réservation, de connexion ou d'installation du site, et jamais plus d'une fois par mois si on choisit « Plus tard ».</li></ul><h3>Actions</h3><ul><li>Installer : la fenêtre d'Android s'ouvre (« Ajouter à l'écran d'accueil ») · Plus tard : l'encadré disparaît 30 jours.</li></ul><h3>Messages d'erreur et cas particuliers</h3><ul><li>Déjà installée ou navigateur incompatible : rien ne s'affiche.</li></ul></div>
+<div data-n="w2"><h2>W2. Installation sur iPhone (Safari)</h2><h3>But</h3><p>Guider l'installation sur iPhone, où le navigateur n'offre pas de bouton automatique.</p><h3>Ce que voit l'utilisateur</h3><ul><li>Trois étapes illustrées, sans jargon.</li></ul><h3>Actions</h3><ul><li>J'ai compris : ferme l'aide (pas de rappel avant 30 jours).</li></ul><h3>Messages d'erreur et cas particuliers</h3><ul><li>Si le visiteur n'est pas dans Safari : « Ouvrez cette page dans Safari pour installer l'application. »</li></ul></div>
+<div data-n="w3"><h2>W3. Icône et écran de démarrage</h2><h3>But</h3><p>Définir l'identité de l'application installée.</p><h3>Ce que voit l'utilisateur</h3><ul><li>Icône : un « G » blanc sur fond vert GESIMO (arrondi, adaptée à toutes les formes d'Android). Écran de démarrage : fond vert, icône, nom.</li></ul><h3>Actions</h3><ul><li>Aucune : c'est ce qui s'affiche au lancement de l'application.</li></ul><h3>Messages d'erreur et cas particuliers</h3><ul><li>Si vous importez un logo PNG (512 px) dans Réglages, il pourra remplacer l'icône par défaut plus tard.</li></ul></div>
+<div data-n="w4"><h2>W4. Hors connexion : page jamais consultée</h2><h3>But</h3><p>Dire clairement ce qui se passe quand le réseau est coupé.</p><h3>Ce que voit l'utilisateur</h3><ul><li>Page simple, rassurante, avec « Réessayer » et, pour un client connecté, l'accès à « Mes réservations » enregistrées.</li></ul><h3>Actions</h3><ul><li>Réessayer · Voir mes réservations enregistrées.</li></ul><h3>Messages d'erreur et cas particuliers</h3><ul><li>Pour un gérant ou un admin : seul « Réessayer » (leurs écrans contiennent des données de tiers et ne sont jamais enregistrés).</li></ul></div>
+<div data-n="w5"><h2>W5. Hors connexion : « Mes réservations » lisible</h2><h3>But</h3><p>Garder « Mes réservations » lisible sans réseau (point 2 du lot).</p><h3>Ce que voit l'utilisateur</h3><ul><li>Un bandeau « Hors connexion » avec l'heure de la dernière mise à jour ; les actions qui demandent le réseau sont grisées avec l'explication.</li></ul><h3>Actions</h3><ul><li>Lire ses réservations et le contact du gérant.</li></ul><h3>Messages d'erreur et cas particuliers</h3><ul><li>Les copies enregistrées sont effacées à la déconnexion, après 7 jours, et dès que le serveur demande de se reconnecter.</li></ul></div>
+<div data-n="w6"><h2>W6. Action impossible sans réseau</h2><h3>But</h3><p>Ne jamais perdre une action en silence, ne jamais la rejouer sans accord.</p><h3>Ce que voit l'utilisateur</h3><ul><li>Message clair : rien envoyé, rien débité, choix conservés.</li></ul><h3>Actions</h3><ul><li>Réessayer (manuel) · rester sur la page.</li></ul><h3>Messages d'erreur et cas particuliers</h3><ul><li>Si la connexion se coupe PENDANT l'envoi : « Nous ne savons pas si votre demande est arrivée. Vérifiez dans Mes réservations avant de recommencer. »</li></ul></div>
+<div data-n="w7"><h2>W7. Retour du réseau</h2><h3>But</h3><p>Reprendre sans perte quand le réseau revient.</p><h3>Ce que voit l'utilisateur</h3><ul><li>Bandeau vert qui remplace le bandeau « Hors connexion », avec « Actualiser » (la page se met aussi à jour toute seule au bout de quelques secondes).</li></ul><h3>Actions</h3><ul><li>Actualiser.</li></ul></div>
+<div data-n="w8"><h2>W8. Nouvelle version disponible</h2><h3>But</h3><p>Mettre à jour sans surprise (point 5).</p><h3>Ce que voit l'utilisateur</h3><ul><li>Un encadré simple avec un bouton ; aucune mise à jour automatique en cours d'utilisation.</li></ul><h3>Actions</h3><ul><li>Mettre à jour : la page se recharge avec la nouvelle version (vos réservations sont sur le serveur, rien n'est perdu) · Plus tard.</li></ul><h3>Messages d'erreur et cas particuliers</h3><ul><li>Au prochain lancement de l'application, la nouvelle version est prise automatiquement si vous n'êtes pas au milieu d'un paiement.</li></ul></div>
+<div data-n="w9"><h2>W9. Paiement déjà en cours (rechargement ou retour en arrière)</h2><h3>But</h3><p>Empêcher tout double paiement (critère du lot).</p><h3>Ce que voit l'utilisateur</h3><ul><li>Le serveur reconnaît un paiement déjà ouvert et le réutilise ; le bouton « Payer » se bloque dès le premier appui ; une seconde « Réserver » identique ne crée pas de seconde réservation.</li></ul><h3>Actions</h3><ul><li>Reprendre · Vérifier.</li></ul><h3>Messages d'erreur et cas particuliers</h3><ul><li>Lien de paiement expiré : « Ce lien a expiré, nous en créons un nouveau » (le précédent n'est plus valable).</li></ul></div>
+</template>
+<script>
+const I={rech:'<path d="m21 21-4.3-4.3M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z"/>',cal:'<path d="M8 2v4M16 2v4M3 10h18M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Z"/>',liste:'<path d="M9 6h11M9 12h11M9 18h11M4 6h.01M4 12h.01M4 18h.01"/>',bat:'<path d="M4 21V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v16M16 9h2a2 2 0 0 1 2 2v10M2 21h20M8 7h4M8 11h4M8 15h4"/>',moi:'<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z"/>',ok:'<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10ZM9 12l2 2 4-4"/>',cle:'<path d="M15 7a4 4 0 1 1-4 4M11 11 3 19v2h3v-2h2v-2h2l1-1"/>',argent:'<path d="M3 7h18v10H3zM12 14a2 2 0 1 0 0-4 2 2 0 0 0 0 4ZM6 10v.01M18 14v.01"/>',porte:'<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/>',carte:'<path d="M3 6h18v12H3zM3 10h18"/>',balance:'<path d="M12 3v18M5 7h14M5 7l-3 7a3 3 0 0 0 6 0L5 7ZM19 7l-3 7a3 3 0 0 0 6 0l-3-7Z"/>',aide:'<path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3M12 17h.01M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20Z"/>',maison:'<path d="m3 11 9-8 9 8M5 10v10h14V10"/>'};
+const MENUS={
+ public:[['Accueil','maison','w3'],['Chercher','rech','w3'],['Aide','aide','w3'],['Connexion','moi','w3']],
+ client:[['Chercher','rech','w1'],['Mes réservations','liste','w5'],['Aide','aide','w1'],['Compte','moi','w1']]};
+const NOMS={public:'Visiteur',client:'Awa Koné (client)'};
+function svg(n){return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'+I[n]+'</svg>';}
+const ecrans=[...document.querySelectorAll('.ecran')];
+function menus(id){
+ const e=document.getElementById(id);const r=e.dataset.role;const m=MENUS[r];
+ const lien=(t,i,c)=>'<a href="#'+(c||id)+'" class="'+(t===e.dataset.menu?'on':'')+'" onclick="'+(c?'montrer(\''+c+'\')':'')+';return false">'+svg(i)+'<span>'+t+'</span></a>';
+ document.getElementById('tabbar').innerHTML=m.map(x=>lien(...x)).join('');
+ document.getElementById('topnav').innerHTML='<span class="logo"><i></i>GESIMO</span>'+m.map(x=>lien(...x)).join('')+'<span class="droite"><span class="aide">'+NOMS[r]+'</span></span>';
+}
+const notes=document.getElementById('notes-data').content;
+const barre=document.getElementById('onglets');
+function montrer(id){
+ menus(id);
+ ecrans.forEach(e=>e.classList.toggle('actif',e.id===id));
+ [...barre.children].forEach(b=>b.classList.toggle('actif',b.dataset.id===id));
+ const n=notes.querySelector('[data-n="'+id+'"]');
+ document.getElementById('notes').innerHTML=n?n.innerHTML:'';
+ history.replaceState(null,'','#'+id); window.scrollTo(0,0);
+}
+ecrans.forEach(e=>{const b=document.createElement('button');b.textContent=e.dataset.titre;b.dataset.id=e.id;b.onclick=()=>montrer(e.id);barre.appendChild(b);});
+const scene=document.getElementById('scene');
+function vue(ordi){scene.classList.toggle('ordi',ordi);document.getElementById('v-ordi').classList.toggle('actif',ordi);document.getElementById('v-mobile').classList.toggle('actif',!ordi);}
+document.getElementById('v-ordi').onclick=()=>vue(true);document.getElementById('v-mobile').onclick=()=>vue(false);
+vue(window.innerWidth>=900);montrer((location.hash||'#w1').slice(1));
+</script>
+</body>
+</html>
