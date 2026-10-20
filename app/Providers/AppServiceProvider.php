@@ -6,6 +6,8 @@ use App\Noyau\Models\Utilisateur;
 use App\Noyau\Services\Courriel;
 use App\Noyau\Services\Sms\FournisseurSms;
 use App\Noyau\Services\Sms\FournisseurSmsNonConfigure;
+use App\Paiement\Services\Fournisseur\FournisseurPaiement;
+use App\Paiement\Services\Fournisseur\GeniusPay;
 use App\Sejours\Models\Reservation;
 use App\Sejours\Models\Residence;
 use App\Sejours\Policies\ReservationPolicy;
@@ -20,6 +22,8 @@ class AppServiceProvider extends ServiceProvider
     {
         // Aucun fournisseur SMS n'existe encore : le SMS reste désactivé tant qu'un vrai fournisseur n'est pas branché.
         $this->app->singleton(FournisseurSms::class, FournisseurSmsNonConfigure::class);
+        // Le fournisseur de paiement est remplaçable : il suffit de changer cette ligne.
+        $this->app->singleton(FournisseurPaiement::class, GeniusPay::class);
     }
 
     public function boot(): void
@@ -34,6 +38,7 @@ class AppServiceProvider extends ServiceProvider
         Gate::define('modifier-parametres', fn (Utilisateur $u) => $u->estActif() && $u->estSuperAdmin());
         Gate::define('voir-journal-audit', fn (Utilisateur $u) => $u->estActif() && $u->estAdmin());
         Gate::define('voir-verifications', fn (Utilisateur $u) => $u->estActif() && $u->estAdmin());
+        Gate::define('gerer-paiements', fn (Utilisateur $u) => $u->estActif() && $u->estAdmin());
         Gate::define('voir-comptabilite', fn (Utilisateur $u) => $u->estActif() && $u->estAdmin());
         Gate::define('enregistrer-reversement', fn (Utilisateur $u) => $u->estActif() && $u->estAdmin());
     }

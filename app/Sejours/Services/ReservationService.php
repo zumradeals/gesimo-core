@@ -99,22 +99,6 @@ class ReservationService
         return $reservation;
     }
 
-    /** Annulation faite par une personne : au Lot 2, seulement une réservation « En attente » ou « hors plateforme ». */
-    public function annuler(Reservation $reservation, Utilisateur $auteur): Reservation
-    {
-        Gate::forUser($auteur)->authorize('annuler', $reservation);
-
-        $annulableIci = $reservation->statut === StatutReservation::EnAttente || $reservation->origine === 'hors_plateforme';
-        if (! $annulableIci || ! $reservation->statut->peutPasserA(StatutReservation::Annulee, $reservation->origine === 'hors_plateforme')) {
-            throw new ReservationImpossible('Cette réservation ne peut plus être annulée ici.');
-        }
-
-        $this->changerStatut($reservation, StatutReservation::Annulee);
-        Audit::enregistrer('reservation.annulee', $reservation, [], $auteur);
-
-        return $reservation;
-    }
-
     public function changerStatut(Reservation $reservation, StatutReservation $cible): Reservation
     {
         $horsPlateforme = $reservation->origine === 'hors_plateforme';

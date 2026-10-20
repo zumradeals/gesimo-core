@@ -37,6 +37,18 @@ class ReservationPolicy
             && $unite->residence->gerant_id === $utilisateur->getKey();
     }
 
+    /** Payer : seulement le client de la réservation. */
+    public function payer(Utilisateur $utilisateur, Reservation $reservation): bool
+    {
+        return $utilisateur->estActif() && $reservation->client_id === $utilisateur->getKey();
+    }
+
+    /** Reçu et confirmation : le client concerné, ou l'équipe GESIMO. */
+    public function voirRecu(Utilisateur $utilisateur, Reservation $reservation): bool
+    {
+        return $utilisateur->estActif() && ($reservation->client_id === $utilisateur->getKey() || $utilisateur->estAdmin());
+    }
+
     public function annuler(Utilisateur $utilisateur, Reservation $reservation): bool
     {
         return $utilisateur->estActif()
