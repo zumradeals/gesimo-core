@@ -72,6 +72,36 @@ sudo -u www-data php artisan gesimo:parametre email.expediteur_nom "GESIMO Séjo
 
 (`email.chiffrement` vaut `tls` par défaut ; mettre `ssl` pour le port 465.)
 
+## 4 bis. Brancher le paiement GeniusPay (Lot 3)
+
+⚠️ **Sécurité d'abord** : la clé secrète « sandbox » a été visible sur une capture d'écran. Dans le tableau de bord GeniusPay,
+**régénérez-la** avant de continuer, et ne l'envoyez plus jamais par message.
+
+1. Dans GeniusPay (mode test), créez un **webhook** :
+   - adresse : `https://gesimo.dgafrique.com/webhooks/geniuspay`
+   - événements : paiement réussi, échoué, annulé, remboursé (`payment.success`, `payment.failed`, `payment.cancelled`, `payment.refunded`)
+   - copiez le secret affiché (il commence par `whsec_`).
+2. Sur le serveur, enregistrez les réglages (les secrets sont demandés au clavier, chiffrés en base, jamais affichés) :
+```bash
+cd /var/www/gesimo
+sudo -u www-data php artisan gesimo:parametre geniuspay.mode sandbox
+sudo -u www-data php artisan gesimo:parametre geniuspay.sandbox.cle_publique --secret
+sudo -u www-data php artisan gesimo:parametre geniuspay.sandbox.cle_secrete --secret
+sudo -u www-data php artisan gesimo:parametre geniuspay.sandbox.webhook_secret --secret
+sudo -u www-data php artisan gesimo:parametre commission.pourcentage 10
+```
+   (`10` = 10 % : **à vous de choisir le vrai taux**. Tant qu'il n'est pas réglé, le paiement en ligne reste fermé.)
+3. Facultatif : `paiement.frais_pourcentage` (frais GeniusPay estimés, pour le calcul de l'acompte minimum).
+4. Passage en réel plus tard : refaire l'étape 2 avec `geniuspay.live.*`, puis `geniuspay.mode live` (compte GeniusPay vérifié requis).
+
+### Liste de tests à faire sur le vrai bac à sable
+1. Réserver un logement, aller au paiement, payer en test → la réservation passe à « Confirmée » (page de confirmation + reçu).
+2. Payer puis fermer la page avant le retour → la réservation est quand même confirmée (le webhook suffit).
+3. Abandonner le paiement → la réservation reste « En attente » puis expire.
+4. Annuler une réservation payée → le remboursement est demandé ; vérifier dans GeniusPay et dans Admin ▸ Contrôle.
+5. Admin ▸ Contrôle : aucun écart ; Admin ▸ Reversements : verser au gérant et marquer « fait ».
+6. Envoyer un faux webhook (`curl -X POST https://gesimo.dgafrique.com/webhooks/geniuspay -d '{}'`) → réponse 401, rien ne change.
+
 ## 5. Vérifier que tout marche
 
 1. Ouvrez **https://gesimo.dgafrique.com** : la page de recherche s'affiche, avec le cadenas HTTPS.
