@@ -1,0 +1,9 @@
+@import 'tailwindcss';
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+
+@theme {
+    /* Polices du système : aucune police à télécharger, utile sur connexion lente. */
+    --font-sans: ui-sans-serif, system-ui, sans-serif;
+}
