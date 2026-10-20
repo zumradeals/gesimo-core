@@ -53,13 +53,21 @@ it('le service worker est servi à la racine, jamais mis en cache, avec un numé
     expect($v1)->not->toContain('__VERSION__')->and($v1)->toMatch("/const VERSION = '[0-9a-f]{12}';/");
     expect($this->get('/sw.js')->getContent())->toBe($v1); // stable tant que rien ne change
 
+    // Le site compilé peut être absent (avant « npm run build ») : on le simule le temps de l'essai, puis on remet les lieux comme avant.
     $manifest = public_path('build/manifest.json');
-    $avant = file_get_contents($manifest);
+    $dossierCree = ! is_dir(dirname($manifest)) && mkdir(dirname($manifest), 0775, true);
+    $existait = is_file($manifest);
+    $avant = $existait ? file_get_contents($manifest) : '{}';
     try {
+        file_put_contents($manifest, $avant);
+        $v1 = $this->get('/sw.js')->getContent();
         file_put_contents($manifest, $avant."\n");
         expect($this->get('/sw.js')->getContent())->not->toBe($v1); // nouveau site compilé = nouvelle version
     } finally {
-        file_put_contents($manifest, $avant);
+        $existait ? file_put_contents($manifest, $avant) : @unlink($manifest);
+        if ($dossierCree) {
+            @rmdir(dirname($manifest));
+        }
     }
 });
 
