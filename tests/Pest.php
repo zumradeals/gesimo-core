@@ -2,14 +2,22 @@
 
 use App\Noyau\Enums\Role;
 use App\Noyau\Models\Utilisateur;
+use App\Paiement\Models\Paiement;
+use App\Paiement\Services\PaiementService;
+use App\Parametres\Services\Parametres;
+use App\Sejours\Models\Reservation;
 use App\Sejours\Models\Residence;
 use App\Sejours\Models\Unite;
+use App\Sejours\Services\ReservationService;
 use Carbon\CarbonImmutable;
 use Carbon\CarbonInterface;
 use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
+use Illuminate\Testing\TestResponse;
 use Tests\TestCase;
 
 pest()->extend(TestCase::class)->use(RefreshDatabase::class)->in('Feature');
@@ -135,4 +143,144 @@ function creerLogement(int $prix = 15000, ?int $prixWeekEnd = 20000, array $resi
 function prochainVendredi(): CarbonImmutable
 {
     return CarbonImmutable::now()->addDays(10)->next(CarbonInterface::FRIDAY)->startOfDay();
+}
+
+// =====================================================================================================
+// Paiement (Lot 3) : faux GeniusPay. Aucune requête réelle ne part jamais pendant les tests.
+// =====================================================================================================
+
+const CLE_SECRETE_TEST = 'sk_sandbox_CLE-SECRETE-DE-TEST-0123456789';
+const SECRET_WEBHOOK_TEST = 'whsec_SECRET-WEBHOOK-DE-TEST-0123456789';
+
+/** Saisit les réglages comme le ferait le super-administrateur dans les Paramètres. */
+function configurerGeniusPay(string $mode = 'sandbox', ?float $commission = 10.0): void
+{
+    Parametres::definir('geniuspay.mode', $mode);
+    Parametres::definir("geniuspay.{$mode}.cle_publique", 'pk_'.$mode.'_PUBLIQUE-DE-TEST', null, true);
+    Parametres::definir("geniuspay.{$mode}.cle_secrete", CLE_SECRETE_TEST, null, true);
+    Parametres::definir("geniuspay.{$mode}.webhook_secret", SECRET_WEBHOOK_TEST, null, true);
+    if ($commission !== null) {
+        Parametres::definir('commission.pourcentage', (string) $commission);
+    }
+}
+
+/**
+ * Simule GeniusPay. $etats : référence => ['status' => 'completed'|..., 'amount' => int] pour GET /payments/{ref}.
+ * Renvoie un objet qui garde la trace des appels, pour que les tests vérifient ce qui a été envoyé.
+ */
+function fauxGeniusPay(array $etats = [], bool $remboursementPossible = true): object
+{
+    $etat = new class
+    {
+        public array $etats = [];
+
+        public array $creations = [];
+
+        public array $remboursements = [];
+
+        public array $lectures = [];
+
+        public bool $remboursementPossible = true;
+
+        public int $compteur = 0;
+    };
+    $etat->etats = $etats;
+    $etat->remboursementPossible = $remboursementPossible;
+
+    Http::fake(function (Request $requete) use ($etat) {
+        $chemin = parse_url($requete->url(), PHP_URL_PATH);
+        $chemin = preg_replace('#^/api/v1/merchant#', '', $chemin);
+
+        if ($requete->method() === 'POST' && $chemin === '/payments') {
+            $etat->compteur++;
+            $reference = 'SANDBOX-'.str_pad((string) $etat->compteur, 4, '0', STR_PAD_LEFT);
+            $etat->creations[] = ['reference' => $reference, 'corps' => $requete->data(), 'entetes' => $requete->headers(), 'url' => $requete->url()];
+            $montant = (int) $requete['amount'];
+
+            return Http::response(['success' => true, 'data' => [
+                'id' => $etat->compteur, 'reference' => $reference, 'external_reference' => $requete['external_reference'] ?? null,
+                'amount' => $montant, 'fees' => (int) round($montant * 0.03), 'net_amount' => $montant - (int) round($montant * 0.03),
+                'status' => 'pending', 'checkout_url' => "https://geniuspay.ci/checkout/{$reference}", 'environment' => 'sandbox',
+                'expires_at' => now()->addDay()->toIso8601ZuluString(),
+            ]], 201);
+        }
+        if ($requete->method() === 'POST' && preg_match('#^/payments/([^/]+)/refund$#', $chemin, $m)) {
+            $etat->remboursements[] = ['reference' => $m[1], 'corps' => $requete->data(), 'entetes' => $requete->headers()];
+            if (! $etat->remboursementPossible) {
+                return Http::response(['success' => false, 'message' => 'Service indisponible'], 503);
+            }
+
+            return Http::response(['success' => true, 'message' => 'Refund processed', 'data' => [
+                'reference' => $m[1], 'status' => 'refunded', 'refund_reference' => 'TXN-R'.count($etat->remboursements),
+                'amount_refunded' => (int) ($requete['amount'] ?? ($etat->etats[$m[1]]['amount'] ?? 0)), 'currency' => 'XOF', 'environment' => 'sandbox',
+            ]], 200);
+        }
+        if ($requete->method() === 'GET' && preg_match('#^/payments/([^/]+)$#', $chemin, $m)) {
+            $etat->lectures[] = $m[1];
+            if (! isset($etat->etats[$m[1]])) {
+                return Http::response(['success' => false, 'error' => ['code' => 'TRANSACTION_NOT_FOUND']], 404);
+            }
+
+            return Http::response(['success' => true, 'data' => ['reference' => $m[1], 'payment_method' => 'wave'] + $etat->etats[$m[1]]], 200);
+        }
+
+        return Http::response(['success' => false], 404);
+    });
+
+    return $etat;
+}
+
+/** Corps et en-têtes d'un message GeniusPay correctement signé (documentation officielle). */
+function messageSigne(string $evenement, string $reference, int $montant, array $options = []): array
+{
+    $horodatage = (string) ($options['horodatage'] ?? time());
+    $corps = $options['corps'] ?? json_encode([
+        'event' => $evenement,
+        'timestamp' => now()->toIso8601ZuluString(),
+        'data' => [
+            'transaction' => ['id' => 1, 'reference' => $reference, 'amount' => $montant, 'status' => 'completed', 'metadata' => []],
+            'merchant' => ['id' => 'uuid-marchand', 'name' => 'GESIMO'],
+            'environment' => $options['environnement'] ?? 'sandbox',
+        ],
+    ]);
+    $signature = $options['signature'] ?? hash_hmac('sha256', $horodatage.'.'.$corps, $options['secret'] ?? SECRET_WEBHOOK_TEST);
+
+    return [$corps, [
+        'HTTP_X_WEBHOOK_SIGNATURE' => $signature,
+        'HTTP_X_WEBHOOK_TIMESTAMP' => $horodatage,
+        'HTTP_X_WEBHOOK_EVENT' => $evenement,
+        'HTTP_X_WEBHOOK_ENVIRONMENT' => $options['environnement'] ?? 'sandbox',
+        'CONTENT_TYPE' => 'application/json',
+    ]];
+}
+
+/** Envoie un message signé sur l'adresse de réception, comme le ferait GeniusPay. */
+function recevoirWebhook(TestCase $test, string $evenement, string $reference, int $montant, array $options = []): TestResponse
+{
+    [$corps, $entetes] = messageSigne($evenement, $reference, $montant, $options);
+
+    return $test->call('POST', '/webhooks/geniuspay', [], [], [], $entetes, $corps);
+}
+
+/** Une réservation « En attente » d'un client, prête à payer. */
+function reservationAPayer(array $attributs = []): Reservation
+{
+    $client = $attributs['client'] ?? creerUtilisateur(Role::Client);
+    $unite = $attributs['unite'] ?? creerLogement(15000, 20000, $attributs['residence'] ?? []);
+    $arrivee = $attributs['arrivee'] ?? prochainVendredi();
+    $nuits = $attributs['nuits'] ?? 3;
+
+    $reservation = app(ReservationService::class)->garderDates($client, $unite, $arrivee, $arrivee->addDays($nuits), 2);
+
+    return $reservation->fresh();
+}
+
+/** Paie et confirme une réservation de bout en bout (démarrage + message signé), comme en production. */
+function payerEtConfirmer(TestCase $test, object $faux, Reservation $reservation): Paiement
+{
+    $paiement = app(PaiementService::class)->demarrer($reservation, $reservation->client);
+    $faux->etats[$paiement->reference_geniuspay] = ['status' => 'completed', 'amount' => $paiement->montant];
+    recevoirWebhook($test, 'payment.success', $paiement->reference_geniuspay, $paiement->montant)->assertOk();
+
+    return $paiement->fresh();
 }
