@@ -9,6 +9,7 @@ use App\Noyau\Services\Telephone;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Title;
+use Livewire\Attributes\Url;
 use Livewire\Component;
 
 #[Title('Créer un compte')]
@@ -22,6 +23,7 @@ class Inscription extends Component
 
     public string $motDePasse = '';
 
+    #[Url]
     /** « client » : réserver un séjour ; « gerant » : proposer ma résidence. */
     public string $profil = 'client';
 

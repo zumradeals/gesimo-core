@@ -35,6 +35,7 @@
                 <label class="puce {{ $profil === 'gerant' ? 'puce-active' : '' }}"><input type="radio" class="sr-only" wire:model.live="profil" value="gerant">Proposer ma résidence</label>
             </div>
         </div>
+        <p class="aide">En créant un compte, vous acceptez les <a class="underline" href="{{ route('conditions') }}" target="_blank">conditions</a> et la <a class="underline" href="{{ route('confidentialite') }}" target="_blank">politique de confidentialité</a>.</p>
         <button class="btn btn-bloc" wire:loading.attr="disabled">Créer mon compte</button>
     </form>
 </div>

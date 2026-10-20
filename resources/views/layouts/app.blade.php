@@ -42,6 +42,14 @@
 
     <main class="mx-auto w-full max-w-[1800px] px-4 pb-28 pt-4 lg:px-10 lg:pb-12 lg:pt-8">
         {{ $slot }}
+        <footer class="mt-10 flex flex-wrap justify-center gap-x-5 gap-y-1 border-t border-trait pt-4 text-[13px] text-gris-doux">
+            <a class="py-2 hover:underline" href="{{ route('a-propos') }}">À propos</a>
+            <a class="py-2 hover:underline" href="{{ route('faq') }}">Questions fréquentes</a>
+            <a class="py-2 hover:underline" href="{{ route('contact') }}">Contact</a>
+            <a class="py-2 hover:underline" href="{{ route('conditions') }}">Conditions</a>
+            <a class="py-2 hover:underline" href="{{ route('confidentialite') }}">Confidentialité</a>
+            <a class="py-2 hover:underline" href="{{ route('devenir-partenaire') }}">Devenir gérant partenaire</a>
+        </footer>
     </main>
 
     {{-- Téléphone : barre d'onglets en bas --}}
