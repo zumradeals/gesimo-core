@@ -24,7 +24,7 @@ Date : 20 octobre 2026 · Branche : `claude/sleepy-brahmagupta-t7j8ta`
 | Rapport Lighthouse (scores réels, mobile) ; PWA installable ; performance et accessibilité > 85 | **Réussi** : performance **93 à 100**, accessibilité **100**, bonnes pratiques **100**, SEO 91 (4G et 3G lente) ; installabilité validée par Chrome | `docs/rapports/lot-6/lighthouse.md` (Lighthouse 13.5.0) + essai de bout en bout. Lighthouse 13 n'a plus de catégorie « PWA » : l'installabilité est vérifiée directement par Chrome (aucune erreur d'installabilité) |
 | Réseau coupé : page hors connexion claire, reprise sans perte au retour | **Réussi** (vrai navigateur, réseau réellement coupé) | `tests/E2E/pwa.mjs` ; captures `hors-connexion-*.png`, `connexion-retablie.png` |
 | Un paiement en cours n'est jamais dupliqué (rechargement, retour en arrière) | **Réussi** | `PwaTest` : double appui, rechargement, verrou, lien expiré remplacé sans toucher à l'ancien |
-| Après déconnexion, aucune donnée personnelle lisible depuis le cache | **Réussi** | essai de bout en bout (vrai Chromium) + 15 essais du service worker en faux navigateur (`tests/Js/sw.test.mjs`) |
+| Après déconnexion, aucune donnée personnelle lisible depuis le cache | **Réussi** | essai de bout en bout (vrai Chromium) + 22 essais du service worker en faux navigateur (`tests/Js/sw.test.mjs`) |
 | Installation vérifiée sur Android (Chrome) et iPhone (Safari), avec captures | **Partiel — voir §4** | captures de l'interface simulée `android-invitation.png`, `iphone-*.png` ; installation sur de vrais téléphones **non testée** |
 | Budget : première page utile < 3 s en 3G simulée | **Réussi** : 3G lente (400 kbit/s, 400 ms) : **2,5 s** ; 4G : **1,0 s** | `lighthouse.md` (une mesure aberrante à 5,3 s, deux re-mesures à 2,5 s) |
 | Mise à jour sans casser une réservation en cours | **Réussi** | essai de bout en bout : message, bouton, rechargement ; absence du message sur les écrans de paiement (code et test du service worker) |
@@ -32,7 +32,7 @@ Date : 20 octobre 2026 · Branche : `claude/sleepy-brahmagupta-t7j8ta`
 
 ## 3. Tests lancés
 
-`vendor/bin/pest` : **332 réussis, 0 échec** (14 nouveaux dans `tests/Feature/Lot6`, dont l'essai du service worker en faux navigateur lancé par Pest) · `node tests/Js/sw.test.mjs` : 17 essais réussis · `node tests/E2E/pwa.mjs` (vrai Chromium à 360 px, réseau réellement coupé, déconnexion, mise à jour) : tous réussis · `npm run build` : OK.
+`vendor/bin/pest` : **332 réussis, 0 échec** (14 nouveaux dans `tests/Feature/Lot6`, dont l'essai du service worker en faux navigateur lancé par Pest) · `node tests/Js/sw.test.mjs` : 22 essais réussis · `node tests/E2E/pwa.mjs` (vrai Chromium à 360 px, réseau réellement coupé, déconnexion, mise à jour) : tous réussis · `npm run build` : OK.
 
 Un défaut trouvé grâce au vrai navigateur et corrigé : la compression du serveur (« Vary: Accept-Encoding ») empêchait de retrouver les pages enregistrées hors connexion ; le service worker l'ignore maintenant.
 
