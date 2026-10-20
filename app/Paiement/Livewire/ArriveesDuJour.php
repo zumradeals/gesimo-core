@@ -2,10 +2,13 @@
 
 namespace App\Paiement\Livewire;
 
+use App\Noyau\Enums\Role;
+use App\Paiement\Models\Reversement;
 use App\Paiement\Services\AnnulationService;
 use App\Paiement\Services\ArriveeService;
 use App\Sejours\Enums\StatutReservation;
 use App\Sejours\Exceptions\ReservationImpossible;
+use App\Sejours\Models\Litige;
 use App\Sejours\Models\MembreResidence;
 use App\Sejours\Models\Reservation;
 use App\Sejours\Models\Residence;
@@ -16,7 +19,7 @@ use Livewire\Attributes\Title;
 use Livewire\Attributes\Url;
 use Livewire\Component;
 
-#[Title('Arrivées et départs')]
+#[Title('Aujourd\'hui')]
 class ArriveesDuJour extends Component
 {
     #[Url]
@@ -24,6 +27,9 @@ class ArriveesDuJour extends Component
 
     #[Url]
     public string $jour = '';
+
+    /** @var array<int, array{type?: string, numero?: string}> Pièce d'identité saisie pour chaque arrivée. */
+    public array $pieces = [];
 
     public ?string $erreur = null;
 
@@ -36,7 +42,19 @@ class ArriveesDuJour extends Component
 
     public function arrivee(int $id, ArriveeService $service): void
     {
-        $this->agir(fn ($r) => $service->enregistrerArrivee($r, auth()->user()), $id, 'Arrivée enregistrée. Votre part est maintenant « à reverser » par GESIMO.');
+        $type = (string) ($this->pieces[$id]['type'] ?? 'cni');
+        $numero = trim((string) ($this->pieces[$id]['numero'] ?? ''));
+        if (! in_array($type, ['cni', 'passeport', 'permis', 'autre'], true)) {
+            $type = 'autre';
+        }
+        if (mb_strlen($numero) < 4 || mb_strlen($numero) > 40) {
+            $this->message = null;
+            $this->erreur = 'Indiquez le numéro de la pièce d\'identité du client (4 à 40 caractères).';
+
+            return;
+        }
+        $this->agir(fn ($r) => $service->enregistrerArrivee($r, auth()->user(), $type, $numero), $id, 'Arrivée enregistrée. Votre part est maintenant « à reverser » par GESIMO.');
+        unset($this->pieces[$id]);
     }
 
     public function depart(int $id, ArriveeService $service): void
@@ -68,10 +86,17 @@ class ArriveesDuJour extends Component
 
         $base = Reservation::whereIn('unite_id', $unites)->with(['unite', 'client'])->orderBy('date_arrivee');
 
+        $estGerant = auth()->user()->aRole(Role::Gerant);
+        $ids = $residences->pluck('id');
+        $tous = Reservation::whereHas('unite', fn ($q) => $q->whereIn('residence_id', $ids));
+
         return view('livewire.paiement.arrivees-du-jour', [
             'residences' => $residences,
             'residence' => $residence,
             'jourDate' => $jour,
+            'nbAVenir' => (clone $tous)->where('statut', StatutReservation::Confirmee->value)->where('date_arrivee', '>', $jour->toDateString())->where('date_arrivee', '<=', $jour->addDays(7)->toDateString())->count(),
+            'sommeDue' => $estGerant ? (int) Reversement::where('gerant_id', auth()->id())->where('statut', 'a_payer')->sum('montant') : null,
+            'litiges' => Litige::where('statut', 'ouvert')->where(fn ($q) => $q->where('ouvert_par', auth()->id())->orWhere('partie_adverse_id', auth()->id()))->count(),
             'attendues' => (clone $base)->whereIn('statut', [StatutReservation::Confirmee->value, StatutReservation::EnAttente->value])
                 ->where('origine', 'plateforme')->where('date_arrivee', '<=', $jour->toDateString())->where('date_depart', '>', $jour->toDateString())
                 ->where(fn ($q) => $q->where('statut', StatutReservation::Confirmee->value)->orWhere('date_arrivee', $jour->toDateString()))->get(),

@@ -19,12 +19,12 @@ class ArriveeService
 {
     public function __construct(private AnnulationService $annulations) {}
 
-    public function enregistrerArrivee(Reservation $reservation, Utilisateur $agent): Reservation
+    public function enregistrerArrivee(Reservation $reservation, Utilisateur $agent, ?string $pieceType = null, ?string $pieceNumero = null): Reservation
     {
         $reservation->loadMissing('unite.residence');
         Gate::forUser($agent)->authorize('enregistrerArrivee', $reservation);
 
-        DB::transaction(function () use ($reservation, $agent) {
+        DB::transaction(function () use ($reservation, $agent, $pieceType, $pieceNumero) {
             $verrouillee = Reservation::whereKey($reservation->id)->lockForUpdate()->first();
             if ($verrouillee->statut !== StatutReservation::Confirmee) {
                 throw new ReservationImpossible('Cette réservation n\'est pas confirmée (acompte non payé) : l\'arrivée ne peut pas être enregistrée.');
@@ -37,7 +37,10 @@ class ArriveeService
                 throw new ReservationImpossible('Le séjour est terminé : l\'arrivée ne peut plus être enregistrée.');
             }
 
-            Checkin::create(['reservation_id' => $verrouillee->id, 'arrivee_le' => now(), 'enregistre_par' => $agent->id]);
+            Checkin::create([
+                'reservation_id' => $verrouillee->id, 'arrivee_le' => now(), 'enregistre_par' => $agent->id,
+                'piece_type' => $pieceType, 'piece_numero' => $pieceNumero, // le numéro est chiffré en base
+            ]);
             $verrouillee->update(['statut' => StatutReservation::ArriveeEnregistree]);
             $verrouillee->setRelation('unite', $reservation->unite);
             $this->annulations->acquerir($verrouillee, Comptabilite::encaisse($verrouillee), $verrouillee->montant_total, $agent, 'Arrivée enregistrée');
