@@ -26,7 +26,7 @@
             @if($r->statut === $S::EnAttente)
                 <a href="{{ route('payer', $r) }}" data-reseau class="btn btn-bloc">Payer {{ $fr($r->acompte) }}</a>
             @endif
-            @if($paye > 0)<a href="{{ route('reservation.recu', $r) }}" target="_blank" class="btn btn-second btn-bloc">Télécharger le reçu</a>@endif
+            @if($paye > 0)<a href="{{ route('reservation.recu', $r) }}" data-reseau target="_blank" class="btn btn-second btn-bloc">Télécharger le reçu</a>@endif
             @if($r->statut === $S::Confirmee)<a href="{{ route('reservation.annuler', $r) }}" data-reseau class="btn btn-danger btn-bloc">Annuler</a>@endif
             @if($r->statut === $S::Terminee)
                 @if($avis)

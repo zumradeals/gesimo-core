@@ -32,7 +32,7 @@
                     @if($res->latitude !== null)<a class="font-semibold text-marque-600 underline" href="https://www.google.com/maps?q={{ $res->latitude }},{{ $res->longitude }}" target="_blank" rel="noopener">Voir sur la carte</a>@endif
                 </div>
                 <div class="grid gap-2 sm:grid-cols-2">
-                    <a href="{{ route('reservation.recu', $r) }}" target="_blank" class="btn btn-second btn-bloc">Reçu</a>
+                    <a href="{{ route('reservation.recu', $r) }}" data-reseau target="_blank" class="btn btn-second btn-bloc">Reçu</a>
                     @if($r->statut === \App\Sejours\Enums\StatutReservation::Confirmee)<a href="{{ route('reservation.annuler', $r) }}" data-reseau class="btn btn-danger btn-bloc">Annuler</a>@endif
                 </div>
             @elseif($r->statut === \App\Sejours\Enums\StatutReservation::Expiree)

@@ -2,7 +2,7 @@
  *
  * Règles de sécurité (Lot 6) :
  *  - on n'enregistre QUE les pages que le serveur marque « X-Gesimo-Cache: public » (visiteur) ou « prive » (client connecté) ;
- *  - jamais le paiement, les reçus, les pièces d'identité, l'argent, les écrans gérant/admin (liste NE_JAMAIS + « no-store » du serveur) ;
+ *  - jamais le paiement, les reçus, les pièces d'identité, l'argent, les écrans gérant/admin (liste NE_JAMAIS, en plus du serveur) ;
  *  - la copie « privée » est effacée à la déconnexion, après 7 jours, et dès que le serveur demande de se reconnecter ;
  *  - aucune requête qui modifie quelque chose (POST…) n'est jamais mise en attente ni rejouée : pas de double paiement possible.
  */
@@ -17,6 +17,8 @@ const AGE_MAX_PRIVE_MS = 7 * 24 * 3600 * 1000;
 const DELAI_RESEAU_FAIBLE_MS = 4000;
 const MAX_PAGES = 40;
 const MAX_IMAGES = 60;
+// Le serveur compresse (« Vary: Accept-Encoding ») : sans cette option, une copie enregistrée ne serait jamais retrouvée.
+const OPTIONS_MATCH = { ignoreVary: true };
 
 const NE_JAMAIS = [
   /^\/(payer|paiement|reserver|admin|gerant|webhooks|installation|connexion|inscription|invitation|compte|deconnexion)(\/|$)/,
@@ -63,24 +65,23 @@ async function avecHorodatage(reponse) {
 
 async function copieEnregistree(url) {
   const k = cle(url);
-  const prive = await (await caches.open(C_PRIVE)).match(k);
+  const prive = await (await caches.open(C_PRIVE)).match(k, OPTIONS_MATCH);
   if (prive) {
     const age = Date.now() - Number(prive.headers.get('X-Gesimo-Enregistre') || 0);
     if (age < AGE_MAX_PRIVE_MS) return prive;
     await (await caches.open(C_PRIVE)).delete(k);
   }
-  return (await (await caches.open(C_PUBLIC)).match(k)) || null;
+  return (await (await caches.open(C_PUBLIC)).match(k, OPTIONS_MATCH)) || null;
 }
 
 async function pageHorsConnexion() {
-  const r = await (await caches.open(C_STATIQUE)).match(PAGE_HORS_CONNEXION);
+  const r = await (await caches.open(C_STATIQUE)).match(PAGE_HORS_CONNEXION, OPTIONS_MATCH);
   return r || new Response('Vous êtes hors connexion.', { status: 503, headers: { 'Content-Type': 'text/plain; charset=utf-8' } });
 }
 
 /** Enregistre une réponse de page SI le serveur l'autorise ; efface la copie privée si le serveur demande de se reconnecter. */
 async function memoriser(requete, reponse) {
   const marque = reponse.headers.get('X-Gesimo-Cache');
-  const controle = (reponse.headers.get('Cache-Control') || '').toLowerCase();
   const k = cle(requete.url);
 
   const cheminDemande = new URL(requete.url).pathname;
@@ -92,7 +93,8 @@ async function memoriser(requete, reponse) {
     await viderPrive(); // session expirée : plus aucune donnée personnelle sur ce téléphone
     return;
   }
-  if (!reponse.ok || reponse.status !== 200 || controle.includes('no-store') || classer(reponse.url || requete.url) !== 'page') return;
+  // Le marquage du serveur est l'autorisation explicite (Livewire ajoute « no-store » à toutes les pages : ce n'est pas un critère).
+  if (!reponse.ok || reponse.status !== 200 || classer(reponse.url || requete.url) !== 'page') return;
   if (marque === 'public') {
     const cache = await caches.open(C_PUBLIC);
     await cache.put(k, reponse.clone());
@@ -138,9 +140,9 @@ async function traiterNavigation(evenement) {
 async function traiterRessource(evenement, type) {
   const nom = type === 'statique' ? C_STATIQUE : C_STATIQUE; // images et fichiers du site dans le même cache versionné
   const cache = await caches.open(nom);
-  const connue = await cache.match(evenement.request);
+  const connue = await cache.match(evenement.request, OPTIONS_MATCH);
   const reseau = fetch(evenement.request).then(async (reponse) => {
-    if (reponse.ok && reponse.status === 200 && !(reponse.headers.get('Cache-Control') || '').toLowerCase().includes('no-store')) {
+    if (reponse.ok && reponse.status === 200) {
       await cache.put(evenement.request, reponse.clone());
       if (type === 'image') await limiter(C_STATIQUE, MAX_IMAGES + 30);
     }

@@ -102,7 +102,9 @@ document.addEventListener('DOMContentLoaded', () => {
 // Une action (Livewire) qui échoue faute de réseau ne se perd jamais en silence, et n'est jamais renvoyée toute seule.
 document.addEventListener('livewire:init', () => {
   if (!window.Livewire?.interceptMessage) return;
-  window.Livewire.interceptMessage(({ onSend, onFailure, onSuccess }) => {
+  window.Livewire.interceptMessage(({ message, onSend, onFailure, onSuccess }) => {
+    // Les rafraîchissements automatiques (wire:poll) ne sont pas des actions de la personne : on ne l'alarme pas pour eux.
+    if ([...(message?.actions || [])].length > 0 && [...message.actions].every((a) => a.metadata?.type === 'poll')) return;
     let horsLigneAvantEnvoi = false;
     onSend(() => { horsLigneAvantEnvoi = !navigator.onLine; });
     onSuccess(() => retirer('pwa-echec'));

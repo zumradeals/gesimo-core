@@ -15,7 +15,7 @@ class FauxReponse extends Response {
 }
 class FauxCache {
   constructor() { this.m = new Map(); }
-  async match(r) { const k = typeof r === 'string' ? new URL(r, ORIGINE).toString() : r.url; const v = this.m.get(k); return v ? v.clone() : undefined; }
+  async match(r, options) { if (options?.ignoreVary !== true) return undefined; /* comme un vrai navigateur face à « Vary » : sans ignoreVary, pas de résultat */ const k = typeof r === 'string' ? new URL(r, ORIGINE).toString() : r.url; const v = this.m.get(k); return v ? v.clone() : undefined; }
   async put(r, rep) { this.m.set(typeof r === 'string' ? new URL(r, ORIGINE).toString() : r.url, rep); }
   async delete(r) { return this.m.delete(typeof r === 'string' ? new URL(r, ORIGINE).toString() : r.url); }
   async keys() { return [...this.m.keys()].map((u) => ({ url: u })); }
@@ -113,9 +113,12 @@ reseau = 'ok';
 // --- réponses non autorisées -----------------------------------------------------------------
 reponses['/logement/9'] = page(null, 'sans marque');
 await evenement('fetch', nav('/logement/9'));
-reponses['/logement/8'] = page('public', 'no-store', { entetes: { 'Cache-Control': 'no-store, private' } });
+reponses['/logement/8'] = page(null, 'no-store', { entetes: { 'Cache-Control': 'no-store, private' } });
 await evenement('fetch', nav('/logement/8'));
-assert.ok(!(await contenu('public-test-v1')).some((c) => c.startsWith('/logement'))); ok('une page sans marquage du serveur, ou « no-store », n\'est pas enregistrée');
+assert.ok(!(await contenu('public-test-v1')).some((c) => c.startsWith('/logement'))); ok('une page sans marquage du serveur n\'est pas enregistrée');
+reponses['/logement/7'] = page('public', 'marquee', { entetes: { 'Cache-Control': 'no-cache, no-store, must-revalidate' } });
+await evenement('fetch', nav('/logement/7'));
+assert.ok((await contenu('public-test-v1')).includes('/logement/7')); ok('une page marquée par le serveur est enregistrée même si Livewire ajoute « no-store » (anti-retour arrière)');
 
 // --- déconnexion ------------------------------------------------------------------------------
 await evenement('fetch', nav('/mes-reservations'));

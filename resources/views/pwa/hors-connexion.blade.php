@@ -27,7 +27,7 @@
 </main>
 <script>
     // Le lien vers « Mes réservations » n'apparaît que si une copie est enregistrée sur ce téléphone.
-    if ('caches' in window) { caches.match('/mes-reservations').then(function (r) { if (r) { document.getElementById('mes-reservations').hidden = false; } }); }
+    if ('caches' in window) { caches.match('/mes-reservations', { ignoreVary: true }).then(function (r) { if (r) { document.getElementById('mes-reservations').hidden = false; } }); }
     window.addEventListener('online', function () { location.reload(); });
 </script>
 </body>

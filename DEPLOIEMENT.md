@@ -121,6 +121,27 @@ Le script sauvegarde la base, passe le site en « maintenance » quelques second
   systemctl start gesimo-queue
   ```
 
+## 8. Installer l'application sur un téléphone (et la vérifier)
+
+L'application s'installe depuis le navigateur, sans magasin d'applications. Elle exige le **HTTPS** (déjà en place avec le script).
+
+**Android (Chrome)**
+1. Ouvrez https://gesimo.dgafrique.com, naviguez sur 2 ou 3 pages (l'invitation ne s'affiche pas dès la première visite).
+2. Touchez **Installer** dans l'encadré vert (ou menu ⋮ ▸ « Installer l'application »).
+3. L'icône « G » vert apparaît sur l'écran d'accueil ; l'application s'ouvre en plein écran.
+
+**iPhone (Safari uniquement)**
+1. Ouvrez le site dans **Safari**, naviguez sur 2 ou 3 pages, touchez « Comment faire » dans l'encadré.
+2. **Partager** (carré avec une flèche) ▸ **Sur l'écran d'accueil** ▸ **Ajouter**.
+
+**À vérifier sur vos téléphones (liste de contrôle)**
+1. L'icône et le nom sous l'icône sont corrects ; l'écran de démarrage est vert.
+2. Se connecter, ouvrir « Mes réservations », puis couper le réseau (mode avion) : la liste reste lisible avec le bandeau « Hors connexion » ; payer/annuler sont grisés.
+3. Ouvrir une page jamais vue en mode avion : message « Vous êtes hors connexion » clair.
+4. Remettre le réseau : « Connexion rétablie ».
+5. Se déconnecter, remettre le mode avion, rouvrir « Mes réservations » : plus rien de personnel n'apparaît.
+6. Après une mise à jour du site (§ 6) : ouvrir l'application, le message « Une nouvelle version est disponible » apparaît ; « Mettre à jour » recharge la page.
+
 ## En cas de problème
 
 | Symptôme | Que faire |
