@@ -40,7 +40,7 @@ class Navigation
             $menu[] = ['libelle' => 'Mes réservations', 'icone' => 'liste', 'route' => 'mes-reservations', 'actif' => ['mes-reservations', 'payer', 'paiement.retour', 'reservation.confirmation', 'reservation.annuler', 'reservation.detail', 'reservation.avis', 'reservation.probleme']];
             $menu[] = $aide;
         }
-        $menu[] = ['libelle' => 'Mon compte', 'icone' => 'compte', 'route' => 'compte', 'actif' => ['compte', 'profil']];
+        $menu[] = ['libelle' => 'Compte', 'icone' => 'compte', 'route' => 'compte', 'actif' => ['compte', 'profil']];
 
         return $menu;
     }
