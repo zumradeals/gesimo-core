@@ -33,6 +33,9 @@ class PaiementService
 {
     public const MONTANT_MINIMUM = 200;
 
+    /** Attente maximale (secondes) d'un autre départ de paiement en cours sur la même réservation. */
+    public static int $attenteVerrouSecondes = 15;
+
     public function __construct(private FournisseurPaiement $fournisseur, private RemboursementService $remboursements) {}
 
     /** Le paiement en ligne n'est ouvert que si les clés sont saisies ET la commission fixée (0 est permis). */
@@ -49,7 +52,7 @@ class PaiementService
     {
         $verrou = Cache::lock('paiement-'.$cle, 60);
         try {
-            $verrou->block(15);
+            $verrou->block(self::$attenteVerrouSecondes);
         } catch (LockTimeoutException) {
             throw new PaiementImpossible('Un paiement est déjà en cours de préparation. Patientez quelques secondes puis touchez « Vérifier », sans payer une deuxième fois.');
         }
