@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GESIMO Séjours — Maquettes du Lot 4</title>
+<style>
+:root{--vert:#0f766e;--vert-clair:#e6f4f2;--texte:#1b2430;--gris:#5b6675;--bord:#d5dbe3;--fond:#f4f6f8;--rouge:#b42318;--rouge-clair:#fdecea;--orange:#b54708;--orange-clair:#fff4e5;--bleu:#175cd3;--bleu-clair:#e8f0fe}
+*{box-sizing:border-box}
+a{text-decoration:none;color:inherit}
+body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;color:var(--texte);background:#e9edf1;line-height:1.45}
+.barre{position:sticky;top:0;z-index:10;background:#fff;border-bottom:1px solid var(--bord);padding:10px 12px}
+.barre h1{font-size:16px;margin:0 0 8px}
+.onglets{display:flex;flex-wrap:wrap;gap:6px}
+.onglets button,.vues button{border:1px solid var(--bord);background:#fff;border-radius:999px;padding:7px 12px;font-size:13px;cursor:pointer}
+.onglets button.actif,.vues button.actif{background:var(--vert);color:#fff;border-color:var(--vert)}
+.vues{display:flex;gap:6px;margin-top:8px;align-items:center;font-size:13px;color:var(--gris)}
+.scene{padding:14px 8px 40px;display:flex;flex-direction:column;align-items:center;gap:16px}
+.cadre{width:390px;max-width:100%;background:var(--fond);border:2px solid #9aa5b3;border-radius:22px;overflow:hidden;container-type:inline-size;transition:width .2s;position:relative}
+.scene.ordi{padding:0 0 40px;gap:0}.scene.ordi .cadre{width:100%;border:0;border-radius:0;min-height:80vh}.scene.ordi .notes{width:100%;border-radius:0;border-left:0;border-right:0}
+.ecran{display:none}.ecran.actif{display:block}
+.notes{width:min(1100px,100%);background:#fff;border:1px solid var(--bord);border-radius:10px;padding:12px 16px;font-size:14px}
+.notes h2{font-size:16px;margin:0 0 6px}.notes h3{font-size:13px;margin:10px 0 2px;color:var(--vert);text-transform:uppercase;letter-spacing:.04em}
+.notes ul{margin:2px 0 0;padding-left:20px}
+
+/* barre du bas (téléphone) et barre du haut (ordinateur) */
+.tabbar{position:sticky;bottom:0;display:grid;grid-auto-flow:column;grid-auto-columns:1fr;background:#fff;border-top:1px solid var(--bord);box-shadow:0 -4px 16px #1b24300f;z-index:5}
+.tabbar a{display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 2px 10px;font-size:11.5px;color:var(--gris);font-weight:600;min-height:58px;justify-content:center}
+.tabbar a svg{width:24px;height:24px}
+.tabbar a.on{color:var(--vert)}.tabbar a.on svg{stroke-width:2.4}
+.topnav{display:none;align-items:center;gap:6px;background:#fff;border-bottom:1px solid var(--bord);padding:0 32px;height:64px}
+.topnav .logo{font-weight:800;color:var(--vert);font-size:19px;margin-right:22px;display:flex;align-items:center;gap:8px}
+.topnav .logo i{width:30px;height:30px;border-radius:9px;background:var(--vert);display:inline-block}
+.topnav a{padding:9px 14px;border-radius:10px;font-weight:600;color:var(--gris);display:flex;gap:8px;align-items:center;font-size:15px}
+.topnav a svg{width:20px;height:20px}
+.topnav a.on{background:var(--vert-clair);color:var(--vert)}
+.topnav .droite{margin-left:auto;display:flex;gap:8px;align-items:center}
+.hero{background:linear-gradient(135deg,#0f766e,#1aa395 60%,#e7c27d);color:#fff;border-radius:18px;padding:18px}
+.hero h2{margin:0 0 4px;font-size:22px}.hero p{margin:0;opacity:.95}
+.resultats{display:grid;gap:14px}
+/* éléments d'interface */
+.entete{background:linear-gradient(135deg,#0f766e,#14958a);color:#fff;padding:12px 14px;display:flex;justify-content:space-between;align-items:center;font-weight:700}
+.entete small{font-weight:400;opacity:.9}
+.corps{padding:14px 14px 96px;display:grid;gap:14px}
+.carte{background:#fff;border:1px solid var(--bord);border-radius:16px;padding:14px;box-shadow:0 1px 2px #1b24300d,0 4px 14px #1b243008}
+.carte h2,.carte h3{margin:0 0 6px;font-size:16px}
+.champ{display:grid;gap:4px}.champ label{font-weight:600;font-size:15px}
+.champ input,.champ select,.champ textarea{width:100%;min-height:50px;border:1.5px solid var(--bord);border-radius:10px;padding:10px 12px;font-size:17px;background:#fff;font-family:inherit}
+.aide{font-size:13px;color:var(--gris)}
+.btn{display:flex;align-items:center;justify-content:center;min-height:54px;width:100%;border-radius:12px;border:0;background:var(--vert);color:#fff;font-size:18px;font-weight:700;padding:10px 14px;cursor:pointer;text-align:center}
+.btn.second{background:#fff;color:var(--vert);border:2px solid var(--vert)}
+.btn.danger{background:#fff;color:var(--rouge);border:2px solid var(--rouge)}
+.btn.gris{background:#c9d0d9;color:#4a5361}
+.erreur{background:var(--rouge-clair);color:var(--rouge);border:1px solid #f4b8b1;border-radius:10px;padding:10px 12px;font-size:15px}
+.info{background:var(--bleu-clair);color:var(--bleu);border:1px solid #b9d1fb;border-radius:10px;padding:10px 12px;font-size:15px}
+.attention{background:var(--orange-clair);color:var(--orange);border:1px solid #f7d4a6;border-radius:10px;padding:10px 12px;font-size:15px}
+.badge{display:inline-block;border-radius:999px;padding:3px 10px;font-size:13px;font-weight:700}
+.b-attente{background:var(--orange-clair);color:var(--orange)}.b-conf{background:#e3f6e8;color:#116b2b}.b-hors{background:var(--bleu-clair);color:var(--bleu)}.b-gris{background:#e7eaee;color:#4a5361}.b-rouge{background:var(--rouge-clair);color:var(--rouge)}.b-verif{background:#e3f6e8;color:#116b2b}
+.prix{font-size:22px;font-weight:800}.prix small{font-size:14px;font-weight:400;color:var(--gris)}
+.ligne{display:flex;justify-content:space-between;gap:10px;padding:6px 0;border-bottom:1px dashed var(--bord)}.ligne:last-child{border:0}
+.photo{background:linear-gradient(135deg,#bfe0db,#f1e9d8);border-radius:10px;height:150px;display:flex;align-items:center;justify-content:center;color:#5a7370;font-size:14px}
+.deux{display:grid;gap:12px}.trois{display:grid;gap:12px}
+.puces{display:flex;flex-wrap:wrap;gap:6px}.puce{border:1.5px solid var(--bord);background:#fff;border-radius:999px;padding:8px 12px;font-size:15px}.puce.on{background:var(--vert-clair);border-color:var(--vert);color:var(--vert);font-weight:700}
+.onglet2{display:grid;grid-template-columns:1fr 1fr;gap:0;background:#fff;border-radius:12px;border:1px solid var(--bord);overflow:hidden}.onglet2 div{padding:13px;text-align:center;font-weight:700}.onglet2 .on{background:var(--vert);color:#fff}
+.calendrier{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;font-size:13px;text-align:center}
+.calendrier .j{background:#fff;border:1px solid var(--bord);border-radius:6px;min-height:46px;padding:2px;display:flex;flex-direction:column;justify-content:center}
+.calendrier .e{font-weight:700;color:var(--gris);border:0;background:none;min-height:0}
+.calendrier .res{background:#cfeedd;border-color:#8fd3ac}.calendrier .att{background:#ffe7c2;border-color:#f3c27a}.calendrier .hors{background:#d6e4ff;border-color:#9cb9f5}.calendrier .blo{background:#e0e3e8;border-color:#b3bac5;text-decoration:line-through}
+.legende{display:flex;flex-wrap:wrap;gap:8px;font-size:13px}.legende span::before{content:"";display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:5px;vertical-align:-1px;background:var(--c);border:1px solid #0003}
+.pasapas{display:flex;gap:6px;font-size:13px;color:var(--gris)}.pasapas b{color:var(--vert)}
+.tableau{width:100%;border-collapse:collapse;font-size:15px}.tableau th,.tableau td{text-align:left;padding:8px;border-bottom:1px solid var(--bord)}
+.cacher-ordi{display:block}.montrer-ordi{display:none}
+@container (min-width:1100px){.resultats{grid-template-columns:1fr 1fr 1fr}.trois{grid-template-columns:repeat(3,1fr)}}
+@container (min-width:720px){
+ .entete{display:none}.tabbar{display:none}.topnav{display:flex}
+ .corps{padding:28px 40px 48px;gap:20px}
+ .resultats{grid-template-columns:1fr 1fr}
+ .large2{grid-template-columns:380px 1fr}
+ .btn{min-width:200px}
+ .deux{grid-template-columns:1fr 1fr}.trois{grid-template-columns:1fr 1fr 1fr}
+ .btn{width:auto;min-width:230px;display:inline-flex}
+ .cacher-ordi{display:none}.montrer-ordi{display:block}
+ .large2{grid-template-columns:320px 1fr;align-items:start}
+ .calendrier .j{min-height:64px}
+ .photo{height:230px}
+}
+
+.stat{display:grid;gap:2px}.stat b{font-size:22px}.stat span{font-size:13px;color:var(--gris)}
+.grille-stat{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@container (min-width:720px){.grille-stat{grid-template-columns:repeat(4,1fr)}}
+.tableau td.d,.tableau th.d{text-align:right;white-space:nowrap}
+.defile{overflow-x:auto}
+.recu{background:#fff;border:1px dashed #9aa5b3;border-radius:10px;padding:18px;max-width:640px}
+.etat{display:grid;gap:8px;text-align:center;justify-items:center;padding:22px 14px}
+.etat .rond{width:64px;height:64px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:32px}
+.rond.ok{background:#e3f6e8;color:#116b2b}.rond.ko{background:var(--rouge-clair);color:var(--rouge)}.rond.att{background:var(--orange-clair);color:var(--orange)}
+.moyens{display:flex;flex-wrap:wrap;gap:8px}.moyens span{border:1.5px solid var(--bord);border-radius:10px;padding:8px 12px;font-weight:700;background:#fff}
+.neg{color:var(--rouge)}.pos{color:#116b2b}
+.sep{height:1px;background:var(--bord);margin:6px 0}
+details{border-bottom:1px dashed var(--bord);padding:8px 0}summary{cursor:pointer;min-height:36px}.cadre .hero{margin:0}
+</style>
+</head>
+<body>
+<div class="barre">
+ <h1>GESIMO Séjours — Maquettes du Lot 4 <span style="font-weight:400;color:var(--gris)">(version à valider — rien n'est encore programmé)</span></h1>
+ <div class="onglets" id="onglets"></div>
+ <div class="vues"><span>Voir en :</span><button id="v-mobile" class="actif">Téléphone</button><button id="v-ordi">Ordinateur</button></div>
+</div>
+<div class="scene" id="scene">
+ <div class="cadre" id="cadre">
+<header class="topnav" id="topnav"></header>
+
+<section class="ecran" id="p1" data-role="public" data-menu="Accueil" data-titre="P1. Accueil">
+ <div class="entete">GESIMO <small></small></div>
+ <div class="corps">
+<div class="hero"><h2>Votre résidence meublée à Abidjan, en toute confiance</h2><p>Réservez en moins de 2 minutes. Payez avec Wave, Orange Money, MTN Money ou carte.</p></div>
+<div class="carte"><h3>Où et quand ?</h3><div class="deux"><div class="champ"><label>Commune</label><select><option>Cocody</option></select></div><div class="champ"><label>Personnes</label><input value="2"></div><div class="champ"><label>Arrivée</label><input value="11 déc. 2026"></div><div class="champ"><label>Départ</label><input value="14 déc. 2026"></div></div><button class="btn" style="margin-top:10px">Chercher un logement</button></div>
+<div class="trois"><div class="carte"><h3>✔ Résidences vérifiées</h3><p class="aide">Nous contrôlons les pièces et les photos avant de publier.</p></div><div class="carte"><h3>💰 Prix clair</h3><p class="aide">Le prix total est affiché avant de payer. Pas de frais cachés.</p></div><div class="carte"><h3>↩ Annulation simple</h3><p class="aide">Remboursement intégral jusqu'à 24 h avant l'arrivée.</p></div></div>
+<h3 style="margin:4px 0 0">Communes populaires</h3><div class="puces"><span class="puce on">Cocody</span><span class="puce">Marcory</span><span class="puce">Plateau</span><span class="puce">Riviera</span><span class="puce">Yopougon</span></div>
+<div class="carte" style="background:var(--vert-clair)"><h3>Vous possédez une résidence ?</h3><p class="aide">Rejoignez GESIMO : visibilité, paiements sécurisés, calendrier simple.</p><button class="btn second">Devenir gérant partenaire</button></div>
+ </div>
+</section>
+
+<section class="ecran" id="p2" data-role="public" data-menu="Chercher" data-titre="P2. Résultats de recherche">
+ <div class="entete">Résultats <small></small></div>
+ <div class="corps">
+<div class="puces"><span class="puce on">Cocody</span><span class="puce on">11 → 14 déc.</span><span class="puce on">2 pers.</span><span class="puce">Clim ✔</span><span class="puce">Wi-Fi</span><span class="puce">+ de filtres</span></div>
+<div class="aide"><b>12 logements libres</b> à ces dates · prix pour 3 nuits</div>
+<div class="resultats">
+<div class="carte"><div class="photo">Photo du logement</div><b>Chambre climatisée 1</b> <span class="badge b-conf">Vérifié GESIMO</span><div class="aide">Les Palmiers · Cocody · 2 pers.</div><div class="prix">55 000 FCFA <small>au total · 18 333 / nuit</small></div></div>
+<div class="carte"><div class="photo">Photo du logement</div><b>Studio avec groupe électrogène</b> <span class="badge b-conf">Vérifié GESIMO</span><div class="aide">Résidence Akwaba · Cocody · 3 pers.</div><div class="prix">72 000 FCFA <small>au total · 24 000 / nuit</small></div></div>
+<div class="carte"><div class="photo">Photo du logement</div><b>Appartement 2 pièces</b><div class="aide">Villa Soleil · Cocody · 4 pers.</div><div class="prix">96 000 FCFA <small>au total · 32 000 / nuit</small></div></div></div>
+<div class="carte etat"><div class="rond att">🔍</div><b>Aucune chambre libre à ces dates.</b><p class="aide">Essayez d'autres dates, ou une autre commune.</p><button class="btn second">Changer les dates</button></div>
+ </div>
+</section>
+
+<section class="ecran" id="p3" data-role="public" data-menu="Chercher" data-titre="P3. Fiche résidence">
+ <div class="entete">Les Palmiers <small></small></div>
+ <div class="corps">
+<div class="deux"><div><div class="photo" style="height:200px">Galerie de photos (4)</div></div>
+<div class="carte"><h2>Chambre climatisée 1 <span class="badge b-conf">Vérifié GESIMO</span></h2><div class="aide">Les Palmiers · Cocody (près de la Riviera Golf)</div>
+<div class="prix">55 000 FCFA <small>pour 3 nuits</small></div><div class="aide">18 333 FCFA par nuit · week-end : 20 000</div>
+<div class="puces" style="margin:8px 0"><span class="puce on">Climatisation</span><span class="puce on">Wi-Fi</span><span class="puce on">Eau chaude</span><span class="puce on">Parking</span></div>
+<button class="btn">Réserver — 2 h pour payer</button><p class="aide">Vous ne payez rien tant que vous n'avez pas validé.</p></div></div>
+<div class="deux"><div class="carte"><h3>Règlement</h3><p class="aide">Arrivée dès 14 h · pas de fête · pas de fumée à l'intérieur.</p></div><div class="carte"><h3>Annulation</h3><p class="aide">Remboursement intégral jusqu'à 24 h avant l'arrivée. Ensuite, une nuit retenue.</p></div></div>
+<div class="carte"><h3>Avis (4,6 / 5 · 12 séjours)</h3><div class="ligne"><span><b>Awa K.</b> ★★★★★</span><span class="aide">nov. 2026</span></div><p class="aide" style="margin:0">« Propre, calme, le gérant est très accueillant. »</p></div>
+ </div>
+</section>
+
+<section class="ecran" id="p4" data-role="public" data-menu="Aide" data-titre="P4. Contact">
+ <div class="entete">Contact <small></small></div>
+ <div class="corps">
+<div class="deux"><div class="carte"><h2>Une question ? Écrivez-nous</h2><div class="champ"><label>Votre nom</label><input></div><div class="champ"><label>Votre e-mail ou téléphone</label><input></div><div class="champ"><label>Votre message</label><textarea rows="4"></textarea></div><button class="btn" style="margin-top:8px">Envoyer</button></div>
+<div class="carte"><h3>Autres moyens</h3><div class="ligne"><span>E-mail</span><span>contact@gesimo… (réglage)</span></div><div class="ligne"><span>Réponse</span><span>sous 24 h (jours ouvrés)</span></div><p class="aide">Problème avec une réservation en cours ? Ouvrez-la depuis « Mes réservations » : vous pourrez écrire à l'équipe.</p></div></div>
+<div class="info">Merci ! Votre message est bien parti. Nous vous répondons sous 24 h.</div>
+<div class="erreur">Votre message est vide. Dites-nous en quelques mots comment nous aider.</div>
+ </div>
+</section>
+
+<section class="ecran" id="p5" data-role="public" data-menu="Aide" data-titre="P5. À propos et FAQ">
+ <div class="entete">À propos <small></small></div>
+ <div class="corps">
+<div class="carte"><h2>À propos de GESIMO Séjours</h2><p>GESIMO met en relation des voyageurs et des gérants de résidences meublées en Côte d'Ivoire. Nous vérifions les résidences, sécurisons le paiement et reversons le gérant après l'arrivée.</p><p class="aide">[Texte à valider par le porteur du projet : histoire, équipe, mission.]</p></div>
+<div class="carte"><h2>Questions fréquentes</h2>
+<details open><summary><b>Comment payer ?</b></summary><p class="aide">Par Wave, Orange Money, MTN Money ou carte, sur la page sécurisée GeniusPay. Vous payez l'acompte ou le total selon la résidence.</p></details>
+<details><summary><b>Mes dates sont-elles gardées ?</b></summary><p class="aide">Oui, 2 heures. Sans paiement, elles sont libérées.</p></details>
+<details><summary><b>Puis-je annuler ?</b></summary><p class="aide">Remboursement intégral jusqu'à 24 h avant l'arrivée. Ensuite une nuit est retenue.</p></details>
+<details><summary><b>Mon paiement est passé mais ma réservation n'est pas confirmée ?</b></summary><p class="aide">Ne payez pas deux fois. La confirmation arrive dès que GeniusPay a confirmé le paiement ; sinon vous êtes remboursé.</p></details>
+<details><summary><b>Comment devenir gérant ?</b></summary><p class="aide">Créez un compte gérant, ajoutez votre résidence et vos pièces ; nous vérifions sous quelques jours.</p></details></div>
+ </div>
+</section>
+
+<section class="ecran" id="p6" data-role="public" data-menu="Aide" data-titre="P6. Conditions et confidentialité">
+ <div class="entete">Conditions <small></small></div>
+ <div class="corps">
+<div class="attention"><b>Brouillon à faire valider par un juriste</b> avant la mise en service (cahier, section 8). Je rédige un texte de travail, jamais un texte définitif.</div>
+<div class="deux"><div class="carte"><h2>Conditions générales d'utilisation</h2><ol class="aide"><li>Rôle de GESIMO : mise en relation et encaissement pour le compte du gérant.</li><li>Réservation, paiement, acompte, solde à l'arrivée.</li><li>Annulation et remboursement (politique flexible).</li><li>Obligations du client et du gérant.</li><li>Litiges.</li><li>Fonds détenus temporairement jusqu'au reversement.</li></ol></div>
+<div class="carte"><h2>Politique de confidentialité</h2><ol class="aide"><li>Données collectées : nom, téléphone, e-mail, pièce d'identité à l'arrivée.</li><li>Pourquoi : réservation, sécurité, obligations légales.</li><li>Qui y accède : le gérant concerné et l'équipe GESIMO.</li><li>Durée de conservation et vos droits (ARTCI).</li><li>Cookies : uniquement ceux nécessaires.</li></ol></div></div>
+ </div>
+</section>
+
+<section class="ecran" id="p7" data-role="public" data-menu="Accueil" data-titre="P7. Devenir gérant partenaire">
+ <div class="entete">Partenaire <small></small></div>
+ <div class="corps">
+<div class="hero"><h2>Gérez vos résidences avec GESIMO</h2><p>Plus de réservations, paiements sécurisés, reversement après l'arrivée.</p></div>
+<div class="trois"><div class="carte"><h3>1. Créez votre compte</h3><p class="aide">Téléphone + e-mail, 2 minutes.</p></div><div class="carte"><h3>2. Ajoutez votre résidence</h3><p class="aide">Photos, prix, règlement, pièces.</p></div><div class="carte"><h3>3. Nous vérifions</h3><p class="aide">Puis vos logements apparaissent et reçoivent des réservations.</p></div></div>
+<div class="carte"><h3>Combien ça coûte ?</h3><p class="aide">Une commission sur chaque réservation payée en ligne (taux indiqué à l'inscription). Les réservations prises par téléphone sont gratuites.</p></div>
+<button class="btn">Créer mon compte gérant</button>
+ </div>
+</section>
+
+<section class="ecran" id="c1" data-role="client" data-menu="Mon compte" data-titre="C1. Accueil du compte">
+ <div class="entete">Mon compte <small>Awa Koné</small></div>
+ <div class="corps">
+<div class="hero"><h2>Bonjour Awa 👋</h2><p>Prochain séjour : <b>11 → 14 déc.</b> · Les Palmiers, Cocody</p></div>
+<div class="carte"><h3>Votre prochain séjour</h3><div class="ligne"><span>Statut</span><span><span class="badge b-conf">Confirmée</span></span></div><div class="ligne"><span>Arrivée</span><span>Vendredi 11 déc. dès 14 h</span></div><div class="ligne"><span>Gérant</span><span>Kouadio · 07 00 00 00 00</span></div><button class="btn" style="margin-top:8px">Voir ma réservation</button></div>
+<div class="carte"><h3>À faire</h3><div class="ligne"><span>⭐ Donner votre avis sur « Studio Akwaba »</span><a class="aide">Donner</a></div></div>
+<div class="trois"><div class="carte stat"><b>3</b><span>séjours</span></div><div class="carte stat"><b>1</b><span>à venir</span></div><div class="carte stat"><b>1</b><span>avis à donner</span></div></div>
+ </div>
+</section>
+
+<section class="ecran" id="c2" data-role="client" data-menu="Mes réservations" data-titre="C2. Mes réservations">
+ <div class="entete">Mes réservations <small>Awa Koné</small></div>
+ <div class="corps">
+<div class="onglet2"><div class="on">À venir (2)</div><div>Passées (5)</div></div><div class="carte"><div style="display:flex;justify-content:space-between;gap:8px"><b>Chambre climatisée 1</b><span class="badge b-conf">Confirmée</span></div><div class="aide">Les Palmiers · 11 → 14 déc.</div><div class="prix" style="font-size:18px;margin-top:4px">55 000 <small>FCFA</small></div></div><div class="carte"><div style="display:flex;justify-content:space-between;gap:8px"><b>Studio Akwaba</b><span class="badge b-attente">En attente · 1 h 42</span></div><div class="aide">Résidence Akwaba · 2 → 4 janv.</div><div class="prix" style="font-size:18px;margin-top:4px">48 000 <small>FCFA</small></div></div>
+ </div>
+</section>
+
+<section class="ecran" id="c3" data-role="client" data-menu="Mes réservations" data-titre="C3. Détail d'une réservation">
+ <div class="entete">Réservation <small>Awa Koné</small></div>
+ <div class="corps">
+<div class="deux"><div class="carte"><h2>Chambre climatisée 1 <span class="badge b-conf">Confirmée</span></h2><div class="ligne"><span>Résidence</span><span>Les Palmiers, Cocody</span></div><div class="ligne"><span>Dates</span><span>11 → 14 déc. (3 nuits)</span></div><div class="ligne"><span>Total</span><span>55 000 FCFA</span></div><div class="ligne"><span>Payé en ligne</span><span>16 500 FCFA (acompte)</span></div><div class="ligne"><span>À régler au gérant à l'arrivée</span><span>38 500 FCFA</span></div></div>
+<div class="carte"><h3>Le gérant</h3><div class="ligne"><span>Nom</span><span>Kouadio</span></div><div class="ligne"><span>Téléphone</span><span>07 00 00 00 00</span></div><div class="sep"></div><button class="btn second">Télécharger le reçu</button><button class="btn danger" style="margin-top:8px">Annuler (remboursement : 16 500 FCFA)</button><button class="btn gris" style="margin-top:8px">Signaler un problème</button></div></div>
+<div class="info">Après le séjour, vous pourrez donner votre avis ici.</div>
+ </div>
+</section>
+
+<section class="ecran" id="c4" data-role="client" data-menu="Mes réservations" data-titre="C4. Avis après séjour">
+ <div class="entete">Votre avis <small>Awa Koné</small></div>
+ <div class="corps">
+<div class="carte"><h2>Comment s'est passé votre séjour ?</h2><p class="aide">Studio Akwaba · 2 → 4 oct. 2026</p><div style="font-size:38px;letter-spacing:6px;color:#e0a100">★★★★☆</div><div class="champ"><label>Votre commentaire (facultatif)</label><textarea rows="4">Très propre, bon accueil.</textarea></div><button class="btn" style="margin-top:8px">Publier mon avis</button></div>
+<div class="erreur">Vous pourrez donner votre avis une fois le séjour terminé.</div>
+<div class="info">Merci ! Votre avis est publié. Un avis ne peut plus être modifié.</div>
+ </div>
+</section>
+
+<section class="ecran" id="c5" data-role="client" data-menu="Mes réservations" data-titre="C5. Signaler un problème (litige)">
+ <div class="entete">Litige <small>Awa Koné</small></div>
+ <div class="corps">
+<div class="carte"><h2>Signaler un problème</h2><p class="aide">Chambre climatisée 1 · 11 → 14 déc.</p><div class="champ"><label>Que s'est-il passé ?</label><textarea rows="5" placeholder="Expliquez simplement…"></textarea></div><button class="btn" style="margin-top:8px">Envoyer à l'équipe GESIMO</button></div>
+<div class="attention">Un litige ouvert met la réservation « En litige ». L'équipe GESIMO vous répond sous 48 h. <b>Aucun remboursement automatique</b> : l'équipe décide.</div>
+ </div>
+</section>
+
+<section class="ecran" id="c6" data-role="client" data-menu="Mon compte" data-titre="C6. Profil">
+ <div class="entete">Mon profil <small>Awa Koné</small></div>
+ <div class="corps">
+<div class="carte"><h2>Mes informations</h2><div class="champ"><label>Nom</label><input value="Awa Koné"></div><div class="champ"><label>Téléphone</label><input value="07 00 00 00 00"></div><div class="champ"><label>E-mail</label><input value="awa@exemple.ci"></div><button class="btn" style="margin-top:8px">Enregistrer</button></div>
+<div class="carte"><h3>Mot de passe</h3><button class="btn second">Changer mon mot de passe</button></div>
+ </div>
+</section>
+
+<section class="ecran" id="g1" data-role="gerant" data-menu="Arrivées" data-titre="G1. Tableau de bord du gérant">
+ <div class="entete">Aujourd'hui <small>Kouadio</small></div>
+ <div class="corps">
+<div class="hero"><h2>Aujourd'hui, vendredi 11 déc.</h2><p>2 arrivées · 1 départ · 3 réservations à venir</p></div>
+<div class="grille-stat"><div class="carte stat"><b>2</b><span>Arrivées à enregistrer</span></div><div class="carte stat"><b>1</b><span>Départs à clôturer</span></div><div class="carte stat"><b>3</b><span>À venir (7 jours)</span></div><div class="carte stat"><b>38 500</b><span>FCFA dus par GESIMO</span></div></div>
+<div class="carte"><h3>À faire maintenant</h3>
+<div class="ligne"><span><b>Awa Koné</b> · Chambre 1 · arrive</span><button class="btn" style="min-height:42px;font-size:15px;width:auto;min-width:0">Check-in</button></div>
+<div class="ligne"><span><b>Moussa D.</b> · Studio · part</span><button class="btn second" style="min-height:42px;font-size:15px;width:auto;min-width:0">Check-out</button></div></div>
+<div class="attention">1 litige ouvert à votre sujet : « Climatisation en panne ». L'équipe GESIMO vous écrira.</div>
+ </div>
+</section>
+
+<section class="ecran" id="g2" data-role="gerant" data-menu="Résidences" data-titre="G2. Résidences et logements">
+ <div class="entete">Mes résidences <small>Kouadio</small></div>
+ <div class="corps">
+<div class="carte"><div style="display:flex;justify-content:space-between"><b>Les Palmiers · Cocody</b><span class="badge b-conf">Publiée</span></div><div class="aide">3 logements · 18 séjours ce mois</div><div class="ligne"><span>Chambre climatisée 1</span><span>18 333 / nuit</span></div><div class="ligne"><span>Chambre 2</span><span>15 000 / nuit</span></div><button class="btn second" style="margin-top:6px">Modifier</button></div>
+<div class="carte"><div style="display:flex;justify-content:space-between"><b>Villa Soleil · Marcory</b><span class="badge b-attente">En vérification</span></div><div class="aide">En attente de l'équipe GESIMO.</div></div>
+<button class="btn">+ Ajouter une résidence</button>
+ </div>
+</section>
+
+<section class="ecran" id="g3" data-role="gerant" data-menu="Calendrier" data-titre="G3. Réservations du gérant">
+ <div class="entete">Réservations <small>Kouadio</small></div>
+ <div class="corps">
+<div class="onglet2"><div class="on">À venir</div><div>Passées</div></div><div class="carte"><div style="display:flex;justify-content:space-between;gap:8px"><b>Awa Koné</b><span class="badge b-conf">Confirmée</span></div><div class="aide">Chambre 1 · 11 → 14 déc.</div><div class="prix" style="font-size:18px;margin-top:4px">55 000 <small>FCFA</small></div></div><div class="carte"><div style="display:flex;justify-content:space-between;gap:8px"><b>Client téléphone</b><span class="badge b-hors">Hors plateforme</span></div><div class="aide">Chambre 2 · 15 → 17 déc.</div><div class="prix" style="font-size:18px;margin-top:4px">30 000 <small>FCFA</small></div></div><div class="carte"><b>Détail : Awa Koné</b><div class="ligne"><span>Contact</span><span>07 00 00 00 00</span></div><div class="ligne"><span>Payé en ligne</span><span>16 500 FCFA</span></div><div class="ligne"><span>À encaisser à l'arrivée</span><span>38 500 FCFA</span></div><button class="btn" style="margin-top:8px">Check-in</button><button class="btn gris" style="margin-top:8px">Signaler un problème</button></div>
+ </div>
+</section>
+
+<section class="ecran" id="g4" data-role="gerant" data-menu="Arrivées" data-titre="G4. Check-in / check-out">
+ <div class="entete">Check-in <small>Kouadio</small></div>
+ <div class="corps">
+<div class="carte"><h2>Check-in — Awa Koné</h2><p class="aide">Chambre 1 · 11 → 14 déc.</p><div class="champ"><label>Pièce d'identité (numéro)</label><input value="CI0012345"></div><div class="champ"><label>Type</label><select><option>Carte nationale</option></select></div><div class="attention">Le solde de <b>38 500 FCFA</b> est à encaisser auprès du client.</div><button class="btn">Confirmer l'arrivée</button></div>
+<div class="carte"><h2>Check-out — Moussa D.</h2><p class="aide">Studio · départ aujourd'hui</p><button class="btn second">Confirmer le départ</button></div>
+<div class="erreur">Le check-in n'est possible que le jour d'arrivée, pour une réservation confirmée.</div>
+ </div>
+</section>
+
+<section class="ecran" id="g5" data-role="gerant" data-menu="Résidences" data-titre="G5. Mises en avant et Aide">
+ <div class="entete">Plus <small>Kouadio</small></div>
+ <div class="corps">
+<div class="carte"><h3>⭐ Mettre en avant</h3><p class="aide">Bientôt disponible : faites remonter vos annonces avec le badge « Sponsorisé ». (Lot 5)</p><button class="btn gris">Bientôt</button></div>
+<div class="carte"><h3>Aide</h3><details open><summary><b>Comment enregistrer un client appelé au téléphone ?</b></summary><p class="aide">Calendrier ▸ « Réservation par téléphone ». Elle bloque les dates, sans commission.</p></details><details><summary><b>Quand suis-je payé ?</b></summary><p class="aide">Après le check-in, GESIMO vous reverse votre part (voir « Argent »).</p></details><details><summary><b>Un client ne vient pas ?</b></summary><p class="aide">Utilisez « Client absent » dans la réservation.</p></details><button class="btn second" style="margin-top:8px">Écrire à l'équipe</button></div>
+ </div>
+</section>
+
+<section class="ecran" id="a1" data-role="admin" data-menu="À vérifier" data-titre="A1. Tableau de bord admin">
+ <div class="entete">Tableau de bord <small>Admin</small></div>
+ <div class="corps">
+<div class="grille-stat"><div class="carte stat"><b>4</b><span>Résidences à valider</span></div><div class="carte stat"><b>2</b><span>Litiges ouverts</span></div><div class="carte stat"><b>1</b><span>Alertes argent</span></div><div class="carte stat"><b>9</b><span>Réservations aujourd'hui</span></div></div>
+<div class="carte"><h3>À traiter</h3><div class="ligne"><span>Villa Soleil — à valider</span><a class="aide">Ouvrir</a></div><div class="ligne"><span>Litige #3 : climatisation en panne</span><a class="aide">Ouvrir</a></div><div class="ligne"><span>Remboursement en échec #12</span><a class="aide">Ouvrir</a></div></div>
+<div class="carte"><h3>Chiffres de la semaine</h3><div class="ligne"><span>Réservations confirmées</span><span>31</span></div><div class="ligne"><span>Taux d'expiration</span><span>22 %</span></div><div class="ligne"><span>Taux d'annulation</span><span>8 %</span></div><div class="ligne"><span>Commissions</span><span>171 000 FCFA</span></div></div>
+ </div>
+</section>
+
+<section class="ecran" id="a2" data-role="admin" data-menu="Paiements" data-titre="A2. Toutes les réservations">
+ <div class="entete">Réservations <small>Admin</small></div>
+ <div class="corps">
+<div class="puces"><span class="puce on">Toutes</span><span class="puce">En litige</span><span class="puce">Annulées</span><span class="puce">Cette semaine</span></div>
+<div class="defile"><table class="tableau"><tr><th>N°</th><th>Client</th><th>Résidence</th><th>Dates</th><th>Statut</th><th class="d">Total</th></tr>
+<tr><td>#123</td><td>Awa Koné</td><td>Les Palmiers</td><td>11→14 déc.</td><td><span class="badge b-conf">Confirmée</span></td><td class="d">55 000</td></tr>
+<tr><td>#124</td><td>Moussa D.</td><td>Akwaba</td><td>9→11 déc.</td><td><span class="badge b-attente">Litige</span></td><td class="d">48 000</td></tr></table></div>
+ </div>
+</section>
+
+<section class="ecran" id="a3" data-role="admin" data-menu="Contrôle" data-titre="A3. Litiges (admin)">
+ <div class="entete">Litiges <small>Admin</small></div>
+ <div class="corps">
+<div class="carte"><b>Litige #3</b> <span class="badge b-attente">Ouvert</span><div class="aide">Réservation #124 · ouvert par Moussa D. (client) · contre Kouadio (gérant)</div><p>« La climatisation ne marchait pas pendant tout le séjour. »</p>
+<div class="champ"><label>Votre décision</label><textarea rows="3" placeholder="Expliquez la décision aux deux parties"></textarea></div>
+<div class="deux"><button class="btn">Clore le litige</button><button class="btn second">Décider un remboursement…</button></div>
+<p class="aide">Un remboursement passe par l'écran d'annulation/remboursement du Lot 3 : aucune écriture n'est modifiée.</p></div>
+<div class="carte"><b>Litige #2</b> <span class="badge b-conf">Résolu</span><div class="aide">Décision : remboursement de 24 000 FCFA.</div></div>
+ </div>
+</section>
+
+<section class="ecran" id="a4" data-role="admin" data-menu="Contrôle" data-titre="A4. Journal d'audit">
+ <div class="entete">Journal <small>Admin</small></div>
+ <div class="corps">
+<div class="puces"><span class="puce on">Tout</span><span class="puce">Connexions</span><span class="puce">Argent</span><span class="puce">Résidences</span></div>
+<div class="defile"><table class="tableau"><tr><th>Quand</th><th>Qui</th><th>Action</th><th>Sur</th></tr>
+<tr><td>11 déc. 15:02</td><td>Admin</td><td>Résidence validée</td><td>Les Palmiers</td></tr>
+<tr><td>11 déc. 14:40</td><td>Kouadio</td><td>Check-in enregistré</td><td>Réservation #123</td></tr>
+<tr><td>11 déc. 14:10</td><td>Admin</td><td>Reversement enregistré</td><td>Réservation #118</td></tr></table></div><p class="aide">Lecture seule : le journal ne se modifie jamais.</p>
+ </div>
+</section>
+
+<section class="ecran" id="n1" data-role="admin" data-menu="Contrôle" data-titre="N1. E-mails envoyés (modèles)">
+ <div class="entete">E-mails <small>Admin</small></div>
+ <div class="corps">
+<div class="carte"><h2>Modèles d'e-mails</h2><p class="aide">Modifiables par l'administrateur. Des mots entre accolades sont remplacés automatiquement : {nom}, {logement}, {dates}, {montant}.</p>
+<div class="ligne"><span>✔ Confirmation de réservation</span><a class="aide">Modifier</a></div><div class="ligne"><span>⏰ Rappel d'arrivée (la veille)</span><a class="aide">Modifier</a></div><div class="ligne"><span>✖ Annulation</span><a class="aide">Modifier</a></div><div class="ligne"><span>💸 Reversement effectué (au gérant)</span><a class="aide">Modifier</a></div></div>
+<div class="carte"><h3>Modifier : Rappel d'arrivée</h3><div class="champ"><label>Sujet</label><input value="Votre arrivée demain à {logement}"></div><div class="champ"><label>Message</label><textarea rows="5">Bonjour {nom}, nous vous attendons demain, {dates}, à {logement}. Bon voyage !</textarea></div><button class="btn" style="margin-top:8px">Enregistrer</button><button class="btn second" style="margin-top:8px">M'envoyer un essai</button></div>
+<div class="aide">Canaux : e-mail aujourd'hui ; SMS et WhatsApp pourront s'ajouter plus tard sans changer ces modèles.</div>
+ </div>
+</section>
+
+  <nav class="tabbar" id="tabbar"></nav>
+ </div>
+ <div class="notes" id="notes"></div>
+</div>
+<template id="notes-data">
+<div data-n="p1"><h2>P1. Accueil</h2><h3>But</h3><p>Donner envie et permettre de chercher tout de suite.</p><h3>Ce que voit l'utilisateur</h3><ul><li>Champs de recherche (commune, dates, personnes) en premier, puis 3 raisons de faire confiance, communes, invitation pour les gérants.</li></ul><h3>Actions</h3><ul><li>Chercher · Devenir gérant partenaire · menu : Accueil, Chercher, Aide, Connexion.</li></ul><h3>Messages d'erreur et états vides</h3><ul><li>Aucune résidence publiée dans une commune : « Pas encore de logement ici. Essayez une autre commune. »</li></ul></div>
+<div data-n="p2"><h2>P2. Résultats de recherche</h2><h3>But</h3><p>Trouver vite un logement libre, avec le prix total.</p><h3>Ce que voit l'utilisateur</h3><ul><li>Filtres en puces, nombre de résultats, cartes avec photo, badge « Vérifié GESIMO », prix total du séjour (le même partout).</li><li>Les mises en avant « Sponsorisé » viendront au Lot 5.</li></ul><h3>Actions</h3><ul><li>Ouvrir une fiche · modifier les filtres.</li></ul><h3>Messages d'erreur et états vides</h3><ul><li>État vide : « Aucune chambre libre à ces dates. Essayez d'autres dates. »</li><li>Dates passées ou départ avant l'arrivée : message clair sous le champ.</li></ul></div>
+<div data-n="p3"><h2>P3. Fiche résidence</h2><h3>But</h3><p>Donner toutes les informations avant de réserver (F-C3).</p><h3>Ce que voit l'utilisateur</h3><ul><li>Photos, prix total et par nuit, équipements, règlement, politique d'annulation, localisation, avis des anciens clients (nouveau).</li></ul><h3>Actions</h3><ul><li>Réserver (mène au récapitulatif, puis au paiement) · lire les avis.</li></ul><h3>Messages d'erreur et états vides</h3><ul><li>Dates non libres : « Ces dates ne sont plus libres. Choisissez d'autres dates. »</li><li>Pas encore d'avis : « Pas encore d'avis pour ce logement. »</li></ul></div>
+<div data-n="p4"><h2>P4. Contact</h2><h3>But</h3><p>Permettre de joindre l'équipe GESIMO.</p><h3>Ce que voit l'utilisateur</h3><ul><li>Formulaire à 3 champs ; coordonnées de l'équipe (adresse e-mail prise dans les Paramètres).</li></ul><h3>Actions</h3><ul><li>Envoyer : le message est gardé en base ET envoyé par e-mail à l'équipe. Limite : 5 messages par heure par personne (anti-spam).</li></ul><h3>Messages d'erreur et états vides</h3><ul><li>Message vide ou contact illisible : message sous le champ.</li><li>Trop de messages : « Merci de patienter un peu avant de renvoyer un message. »</li></ul></div>
+<div data-n="p5"><h2>P5. À propos et FAQ</h2><h3>But</h3><p>Répondre aux questions courantes sans appeler.</p><h3>Ce que voit l'utilisateur</h3><ul><li>Texte « À propos » et 5 questions/réponses repliables (F-… pages publiques).</li></ul><h3>Actions</h3><ul><li>Ouvrir/fermer une question · aller à Contact.</li></ul></div>
+<div data-n="p6"><h2>P6. Conditions et confidentialité</h2><h3>But</h3><p>Informer clairement sur les règles et les données.</p><h3>Ce que voit l'utilisateur</h3><ul><li>Deux pages liées au pied de page et à l'inscription (case « J'accepte »).</li></ul><h3>Actions</h3><ul><li>Lire · accepter à l'inscription.</li></ul></div>
+<div data-n="p7"><h2>P7. Devenir gérant partenaire</h2><h3>But</h3><p>Recruter des gérants.</p><h3>Ce que voit l'utilisateur</h3><ul><li>Explication en 3 étapes et du modèle de commission (le taux vient des Paramètres).</li></ul><h3>Actions</h3><ul><li>Créer mon compte gérant → page d'inscription existante (profil « gérant »).</li></ul></div>
+<div data-n="c1"><h2>C1. Accueil du compte</h2><h3>But</h3><p>Un point d'entrée simple pour le client (nouveau).</p><h3>Ce que voit l'utilisateur</h3><ul><li>Prochain séjour, ce qu'il y a à faire (avis), accès profil.</li></ul><h3>Actions</h3><ul><li>Voir la réservation · donner un avis.</li></ul><h3>Messages d'erreur et états vides</h3><ul><li>Aucun séjour : « Vous n'avez pas encore de séjour. Trouvez votre prochain logement. » + bouton Chercher.</li></ul></div>
+<div data-n="c2"><h2>C2. Mes réservations</h2><h3>But</h3><p>Retrouver ses réservations (F-C6).</p><h3>Ce que voit l'utilisateur</h3><ul><li>Deux onglets : à venir / passées ; statut en couleur ; temps restant pour payer.</li></ul><h3>Actions</h3><ul><li>Ouvrir · payer · annuler (depuis le détail).</li></ul><h3>Messages d'erreur et états vides</h3><ul><li>Vide : « Aucune réservation pour le moment. »</li></ul></div>
+<div data-n="c3"><h2>C3. Détail d'une réservation</h2><h3>But</h3><p>Voir tout sur une réservation et agir.</p><h3>Ce que voit l'utilisateur</h3><ul><li>Montants, contact du gérant, reçu, annulation (avec le remboursement montré avant), signaler un problème (litige).</li></ul><h3>Actions</h3><ul><li>Reçu · annuler · signaler un problème (C5).</li></ul></div>
+<div data-n="c4"><h2>C4. Avis après séjour</h2><h3>But</h3><p>Récolter des avis fiables (F-C7).</p><h3>Ce que voit l'utilisateur</h3><ul><li>Note de 1 à 5 étoiles, commentaire libre ; un seul avis par séjour.</li></ul><h3>Actions</h3><ul><li>Publier. Possible seulement si le séjour est « Terminé » — la base de données le refuse sinon.</li></ul><h3>Messages d'erreur et états vides</h3><ul><li>Séjour non terminé : « Vous pourrez donner votre avis une fois le séjour terminé. »</li><li>Déjà donné : « Vous avez déjà donné votre avis. »</li></ul></div>
+<div data-n="c5"><h2>C5. Signaler un problème (litige)</h2><h3>But</h3><p>Permettre au client d'ouvrir un litige.</p><h3>Ce que voit l'utilisateur</h3><ul><li>Un seul champ : le motif.</li></ul><h3>Actions</h3><ul><li>Envoyer : la réservation passe en « Litige » ; l'autre partie et l'équipe sont prévenues par e-mail.</li></ul><h3>Messages d'erreur et états vides</h3><ul><li>Motif vide ou trop court : « Expliquez le problème en quelques mots. »</li></ul></div>
+<div data-n="c6"><h2>C6. Profil</h2><h3>But</h3><p>Gérer ses informations.</p><h3>Ce que voit l'utilisateur</h3><ul><li>Nom, téléphone, e-mail, mot de passe.</li></ul><h3>Actions</h3><ul><li>Enregistrer · changer le mot de passe (ancien mot de passe demandé).</li></ul><h3>Messages d'erreur et états vides</h3><ul><li>Téléphone déjà utilisé : « Ce numéro a déjà un compte. »</li></ul></div>
+<div data-n="g1"><h2>G1. Tableau de bord du gérant</h2><h3>But</h3><p>Voir tout de suite ce qu'il y a à faire aujourd'hui (F-G3).</p><h3>Ce que voit l'utilisateur</h3><ul><li>Chiffres du jour, liste d'actions avec gros boutons, alerte litige.</li></ul><h3>Actions</h3><ul><li>Check-in · check-out · ouvrir la réservation.</li></ul><h3>Messages d'erreur et états vides</h3><ul><li>Rien aujourd'hui : « Rien à faire aujourd'hui. Profitez-en ! »</li></ul></div>
+<div data-n="g2"><h2>G2. Résidences et logements</h2><h3>But</h3><p>Gérer ses résidences (F-G1) — écran déjà livré au Lot 2, refondu dans le nouveau style.</p><h3>Ce que voit l'utilisateur</h3><ul><li>Cartes par résidence avec statut, logements et prix.</li></ul><h3>Actions</h3><ul><li>Ajouter · modifier.</li></ul><h3>Messages d'erreur et états vides</h3><ul><li>Vide : « Vous n'avez pas encore de résidence. Ajoutez la première. »</li></ul></div>
+<div data-n="g3"><h2>G3. Réservations du gérant</h2><h3>But</h3><p>Suivre ses réservations (menu « Calendrier » regroupe calendrier + liste).</p><h3>Ce que voit l'utilisateur</h3><ul><li>Liste à venir / passées, détail avec ce que le client doit encore payer.</li></ul><h3>Actions</h3><ul><li>Check-in · signaler un problème · voir le calendrier.</li></ul></div>
+<div data-n="g4"><h2>G4. Check-in / check-out</h2><h3>But</h3><p>Enregistrer arrivée et départ depuis le téléphone (F-G4) — logique déjà livrée au Lot 3.</p><h3>Ce que voit l'utilisateur</h3><ul><li>Formulaire de pièce d'identité ; rappel du solde à encaisser.</li></ul><h3>Actions</h3><ul><li>Confirmer l'arrivée → déclenche la part du gérant · confirmer le départ → séjour « Terminé » (avis possible).</li></ul><h3>Messages d'erreur et états vides</h3><ul><li>Pièce non renseignée : « Indiquez le numéro de la pièce d'identité. »</li></ul></div>
+<div data-n="g5"><h2>G5. Mises en avant et Aide</h2><h3>But</h3><p>Annoncer la mise en avant (réservée au Lot 5) et aider le gérant (menu « Résidences » ▸ Plus).</p><h3>Ce que voit l'utilisateur</h3><ul><li>Carte « Bientôt » sans action ; aide courte.</li></ul><h3>Actions</h3><ul><li>Lire l'aide · contacter l'équipe.</li></ul></div>
+<div data-n="a1"><h2>A1. Tableau de bord admin</h2><h3>But</h3><p>Voir d'un coup d'œil ce qui demande l'équipe.</p><h3>Ce que voit l'utilisateur</h3><ul><li>Compteurs, liste « À traiter », indicateurs du cahier (section 9).</li></ul><h3>Actions</h3><ul><li>Ouvrir chaque élément.</li></ul><h3>Messages d'erreur et états vides</h3><ul><li>Rien à traiter : « Tout est à jour. »</li></ul></div>
+<div data-n="a2"><h2>A2. Toutes les réservations</h2><h3>But</h3><p>Suivre toutes les réservations (F-A3). Les paiements, reversements et le contrôle existent déjà (Lot 3).</p><h3>Ce que voit l'utilisateur</h3><ul><li>Tableau filtrable, lecture seule.</li></ul><h3>Actions</h3><ul><li>Filtrer · ouvrir une réservation.</li></ul></div>
+<div data-n="a3"><h2>A3. Litiges (admin)</h2><h3>But</h3><p>Traiter les litiges (F-A5).</p><h3>Ce que voit l'utilisateur</h3><ul><li>Motif, parties, zone de décision ; litiges résolus.</li></ul><h3>Actions</h3><ul><li>Clore avec une décision (les deux parties reçoivent un e-mail) · décider un remboursement via le circuit existant.</li></ul><h3>Messages d'erreur et états vides</h3><ul><li>Décision vide : « Écrivez la décision avant de clore. »</li></ul></div>
+<div data-n="a4"><h2>A4. Journal d'audit</h2><h3>But</h3><p>Savoir qui a fait quoi (F-A5).</p><h3>Ce que voit l'utilisateur</h3><ul><li>Journal filtrable, lecture seule, sans aucun secret.</li></ul><h3>Actions</h3><ul><li>Filtrer.</li></ul></div>
+<div data-n="n1"><h2>N1. E-mails envoyés (modèles)</h2><h3>But</h3><p>Envoyer les e-mails du lot et laisser modifier leurs textes.</p><h3>Ce que voit l'utilisateur</h3><ul><li>Liste des 4 modèles, éditeur avec mots remplacés automatiquement, bouton d'essai.</li></ul><h3>Actions</h3><ul><li>Enregistrer · s'envoyer un essai. Une page simple « Modèles d'e-mails » ; l'espace Paramètres complet reste au Lot 5.</li></ul><h3>Messages d'erreur et états vides</h3><ul><li>Mot inconnu entre accolades : « {xyz} n'existe pas. Mots possibles : {nom}, … »</li></ul></div>
+</template>
+<script>
+const I={rech:'<path d="m21 21-4.3-4.3M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z"/>',cal:'<path d="M8 2v4M16 2v4M3 10h18M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Z"/>',liste:'<path d="M9 6h11M9 12h11M9 18h11M4 6h.01M4 12h.01M4 18h.01"/>',bat:'<path d="M4 21V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v16M16 9h2a2 2 0 0 1 2 2v10M2 21h20M8 7h4M8 11h4M8 15h4"/>',moi:'<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z"/>',ok:'<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10ZM9 12l2 2 4-4"/>',cle:'<path d="M15 7a4 4 0 1 1-4 4M11 11 3 19v2h3v-2h2v-2h2l1-1"/>',argent:'<path d="M3 7h18v10H3zM12 14a2 2 0 1 0 0-4 2 2 0 0 0 0 4ZM6 10v.01M18 14v.01"/>',porte:'<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/>',carte:'<path d="M3 6h18v12H3zM3 10h18"/>',balance:'<path d="M12 3v18M5 7h14M5 7l-3 7a3 3 0 0 0 6 0L5 7ZM19 7l-3 7a3 3 0 0 0 6 0l-3-7Z"/>',aide:'<path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3M12 17h.01M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20Z"/>',maison:'<path d="m3 11 9-8 9 8M5 10v10h14V10"/>'};
+const MENUS={
+ public:[['Accueil','maison','p1'],['Chercher','rech','p2'],['Aide','aide','p5'],['Connexion','moi','c1']],
+ client:[['Chercher','rech','p2'],['Mes réservations','liste','c2'],['Aide','aide','p5'],['Mon compte','moi','c1']],
+ gerant:[['Arrivées','porte','g1'],['Calendrier','cal','g3'],['Argent','argent',null],['Résidences','bat','g2'],['Mon compte','moi',null]],
+ admin:[['À vérifier','ok',null],['Paiements','carte','a2'],['Reversements','argent',null],['Contrôle','balance','a3'],['Mon compte','moi',null]]};
+const NOMS={public:'Visiteur',client:'Awa Koné (client)',gerant:'Kouadio (gérant)',admin:'Admin GESIMO'};
+function svg(n){return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'+I[n]+'</svg>';}
+const ecrans=[...document.querySelectorAll('.ecran')];
+function menus(id){
+ const e=document.getElementById(id);const r=e.dataset.role;const m=MENUS[r];
+ const lien=(t,i,c)=>'<a href="#'+(c||id)+'" class="'+(t===e.dataset.menu?'on':'')+'" onclick="'+(c?'montrer(\''+c+'\')':'')+';return false">'+svg(i)+'<span>'+t+'</span></a>';
+ document.getElementById('tabbar').innerHTML=m.map(x=>lien(...x)).join('');
+ document.getElementById('topnav').innerHTML='<span class="logo"><i></i>GESIMO</span>'+m.map(x=>lien(...x)).join('')+'<span class="droite"><span class="aide">'+NOMS[r]+'</span></span>';
+}
+const notes=document.getElementById('notes-data').content;
+const barre=document.getElementById('onglets');
+function montrer(id){
+ menus(id);
+ ecrans.forEach(e=>e.classList.toggle('actif',e.id===id));
+ [...barre.children].forEach(b=>b.classList.toggle('actif',b.dataset.id===id));
+ const n=notes.querySelector('[data-n="'+id+'"]');
+ document.getElementById('notes').innerHTML=n?n.innerHTML:'';
+ history.replaceState(null,'','#'+id); window.scrollTo(0,0);
+}
+ecrans.forEach(e=>{const b=document.createElement('button');b.textContent=e.dataset.titre;b.dataset.id=e.id;b.onclick=()=>montrer(e.id);barre.appendChild(b);});
+const scene=document.getElementById('scene');
+function vue(ordi){scene.classList.toggle('ordi',ordi);document.getElementById('v-ordi').classList.toggle('actif',ordi);document.getElementById('v-mobile').classList.toggle('actif',!ordi);}
+document.getElementById('v-ordi').onclick=()=>vue(true);document.getElementById('v-mobile').onclick=()=>vue(false);
+vue(window.innerWidth>=900);montrer((location.hash||'#p1').slice(1));
+</script>
+</body>
+</html>
