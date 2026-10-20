@@ -69,7 +69,8 @@ class GeniusPay implements FournisseurPaiement
 
     public function lirePaiement(string $reference): EtatPaiement
     {
-        $reponse = $this->appeler(fn (PendingRequest $r) => $r->get('/payments/'.$this->referenceSure($reference)));
+        $reference = $this->referenceSure($reference); // vérifiée AVANT l'appel : une référence piégée ne part jamais
+        $reponse = $this->appeler(fn (PendingRequest $r) => $r->get('/payments/'.$reference));
         $data = $reponse->json('data');
         if (! is_array($data) || ! isset($data['status'])) {
             throw new FournisseurIndisponible('Réponse inattendue du fournisseur de paiement.');
@@ -86,7 +87,8 @@ class GeniusPay implements FournisseurPaiement
     public function rembourser(string $reference, ?int $montant, string $motif): ResultatRemboursement
     {
         $corps = array_filter(['amount' => $montant, 'reason' => mb_substr($motif, 0, 200)], fn ($v) => $v !== null && $v !== '');
-        $reponse = $this->appeler(fn (PendingRequest $r) => $r->post('/payments/'.$this->referenceSure($reference).'/refund', $corps));
+        $reference = $this->referenceSure($reference);
+        $reponse = $this->appeler(fn (PendingRequest $r) => $r->post('/payments/'.$reference.'/refund', $corps));
         $data = $reponse->json('data');
         if (! is_array($data) || ($data['status'] ?? null) !== 'refunded') {
             throw new FournisseurIndisponible('Réponse inattendue du fournisseur de paiement.');

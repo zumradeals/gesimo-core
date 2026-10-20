@@ -2,7 +2,9 @@
 
 namespace App\Paiement\Models;
 
+use App\Sejours\Models\Reservation;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class AlerteAdmin extends Model
 {
@@ -13,6 +15,11 @@ class AlerteAdmin extends Model
     protected function casts(): array
     {
         return ['traitee_le' => 'datetime'];
+    }
+
+    public function reservation(): BelongsTo
+    {
+        return $this->belongsTo(Reservation::class);
     }
 
     public static function libelleType(string $type): string
