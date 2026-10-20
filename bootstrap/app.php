@@ -21,6 +21,8 @@ return Application::configure(basePath: dirname(__DIR__))
         DefinirParametre::class,
     ])
     ->withMiddleware(function (Middleware $middleware): void {
+        // Les messages de GeniusPay n'ont pas de jeton de formulaire : ils sont protégés par leur signature.
+        $middleware->validateCsrfTokens(except: ['webhooks/*']);
         $middleware->redirectGuestsTo(fn () => route('connexion'));
         $middleware->redirectUsersTo(fn () => route('accueil'));
         $middleware->alias(['role' => VerifierRole::class]);
