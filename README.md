@@ -44,10 +44,26 @@ Il faut : PHP 8.3 ou plus (avec l'extension `pdo_pgsql`), Composer, Node.js 22, 
    ```
    Ouvrir <http://localhost:8000>.
 
+## Mettre en ligne
+
+Voir [`DEPLOIEMENT.md`](DEPLOIEMENT.md) : installation complète sur un VPS (Ubuntu 24.04), HTTPS, sauvegardes, mises à jour.
+
+## Commandes du serveur
+
+```bash
+php artisan gesimo:creer-super-admin           # crée le premier super-administrateur (mot de passe demandé, masqué)
+php artisan gesimo:parametre email.hote smtp.exemple.com          # enregistre un réglage
+php artisan gesimo:parametre email.mot_de_passe --secret          # un secret : demandé à la saisie, chiffré en base
+php artisan gesimo:expirer-reservations        # libère les réservations « En attente » expirées (lancée chaque minute par le planificateur)
+```
+
+En production, deux processus doivent tourner (le script d'installation les met en place) : le planificateur
+(`php artisan schedule:run` chaque minute, via cron) et le traitement en arrière-plan (`php artisan queue:work`).
+
 ## Lancer les tests
 
 ```bash
-vendor/bin/pest        # tests (utilisent la base gesimo_test)
+vendor/bin/pest        # tests (utilisent la base gesimo_test), dont le test de réservations simultanées
 vendor/bin/pint --test # vérification du formatage
 vendor/bin/pint        # corriger le formatage
 ```

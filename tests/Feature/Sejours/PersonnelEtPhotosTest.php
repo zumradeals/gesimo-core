@@ -156,3 +156,20 @@ it('réencode la photo en JPEG et limite à 8 photos par résidence', function (
 
     expect(fn () => Photos::enregistrer(UploadedFile::fake()->image('neuvieme.jpg'), $residence))->toThrow(InvalidArgumentException::class, 'au plus 8 photos');
 });
+
+it('remet droite une photo prise en portrait avec un téléphone (orientation EXIF)', function () {
+    Storage::fake('public');
+    // Photo 200 × 100 marquée « à tourner de 90° » : une fois redressée, elle doit faire 100 × 200.
+    $image = imagecreatetruecolor(200, 100);
+    ob_start();
+    imagejpeg($image);
+    $jpeg = (string) ob_get_clean();
+    $tiff = "II*\x00\x08\x00\x00\x00"."\x01\x00"."\x12\x01\x03\x00\x01\x00\x00\x00\x06\x00\x00\x00"."\x00\x00\x00\x00";
+    $app1 = "\xFF\xE1".pack('n', 2 + 6 + strlen($tiff))."Exif\x00\x00".$tiff;
+    $avecExif = substr($jpeg, 0, 2).$app1.substr($jpeg, 2);
+
+    $photo = Photos::enregistrer(UploadedFile::fake()->createWithContent('portrait.jpg', $avecExif), creerResidence());
+
+    [$largeur, $hauteur] = getimagesizefromstring(Storage::disk('public')->get($photo->chemin));
+    expect([$largeur, $hauteur])->toBe([100, 200]);
+});

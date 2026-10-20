@@ -40,6 +40,8 @@ class Photos
             throw new InvalidArgumentException('Cette photo n\'est pas une image valide (JPEG, PNG ou WebP).');
         }
 
+        $source = self::redresser($source, $fichier->getRealPath(), $infos[2]);
+
         [$largeur, $hauteur] = [imagesx($source), imagesy($source)];
         if ($largeur > self::LARGEUR_MAX) {
             $reduite = imagescale($source, self::LARGEUR_MAX, (int) round($hauteur * self::LARGEUR_MAX / $largeur));
@@ -66,6 +68,24 @@ class Photos
             'chemin' => $chemin,
             'ordre' => (int) Photo::where('residence_id', $residence->id)->max('ordre') + 1,
         ]);
+    }
+
+    /** Les téléphones notent le sens de la photo dans les données EXIF (effacées au réencodage) : on la remet droite avant. */
+    private static function redresser(\GdImage $image, string $chemin, int $type): \GdImage
+    {
+        if ($type !== IMAGETYPE_JPEG || ! function_exists('exif_read_data')) {
+            return $image;
+        }
+
+        $orientation = @exif_read_data($chemin)['Orientation'] ?? 1;
+        $angle = match ($orientation) {
+            3 => 180,
+            6 => -90,
+            8 => 90,
+            default => 0,
+        };
+
+        return $angle === 0 ? $image : (imagerotate($image, $angle, 0) ?: $image);
     }
 
     public static function supprimer(Photo $photo): void
