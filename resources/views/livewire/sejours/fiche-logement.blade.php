@@ -15,7 +15,7 @@
             @if($photos->isNotEmpty())
                 <div class="flex snap-x snap-mandatory gap-3 overflow-x-auto rounded-2xl pb-1">
                     @foreach($photos as $p)
-                        <img src="{{ $p->url() }}" alt="" class="h-64 w-[88%] shrink-0 snap-center rounded-2xl object-cover lg:h-[420px] lg:w-[70%]" loading="lazy">
+                        <img src="{{ $p->url() }}" alt="Photo {{ $loop->iteration }} de {{ $u->nom }}" width="1600" height="1067" class="h-64 w-[88%] shrink-0 snap-center rounded-2xl object-cover lg:h-[420px] lg:w-[70%]" decoding="async" @if($loop->first) fetchpriority="high" @else loading="lazy" @endif>
                     @endforeach
                 </div>
             @else

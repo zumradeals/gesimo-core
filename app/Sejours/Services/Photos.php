@@ -21,6 +21,9 @@ class Photos
 
     public const LARGEUR_MAX = 1600;
 
+    /** Version légère pour les listes (téléphone) : environ 30 Ko au lieu de 300 Ko. */
+    public const LARGEUR_MINIATURE = 480;
+
     private const TYPES = [IMAGETYPE_JPEG, IMAGETYPE_PNG, IMAGETYPE_WEBP];
 
     public static function enregistrer(UploadedFile $fichier, Residence $residence, ?Unite $unite = null): Photo
@@ -61,6 +64,7 @@ class Photos
 
         $chemin = "photos/{$residence->id}/".Str::random(32).'.jpg';
         Storage::disk('public')->put($chemin, $jpeg);
+        Storage::disk('public')->put(Photo::cheminMiniature($chemin), self::miniature($fond));
 
         return Photo::create([
             'residence_id' => $residence->id,
@@ -68,6 +72,17 @@ class Photos
             'chemin' => $chemin,
             'ordre' => (int) Photo::where('residence_id', $residence->id)->max('ordre') + 1,
         ]);
+    }
+
+    /** @return string JPEG de 480 px de large au plus, qualité 72 (suffisant pour une carte de liste). */
+    private static function miniature(\GdImage $image): string
+    {
+        $largeur = imagesx($image);
+        $petite = $largeur > self::LARGEUR_MINIATURE ? imagescale($image, self::LARGEUR_MINIATURE, (int) round(imagesy($image) * self::LARGEUR_MINIATURE / $largeur)) : $image;
+        ob_start();
+        imagejpeg($petite ?: $image, null, 72);
+
+        return (string) ob_get_clean();
     }
 
     /** Les téléphones notent le sens de la photo dans les données EXIF (effacées au réencodage) : on la remet droite avant. */
@@ -90,7 +105,7 @@ class Photos
 
     public static function supprimer(Photo $photo): void
     {
-        Storage::disk('public')->delete($photo->chemin);
+        Storage::disk('public')->delete([$photo->chemin, Photo::cheminMiniature($photo->chemin)]);
         $photo->delete();
     }
 }

@@ -65,7 +65,7 @@
                             <div>
                                 <p class="font-extrabold">{{ $u->nom }} @unless($u->active)<span class="aide">(retiré)</span>@endunless</p>
                                 <p class="aide">{{ ucfirst($u->type) }} · {{ $u->capacite }} pers. · {{ ($p = $u->tarifs->firstWhere('type_periode', 'standard')) ? $fr($p->prix_nuit).' / nuit' : 'sans prix' }}</p>
-                                <div class="mt-1 flex flex-wrap gap-1.5">@foreach($u->photos as $ph)<span class="relative"><img src="{{ $ph->url() }}" alt="" class="h-14 w-14 rounded-lg object-cover"><button type="button" wire:click="supprimerPhoto({{ $ph->id }})" wire:confirm="Supprimer cette photo ?" class="absolute -right-1 -top-1 flex h-6 w-6 items-center justify-center rounded-full bg-red-700 text-xs font-bold text-white" aria-label="Supprimer la photo">×</button></span>@endforeach</div>
+                                <div class="mt-1 flex flex-wrap gap-1.5">@foreach($u->photos as $ph)<span class="relative"><img src="{{ $ph->urlMiniature() }}" alt="Photo du logement" width="56" height="56" class="h-14 w-14 rounded-lg object-cover" loading="lazy"><button type="button" wire:click="supprimerPhoto({{ $ph->id }})" wire:confirm="Supprimer cette photo ?" class="absolute -right-1 -top-1 flex h-6 w-6 items-center justify-center rounded-full bg-red-700 text-xs font-bold text-white" aria-label="Supprimer la photo">×</button></span>@endforeach</div>
                             </div>
                             <div class="flex flex-col gap-1.5">
                                 <button type="button" wire:click="modifierLogement({{ $u->id }})" class="rounded-lg bg-marque-50 px-3 py-2 text-sm font-bold text-marque-600">Modifier</button>

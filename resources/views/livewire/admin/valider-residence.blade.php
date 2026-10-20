@@ -13,7 +13,7 @@
                 @if($r->reglement)<p class="aide !text-[15px]">Règlement : {{ $r->reglement }}</p>@endif
             </div>
             <div class="carte"><h2 class="mb-2 font-extrabold">Photos</h2>
-                <div class="grid grid-cols-2 gap-2 md:grid-cols-4">@forelse($r->photos as $p)<img src="{{ $p->url() }}" alt="" class="h-28 w-full rounded-lg object-cover" loading="lazy">@empty<p class="aide">Aucune photo.</p>@endforelse</div></div>
+                <div class="grid grid-cols-2 gap-2 md:grid-cols-4">@forelse($r->photos as $p)<img src="{{ $p->urlMiniature() }}" alt="Photo de la résidence" width="480" height="320" class="h-28 w-full rounded-lg object-cover" loading="lazy" decoding="async">@empty<p class="aide">Aucune photo.</p>@endforelse</div></div>
             <div class="carte"><h2 class="mb-2 font-extrabold">Logements</h2>
                 @foreach($r->unites as $u)<div class="flex justify-between border-b border-dashed border-trait py-1.5"><span>{{ $u->nom }} <span class="aide">({{ $u->type }}, {{ $u->capacite }} pers.)</span></span><span>{{ ($p = $u->tarifs->firstWhere('type_periode', 'standard')) ? $fr($p->prix_nuit) : 'sans prix' }}</span></div>@endforeach</div>
             <div class="carte"><h2 class="mb-2 font-extrabold">Pièces</h2>

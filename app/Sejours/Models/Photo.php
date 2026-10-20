@@ -15,4 +15,17 @@ class Photo extends Model
     {
         return Storage::disk('public')->url($this->chemin);
     }
+
+    public static function cheminMiniature(string $chemin): string
+    {
+        return preg_replace('/\.jpg$/', '_m.jpg', $chemin);
+    }
+
+    /** Version légère pour les listes ; les anciennes photos (sans miniature) gardent l'image d'origine. */
+    public function urlMiniature(): string
+    {
+        $mini = self::cheminMiniature($this->chemin);
+
+        return $mini !== $this->chemin && Storage::disk('public')->exists($mini) ? Storage::disk('public')->url($mini) : $this->url();
+    }
 }

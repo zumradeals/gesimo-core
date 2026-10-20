@@ -61,7 +61,7 @@
                             @php $u = $ligne['unite']; $r = $u->residence; @endphp
                             <article class="carte grid content-start gap-2 {{ $ligne['sponsorise'] ? '!border-2 !border-amber-400' : '' }}">
                                 @if($ligne['sponsorise'])<span class="w-fit rounded-full bg-amber-100 px-3 py-0.5 text-[13px] font-bold text-amber-800">⭐ Sponsorisé</span>@endif
-                                <x-ui.photo :photo="$u->photos->first() ?? $r->photos->first()" classe="h-48" />
+                                <x-ui.photo :photo="$u->photos->first() ?? $r->photos->first()" classe="h-48" :alt="'Photo de '.$u->nom" />
                                 <h3 class="text-lg font-extrabold">{{ $u->nom }}
                                     @if($r->badge_verifie) <span class="ml-1 inline-block rounded-full bg-green-100 px-2 py-0.5 align-middle text-[12px] font-bold text-green-800">✔ Vérifié GESIMO</span> @endif
                                 </h3>
