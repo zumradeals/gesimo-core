@@ -24,6 +24,9 @@ try {
         assert.equal(await page.locator('.mobile-tabs').isVisible(), width < 1024);
     }
     await page.setViewportSize({ width: 390, height: 844 });
+    const bouton = await page.getByRole('button', { name: 'Rechercher un logement', exact: true }).boundingBox();
+    const menu = await page.locator('.mobile-tabs').boundingBox();
+    assert(bouton.y + bouton.height <= menu.y, 'Le bouton de recherche initial ne doit pas être sous les onglets à 390 × 844.');
     await page.screenshot({ path: output + '/accueil-telephone.png', fullPage: true });
     await page.screenshot({ path: output + '/accueil-telephone-ecran.png' });
     await page.locator('.site-f').scrollIntoViewIfNeeded();
