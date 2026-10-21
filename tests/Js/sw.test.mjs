@@ -86,9 +86,9 @@ reseau = 'ok';
 
 // --- illustrations publiques de l’accueil : conservées hors connexion -------------------------
 reponses['/images/sejours/studio.webp'] = () => new Response('ILLUSTRATION_PUBLIQUE', { headers: { 'Content-Type': 'image/webp' } });
-await evenement('fetch', nav('/images/sejours/studio.webp'));
+await evenement('fetch', new Request(ORIGINE + '/images/sejours/studio.webp'));
 reseau = 'coupe';
-({ r } = await evenement('fetch', nav('/images/sejours/studio.webp')));
+({ r } = await evenement('fetch', new Request(ORIGINE + '/images/sejours/studio.webp')));
 assert.equal(await r.text(), 'ILLUSTRATION_PUBLIQUE'); ok('les illustrations publiques de l’accueil restent lisibles hors connexion');
 reseau = 'ok';
 
