@@ -21,8 +21,8 @@ Toute autre technologie : seulement si indispensable, et après accord du porteu
 Référence cible : `docs/contrats/profil-gerant-certification-v1.md`. Le porteur a validé la distinction suivante :
 pièce d’identité obligatoire pour publier après contrôle ; certificat de résidence facultatif pour devenir « Gérant certifié » ;
 justificatif de gestion facultatif pour le badge de la résidence concernée. Les pièces personnelles appartiennent au profil du gérant.
-Les règles fondatrices sont validées ; les maquettes et modalités de reprise des données attendent leur validation avant implémentation.
-Le code actuel ne met pas encore en œuvre cette nouvelle organisation.
+Les règles fondatrices et les quatre maquettes ont été validées en conversation le 21 octobre 2026.
+Le code met en œuvre cette organisation ; le contrat décrit aussi la reprise prudente des anciens dossiers et le renouvellement des documents.
 
 ## Règles absolues
 1. Ne jamais inventer une règle de gestion. Cahier muet ou contradictoire : s'arrêter et poser la question avec une recommandation.

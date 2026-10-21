@@ -54,6 +54,16 @@ it('refuse de changer silencieusement un nom dont l’identité est déjà valid
     expect($gerant->profilGerant->fresh()->nom_complet)->toBe($gerant->nom);
 });
 
+it('réserve la correction du nom légal à l’administrateur sans changer le nom public', function () {
+    $gerant = creerUtilisateur(Role::Gerant);
+    $p = $gerant->profilGerant;
+    $nomPublic = $p->nom_public;
+    Livewire::actingAs(creerUtilisateur(Role::Admin))->test(VerifierGerant::class, ['profil' => $p])
+        ->set('nomComplet', '  Identité corrigée après contrôle  ')->call('corrigerNom')->assertHasNoErrors();
+    expect($p->fresh()->nom_complet)->toBe('Identité corrigée après contrôle')->and($p->fresh()->nom_public)->toBe($nomPublic);
+    $this->actingAs($gerant)->get(route('admin.gerant', $p))->assertForbidden();
+});
+
 it('centralise les documents pour deux résidences sans copie par résidence ni certification automatique', function () {
     $gerant = creerUtilisateur(Role::Gerant);
     $p = profilSansIdentite($gerant);

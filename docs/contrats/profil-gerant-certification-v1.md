@@ -1,7 +1,7 @@
 # Profil gérant, certification et badges — contrat v1
 
 Date : 21 octobre 2026.
-Statut : règles fondatrices validées en conversation ; maquettes et modalités complémentaires proposées à la validation. Aucune implémentation applicative dans ce lot.
+Statut : règles et quatre maquettes validées en conversation le 21 octobre 2026 ; implémentation réalisée dans la PR nº 2. Le déploiement en production reste distinct de la fusion du code.
 
 ## 1. Vision — pourquoi
 
@@ -32,7 +32,7 @@ Une résidence peut être publiée sans badge, et appartenir à un gérant sans 
 - Le refus indique au gérant ce qu'il doit corriger, dans le contexte du document concerné.
 - L'état de certification et le badge sont déterminés côté serveur par les contrôles acceptés, et non par les informations modifiables du profil public.
 
-## 4. Parcours proposé
+## 4. Parcours validé
 
 1. Le gérant complète son profil privé : nom complet, adresse et coordonnées. L'entreprise reste facultative pour ne pas exclure les personnes exerçant en leur nom.
 2. Il fournit sa pièce d'identité et peut joindre son certificat de résidence, maintenant ou plus tard.
@@ -42,7 +42,7 @@ Une résidence peut être publiée sans badge, et appartenir à un gérant sans 
 6. L'équipe Avelis valide l'annonce indépendamment du badge facultatif. Le gérant peut apporter un justificatif de gestion plus tard.
 7. Le profil public n'affiche que les offres effectivement publiées, ainsi que la certification du gérant si elle est acquise. Chaque résidence conserve son propre badge.
 
-La navigation de fin de parcours est une proposition de conception approuvée dans son principe ; les maquettes en montrent le comportement attendu. Les sauvegardes intermédiaires restent sur leur formulaire et confirment ce qui a été enregistré : toutes les sauvegardes ne doivent pas provoquer une redirection.
+La navigation de fin de parcours a été validée avec les maquettes. Les sauvegardes intermédiaires restent sur leur formulaire et confirment ce qui a été enregistré : toutes les sauvegardes ne doivent pas provoquer une redirection.
 
 ## 5. États et cas d'acceptation
 
@@ -59,7 +59,7 @@ Chaque contrôle documentaire distingue au minimum : absent, en attente de contr
 | Acceptée | Refusé | Validée | Absent | Publication ; certification complémentaire non accordée |
 | Acceptée | Absent | Validée | Refusé | Publication ; badge non accordé |
 
-## 6. Maquettes proposées à valider
+## 6. Maquettes validées
 
 Fichier autonome, sans dépendance ni envoi de données : `docs/maquettes/profil-gerant-v1/index.html`.
 Les valeurs, noms et offres sont des exemples fictifs. Les illustrations ne sont pas des photos de résidences réelles.
@@ -73,21 +73,26 @@ Les valeurs, noms et offres sont des exemples fictifs. Les illustrations ne sont
 
 Les sélecteurs « Simulation pour la revue » permettent d'inspecter plusieurs états ; ils ne font pas partie de l'application à implémenter.
 
-## 7. Implémentation — prochaine étape après validation des maquettes
+## 7. Implémentation
 
-Aucun changement de code métier, de base, de compte ou de production dans ce lot.
+Profil privé `/gerant/profil`, aperçu réservé au propriétaire `/gerant/profil/apercu`, profil public `/hebergeurs/{slug}` et contrôle administratif `/admin/gerants/{profil}`. Les pièces sont téléchargées uniquement par la route administrative autorisée et auditée. L’adresse personnelle est chiffrée en base. Les images publiques sont réencodées pour ne pas publier les métadonnées de l’original.
 
-La réalisation devra rester dans la pile existante et couvrir : profil gérant et contrôles documentaires centralisés ; contrôle de publication ; décisions administratives indépendantes ; parcours de soumission et profil public ; migrations réversibles ; tests de droits, de confidentialité et des combinaisons du tableau ci-dessus.
+L’éligibilité à la publication est appliquée aux recherches, fiches publiques, disponibilités, réservations et achats de mise en avant. Elle exige une annonce validée, un compte gérant actif et une identité acceptée. Les décisions administratives distinguent identité, certificat de résidence et justificatif de gestion.
+
+### Renouvellement et corrections
+
+Le remplacement d’un document ne retire pas sa version déjà acceptée : elle demeure valable pendant l’examen et après un refus du remplacement. L’acceptation du nouveau document archive la version précédente, sans suppression du fichier. Le gérant ne peut pas changer silencieusement le nom d’une identité acceptée ; l’administrateur dispose d’une correction explicite, auditée, après contrôle. Le nom public est indépendant.
+
+Le refus explicite d’une identité acceptée retire l’éligibilité publique ; le refus d’une pièce facultative ne retire pas la publication. Aucun délai d’expiration, retrait autonome, purge ou durée de conservation n’est inventé dans ce lot.
 
 ### Reprise des données existantes
 
-Ne pas supprimer ni déplacer silencieusement les pièces déjà fournies. Inventorier les pièces par gérant, leur historique et leurs validations ; conserver les références traçables. Si plusieurs résidences portent des pièces d'identité différentes pour un même compte, ne pas en choisir arbitrairement une : prévoir un contrôle administratif.
-Les justificatifs de gestion existants restent liés à leur résidence. Une résidence déjà vérifiée et son badge doivent être examinés selon la signification historique du contrôle ; ne pas convertir automatiquement un badge ancien en preuve de gestion si celle-ci n'a pas été explicitement contrôlée.
+La migration ne supprime ni ne déplace les pièces. Elle crée un profil par gérant et conserve les références aux documents sources. Un chemin d’identité unique avec décision historique acceptée peut être repris comme accepté. Plusieurs chemins différents déclenchent un contrôle administratif : aucun choix arbitraire, toutes les références sont conservées. Une identité manquante ou ambiguë doit être contrôlée avant publication selon les nouvelles règles.
 
-### Modalités à fixer avant modification des données existantes
+Les justificatifs de gestion restent liés à leur résidence. Le booléen historique de badge est conservé mais ne suffit plus à afficher le badge public : un administrateur doit confirmer explicitement une preuve de gestion disponible. Une annonce validée peut donc rester publiée sans badge.
 
-- Effet du remplacement ou du retrait d'une pièce d'identité sur les annonces déjà publiées ; éviter une suspension involontaire lors d'un simple renouvellement tout en conservant le contrôle d'identité.
-- Reprise administrative des gérants et badges existants, notamment en cas de documents divergents ou d'anciennes validations ne distinguant pas les contrôles.
-- Règles de conservation, retrait, purge et éventuelle expiration des documents. Aucun délai de validité de certificat n'est inventé dans ce lot.
+### Déploiement et retour arrière
 
-Ces points ne remettent pas en cause les règles fondatrices validées ; ils doivent être résolus avant d'activer la nouvelle logique sur des données réelles.
+Sauvegarder la base, les fichiers privés et la clé `APP_KEY` avant déploiement. Prévoir la revue des identités ambiguës ou manquantes et la confirmation des anciens badges avant d’activer les nouvelles règles sur les comptes concernés. Le code ne prétend pas avoir effectué cet inventaire en production.
+
+Le retour arrière exporte d’abord les profils et documents centralisés dans une archive chiffrée privée (`archives-dossiers-gerants/*.json.enc`) ; il échoue si cette sauvegarde ne peut pas être écrite. Les fichiers originaux restent conservés. Cette archive exige la même clé `APP_KEY` et une restauration administrative manuelle ; rejouer la migration ne restaure pas automatiquement les nouvelles données exportées. Une sauvegarde complète avant déploiement reste nécessaire.
