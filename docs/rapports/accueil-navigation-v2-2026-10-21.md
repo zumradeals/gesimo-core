@@ -36,6 +36,8 @@ La recette visuelle locale ne remplace pas le parcours PostgreSQL : elle utilise
 Les captures réelles ordinateur/téléphone sont jointes à l’artefact `parcours-gerant` de cette exécution (rétention 7 jours). La vérification réelle couvre la transmission des dates/commune/voyageurs, un résultat publié, la connexion requise pour les réservations, le compte client, les quatre onglets, les photos chargées, les liens du footer et l’absence de débordement de 320 à 1440 px.
 La dernière inspection de la capture mobile a conduit à réduire la hauteur du hero sur téléphone afin que le bouton de recherche initial soit entièrement visible au-dessus des onglets à 390 × 844 px. Un contrôle navigateur explicite de cette position a été ajouté ; la typographie ordinateur reste indépendante.
 
+**Recette finale réussie** sur `84f878700addc53ed30bb83068d577e3a64a0184` : https://github.com/zumradeals/gesimo-core/actions/runs/39652005759 — 405 tests, 2 512 assertions, migrations aller-retour, formatage, JavaScript, build et les deux parcours Chromium réussis. Le contrôle de position confirme le bouton de recherche entièrement au-dessus des onglets à 390 × 844 px. Le nouveau scénario PWA confirme la relecture d’une illustration publique après coupure réseau, sans changement des exclusions privées.
+
 ## Décisions et limites
 
 Les exemples de démonstration sont une section éditoriale versionnée, sans nouvel éditeur administratif. Ils sont toujours accompagnés de mentions explicites, y compris leurs prix. Le lien de recherche placé hors des cartes mène exclusivement aux vraies offres.
