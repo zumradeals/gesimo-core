@@ -4,14 +4,15 @@ namespace App\Sejours\Livewire;
 
 use App\Noyau\Services\Audit;
 use App\Paiement\Services\PlancherAcompte;
-use App\Sejours\Models\DocumentVerification;
 use App\Sejours\Models\Equipement;
 use App\Sejours\Models\Photo;
 use App\Sejours\Models\Residence;
 use App\Sejours\Models\Unite;
 use App\Sejours\Services\Photos;
+use App\Sejours\Services\PiecesVerification;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
 use InvalidArgumentException;
 use Livewire\Attributes\Title;
@@ -77,6 +78,8 @@ class EditerResidence extends Component
 
     public $justificatif = null;
 
+    public int $versionPieces = 0;
+
     public ?string $message = null;
 
     public ?string $erreur = null;
@@ -86,7 +89,7 @@ class EditerResidence extends Component
         if ($residence?->exists) {
             Gate::authorize('update', $residence);
             $this->residenceId = $residence->id;
-            $this->etape = (int) session('etape', 1);
+            $this->etape = in_array((int) session('etape', 1), [1, 2], true) ? (int) session('etape', 1) : 1;
             $this->nom = $residence->nom;
             $this->commune = $residence->commune;
             $this->quartier = (string) $residence->quartier;
@@ -103,12 +106,46 @@ class EditerResidence extends Component
 
     public function allerEtape(int $etape): void
     {
-        $this->etape = ($this->residenceId === null || $etape < 1 || $etape > 3) ? 1 : $etape;
+        if ($this->residenceId === null || $etape < 1 || $etape > 3) {
+            $this->etape = 1;
+
+            return;
+        }
+        if ($etape > $this->etape) {
+            // Même contrôle pour les onglets et les boutons « Étape suivante ».
+            $this->etape = 1;
+            $this->enregistrerResidence();
+            if ($this->getErrorBag()->isNotEmpty()) {
+                return;
+            }
+            if ($etape === 3 && ! $this->preparerLogements()) {
+                return;
+            }
+        }
+        $this->etape = $etape;
+    }
+
+    private function preparerLogements(): bool
+    {
+        $this->etape = 2;
+        if ($this->formulaireLogement) {
+            $this->enregistrerLogement();
+        }
+        $residence = $this->residence();
+        if (! $residence->unites()->where('active', true)->whereHas('tarifs', fn ($q) => $q->where('type_periode', 'standard'))->exists()) {
+            $this->erreur = 'Ajoutez et enregistrez au moins un logement avec son prix par nuit avant de continuer.';
+
+            return false;
+        }
+
+        return true;
     }
 
     public function enregistrerResidence()
     {
         $this->reinitialiser();
+        $this->nom = trim($this->nom);
+        $this->commune = trim($this->commune);
         $plancher = PlancherAcompte::pourcentageMinimum();
 
         $donnees = $this->validate([
@@ -122,8 +159,8 @@ class EditerResidence extends Component
             'pourcentageAcompte' => 'nullable|integer|between:1,100',
             'politiqueAnnulation' => 'required|in:flexible',
         ], [
-            'latitude.required_with' => 'Indiquez aussi la longitude.',
-            'longitude.required_with' => 'Indiquez aussi la latitude.',
+            'latitude.required_with' => 'Indiquez aussi la latitude.',
+            'longitude.required_with' => 'Indiquez aussi la longitude.',
         ], ['nom' => 'Le nom', 'commune' => 'La commune', 'pourcentageAcompte' => 'L\'acompte']);
 
         if ($this->modePaiement === 'acompte') {
@@ -211,11 +248,12 @@ class EditerResidence extends Component
         $this->reinitialiser();
         $residence = $this->residence();
 
-        // Les prix sont saisis comme « 15 000 » : on garde seulement les chiffres.
-        $this->uPrix = preg_replace('/\D+/', '', $this->uPrix);
-        $this->uPrixWeekEnd = preg_replace('/\D+/', '', $this->uPrixWeekEnd);
+        $this->uNom = trim($this->uNom);
+        // Seuls les espaces de groupement sont retirés : jamais le signe ni les décimales.
+        $this->uPrix = preg_replace('/[ \x{00A0}\x{202F}]/u', '', trim($this->uPrix));
+        $this->uPrixWeekEnd = preg_replace('/[ \x{00A0}\x{202F}]/u', '', trim($this->uPrixWeekEnd));
         foreach ($this->uFetes as $i => $fete) {
-            $this->uFetes[$i]['prix'] = preg_replace('/\D+/', '', $fete['prix']);
+            $this->uFetes[$i]['prix'] = preg_replace('/[ \x{00A0}\x{202F}]/u', '', trim($fete['prix']));
         }
 
         $this->validate([
@@ -229,6 +267,7 @@ class EditerResidence extends Component
             'uFetes.*.fin' => 'required|date|after_or_equal:uFetes.*.debut',
             'uFetes.*.prix' => 'required|integer|min:1',
             'uEquipements' => 'array',
+            'uEquipements.*' => 'integer|exists:equipement,id',
             'nouvellesPhotos.*' => 'image|mimes:jpg,jpeg,png,webp|max:5120',
         ], [
             'uPrix.required' => 'Le prix par nuit est obligatoire et doit être un nombre entier.',
@@ -300,49 +339,91 @@ class EditerResidence extends Component
         $this->etape = 3;
         $this->reinitialiser();
         $residence = $this->residence();
+        $etaitVerifiee = $residence->estVerifiee();
+        if ($this->enregistrerPieces($residence)) {
+            $this->message = 'Pièces enregistrées.'.($etaitVerifiee ? ' La résidence est repassée en vérification après le remplacement des pièces.' : '');
+        } else {
+            $this->message = 'Aucune nouvelle pièce sélectionnée. Les pièces déjà enregistrées sont conservées.';
+        }
+    }
+
+    private function enregistrerPieces(Residence $residence): bool
+    {
         $this->validate([
             'pieceGerant' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:5120',
             'justificatif' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:5120',
-        ], [], ['pieceGerant' => 'La pièce d\'identité', 'justificatif' => 'Le justificatif']);
+        ], [
+            'pieceGerant.mimes' => 'Choisissez une pièce d’identité en PDF, JPEG ou PNG.',
+            'justificatif.mimes' => 'Choisissez un justificatif du droit de gérer en PDF, JPEG ou PNG.',
+            'pieceGerant.max' => 'La pièce d’identité ne doit pas dépasser 5 Mo.',
+            'justificatif.max' => 'Le justificatif ne doit pas dépasser 5 Mo.',
+        ], ['pieceGerant' => 'La pièce d’identité', 'justificatif' => 'Le justificatif']);
 
-        foreach (['piece_gerant' => 'pieceGerant', 'justificatif_droit_gestion' => 'justificatif'] as $type => $propriete) {
-            if ($this->{$propriete}) {
-                // Stockage privé, nom au hasard : jamais accessible par une adresse publique.
-                $chemin = $this->{$propriete}->store("documents/{$residence->id}", 'local');
-                DocumentVerification::updateOrCreate(['residence_id' => $residence->id, 'type' => $type], ['chemin' => $chemin, 'statut' => 'en_attente', 'verifie_par' => null, 'verifie_le' => null]);
-                $this->{$propriete} = null;
+        $fichiers = [];
+        foreach (PiecesVerification::CHAMPS as $type => $champ) {
+            if ($this->{$champ} !== null) {
+                $fichiers[$type] = $this->{$champ};
             }
         }
-        $this->message = 'Pièces enregistrées.'.($this->residence()->statut_verification === 'verifiee' ? $this->repasserEnVerification($this->residence()) : '');
+        $modifiees = PiecesVerification::enregistrer($residence, $fichiers);
+        if ($modifiees) {
+            $this->reset('pieceGerant', 'justificatif');
+            $this->versionPieces++;
+        }
+
+        return $modifiees;
     }
 
     public function soumettre(): void
     {
-        $this->etape = 3;
         $this->reinitialiser();
-        $residence = $this->residence()->load(['unites.tarifs', 'photos', 'documents']);
+        // Une action directe ne peut pas contourner les contrôles des étapes précédentes.
+        $this->etape = 1;
+        $this->enregistrerResidence();
+        if ($this->getErrorBag()->isNotEmpty()) {
+            return;
+        }
+        $this->message = null;
+        if (! $this->preparerLogements()) {
+            return;
+        }
+        $this->etape = 3;
+        $residence = $this->residence();
+        $this->enregistrerPieces($residence);
+        $residence = $residence->fresh()->load(['photos', 'documents']);
 
         $manques = [];
-        if (! $residence->unites->contains(fn ($u) => $u->active && $u->tarifs->contains('type_periode', 'standard'))) {
-            $manques[] = 'au moins un logement avec son prix par nuit';
-        }
         if ($residence->photos->isEmpty()) {
             $manques[] = 'au moins une photo';
         }
-        foreach (['piece_gerant' => 'la pièce d\'identité du gérant', 'justificatif_droit_gestion' => 'le justificatif du droit de gérer'] as $type => $libelle) {
-            if (! $residence->documents->contains('type', $type)) {
+        foreach (['piece_gerant' => 'la pièce d’identité du gérant', 'justificatif_droit_gestion' => 'le justificatif du droit de gérer'] as $type => $libelle) {
+            $document = $residence->documents->firstWhere('type', $type);
+            if (! $document || $document->statut === 'refuse' || ! Storage::disk('local')->exists($document->chemin)) {
                 $manques[] = $libelle;
             }
         }
         if ($manques !== []) {
-            $this->erreur = 'Il manque : '.implode(', ', $manques).'.';
+            $this->erreur = 'Il manque : '.implode(', ', $manques).'. Les pièces déjà enregistrées sont conservées.';
 
             return;
         }
 
-        $residence->update(['statut_verification' => 'en_attente', 'soumise_le' => now(), 'motif_refus' => null]);
-        Audit::enregistrer('residence.soumise', $residence);
-        $this->message = 'Envoyée pour vérification. Vous serez prévenu dès la décision de l\'équipe Avelis.';
+        DB::transaction(function () use ($residence) {
+            $residence = Residence::lockForUpdate()->findOrFail($residence->id);
+            if ($residence->estVerifiee()) {
+                $this->message = 'Cette résidence est déjà validée et en ligne.';
+
+                return;
+            }
+            if ($residence->statut_verification === 'en_attente' && $residence->soumise_le !== null) {
+                $this->message = 'Envoyée pour vérification. Votre dossier est déjà en attente de décision.';
+
+                return;
+            }
+            $residence->update(['statut_verification' => 'en_attente', 'badge_verifie' => false, 'soumise_le' => now(), 'motif_refus' => null]);
+            Audit::enregistrer('residence.soumise', $residence);
+            $this->message = 'Envoyée pour vérification. Vous serez prévenu dès la décision de l’équipe Avelis.';
+        });
     }
 
     public function updatedNouvellesPhotos(): void
@@ -361,7 +442,14 @@ class EditerResidence extends Component
     {
         $residence = $this->residenceId ? $this->residence()->load(['unites.tarifs', 'unites.photos', 'unites.equipements', 'documents']) : null;
 
+        $piecesDisponibles = [];
+        foreach (PiecesVerification::CHAMPS as $type => $champ) {
+            $document = $residence?->documents->firstWhere('type', $type);
+            $piecesDisponibles[$type] = $document && $document->statut !== 'refuse' && Storage::disk('local')->exists($document->chemin);
+        }
+
         return view('livewire.sejours.editer-residence', [
+            'piecesDisponibles' => $piecesDisponibles,
             'residence' => $residence,
             'equipements' => Equipement::orderBy('id')->get(),
             'plancher' => PlancherAcompte::pourcentageMinimum(),

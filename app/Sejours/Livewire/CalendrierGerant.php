@@ -45,6 +45,13 @@ class CalendrierGerant extends Component
         $this->mois = $this->mois !== '' ? $this->mois : now()->format('Y-m');
     }
 
+    public function updatedResidenceId(): void
+    {
+        $this->uniteId = null;
+        $this->debut = $this->fin = $this->motif = '';
+        $this->reinitialiser();
+    }
+
     public function moisPrecedent(): void
     {
         $this->mois = $this->premierJour()->subMonth()->format('Y-m');
@@ -108,7 +115,10 @@ class CalendrierGerant extends Component
             return view('livewire.sejours.calendrier-gerant', ['residences' => $residences, 'unites' => collect(), 'unite' => null]);
         }
 
-        $unite = $this->uniteChoisie();
+        $unite = $this->uniteChoisie(false);
+        if ($unite === null) {
+            return view('livewire.sejours.calendrier-gerant', ['residences' => $residences, 'unites' => collect(), 'unite' => null]);
+        }
         $debutMois = $this->premierJour();
         $finMois = $debutMois->endOfMonth()->startOfDay();
 
@@ -161,7 +171,7 @@ class CalendrierGerant extends Component
             ->orderBy('nom')->get();
     }
 
-    private function uniteChoisie(): Unite
+    private function uniteChoisie(bool $obligatoire = true): ?Unite
     {
         $residences = $this->residencesAccessibles();
         abort_if($residences->isEmpty(), 403);
@@ -170,7 +180,14 @@ class CalendrierGerant extends Component
         $residence = $residences->firstWhere('id', $this->residenceId) ?? $residences->first();
         $this->residenceId = $residence->id;
         $unite = $residence->unites->firstWhere('id', $this->uniteId) ?? $residence->unites->first();
-        abort_if($unite === null, 404, 'Cette résidence n\'a pas encore de logement.');
+        if ($unite === null) {
+            $this->uniteId = null;
+            if ($obligatoire) {
+                throw \Illuminate\Validation\ValidationException::withMessages(['debut' => 'Ajoutez un logement actif avant de gérer son calendrier.']);
+            }
+
+            return null;
+        }
         $this->uniteId = $unite->id;
         $unite->setRelation('residence', $residence);
 
@@ -179,7 +196,7 @@ class CalendrierGerant extends Component
 
     private function premierJour(): CarbonImmutable
     {
-        return preg_match('/^\d{4}-\d{2}$/', $this->mois) ? CarbonImmutable::createFromFormat('!Y-m', $this->mois) : CarbonImmutable::now()->startOfMonth();
+        return preg_match('/^[1-9]\d{3}-(0[1-9]|1[0-2])$/', $this->mois) ? CarbonImmutable::createFromFormat('!Y-m', $this->mois) : CarbonImmutable::now()->startOfMonth();
     }
 
     private function reinitialiser(): void
