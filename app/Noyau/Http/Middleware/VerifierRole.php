@@ -26,6 +26,8 @@ class VerifierRole
             }
         }
 
-        abort(403, "Vous n'avez pas le droit d'accéder à cette page.");
+        abort(403, $request->route()?->getName() === 'reserver'
+            ? 'Seuls les comptes « Client » peuvent réserver un séjour en ligne.'
+            : "Vous n'avez pas le droit d'accéder à cette page.");
     }
 }
