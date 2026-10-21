@@ -59,3 +59,30 @@ jobs:
         run: |
           npm install --ignore-scripts
           npm run build
+
+      - name: Préparer le parcours navigateur du gérant
+        env:
+          APP_ENV: testing
+          APP_KEY: base64:dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHQ=
+          DB_URL: pgsql://gesimo:gesimo_test@127.0.0.1:5432/gesimo_test
+        run: |
+          php artisan migrate:fresh --force
+          php artisan storage:link
+          php tests/Support/preparer-profil-gerant.php "$RUNNER_TEMP/avelis-parcours"
+          npm install --prefix "$RUNNER_TEMP/avelis-playwright" --ignore-scripts playwright@1.51.1
+          "$RUNNER_TEMP/avelis-playwright/node_modules/.bin/playwright" install chromium --with-deps
+          php artisan serve --host=127.0.0.1 --port=8123 > "$RUNNER_TEMP/avelis-parcours/serveur.log" 2>&1 &
+          for essai in $(seq 1 30); do curl -fsS http://127.0.0.1:8123/up && break; sleep 1; done
+
+      - name: Vérifier le parcours gérant dans Chromium
+        run: node tests/E2E/profil-gerant.mjs "$RUNNER_TEMP/avelis-playwright" "$RUNNER_TEMP/avelis-parcours"
+
+      - name: Conserver les captures du parcours gérant
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: parcours-gerant
+          path: |
+            ${{ runner.temp }}/avelis-parcours/*.png
+            ${{ runner.temp }}/avelis-parcours/serveur.log
+          retention-days: 7

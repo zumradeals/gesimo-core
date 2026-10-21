@@ -15,7 +15,7 @@ class LogoGerant
         DossierGerant::autoriserProprietaire($profil);
         $contenu = file_get_contents($fichier->getRealPath());
         $infos = $contenu === false ? false : @getimagesizefromstring($contenu);
-        if (! $infos || ! in_array($infos[2], [IMAGETYPE_JPEG, IMAGETYPE_PNG, IMAGETYPE_WEBP], true) || $infos[0] * $infos[1] > 40_000_000) {
+        if (! $infos || ! in_array($infos[2], [IMAGETYPE_JPEG, IMAGETYPE_PNG, IMAGETYPE_WEBP], true) || $infos[0] * $infos[1] > 20_000_000) {
             throw ValidationException::withMessages(['logo' => 'Choisissez une image JPEG, PNG ou WebP valide.']);
         }
         $image = @imagecreatefromstring($contenu);
@@ -24,6 +24,9 @@ class LogoGerant
         }
         $largeur = imagesx($image);
         $petite = $largeur > 480 ? imagescale($image, 480) : $image;
+        if ($petite === false) {
+            throw ValidationException::withMessages(['logo' => 'Cette image ne peut pas être redimensionnée.']);
+        }
         $fond = imagecreatetruecolor(imagesx($petite), imagesy($petite));
         imagefill($fond, 0, 0, imagecolorallocate($fond, 255, 255, 255));
         imagecopy($fond, $petite, 0, 0, 0, 0, imagesx($petite), imagesy($petite));

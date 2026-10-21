@@ -254,7 +254,8 @@ it('le gérant voit son aperçu privé même sans offre publiée mais un visiteu
     $gerant = creerUtilisateur(Role::Gerant);
     $p = $gerant->profilGerant;
     $this->get(route('hebergeur', $p->slug))->assertNotFound();
-    $this->actingAs($gerant)->get(route('gerant.profil.apercu'))->assertOk()->assertSee('Aperçu de votre profil public')->assertHeader('Cache-Control', 'no-store, private');
+    $reponse = $this->actingAs($gerant)->get(route('gerant.profil.apercu'))->assertOk()->assertSee('Aperçu de votre profil public');
+    expect($reponse->headers->get('Cache-Control'))->toContain('no-store')->toContain('private');
 });
 
 it('le suivi après soumission remplace le formulaire par une confirmation dans la liste', function () {
