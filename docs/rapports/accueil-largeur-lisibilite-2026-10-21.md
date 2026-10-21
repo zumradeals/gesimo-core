@@ -18,11 +18,13 @@ Les paramètres Général existants couvrent l’identité visuelle, le slogan, 
 
 ## Validation
 
-Compilation Vite et Pint réussis localement. Contrôles visuels depuis les vraies vues Blade avec une offre en mémoire, sans insertion en base : aucune image cassée et aucune erreur JavaScript. Tests PHP/PostgreSQL et parcours E2E : résultat CI à compléter après exécution.
+Compilation Vite et Pint réussis localement. Contrôles visuels depuis les vraies vues Blade avec une, deux puis trois offres en mémoire, sans insertion en base : aucune image cassée et aucune erreur JavaScript. CI réussie sur le commit applicatif `52cb142e5b675fb6e26ea30e471af3c8832237d2` : **405 tests / 2 515 assertions**, migrations réversibles, tests PWA/hors connexion, build et deux parcours Chromium réussis (profil gérant puis accueil/navigation). Le parcours accueil vérifie aussi les largeurs 1 920 et 2 560 px, la carte unique sur toute sa grille et la taille lisible des explications. Captures ordinateur/téléphone inspectées après exécution.
+
+Preuve : https://github.com/zumradeals/gesimo-core/actions/runs/39656851206 (captures dans les artefacts du run). Le commit suivant ne finalise que le présent rapport.
 
 ## Vérification navigateur
 
-Ouvrir l’accueil sur ordinateur : les sections suivent les mêmes marges que le héros, les explications sont lisibles, une seule annonce ne laisse plus deux colonnes vides. « Pour vous projeter » est absent. Sur téléphone, vérifier les quatre onglets, rechercher par dates puis ouvrir un logement. Les paramètres restent accessibles aux administrateurs autorisés dans Réglages > Général.
+Ouvrir l’accueil sur ordinateur : les sections suivent les mêmes marges que le héros, les explications sont lisibles, une seule annonce ne laisse plus deux colonnes vides. « Pour vous projeter » est absent. Sur téléphone, vérifier les quatre onglets, rechercher par dates puis ouvrir un logement. Les paramètres restent accessibles au super-administrateur dans Réglages > Général.
 
 ## Décisions et limites
 
