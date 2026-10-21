@@ -55,6 +55,9 @@ jobs:
           php artisan migrate:rollback --step=20 --force
           php artisan migrate --force
 
+      - name: Vérifier les invitations PWA et le mode hors connexion
+        run: node --test tests/Js/*.test.mjs
+
       - name: Construire les fichiers du site
         run: |
           npm install --ignore-scripts
