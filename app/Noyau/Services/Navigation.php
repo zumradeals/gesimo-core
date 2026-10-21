@@ -114,10 +114,12 @@ class Navigation
     public static function site(): array
     {
         return [
+            ['libelle' => 'Accueil', 'route' => 'accueil', 'actif' => ['accueil']],
             ['libelle' => 'Logements', 'route' => 'recherche', 'actif' => ['recherche', 'logement', 'hebergeur']],
-            ['libelle' => 'Comment ça marche', 'route' => 'accueil', 'ancre' => '#comment', 'actif' => []],
+            ['libelle' => 'À propos', 'route' => 'a-propos', 'actif' => ['a-propos']],
             ['libelle' => 'Devenir partenaire', 'route' => 'devenir-partenaire', 'actif' => ['devenir-partenaire']],
             ['libelle' => 'Aide', 'route' => 'faq', 'actif' => ['faq']],
+            ['libelle' => 'Contact', 'route' => 'contact', 'actif' => ['contact']],
         ];
     }
 

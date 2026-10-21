@@ -1,0 +1,105 @@
+/* Maquette partenaire validée le 21/10/2026 ; styles limités à cette page. */
+.partenaire-v2{font-size:16px;line-height:1.65;background:#fff;color:#172d2a}
+.partenaire-v2{--vert:#107c73;--profond:#102f2b;--or:#e8c580;--sable:#f6efe1;--texte:#172d2a;--gris:#4d625e}
+.partenaire-v2 *{box-sizing:border-box}
+.partenaire-v2 a{color:inherit;text-decoration:none}
+.partenaire-v2 button,.partenaire-v2 summary{font:inherit}
+.partenaire-v2 h1,.partenaire-v2 h2,.partenaire-v2 h3,.partenaire-v2 p{margin:0}
+.partenaire-v2 h1,.partenaire-v2 h2,.partenaire-v2 h3{line-height:1.12;letter-spacing:-.035em;font-weight:780}
+.partenaire-v2 h1{font-size:clamp(36px,4.5vw,66px);max-width:750px}
+.partenaire-v2 h2{font-size:clamp(29px,3vw,44px);margin:10px 0 18px}
+.partenaire-v2 h3{font-size:22px;margin-bottom:12px}
+.partenaire-v2 p{color:var(--gris)}
+.partenaire-v2 .pa-cont{width:min(100%,1560px);padding-inline:clamp(22px,5vw,80px);margin:auto}
+.partenaire-v2 .pa-hero{position:relative;isolation:isolate;background:var(--profond);color:white;padding:85px 0 92px;overflow:hidden}
+.partenaire-v2 .pa-hero>img{position:absolute;inset:0;z-index:-2;width:100%;height:100%;object-fit:cover;object-position:70% 50%}
+.partenaire-v2 .pa-hero:after{content:'';position:absolute;inset:0;z-index:-1;background:linear-gradient(90deg,#102f2bfa,#102f2bea 38%,#102f2b22 85%)}
+.partenaire-v2 .pa-eyebrow{font-size:12px;letter-spacing:.13em;text-transform:uppercase;font-weight:800;color:#926c26}
+.partenaire-v2 .pa-hero .pa-eyebrow{color:var(--or)}
+.partenaire-v2 .pa-hero h1{margin:16px 0 22px}
+.partenaire-v2 .pa-hero p{max-width:600px;color:#e0eae6;font-size:19px}
+.partenaire-v2 .pa-actions{display:flex;gap:20px;align-items:center;flex-wrap:wrap;margin-top:28px}
+.partenaire-v2 .pa-btn{display:inline-flex;align-items:center;justify-content:center;gap:18px;min-height:50px;padding:12px 22px;border-radius:9px;background:var(--vert);color:white;font-weight:750;font-size:15px}
+.partenaire-v2 .pa-btn.pa-or{background:var(--or);color:var(--profond)}
+.partenaire-v2 .pa-lien{color:var(--vert);font-weight:750}
+.partenaire-v2 .pa-hero .pa-lien{color:white;border-bottom:1px solid #ffffff70}
+.partenaire-v2 .pa-hero small{display:block;margin-top:17px;color:#deebe6;font-size:13px}
+.partenaire-v2 .pa-preuves{display:grid;grid-template-columns:repeat(3,1fr);gap:28px;padding-block:26px;border-bottom:1px solid #e0e8e4}
+.partenaire-v2 .pa-preuve{display:flex;gap:14px;align-items:center}
+.partenaire-v2 .pa-icone{flex:none;display:grid;place-items:center;width:44px;height:44px;border-radius:12px;background:#e8f3ef;color:var(--vert);font-size:22px}
+.partenaire-v2 .pa-preuve b{display:block;font-size:15px}
+.partenaire-v2 .pa-preuve p{font-size:13px}
+.partenaire-v2 section{padding:74px 0}
+.partenaire-v2 .pa-intro{max-width:760px;margin-bottom:34px}
+.partenaire-v2 .pa-intro p{font-size:18px}
+.partenaire-v2 .pa-grille{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.partenaire-v2 .pa-carte{border:1px solid #dce6e1;padding:28px;border-radius:15px;background:#fff}
+.partenaire-v2 .pa-carte .pa-icone{margin-bottom:22px}
+.partenaire-v2 .pa-carte p{font-size:16px}
+.partenaire-v2 .pa-outil{background:#edf5f2}
+.partenaire-v2 .pa-deux{display:grid;grid-template-columns:1fr 1fr;gap:70px;align-items:center}
+.partenaire-v2 .pa-liste{display:grid;gap:18px;margin-top:26px}
+.partenaire-v2 .pa-liste div{padding-left:22px;border-left:3px solid #d7b775}
+.partenaire-v2 .pa-liste b{display:block;margin-bottom:5px}
+.partenaire-v2 .pa-espace{border:1px solid #d6e4de;border-radius:18px;overflow:hidden;background:white;box-shadow:0 18px 45px #102f2b10}
+.partenaire-v2 .pa-espace-tete{background:var(--profond);padding:19px 24px;color:white;display:flex;justify-content:space-between;font-weight:700}
+.partenaire-v2 .pa-espace-corps{padding:25px}
+.partenaire-v2 .pa-espace-corps>p{font-size:13px;margin-bottom:20px}
+.partenaire-v2 .pa-ligne{display:flex;align-items:center;justify-content:space-between;border:1px solid #dce6e1;padding:17px;border-radius:10px;margin-bottom:11px;gap:20px}
+.partenaire-v2 .pa-ligne small{display:block;color:var(--gris);font-size:12px}
+.partenaire-v2 .pa-pastille{background:#e9f5ef;color:var(--vert);padding:5px 9px;border-radius:7px;font-size:12px;font-weight:700;white-space:nowrap}
+.partenaire-v2 .pa-parcours{counter-reset:etape}
+.partenaire-v2 .pa-etape{border-top:1px solid #bfd1c8;padding-top:23px}
+.partenaire-v2 .pa-num{color:var(--vert);font-size:32px;font-weight:800;display:block;margin-bottom:18px}
+.partenaire-v2 .pa-etape p{font-size:16px}
+.partenaire-v2 .pa-confiance{background:var(--sable)}
+.partenaire-v2 .pa-etiquette{display:inline-block;font-size:12px;font-weight:750;color:var(--vert);background:#e6f1eb;padding:5px 10px;border-radius:6px;margin-bottom:17px}
+.partenaire-v2 .pa-etiquette.pa-obligatoire{color:#705021;background:#f2e3bd}
+.partenaire-v2 .pa-tarifs{background:var(--profond);color:white}
+.partenaire-v2 .pa-tarifs p{color:#d7e5df}
+.partenaire-v2 .pa-tarifs h2{max-width:600px}
+.partenaire-v2 .pa-tarifs .pa-eyebrow{color:var(--or)}
+.partenaire-v2 .pa-tarifs .pa-carte{background:#ffffff0c;border-color:#ffffff30}
+.partenaire-v2 .pa-tarifs .pa-carte p{font-size:16px}
+.partenaire-v2 .pa-tarifs h3{font-size:24px}
+.partenaire-v2 .pa-tarifs .pa-liste div{border-color:var(--or)}
+.partenaire-v2 .pa-faq{display:grid;gap:12px}
+.partenaire-v2 details{border:1px solid #dbe5df;border-radius:10px;background:#fff}
+.partenaire-v2 summary{padding:20px;cursor:pointer;font-weight:700;font-size:16px}
+.partenaire-v2 details p{padding:0 20px 20px;font-size:15px}
+.partenaire-v2 .pa-rejoindre{padding:38px 0 65px}
+.partenaire-v2 .pa-appel{background:var(--sable);border-radius:18px;padding:42px;display:flex;align-items:center;justify-content:space-between;gap:30px}
+.partenaire-v2 .pa-appel h2{max-width:700px;margin-top:0}
+.partenaire-v2 .pa-appel p{max-width:650px}
+.partenaire-v2 .pa-appel .pa-btn{flex:none}
+.partenaire-v2 a:focus-visible,.partenaire-v2 summary:focus-visible{outline:3px solid #ba8e31;outline-offset:4px}
+@media(max-width:1100px){
+.partenaire-v2 .pa-deux{gap:35px}
+}
+@media(max-width:900px){
+.partenaire-v2 .pa-hero{padding:50px 0 58px}
+.partenaire-v2 .pa-hero p{font-size:17px;max-width:520px}
+.partenaire-v2 .pa-hero:after{background:linear-gradient(90deg,#102f2bf5,#102f2bb5)}
+.partenaire-v2 .pa-deux{grid-template-columns:1fr;gap:35px}
+.partenaire-v2 .pa-grille{grid-template-columns:1fr}
+.partenaire-v2 .pa-carte{padding:25px}
+.partenaire-v2 .pa-preuves{grid-template-columns:1fr;gap:18px}
+.partenaire-v2 .pa-preuve p{font-size:14px}
+.partenaire-v2 section{padding:49px 0}
+.partenaire-v2 .pa-intro{margin-bottom:26px}
+.partenaire-v2 .pa-appel{display:block;padding:28px}
+.partenaire-v2 .pa-appel .pa-btn{margin-top:24px}
+}
+@media(max-width:400px){
+.partenaire-v2 h1{font-size:36px}
+.partenaire-v2 .pa-actions{gap:16px}
+.partenaire-v2 .pa-espace-corps{padding:16px}
+.partenaire-v2 .pa-ligne{padding:13px;gap:8px}
+.partenaire-v2 .pa-pastille{font-size:11px}
+.partenaire-v2 .pa-appel{padding:24px}
+.partenaire-v2 .pa-hero small{font-size:12px}
+}
+.partenaire-v2 .pa-icone .ic{width:23px;height:23px}
+.partenaire-v2 .pa-exemple{margin-top:24px;padding-top:22px;border-top:1px solid #ffffff40;font-size:14px}
+.partenaire-v2 .pa-exemple>div{display:flex;justify-content:space-between;gap:20px;padding:6px 0}
+.partenaire-v2 .pa-exemple p{font-size:12px}

@@ -92,6 +92,9 @@ jobs:
       - name: Vérifier l’accueil et sa navigation dans Chromium
         run: node tests/E2E/accueil.mjs "$RUNNER_TEMP/avelis-playwright" "$RUNNER_TEMP/avelis-parcours"
 
+      - name: Vérifier la page partenaire et le menu public dans Chromium
+        run: node tests/E2E/partenaire-navigation.mjs "$RUNNER_TEMP/avelis-playwright" "$RUNNER_TEMP/avelis-parcours"
+
       - name: Afficher les erreurs du serveur de test
         if: failure()
         run: tail -n 100 storage/logs/laravel.log || true
