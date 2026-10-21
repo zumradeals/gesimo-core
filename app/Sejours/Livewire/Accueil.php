@@ -12,8 +12,8 @@ use Livewire\Attributes\Title;
 use Livewire\Component;
 
 /**
- * Page d'accueil du site. Rien n'y est inventé : logements, communes, nombres et avis viennent de la plateforme,
- * et une section sans contenu réel n'est pas affichée.
+ * Les offres réservables et avis viennent de la plateforme. Les exemples visuels sont
+ * séparés dans la vue, explicitement fictifs, sans identité de logement ni lien de réservation.
  */
 #[Title('Résidences meublées en Côte d\'Ivoire')]
 class Accueil extends Component
@@ -59,7 +59,7 @@ class Accueil extends Component
             'unites' => $unites,
             'enAvant' => $enAvant,
             'communes' => $communes,
-            'toutesCommunes' => Residence::where('statut_verification', 'verifiee')->distinct()->orderBy('commune')->pluck('commune'),
+            'toutesCommunes' => Residence::query()->publiee()->distinct()->orderBy('commune')->pluck('commune'),
             'avis' => $avis,
             'delai' => Reglages::entier('annulation.delai_gratuit_heures'),
             'blocage' => $blocage % 60 === 0 ? ($blocage / 60).' heure'.($blocage >= 120 ? 's' : '') : $blocage.' minutes',

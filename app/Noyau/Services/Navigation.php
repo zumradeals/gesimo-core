@@ -88,26 +88,36 @@ class Navigation
         ];
     }
 
-    /** Menu du bas du site pour un visiteur dans l'application installée. */
-    public static function visiteur(): array
+    /** Navigation mobile commune au visiteur et au client, navigateur ou application installée. */
+    public static function visiteur(?Utilisateur $u = null): array
     {
-        return [
-            ['libelle' => 'Chercher', 'icone' => 'recherche', 'route' => 'recherche', 'actif' => ['accueil', 'recherche', 'logement']],
-            ['libelle' => 'Aide', 'icone' => 'aide', 'route' => 'faq', 'actif' => ['faq', 'contact', 'a-propos', 'conditions', 'confidentialite', 'devenir-partenaire', 'mentions-legales']],
-            ['libelle' => 'Se connecter', 'icone' => 'compte', 'route' => 'connexion', 'actif' => ['connexion', 'inscription', 'connexion.lien']],
+        $menu = [
+            ['libelle' => 'Accueil', 'icone' => 'maison', 'route' => 'accueil', 'actif' => ['accueil']],
+            ['libelle' => 'Logements', 'icone' => 'recherche', 'route' => 'recherche', 'actif' => ['recherche', 'logement', 'hebergeur']],
+            ['libelle' => 'Réservations', 'icone' => 'calendrier', 'route' => 'mes-reservations', 'actif' => ['mes-reservations', 'reserver', 'payer', 'paiement.retour', 'reservation.confirmation', 'reservation.annuler', 'reservation.detail', 'reservation.recu', 'reservation.avis']],
+            ['libelle' => 'Compte', 'icone' => 'compte', 'route' => 'compte', 'actif' => ['compte', 'profil', 'connexion', 'inscription', 'connexion.lien']],
         ];
+        if ($u && ! $u->aRole(Role::Client)) {
+            if ($u->estAdmin()) {
+                $menu[2]['route'] = 'admin.reservations';
+            } elseif ($u->aRole(Role::Gerant)) {
+                $menu[2]['route'] = 'gerant.reservations';
+            } else {
+                $menu[2] = ['libelle' => 'Aide', 'icone' => 'aide', 'route' => 'faq', 'actif' => ['faq', 'contact']];
+            }
+        }
+
+        return $menu;
     }
 
-    /** Menu de l'en-tête du site public. @return list<array{libelle: string, route: string, actif: list<string>}> */
+    /** Menu de l’en-tête public ; les pages complémentaires restent accessibles depuis le footer. */
     public static function site(): array
     {
         return [
-            ['libelle' => 'Accueil', 'route' => 'accueil', 'actif' => ['accueil']],
-            ['libelle' => 'Logements', 'route' => 'recherche', 'actif' => ['recherche', 'logement']],
-            ['libelle' => 'À propos', 'route' => 'a-propos', 'actif' => ['a-propos']],
+            ['libelle' => 'Logements', 'route' => 'recherche', 'actif' => ['recherche', 'logement', 'hebergeur']],
+            ['libelle' => 'Comment ça marche', 'route' => 'accueil', 'ancre' => '#comment', 'actif' => []],
             ['libelle' => 'Devenir partenaire', 'route' => 'devenir-partenaire', 'actif' => ['devenir-partenaire']],
             ['libelle' => 'Aide', 'route' => 'faq', 'actif' => ['faq']],
-            ['libelle' => 'Contact', 'route' => 'contact', 'actif' => ['contact']],
         ];
     }
 

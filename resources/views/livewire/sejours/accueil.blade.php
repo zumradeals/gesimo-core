@@ -1,151 +1,78 @@
 @php
     use App\Parametres\Services\Marque;
-    $fcfa = fn (int $m) => \App\Noyau\Services\Format::fcfa($m);
-    $image = Marque::imageAccueilUrl();
     $nom = Marque::nom();
+    $image = Marque::imageAccueilUrl() ?: asset('images/sejours/salon-balcon.webp');
+    $exemples = [
+        ['titre' => 'Studio lumineux à Cocody', 'lieu' => 'Cocody', 'details' => '2 voyageurs · Studio', 'prix' => 25000, 'photo' => 'studio.webp'],
+        ['titre' => 'Appartement cosy à Marcory', 'lieu' => 'Marcory', 'details' => '4 voyageurs · Appartement', 'prix' => 40000, 'photo' => 'appartement.webp'],
+        ['titre' => 'Séjour paisible à Riviera', 'lieu' => 'Cocody · Riviera', 'details' => '4 voyageurs · Appartement', 'prix' => 55000, 'photo' => 'salon-balcon.webp'],
+    ];
 @endphp
-<div>
-    {{-- Héros --}}
-    <section class="hero" @if($image) style="background-image: linear-gradient(135deg, rgba(11,90,84,.92), rgba(15,118,110,.82) 55%, rgba(20,149,138,.7)), url('{{ $image }}'); background-size: cover; background-position: center;" @endif>
-        <div class="cont hero-in">
-            <div class="hero-txt">
-                <span class="surtitre clair">Résidences meublées · Côte d'Ivoire</span>
-                <h1>Trouvez votre résidence meublée, réservez en toute confiance</h1>
-                <p>{{ Marque::slogan() ?: 'Des logements vérifiés en Côte d\'Ivoire, avec le prix total affiché dès le départ et un paiement sécurisé.' }}</p>
-                <ul class="hero-points">
-                    <li><x-ui.icone nom="bouclier" classe="ic" /> Résidences vérifiées avant publication</li>
-                    <li><x-ui.icone nom="prix" classe="ic" /> Prix total affiché, sans frais cachés</li>
-                    <li><x-ui.icone nom="retour" classe="ic" /> Annulation simple jusqu'à {{ $delai }} h avant l'arrivée</li>
-                </ul>
+<div class="accueil-v2">
+    <section class="av-hero" aria-labelledby="titre-accueil">
+        <img class="av-hero-image" src="{{ $image }}" alt="" width="1536" height="1024" fetchpriority="high" decoding="async">
+        <div class="av-hero-ombre"></div>
+        <div class="cont av-hero-texte"><span class="surtitre">Votre séjour en Côte d’Ivoire</span><h1 id="titre-accueil">Un lieu à vous.<br>Le temps d’un séjour.</h1><p>{{ Marque::slogan() ?: 'Trouvez votre résidence meublée en Côte d’Ivoire, avec des annonces contrôlées et un prix clair avant de réserver.' }}</p><a class="lien-clair" href="{{ route('a-propos') }}">Découvrir {{ $nom }} <span aria-hidden="true">→</span></a></div>
+    </section>
+    <div class="cont av-recherche-cont">
+        <form class="av-recherche" method="get" action="{{ route('recherche') }}" aria-label="Rechercher un séjour">
+            <h2>Où souhaitez-vous séjourner ?</h2>
+            <div class="av-recherche-champs">
+                <label class="av-commune" for="accueil-commune"><span>Commune</span><select id="accueil-commune" name="commune"><option value="">Toutes les communes</option>@foreach($toutesCommunes as $c)<option>{{ $c }}</option>@endforeach</select></label>
+                <label for="accueil-arrivee"><span>Arrivée</span><input id="accueil-arrivee" type="date" name="arrivee" min="{{ now()->toDateString() }}" required></label>
+                <label for="accueil-depart"><span>Départ</span><input id="accueil-depart" type="date" name="depart" min="{{ now()->addDay()->toDateString() }}" required></label>
+                <label class="av-voyageurs" for="accueil-personnes"><span>Voyageurs</span><select id="accueil-personnes" name="personnes">@foreach([1, 2, 3, 4, 5, 6, 8, 10, 12] as $n)<option value="{{ $n }}" @selected($n === 2)>{{ $n }} {{ $n === 1 ? 'personne' : 'personnes' }}</option>@endforeach</select></label>
+                <button class="btn-pl" type="submit"><x-ui.icone nom="recherche" classe="ic" /><span>Rechercher un logement</span></button>
             </div>
-            <form class="recherche" method="get" action="{{ route('recherche') }}">
-                <h2>Où et quand voulez-vous séjourner ?</h2>
-                <div class="r-grille">
-                    <label>Commune
-                        <select name="commune"><option value="">Toutes les communes</option>@foreach($toutesCommunes as $c)<option>{{ $c }}</option>@endforeach</select>
-                    </label>
-                    <label>Arrivée<input type="date" name="arrivee" min="{{ now()->toDateString() }}" required></label>
-                    <label>Départ<input type="date" name="depart" min="{{ now()->addDay()->toDateString() }}" required></label>
-                    <label>Personnes<input type="number" name="personnes" value="2" min="1" max="50" inputmode="numeric"></label>
-                </div>
-                <button class="btn-pl grand pleine"><x-ui.icone nom="recherche" classe="ic" /> Rechercher un logement</button>
-                <p class="petit" style="margin-top:8px">Seuls les logements réellement libres à vos dates sont affichés.</p>
-            </form>
-        </div>
-    </section>
+            <p class="av-recherche-note">Choisissez vos dates pour consulter les logements disponibles et le montant de votre séjour.</p>
+        </form>
+    </div>
+    <div class="cont av-reassurance">
+        <div><x-ui.icone nom="bouclier" classe="ic" /><p><b>Identité du gérant contrôlée</b><span>Sa pièce d’identité est validée avant publication.</span></p></div>
+        <div><x-ui.icone nom="prix" classe="ic" /><p><b>Total affiché avant paiement</b><span>Consultez le montant du séjour avant de réserver.</span></p></div>
+        <div><x-ui.icone nom="carte" classe="ic" /><p><b>Mobile Money ou carte</b><span>Les moyens disponibles sont précisés au paiement.</span></p></div>
+    </div>
 
-    {{-- Bandeau de confiance --}}
-    <section class="bandeau-confiance">
-        <div class="cont bc-in">
-            <div><x-ui.icone nom="bouclier" classe="ic" /><b>Gérants vérifiés</b><span>Pièces et photos contrôlées</span></div>
-            <div><x-ui.icone nom="prix" classe="ic" /><b>Prix clair</b><span>Total affiché avant de payer</span></div>
-            <div><x-ui.icone nom="carte" classe="ic" /><b>Paiement sécurisé</b><span>Mobile Money ou carte</span></div>
-            <div><x-ui.icone nom="retour" classe="ic" /><b>Annulation simple</b><span>Remboursement jusqu'à {{ $delai }} h avant</span></div>
-        </div>
-    </section>
-
-    {{-- Comment ça marche --}}
-    <section class="sect" id="comment">
-        <div class="cont">
-            <div class="sect-t"><span class="surtitre">Simple et rapide</span><h2>Comment ça marche ?</h2><p>Réservez en quelques minutes, depuis votre téléphone.</p></div>
-            <div class="etapes">
-                <div class="etape"><span class="num">1</span><x-ui.icone nom="recherche" classe="ic gros" /><h3>Cherchez</h3><p>Choisissez la commune, vos dates et le nombre de personnes. Nous affichons les logements libres avec le prix total.</p></div>
-                <div class="etape"><span class="num">2</span><x-ui.icone nom="carte" classe="ic gros" /><h3>Réservez et payez</h3><p>Vos dates sont gardées {{ $blocage }}. Payez l'acompte ou le total par Wave, Orange Money, MTN Money ou carte.</p></div>
-                <div class="etape"><span class="num">3</span><x-ui.icone nom="maison" classe="ic gros" /><h3>Profitez de votre séjour</h3><p>Vous recevez la confirmation par e-mail avec les coordonnées du gérant. Il vous accueille à l'arrivée.</p></div>
-            </div>
-        </div>
-    </section>
-
-    {{-- Logements à la une (seulement s'il y en a) --}}
     @if($unites->isNotEmpty())
-        <section class="sect alt">
-            <div class="cont">
-                <div class="sect-t gauche"><div><span class="surtitre">Sélection</span><h2>Logements à la une</h2><p>Des résidences vérifiées, prêtes à vous accueillir.</p></div>
-                    <a href="{{ route('recherche') }}" class="lien-fl">Voir tous les logements <x-ui.icone nom="fleche" classe="ic" /></a></div>
-                <div class="grille3">
-                    @foreach($unites as $u)
-                        @php $r = $u->residence; $sponso = in_array($u->residence_id, $enAvant, true); $prix = (int) $u->tarifs->firstWhere('type_periode', 'standard')->prix_nuit; @endphp
-                        <a href="{{ route('logement', ['unite' => $u->id]) }}" class="lg {{ $sponso ? 'spons' : '' }}">
-                            <div class="lg-photo">
-                                @if($sponso)<span class="etq or">★ Sponsorisé</span>@endif
-                                <x-ui.photo :photo="$u->photos->first() ?? $r->photos->first()" classe="h-full" :plat="true" :alt="'Photo de '.$u->nom" />
-                            </div>
-                            <div class="lg-c">
-                                <div class="lg-t"><b>{{ $u->nom }}</b>@if($r->aBadgeGestion())<span class="etq vert">✔ Gestion vérifiée</span>@endif</div>
-                                <div class="lg-l"><x-ui.icone nom="pin" classe="ic pt" /> {{ $r->commune }}@if($r->quartier), {{ $r->quartier }}@endif · jusqu'à {{ $u->capacite }} pers.</div>
-                                <div class="lg-p"><b>{{ number_format($prix, 0, ',', "\u{202F}") }}</b> <small>FCFA / nuit</small></div>
-                            </div>
-                        </a>
-                    @endforeach
-                </div>
-            </div>
-        </section>
+    <section class="av-section" aria-labelledby="offres-titre"><div class="cont">
+        <div class="av-section-titre"><div><span class="surtitre">Logements à la une</span><h2 id="offres-titre">Posez vos valises,<br class="av-desktop"> sentez-vous chez vous.</h2><p>Des offres publiées par nos gérants, à découvrir pour votre prochain séjour.</p></div><a href="{{ route('recherche') }}" class="lien-fl">Voir les logements <span aria-hidden="true">→</span></a></div>
+        <div class="av-offres">
+        @foreach($unites as $u)
+            @php $r = $u->residence; $prix = $u->tarifs->firstWhere('type_periode', 'standard'); $photo = $u->photos->first() ?? $r->photos->first(); @endphp
+            <article class="av-offre">
+                <a class="av-offre-photo" href="{{ route('logement', $u) }}" aria-label="Découvrir {{ $u->nom }}"><x-ui.photo :photo="$photo" classe="h-full w-full" :plat="true" :alt="'Photo de '.$u->nom" />@if(in_array($u->residence_id, $enAvant, true))<span class="av-etiquette">Sponsorisé</span>@endif</a>
+                <div class="av-offre-corps">@if($r->aBadgeGestion())<span class="pg-badge">✓ Gestion vérifiée</span>@endif<h3><a href="{{ route('logement', $u) }}">{{ $u->nom }}</a></h3><p>{{ $r->commune }}@if($r->quartier) · {{ $r->quartier }}@endif</p><p>{{ $u->capacite }} voyageur(s) · {{ ucfirst($u->type) }}</p><div class="av-offre-bas"><p><b>{{ number_format($prix->prix_nuit, 0, ',', "\u{202F}") }} FCFA</b><span> / nuit</span></p><a href="{{ route('logement', $u) }}" class="lien-fl">Voir le logement <span aria-hidden="true">→</span></a></div></div>
+            </article>
+        @endforeach
+        </div>
+    </div></section>
     @endif
 
-    {{-- Communes (seulement s'il y en a) --}}
+    <section class="av-section av-exemples" aria-labelledby="exemples-titre"><div class="cont">
+        <div class="av-section-titre"><div><span class="surtitre">Pour vous projeter</span><h2 id="exemples-titre">À chaque séjour, son cadre.</h2><p>Un studio pour une escapade, un appartement pour quelques jours : imaginez votre prochain pied-à-terre.</p></div></div>
+        <div class="av-demo-notice" role="note"><x-ui.icone nom="photo" classe="ic" /><p><b>Exemples de présentation — offres fictives, non réservables.</b> Les visuels sont des illustrations et les tarifs sont donnés pour la démonstration. <a href="{{ route('recherche') }}">Consulter les vrais logements →</a></p></div>
+        <div class="av-offres">
+        @foreach($exemples as $e)
+            <article class="av-offre av-demo" data-offre-fictive><div class="av-offre-photo"><img src="{{ asset('images/sejours/'.$e['photo']) }}" alt="Illustration d’un logement fictif : {{ $e['titre'] }}" width="768" height="512" loading="lazy" decoding="async"><span class="av-etiquette">Exemple fictif</span></div><div class="av-offre-corps"><h3>{{ $e['titre'] }}</h3><p>{{ $e['lieu'] }} · {{ $e['details'] }}</p><div class="av-offre-bas"><p><b>{{ number_format($e['prix'], 0, ',', "\u{202F}") }} FCFA</b><span> / nuit · tarif fictif</span></p></div><span class="av-non-reservable">Illustration uniquement · Non réservable</span></div></article>
+        @endforeach
+        </div>
+    </div></section>
+
     @if($communes->isNotEmpty())
-        <section class="sect">
-            <div class="cont">
-                <div class="sect-t"><span class="surtitre">Explorer</span><h2>Choisissez votre commune</h2></div>
-                <div class="communes">
-                    @foreach($communes as $c)
-                        <a href="{{ route('recherche', ['commune' => $c->commune]) }}" class="commune"><span>{{ $c->commune }}</span><small>{{ $c->nombre }} logement{{ $c->nombre > 1 ? 's' : '' }}</small></a>
-                    @endforeach
-                </div>
-            </div>
-        </section>
+    <section class="av-section av-destinations" aria-labelledby="communes-titre"><div class="cont"><div class="av-section-titre"><div><span class="surtitre">Choisissez votre commune</span><h2 id="communes-titre">La Côte d’Ivoire, à votre rythme.</h2><p>Retrouvez les communes où nos gérants proposent des offres publiées.</p></div></div><div class="av-communes">@foreach($communes as $c)<a href="{{ route('recherche', ['commune' => $c->commune]) }}"><x-ui.icone nom="pin" classe="ic" /><span><b>{{ $c->commune }}</b><small>{{ $c->nombre }} logement{{ $c->nombre > 1 ? 's' : '' }} publié{{ $c->nombre > 1 ? 's' : '' }}</small></span><span aria-hidden="true">↗</span></a>@endforeach</div></div></section>
     @endif
 
-    {{-- Pourquoi --}}
-    <section class="sect alt">
-        <div class="cont">
-            <div class="sect-t"><span class="surtitre">Pourquoi {{ $nom }}</span><h2>Une réservation en laquelle vous pouvez avoir confiance</h2></div>
-            <div class="grille4">
-                <div class="av"><x-ui.icone nom="bouclier" classe="ic gros" /><h3>Résidences vérifiées</h3><p>Chaque résidence est contrôlée (pièces, photos, droit de gérer) avant d'être publiée. Le badge « Vérifié » le garantit.</p></div>
-                <div class="av"><x-ui.icone nom="prix" classe="ic gros" /><h3>Prix total affiché</h3><p>Le montant du séjour est le même partout : dans la recherche, sur la fiche et au paiement.</p></div>
-                <div class="av"><x-ui.icone nom="carte" classe="ic gros" /><h3>Paiement protégé</h3><p>Le gérant est payé après votre arrivée. Vos paiements passent par un prestataire sécurisé.</p></div>
-                <div class="av"><x-ui.icone nom="retour" classe="ic gros" /><h3>Annulation claire</h3><p>Remboursement intégral jusqu'à {{ $delai }} h avant l'arrivée. Les règles sont affichées avant de payer.</p></div>
-            </div>
-        </div>
-    </section>
+    <section class="av-section" id="engagements" aria-labelledby="engagements-titre"><div class="cont av-confiance"><div class="av-confiance-visuel"><img src="{{ asset('images/sejours/salon-balcon.webp') }}" alt="Intérieur illustratif d’un séjour meublé chaleureux" width="768" height="700" loading="lazy" decoding="async"><p>Des contrôles concrets,<br>des informations claires.</p></div><div class="av-confiance-texte"><span class="surtitre">La confiance se construit</span><h2 id="engagements-titre">Sachez ce que<br>vous réservez.</h2>
+        <ol><li><span>01</span><div><h3>Un gérant identifié</h3><p>Sa pièce d’identité est contrôlée avant la publication de ses résidences. L’annonce fait elle aussi l’objet d’une validation par Avelis.</p></div></li><li><span>02</span><div><h3>Des badges qui ont un sens</h3><p><b>Gérant certifié</b> : identité et certificat de résidence validés. <b>Gestion vérifiée</b> : justificatif du droit de gérer contrôlé pour cette résidence. Ces reconnaissances sont distinctes et facultatives.</p></div></li><li><span>03</span><div><h3>Vos conditions avant de payer</h3><p>Consultez le montant total et les conditions d’annulation avant confirmation. Vous choisissez en connaissant les règles de votre séjour.</p></div></li></ol><a href="{{ route('a-propos') }}" class="lien-fl">Comprendre nos engagements <span aria-hidden="true">→</span></a>
+    </div></div></section>
 
-    {{-- Avis réels (masqué tant qu'il n'y en a pas) --}}
+    <section class="av-section av-comment" id="comment" aria-labelledby="comment-titre"><div class="cont"><span class="surtitre">Comment ça marche</span><h2 id="comment-titre">De la recherche à l’arrivée, simplement.</h2><div class="av-etapes"><div><x-ui.icone nom="recherche" classe="ic" /><div><h3>01 · Choisissez votre séjour</h3><p>Indiquez la commune, les dates et les voyageurs. Comparez les logements disponibles et le total du séjour.</p></div></div><div><x-ui.icone nom="carte" classe="ic" /><div><h3>02 · Réservez et payez</h3><p>Selon l’offre, réglez un acompte ou la totalité. Vos dates sont gardées {{ $blocage }} pendant le paiement.</p></div></div><div><x-ui.icone nom="cle" classe="ic" /><div><h3>03 · Préparez votre arrivée</h3><p>Après confirmation, retrouvez votre réservation et les coordonnées du gérant pour organiser votre accueil.</p></div></div></div></div></section>
+
     @if($avis->isNotEmpty())
-        <section class="sect">
-            <div class="cont">
-                <div class="sect-t"><span class="surtitre">Avis</span><h2>Ce que disent nos voyageurs</h2></div>
-                <div class="grille3">
-                    @foreach($avis as $a)
-                        @php $mots = preg_split('/\s+/', trim($a->client->nom)); $court = $mots[0].(count($mots) > 1 ? ' '.mb_strtoupper(mb_substr(end($mots), 0, 1)).'.' : ''); @endphp
-                        <blockquote class="avis">
-                            <div class="etoiles" role="img" aria-label="{{ $a->note }} sur 5">{{ str_repeat('★', $a->note) }}{{ str_repeat('☆', 5 - $a->note) }}</div>
-                            <p>« {{ $a->commentaire }} »</p>
-                            <footer><b>{{ $court }}</b> · séjour à {{ $a->reservation->unite->residence->commune }}</footer>
-                        </blockquote>
-                    @endforeach
-                </div>
-            </div>
-        </section>
+    <section class="av-section"><div class="cont"><div class="av-section-titre"><div><span class="surtitre">Leurs séjours, leurs mots</span><h2>Ce que disent nos voyageurs</h2></div></div><div class="av-offres">@foreach($avis as $a)@php $mots = preg_split('/\s+/', trim($a->client->nom)); $court = $mots[0].(count($mots) > 1 ? ' '.mb_strtoupper(mb_substr(end($mots), 0, 1)).'.' : ''); @endphp<blockquote class="avis"><div class="etoiles" aria-label="{{ $a->note }} sur 5">{{ str_repeat('★', $a->note) }}</div><p>« {{ $a->commentaire }} »</p><footer><b>{{ $court }}</b> · séjour à {{ $a->reservation->unite->residence->commune }}</footer></blockquote>@endforeach</div></div></section>
     @endif
 
-    {{-- Invitation aux gérants --}}
-    <section class="cta-par">
-        <div class="cont cta-in">
-            <div><span class="surtitre clair">Vous gérez une résidence meublée ?</span><h2>Recevez plus de réservations avec {{ $nom }}</h2><p>Visibilité, paiements sécurisés, calendrier simple, reversement après l'arrivée du client. Inscription gratuite.</p></div>
-            <div class="cta-b"><a href="{{ route('devenir-partenaire') }}" class="btn-or grand">Devenir gérant partenaire</a></div>
-        </div>
-    </section>
+    <section class="av-section av-partenaires"><div class="cont"><div class="av-partenaire"><img src="{{ asset('images/sejours/appartement.webp') }}" alt="" width="768" height="512" loading="lazy" decoding="async"><div><span class="surtitre">Vous gérez une résidence meublée ?</span><h2>Votre résidence mérite<br>d’être découverte.</h2><p>Présentez vos logements, gérez vos disponibilités et recevez des réservations avec {{ $nom }}. Votre dossier gérant accompagne toutes vos résidences.</p><a href="{{ route('devenir-partenaire') }}" class="btn-or">Devenir gérant partenaire <span aria-hidden="true">→</span></a></div></div></div></section>
 
-    {{-- Questions fréquentes --}}
-    <section class="sect">
-        <div class="cont">
-            <div class="sect-t"><span class="surtitre">Aide</span><h2>Questions fréquentes</h2></div>
-            <div class="faq" style="max-width:820px;margin:0 auto">
-                <details><summary>Comment payer ma réservation ?</summary><p>Par Wave, Orange Money, MTN Money ou carte bancaire, sur la page sécurisée de notre partenaire de paiement.</p></details>
-                <details><summary>Mes dates sont-elles gardées pendant que je paie ?</summary><p>Oui, pendant {{ $blocage }}. Passé ce délai sans paiement, elles sont libérées automatiquement.</p></details>
-                <details><summary>Puis-je annuler ma réservation ?</summary><p>Oui. Remboursement intégral jusqu'à {{ $delai }} heures avant l'arrivée ; ensuite, une nuit est retenue.</p></details>
-            </div>
-            <p class="centre" style="margin-top:14px"><a href="{{ route('faq') }}" class="lien-fl">Toutes les questions <x-ui.icone nom="fleche" classe="ic" /></a></p>
-        </div>
-    </section>
+    <section class="av-section av-faq"><div class="cont av-faq-grille"><div><span class="surtitre">Nous vous accompagnons</span><h2>Une question<br>avant de réserver ?</h2><a href="{{ route('faq') }}" class="lien-fl">Consulter l’aide <span aria-hidden="true">→</span></a></div><div class="faq"><details><summary>Comment se déroule le paiement ?</summary><p>Les moyens de paiement disponibles et le montant à régler sont affichés avant confirmation. Selon l’offre, vous payez un acompte ou le total. Vos dates sont gardées {{ $blocage }} pendant cette étape.</p></details><details><summary>Que signifient les badges ?</summary><p>Le gérant certifié a fait valider son identité et son certificat de résidence. Le badge de gestion correspond à un justificatif contrôlé pour une résidence précise. Une annonce peut être publiée sans ces reconnaissances facultatives.</p></details><details><summary>Où consulter les conditions d’annulation ?</summary><p>Elles sont affichées avant le paiement et conservées avec votre réservation. Consultez les conditions de votre séjour avant de confirmer.</p></details></div></div></section>
 </div>

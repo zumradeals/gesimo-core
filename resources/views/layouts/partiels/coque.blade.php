@@ -48,10 +48,14 @@
             </div>
         </div>
     @endif
+    @if($habillage === 'client')
+        @include('layouts.partiels.navigation-mobile-site')
+    @else
     <nav class="barre-bas adm-bas" aria-label="Menu principal">
         @foreach($bas as $m)
             <a href="{{ route($m['route']) }}" class="{{ $estActif($m) ? 'on' : '' }}" @if($estActif($m)) aria-current="page" @endif><x-ui.icone :nom="$m['icone']" /><span>{{ $libelleBas[$m['route']] ?? $m['libelle'] }}</span></a>
         @endforeach
         @if($avecPlus)<label for="plus-admin" class="{{ $plusActif ? 'on' : '' }}"><x-ui.icone nom="plus-menu" /><span>Plus</span></label>@endif
     </nav>
+    @endif
 </body>

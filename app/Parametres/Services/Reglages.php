@@ -42,7 +42,7 @@ class Reglages
         $ajouter('general.nom', 'general', 'Nom de la plateforme', 'texte', ['defaut' => 'Avelis Séjours', 'max' => 80, 'section' => 'Identité']);
         $ajouter('general.slogan', 'general', 'Slogan', 'texte', ['max' => 120, 'section' => 'Identité', 'aide' => 'Phrase courte affichée sous le titre de la page d\'accueil et dans le pied de page.']);
         $ajouter('general.logo', 'general', 'Logo', 'logo', ['section' => 'Identité', 'aide' => 'Image PNG ou JPG, 1 Mo maximum.']);
-        $ajouter('general.image_accueil', 'general', 'Image de la page d\'accueil', 'image', ['section' => 'Identité', 'aide' => 'Photo large (PNG ou JPG, 4 Mo maximum) derrière le titre de l\'accueil. Vide : fond vert.']);
+        $ajouter('general.image_accueil', 'general', 'Image de la page d\'accueil', 'image', ['section' => 'Identité', 'aide' => 'Photo large (PNG ou JPG, 4 Mo maximum) derrière le titre de l\'accueil. Vide : visuel illustratif Avelis.']);
         $ajouter('contact.email', 'general', 'E-mail de contact', 'texte', ['max' => 190, 'section' => 'Coordonnées', 'aide' => 'Les messages du formulaire « Contact » arrivent ici.']);
         $ajouter('general.telephone', 'general', 'Téléphone de contact', 'texte', ['max' => 30, 'section' => 'Coordonnées']);
         $ajouter('general.whatsapp', 'general', 'Numéro WhatsApp', 'texte', ['max' => 30, 'section' => 'Coordonnées', 'aide' => 'Avec l\'indicatif, par exemple +225 07 00 00 00 00. Vide : aucun lien WhatsApp.']);

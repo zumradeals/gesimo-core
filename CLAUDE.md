@@ -24,6 +24,11 @@ justificatif de gestion facultatif pour le badge de la résidence concernée. Le
 Les règles fondatrices et les quatre maquettes ont été validées en conversation le 21 octobre 2026.
 Le code met en œuvre cette organisation ; le contrat décrit aussi la reprise prudente des anciens dossiers et le renouvellement des documents.
 
+## Refonte accueil et navigation (21 octobre 2026)
+
+Les maquettes ordinateur et téléphone ont été validées. Référence : `docs/contrats/accueil-navigation-v2.md`.
+Le porteur demande de conserver les exemples fictifs ; ils restent séparés, explicitement non réservables et sans insertion en base.
+
 ## Règles absolues
 1. Ne jamais inventer une règle de gestion. Cahier muet ou contradictoire : s'arrêter et poser la question avec une recommandation.
 2. Travailler uniquement dans le périmètre du lot demandé.
