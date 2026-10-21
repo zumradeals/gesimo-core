@@ -42,6 +42,7 @@ try {
     await page.getByText('Non. Il complète votre identité', { exact: false }).waitFor({ state: 'visible' });
     await page.locator('.pa-hero').getByRole('link', { name: /Devenir gérant partenaire/ }).click();
     await page.waitForURL(u => u.pathname === '/inscription' && u.searchParams.get('profil') === 'gerant');
+    await page.waitForFunction(() => document.querySelector('input[type="radio"][value="gerant"]')?.checked);
     assert.equal(await page.locator('input[type="radio"][value="gerant"]').isChecked(), true);
     assert.deepEqual(errors, []);
     console.log('✓ Page partenaire, six liens publics, menu mobile, FAQ et inscription gérant vérifiés.');
