@@ -16,7 +16,9 @@ L’aperçu est sélectionné parmi les photos des résidences publiées disposa
 
 ## Validation
 
-Build Vite, Pint, compilation Blade et syntaxe JavaScript contrôlés localement. Résultat de la CI à compléter après exécution.
+Build Vite, Pint, compilation Blade et syntaxe JavaScript contrôlés localement. CI réussie sur le commit applicatif `7c1db6e3cdf05c6947129a67c39a1b7ea0eac43b` : **407 tests / 2 526 assertions**, migrations réversibles, tests PWA, build et deux parcours navigateur réussis. Le parcours accueil contrôle la présence de l’aperçu, la largeur compacte sur ordinateur et le clic vers Cocody. Captures ordinateur et téléphone inspectées.
+
+Preuve : https://github.com/zumradeals/gesimo-core/actions/runs/39659174188. Le commit suivant finalise uniquement ce rapport.
 
 ## Vérification navigateur
 
