@@ -10,7 +10,7 @@ Le porteur a validé en conversation le 21 octobre 2026 la maquette ordinateur p
 
 - Header compact, aide visible sur téléphone, navigation complète sur ordinateur.
 - Hero photographique, titre « Un lieu à vous. Le temps d’un séjour. », recherche commune/dates/voyageurs.
-- Offres réellement publiées uniquement ; carte large pour une seule offre, deux ou trois colonnes selon le nombre d’annonces. Aucune section « Pour vous projeter » ni mention de démonstration.
+- Offres réellement publiées uniquement, dans des cartes compactes même si elles sont peu nombreuses. « À la une » contient jusqu’à six annonces avec une mise en avant actuellement active. « À chaque séjour, son cadre » est rétablie avec jusqu’à six offres ordinaires, sans doublons. Les sections sans offre sont masquées ; aucun remplissage fictif.
 - Contrôles d’identité, certification et gestion expliqués sans les confondre ; avis uniquement issus de séjours réels.
 - Communes présentes en base, aucune géographie ou disponibilité inventée. À la demande du porteur, chaque commune est une carte compacte avec aperçu réel, nombre d’offres et lien de recherche, assortie à l’accueil ; une seule commune ne forme plus un bandeau étiré. Les aperçus excluent les résidences non publiées et les unités inactives. Sans photo, un emplacement neutre remplace l’image.
 - Parcours en trois étapes, invitation aux gérants, FAQ puis footer professionnel avec coordonnées et mentions réglées dans la base.
@@ -22,7 +22,7 @@ Aucune offre fictive éditoriale n’est affichée. Aucun logement de substituti
 
 Les photographies d’ambiance ne remplacent jamais les photos d’une annonce réelle. Les réglages Général permettent déjà de modifier le nom, le slogan, le logo, le visuel principal, les coordonnées, les réseaux sociaux et les textes institutionnels/légaux. Les titres et blocs de l’accueil restent dans la vue versionnée : aucun éditeur de sections n’est ajouté dans ce lot.
 
-Sur ordinateur, les conteneurs de l’accueil, du header et du footer ont des marges proportionnelles à l’écran ; les textes explicatifs sont agrandis. Le héros et la navigation téléphone validés sont conservés.
+Dernier affinement : le contenu sous le héros est légèrement resserré et plafonné à 1 920 px, avec des marges adaptées. Le héros et sa recherche restent inchangés. Les communes défilent sur une seule ligne, quatre visibles sur ordinateur et cinq à partir de 1 440 px, selon l’inventaire réel. Flèches, défilement tactile et clavier ; aucune rotation automatique ni duplication.
 
 ## Implémentation
 

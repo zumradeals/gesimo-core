@@ -15,8 +15,13 @@ try {
     await page.getByRole('heading', { name: 'Un lieu à vous. Le temps d’un séjour.' }).waitFor();
     assert.equal(await page.locator('[data-offre-fictive], .av-exemples, .av-demo-notice').count(), 0);
     assert.equal(await page.locator('[data-offre-fictive] a, [data-offre-fictive] button, [data-offre-fictive] form').count(), 0);
-    await page.getByText('Studio Papaye — ESSAI', { exact: true }).waitFor();
-    await page.locator('img').evaluateAll(imgs => Promise.all(imgs.map(img => img.decode())));
+    await page.getByRole('heading', { name: 'À chaque séjour, son cadre.' }).waitFor();
+    assert.equal(await page.locator('section[aria-labelledby="offres-titre"] .av-offre').count(), 6);
+    assert.equal(await page.locator('section[aria-labelledby="ordinaires-titre"] .av-offre').count(), 6);
+    const ids = await page.locator('[data-logement]').evaluateAll(els => els.map(el => el.dataset.logement));
+    assert.equal(new Set(ids).size, 12, 'Aucun doublon entre les sections.');
+    await page.waitForFunction(() => !!document.querySelector('[x-data="carrouselCommunes"]')._x_dataStack);
+    await page.locator('img').evaluateAll(imgs => Promise.all(imgs.map(img => { img.loading = 'eager'; return img.decode(); })));
     await page.screenshot({ path: output + '/accueil-ordinateur.png', fullPage: true });
     for (const width of [320, 390, 768, 1024, 1440, 1920, 2560]) {
         await page.setViewportSize({ width, height: 844 });
@@ -27,20 +32,34 @@ try {
             assert(destination.width <= 422, 'Une commune reste une carte compacte sur ordinateur.');
             assert(await page.locator('.av-commune-photo img').first().isVisible(), 'La commune présente un aperçu réel.');
             const contenu = await page.locator('#engagements > .cont').boundingBox();
-            assert(contenu.width >= width * .9, `Le contenu doit occuper l’écran à ${width} px`);
-            const cartes = await page.locator('.av-offres-reelles').boundingBox();
+            assert(contenu.width <= Math.min(width, 1920) + 1, `Le contenu doit occuper l’écran à ${width} px`);
+            const cartes = await page.locator('.av-offres-reelles').first().boundingBox();
             const carte = await page.locator('.av-offres-reelles .av-offre').first().boundingBox();
-            assert(carte.width >= cartes.width * .99, 'L’offre unique occupe toute sa grille.');
+            assert(carte.width < cartes.width / 2, 'Les annonces restent des cartes compactes.');
+            const visibles = await page.locator('#carrousel-communes').evaluate(el => [...el.children].filter(c => { const r=c.getBoundingClientRect(), p=el.getBoundingClientRect(); return r.left >= p.left - 1 && r.right <= p.right + 1; }).length);
+            assert.equal(visibles, width >= 1440 ? 5 : 4, 'Quatre à cinq communes visibles sur une seule ligne.');
             assert(await page.locator('.av-confiance-texte p').first().evaluate(el => parseFloat(getComputedStyle(el).fontSize)) >= 18, 'Les explications restent lisibles sur ordinateur.');
         }
     }
+    await page.setViewportSize({ width: 1440, height: 1000 });
+    const piste = page.locator('#carrousel-communes');
+    const suivant = page.getByRole('button', { name: 'Communes suivantes', exact: true });
+    await suivant.click();
+    await page.waitForFunction(() => document.querySelector('#carrousel-communes').scrollLeft > 20);
+    await page.getByRole('button', { name: 'Communes précédentes', exact: true }).click();
+    await page.waitForFunction(() => document.querySelector('#carrousel-communes').scrollLeft <= 2);
+    await piste.focus();
+    await page.keyboard.press('ArrowRight');
+    await page.waitForFunction(() => document.querySelector('#carrousel-communes').scrollLeft > 2);
+    await piste.evaluate(el => { el.scrollLeft = el.scrollWidth; });
+    await page.waitForFunction(() => document.querySelector('[aria-label="Communes suivantes"]').disabled);
     await page.setViewportSize({ width: 390, height: 844 });
     const bouton = await page.getByRole('button', { name: 'Rechercher un logement', exact: true }).boundingBox();
     const menu = await page.locator('.mobile-tabs').boundingBox();
     assert(bouton.y + bouton.height <= menu.y, 'Le bouton de recherche initial ne doit pas être sous les onglets à 390 × 844.');
     await page.screenshot({ path: output + '/accueil-telephone.png', fullPage: true });
     await page.screenshot({ path: output + '/accueil-telephone-ecran.png' });
-    await page.locator('.av-commune-carte').first().click();
+    await page.getByRole('link', { name: 'Découvrir les logements à Cocody', exact: true }).click();
     await page.waitForURL(u => u.pathname === '/recherche' && u.searchParams.get('commune') === 'Cocody');
     await page.goto(base);
     await page.locator('.site-f').scrollIntoViewIfNeeded();

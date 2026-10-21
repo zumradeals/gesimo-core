@@ -30,24 +30,27 @@
 
     @if($unites->isNotEmpty())
     <section class="av-section" aria-labelledby="offres-titre"><div class="cont">
-        <div class="av-section-titre"><div><span class="surtitre">Logements à la une</span><h2 id="offres-titre">Posez vos valises,<br class="av-desktop"> sentez-vous chez vous.</h2><p>Des offres publiées par nos gérants, à découvrir pour votre prochain séjour.</p></div><a href="{{ route('recherche') }}" class="lien-fl">Voir les logements <span aria-hidden="true">→</span></a></div>
-        <div class="av-offres av-offres-reelles av-offres-{{ $unites->count() }}">
+        <div class="av-section-titre"><div><span class="surtitre">Logements à la une</span><h2 id="offres-titre">Posez vos valises,<br class="av-desktop"> sentez-vous chez vous.</h2><p>Des logements mis en avant par leurs gérants, à découvrir pour votre prochain séjour.</p></div><a href="{{ route('recherche') }}" class="lien-fl">Voir les logements <span aria-hidden="true">→</span></a></div>
+        <div class="av-offres av-offres-reelles">
         @foreach($unites as $u)
-            @php $r = $u->residence; $prix = $u->tarifs->firstWhere('type_periode', 'standard'); $photo = $u->photos->first() ?? $r->photos->first(); @endphp
-            <article class="av-offre">
-                <a class="av-offre-photo" href="{{ route('logement', $u) }}" aria-label="Découvrir {{ $u->nom }}"><x-ui.photo :photo="$photo" classe="h-full w-full" :plat="true" :sizes="'(max-width: 1023px) 100vw, '.($unites->count() === 1 ? '53vw' : ($unites->count() === 2 ? '46vw' : '30vw'))" :alt="'Photo de '.$u->nom" />@if(in_array($u->residence_id, $enAvant, true))<span class="av-etiquette">Sponsorisé</span>@endif</a>
-                <div class="av-offre-corps">@if($r->aBadgeGestion())<span class="pg-badge">✓ Gestion vérifiée</span>@endif<h3><a href="{{ route('logement', $u) }}">{{ $u->nom }}</a></h3><p>{{ $r->commune }}@if($r->quartier) · {{ $r->quartier }}@endif</p><p>{{ $u->capacite }} voyageur(s) · {{ ucfirst($u->type) }}</p><div class="av-offre-bas"><p><b>{{ number_format($prix->prix_nuit, 0, ',', "\u{202F}") }} FCFA</b><span> / nuit</span></p><a href="{{ route('logement', $u) }}" class="lien-fl">Voir le logement <span aria-hidden="true">→</span></a></div></div>
-            </article>
+            <x-ui.carte-logement :u="$u" :en-avant="$enAvant" />
         @endforeach
         </div>
     </div></section>
     @endif
 
+    @if($ordinaires->isNotEmpty())
+    <section class="av-section av-ordinaires" aria-labelledby="ordinaires-titre"><div class="cont">
+        <div class="av-section-titre"><div><span class="surtitre">Découvrez nos logements</span><h2 id="ordinaires-titre">À chaque séjour, son cadre.</h2><p>Un studio pour une escapade, un appartement pour quelques jours : trouvez votre prochain pied-à-terre parmi les offres de nos gérants.</p></div><a href="{{ route('recherche') }}" class="lien-fl">Explorer tous les logements <span aria-hidden="true">→</span></a></div>
+        <div class="av-offres av-offres-reelles">@foreach($ordinaires as $u)<x-ui.carte-logement :u="$u" />@endforeach</div>
+    </div></section>
+    @endif
+
     @if($communes->isNotEmpty())
     <section class="av-section av-destinations" aria-labelledby="communes-titre">
-        <div class="cont av-destinations-grille {{ $communes->count() === 1 ? 'av-destination-unique' : '' }}">
-            <div class="av-section-titre"><div><span class="surtitre">Choisissez votre commune</span><h2 id="communes-titre">La Côte d’Ivoire,<br>à votre rythme.</h2><p>Choisissez votre destination et découvrez les logements proposés pour votre prochain séjour.</p></div></div>
-            <div class="av-communes">
+        <div class="cont" x-data="carrouselCommunes">
+            <div class="av-section-titre"><div><span class="surtitre">Choisissez votre commune</span><h2 id="communes-titre">La Côte d’Ivoire, à votre rythme.</h2><p>Choisissez votre destination et découvrez les logements proposés pour votre prochain séjour.</p></div><div class="av-carrousel-commandes" x-cloak><button type="button" @click="deplacer(-1)" :disabled="debut" aria-label="Communes précédentes" aria-controls="carrousel-communes">←</button><button type="button" @click="deplacer(1)" :disabled="fin" aria-label="Communes suivantes" aria-controls="carrousel-communes">→</button></div></div>
+            <div class="av-communes" id="carrousel-communes" x-ref="piste" @scroll.passive.debounce.80ms="actualiser()" role="region" aria-label="Communes à découvrir" tabindex="0">
                 @foreach($communes as $c)
                     <a class="av-commune-carte" href="{{ route('recherche', ['commune' => $c->commune]) }}" aria-label="Découvrir les logements à {{ $c->commune }}">
                         <div class="av-commune-photo"><x-ui.photo :photo="$c->photoApercu" classe="h-full w-full" :plat="true" :alt="'Aperçu d’un logement à '.$c->commune" sizes="(max-width: 639px) 100vw, (max-width: 1023px) 50vw, 400px" /></div>
