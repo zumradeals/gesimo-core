@@ -33,6 +33,10 @@ Dernière décision du porteur : retirer les offres fictives et leurs mentions d
 
 Maquette et menu approuvés en conversation, intégration autorisée. Référence : `docs/contrats/devenir-partenaire-v2.md`. Le catalogue Logements est conservé ; le menu public comprend Accueil, Logements, À propos, Devenir partenaire, Aide et Contact, avec un menu complémentaire sur téléphone.
 
+## Catalogue Logements (21 octobre 2026)
+
+Maquette approuvée et intégration autorisée : `docs/contrats/logements-v2.md`. Sans dates, afficher uniquement les annonces publiables avec le tarif standard de référence ; après recherche datée valide, afficher la disponibilité et le total réels. Aucun inventaire de démonstration ajouté en production.
+
 ## Règles absolues
 1. Ne jamais inventer une règle de gestion. Cahier muet ou contradictoire : s'arrêter et poser la question avec une recommandation.
 2. Travailler uniquement dans le périmètre du lot demandé.
