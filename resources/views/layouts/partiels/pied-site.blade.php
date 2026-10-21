@@ -44,7 +44,7 @@
                     <div class="f-liens">@foreach($liens as [$nom, $url])<a href="{{ $url }}">{{ $nom }}</a>@endforeach</div>
                 </div>
             @endforeach
-            <div class="f-col f-paie"><h4>Paiement sécurisé</h4>
+            <div class="f-col f-paie"><p class="f-titre">Paiement sécurisé</p>
                 <div class="pastilles"><span>Wave</span><span>Orange Money</span><span>MTN Money</span><span>Carte</span></div>
                 <p class="petit">Vos paiements passent par GeniusPay. {{ Marque::nom() }} ne voit jamais votre numéro de carte.</p>
             </div>

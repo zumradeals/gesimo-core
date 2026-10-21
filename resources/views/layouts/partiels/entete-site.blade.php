@@ -17,7 +17,7 @@
                 <a href="{{ route('inscription') }}" class="btn-pl">Créer un compte</a>
             @endif
         </div>
-        <label for="menu-site" class="burger" aria-label="Menu"><x-ui.icone nom="menu" classe="ic" /></label>
+        <label for="menu-site" class="burger"><x-ui.icone nom="menu" classe="ic" /><span class="sr-only-site">Menu</span></label>
     </div>
     <div class="m-panel">
         <div class="m-menu cont">
