@@ -128,6 +128,8 @@ window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); invi
 window.addEventListener('appinstalled', () => { const d = lire(); d.installee = true; ecrire(d); retirer('pwa-installer'); });
 
 function proposerInstallation() {
+  // Seulement sur téléphone ou tablette (écran tactile, largeur < 1024 px) : jamais sur un ordinateur.
+  if (!window.matchMedia('(pointer: coarse) and (max-width: 1023px)').matches) return;
   const d = lire();
   if (installee() || d.installee || surPageSensible() || document.getElementById('pwa-installer')) return;
   if (d.refuse_le && Date.now() - d.refuse_le < 30 * 24 * 3600 * 1000) return;
