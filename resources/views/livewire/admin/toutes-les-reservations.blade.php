@@ -1,5 +1,5 @@
 <div class="grid gap-4">
-    <h1 class="text-2xl font-extrabold">Toutes les réservations</h1>
+    <div class="adm-top"><div><h1>Toutes les réservations</h1></div></div>
     <div class="champ max-w-xs"><label class="etiquette" for="statut">Statut</label>
         <select id="statut" wire:model.live="statut" class="saisie"><option value="">Tous</option>@foreach($statuts as $s)<option value="{{ $s->value }}">{{ $s->libelle() }}</option>@endforeach</select></div>
     <div class="carte overflow-x-auto p-0 lg:p-0">

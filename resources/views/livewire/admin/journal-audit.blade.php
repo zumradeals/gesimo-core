@@ -1,5 +1,5 @@
 <div class="grid gap-4">
-    <h1 class="text-2xl font-extrabold">Journal d'audit</h1>
+    <div class="adm-top"><div><h1>Journal d'audit</h1></div></div>
     <div class="flex flex-wrap gap-2">@foreach($filtres as $cle => $nom)<button wire:click="$set('filtre', '{{ $cle }}')" class="puce {{ $filtre === $cle ? 'puce-active' : '' }}">{{ $nom }}</button>@endforeach</div>
     <div class="carte overflow-x-auto p-0 lg:p-0">
         <table class="w-full min-w-[560px] text-left text-[15px]">

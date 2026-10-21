@@ -1,15 +1,15 @@
 @php $fr = fn (int $m) => \App\Noyau\Services\Format::fcfa($m); @endphp
-<div class="grid gap-4">
-    <h1 class="text-2xl font-extrabold">Argent</h1>
-    <div class="grid grid-cols-2 gap-3 xl:grid-cols-4">
-        <div class="carte"><p class="text-2xl font-extrabold text-green-700">{{ $fr($aRecevoir) }}</p><p class="aide">GESIMO vous doit (à reverser)</p></div>
-        <div class="carte"><p class="text-2xl font-extrabold">{{ $fr($dejaRecu) }}</p><p class="aide">Déjà reversé</p></div>
-        <div class="carte"><p class="text-2xl font-extrabold">{{ $fr($commissions) }}</p><p class="aide">Commissions retenues</p></div>
-        <div class="carte"><p class="text-2xl font-extrabold">{{ $fr($aEncaisser) }}</p><p class="aide">À encaisser vous-même (arrivées à venir)</p></div>
+<div style="display:grid;gap:16px">
+    <div class="adm-top"><div><h1>Argent</h1><p class="petit">Ce que GESIMO vous doit, et ce qui vous a été reversé</p></div></div>
+    <div class="kpi">
+        <div class="k"><span class="k-i g"><x-ui.icone nom="argent" classe="ic" /></span><b>{{ number_format($aRecevoir, 0, ',', "\u{202F}") }}</b><span>GESIMO vous doit (à reverser)</span><small>FCFA</small></div>
+        <div class="k"><span class="k-i b"><x-ui.icone nom="carte" classe="ic" /></span><b>{{ number_format($dejaRecu, 0, ',', "\u{202F}") }}</b><span>Déjà reversé</span><small>FCFA</small></div>
+        <div class="k"><span class="k-i o"><x-ui.icone nom="balance" classe="ic" /></span><b>{{ number_format($commissions, 0, ',', "\u{202F}") }}</b><span>Commissions retenues</span><small>FCFA</small></div>
+        <div class="k"><span class="k-i v"><x-ui.icone nom="porte" classe="ic" /></span><b>{{ number_format($aEncaisser, 0, ',', "\u{202F}") }}</b><span>À encaisser vous-même (arrivées à venir)</span><small>FCFA</small></div>
     </div>
 
-    <div class="carte overflow-x-auto">
-        <h2 class="mb-2 text-lg font-extrabold">Séjours</h2>
+    <section class="carte-a">
+        <h2>Séjours</h2>
         <table class="w-full min-w-[640px] border-collapse text-[15px]">
             <thead><tr class="border-b border-trait text-left"><th class="p-2">Séjour</th><th class="p-2 text-right">Encaissé par GESIMO</th><th class="p-2 text-right">Commission</th><th class="p-2 text-right">Votre part</th><th class="p-2">État</th></tr></thead>
             <tbody>
@@ -32,6 +32,6 @@
             </tbody>
         </table>
         <p class="aide mt-2">Montants en FCFA. Vous ne voyez que vos propres séjours. La commission est retenue par GESIMO sur l'argent encaissé.</p>
-    </div>
+    </section>
     <x-ui.alerte type="info">GESIMO vous reverse votre part <b>après l'arrivée du client</b>, par Mobile Money. Le solde du séjour (hors acompte) vous est payé directement par le client à l'arrivée, sans commission supplémentaire.</x-ui.alerte>
 </div>

@@ -1,5 +1,5 @@
 <div class="grid gap-4">
-    <h1 class="text-2xl font-extrabold">Paiements</h1>
+    <div class="adm-top"><div><h1>Paiements</h1></div></div>
     <div class="grid max-w-md grid-cols-2 overflow-hidden rounded-2xl border border-trait bg-white text-center font-bold">
         <button wire:click="$set('onglet', 'paiements')" class="p-3 {{ $onglet === 'paiements' ? 'bg-marque-600 text-white' : 'text-gris-doux' }}">Paiements</button>
         <button wire:click="$set('onglet', 'ecritures')" class="p-3 {{ $onglet === 'ecritures' ? 'bg-marque-600 text-white' : 'text-gris-doux' }}">Écritures comptables</button>

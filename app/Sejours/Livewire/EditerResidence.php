@@ -25,6 +25,9 @@ class EditerResidence extends Component
 
     public ?int $residenceId = null;
 
+    /** Étape de l'assistant : 1 résidence, 2 logements, 3 pièces et envoi. */
+    public int $etape = 1;
+
     // Résidence
     public string $nom = '';
 
@@ -83,6 +86,7 @@ class EditerResidence extends Component
         if ($residence?->exists) {
             Gate::authorize('update', $residence);
             $this->residenceId = $residence->id;
+            $this->etape = (int) session('etape', 1);
             $this->nom = $residence->nom;
             $this->commune = $residence->commune;
             $this->quartier = (string) $residence->quartier;
@@ -95,6 +99,11 @@ class EditerResidence extends Component
         } else {
             Gate::authorize('create', Residence::class);
         }
+    }
+
+    public function allerEtape(int $etape): void
+    {
+        $this->etape = ($this->residenceId === null || $etape < 1 || $etape > 3) ? 1 : $etape;
     }
 
     public function enregistrerResidence()
@@ -146,7 +155,7 @@ class EditerResidence extends Component
             $residence = Residence::create($champs + ['gerant_id' => auth()->id()]);
             Audit::enregistrer('residence.creee', $residence);
 
-            return redirect()->route('gerant.residence', $residence)->with('message', 'Résidence enregistrée. Ajoutez maintenant vos logements.');
+            return redirect()->route('gerant.residence', $residence)->with('message', 'Résidence enregistrée. Ajoutez maintenant vos logements.')->with('etape', 2);
         }
 
         $residence = $this->residence();
@@ -160,6 +169,7 @@ class EditerResidence extends Component
 
     public function nouveauLogement(): void
     {
+        $this->etape = 2;
         $this->reinitialiser();
         $this->reinitialiserLogement();
         $this->formulaireLogement = true;
@@ -167,6 +177,7 @@ class EditerResidence extends Component
 
     public function modifierLogement(int $id): void
     {
+        $this->etape = 2;
         $this->reinitialiser();
         $unite = $this->residence()->unites()->with(['tarifs', 'equipements'])->findOrFail($id);
         $this->reinitialiserLogement();
@@ -196,6 +207,7 @@ class EditerResidence extends Component
 
     public function enregistrerLogement(): void
     {
+        $this->etape = 2;
         $this->reinitialiser();
         $residence = $this->residence();
 
@@ -285,6 +297,7 @@ class EditerResidence extends Component
 
     public function envoyerPieces(): void
     {
+        $this->etape = 3;
         $this->reinitialiser();
         $residence = $this->residence();
         $this->validate([
@@ -305,6 +318,7 @@ class EditerResidence extends Component
 
     public function soumettre(): void
     {
+        $this->etape = 3;
         $this->reinitialiser();
         $residence = $this->residence()->load(['unites.tarifs', 'photos', 'documents']);
 

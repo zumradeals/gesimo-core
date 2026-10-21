@@ -1,30 +1,30 @@
 @php $fr = fn (int $m) => \App\Noyau\Services\Format::fcfa($m); @endphp
 <div class="grid gap-4">
-    <h1 class="text-2xl font-extrabold">Aujourd'hui</h1>
+    <div class="adm-top"><div><h1>Aujourd'hui</h1>@if($residence)<p class="petit">Résidence {{ $residence->nom }} · {{ $jourDate->translatedFormat('l j F') }}</p>@endif</div></div>
     @if($message)<x-ui.alerte type="succes">{{ $message }}</x-ui.alerte>@endif
     @if($erreur)<x-ui.alerte type="erreur">{{ $erreur }}</x-ui.alerte>@endif
 
     @if($residence === null)
         <x-ui.alerte type="attention">Aucune résidence à afficher : vous n'avez pas encore le droit « arrivées et départs ».</x-ui.alerte>
     @else
-    <div class="grid gap-3 md:max-w-3xl md:grid-cols-2">
+    <div class="filtres-h" style="max-width:640px;grid-template-columns:1fr 1fr">
         <div class="champ"><label class="etiquette" for="residence">Résidence</label>
             <select id="residence" wire:model.live="residenceId" class="saisie">@foreach($residences as $r)<option value="{{ $r->id }}">{{ $r->nom }} ({{ $r->commune }})</option>@endforeach</select></div>
         <div class="champ"><label class="etiquette" for="jour">Jour</label><input id="jour" type="date" wire:model.live="jour" class="saisie"></div>
     </div>
 
-    <div class="grid grid-cols-2 gap-3 md:grid-cols-4">
-        <div class="carte"><b class="text-2xl">{{ $attendues->count() }}</b><p class="aide">Arrivées du jour</p></div>
-        <div class="carte"><b class="text-2xl">{{ $presents->count() }}</b><p class="aide">Dans la résidence</p></div>
-        <div class="carte"><b class="text-2xl">{{ $nbAVenir }}</b><p class="aide">À venir (7 jours)</p></div>
-        @if($sommeDue !== null)<a href="{{ route('gerant.argent') }}" class="carte"><b class="text-2xl">{{ $fr($sommeDue) }}</b><p class="aide">dus par GESIMO</p></a>@endif
+    <div class="kpi">
+        <div class="k"><span class="k-i b"><x-ui.icone nom="porte" classe="ic" /></span><b>{{ $attendues->count() }}</b><span>Arrivées du jour</span></div>
+        <div class="k"><span class="k-i g"><x-ui.icone nom="batiment" classe="ic" /></span><b>{{ $presents->count() }}</b><span>Dans la résidence</span></div>
+        <div class="k"><span class="k-i o"><x-ui.icone nom="calendrier" classe="ic" /></span><b>{{ $nbAVenir }}</b><span>À venir (7 jours)</span></div>
+        @if($sommeDue !== null)<a href="{{ route('gerant.argent') }}" class="k"><span class="k-i v"><x-ui.icone nom="argent" classe="ic" /></span><b>{{ number_format($sommeDue, 0, ',', "\u{202F}") }}</b><span>FCFA dus par GESIMO</span></a>@endif
     </div>
     @if($litiges > 0)<x-ui.alerte type="attention">{{ $litiges }} problème(s) signalé(s) en cours de traitement par l'équipe GESIMO. <a class="font-bold underline" href="{{ route('gerant.reservations') }}">Voir mes réservations</a></x-ui.alerte>@endif
 
-    <h2 class="text-lg font-extrabold">Arrivées ({{ $attendues->count() }})</h2>
+    <h2 class="h2-s">Arrivées ({{ $attendues->count() }})</h2>
     <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
         @forelse($attendues as $a)
-            <article class="carte grid gap-1.5">
+            <article class="carte-p">
                 <div><x-ui.badge-statut :statut="$a->statut" /></div>
                 <h3 class="text-lg font-extrabold">{{ $a->client?->nom }} · {{ $a->unite->nom }}</h3>
                 <p class="aide">{{ $a->nombre_personnes }} pers. · {{ $a->date_arrivee->translatedFormat('j M') }} → {{ $a->date_depart->translatedFormat('j M') }}@if($a->client) · {{ \App\Noyau\Services\Telephone::afficher($a->client->telephone) }}@endif</p>
@@ -47,10 +47,10 @@
         @endforelse
     </div>
 
-    <h2 class="text-lg font-extrabold">Dans la résidence ({{ $presents->count() }})</h2>
+    <h2 class="h2-s">Dans la résidence ({{ $presents->count() }})</h2>
     <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
         @forelse($presents as $p)
-            <article class="carte grid gap-1.5">
+            <article class="carte-p">
                 <div><x-ui.badge-statut :statut="$p->statut" /></div>
                 <h3 class="text-lg font-extrabold">{{ $p->client?->nom }} · {{ $p->unite->nom }}</h3>
                 <p class="aide">Départ prévu le {{ $p->date_depart->translatedFormat('D j M') }}{{ $p->date_depart->isSameDay($jourDate) ? ' (aujourd\'hui)' : '' }}</p>

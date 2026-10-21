@@ -1,9 +1,9 @@
 @php $fr = fn (int $m) => \App\Noyau\Services\Format::fcfa($m); @endphp
 <div class="grid gap-4">
-    <h1 class="text-2xl font-extrabold">Mises en avant</h1>
+    <div class="adm-top"><div><h1>Mises en avant</h1></div></div>
     @if($message)<x-ui.alerte type="succes">{{ $message }}</x-ui.alerte>@endif
     @if($erreur)<x-ui.alerte type="erreur">{{ $erreur }}</x-ui.alerte>@endif
-    <div class="carte w-fit"><b class="text-xl">{{ $fr($revenus) }}</b><p class="aide">Revenus des mises en avant (pour GESIMO)</p></div>
+    <div class="carte-p"><b class="text-xl">{{ $fr($revenus) }}</b><p class="aide">Revenus des mises en avant (pour GESIMO)</p></div>
     <div class="flex flex-wrap gap-2">
         @foreach(['en_cours' => 'En cours ('.$compteurs['en_cours'].')', 'programmees' => 'Programmées ('.$compteurs['programmees'].')', 'terminees' => 'Terminées', 'suspendues' => 'Suspendues ('.$compteurs['suspendues'].')'] as $k => $n)
             <button wire:click="$set('filtre', '{{ $k }}')" class="puce {{ $filtre === $k ? 'puce-active' : '' }}">{{ $n }}</button>
@@ -25,10 +25,10 @@
         </table>
     </div>
     @if($suspension)
-        <form wire:submit="suspendre" class="carte grid gap-2 md:max-w-xl">
-            <h2 class="text-lg font-extrabold">Suspendre la mise en avant n° {{ $suspension }}</h2>
+        <form wire:submit="suspendre" class="carte-p">
+            <h2>Suspendre la mise en avant n° {{ $suspension }}</h2>
             <div class="champ"><label class="etiquette" for="motif">Motif (gardé dans le journal)</label><textarea id="motif" wire:model="motif" rows="2" class="saisie py-2"></textarea></div>
-            <button class="btn btn-danger btn-bloc">Suspendre la mise en avant</button>
+            <button class="btn-sec rouge-b2 pleine">Suspendre la mise en avant</button>
             <p class="aide">L'annonce redevient normale tout de suite. <b>Aucun remboursement automatique</b> : la période n'est pas prolongée ; « Reprendre » la remet en avant jusqu'à sa date de fin.</p>
         </form>
     @endif

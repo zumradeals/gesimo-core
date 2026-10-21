@@ -15,7 +15,7 @@
 
     {{-- ====================================================== ACCUEIL --}}
     @if($rubrique === 'accueil')
-        <div class="carte"><h1 class="text-xl font-extrabold">Réglages de la plateforme</h1><p class="aide">Tout se règle ici, sans toucher à aucun fichier technique. Chaque changement est tracé.</p></div>
+        <div class="carte-p"><h1 class="text-xl font-extrabold">Réglages de la plateforme</h1><p class="aide">Tout se règle ici, sans toucher à aucun fichier technique. Chaque changement est tracé.</p></div>
         <div class="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
             @foreach($rubriques as $cle => $nom)
                 <a href="{{ route('admin.reglages', ['rubrique' => $cle]) }}" class="carte grid gap-1 hover:border-marque-600">
@@ -25,26 +25,26 @@
             @endforeach
         </div>
         <div class="grid gap-3 sm:grid-cols-2 md:max-w-2xl">
-            <a href="{{ route('admin.reglages', ['rubrique' => 'tests']) }}" class="btn btn-second btn-bloc">Tester les connexions</a>
-            <a href="{{ route('admin.reglages', ['rubrique' => 'historique']) }}" class="btn btn-second btn-bloc">Historique des modifications</a>
+            <a href="{{ route('admin.reglages', ['rubrique' => 'tests']) }}" class="btn-sec pleine">Tester les connexions</a>
+            <a href="{{ route('admin.reglages', ['rubrique' => 'historique']) }}" class="btn-sec pleine">Historique des modifications</a>
         </div>
 
     {{-- ====================================================== TESTS --}}
     @elseif($rubrique === 'tests')
-        <div class="carte"><h1 class="text-xl font-extrabold">Tester les connexions</h1><p class="aide">Chaque test est sans danger : aucun vrai paiement, aucune donnée modifiée. Un résultat ne montre jamais de clé ni de mot de passe.</p></div>
+        <div class="carte-p"><h1 class="text-xl font-extrabold">Tester les connexions</h1><p class="aide">Chaque test est sans danger : aucun vrai paiement, aucune donnée modifiée. Un résultat ne montre jamais de clé ni de mot de passe.</p></div>
         <div class="grid gap-4 lg:grid-cols-2">
-            <div class="carte grid gap-2"><h2 class="font-extrabold">✉ E-mail</h2><p class="aide">Envoie un message de test à votre adresse ({{ auth()->user()->email }}).</p>
-                <button wire:click="testerEmail" wire:loading.attr="disabled" class="btn btn-bloc">Lancer le test e-mail</button>
+            <div class="carte-p"><h2 class="font-extrabold">✉ E-mail</h2><p class="aide">Envoie un message de test à votre adresse ({{ auth()->user()->email }}).</p>
+                <button wire:click="testerEmail" wire:loading.attr="disabled" class="btn-pl pleine">Lancer le test e-mail</button>
                 @include('livewire.parametres.resultat', ['r' => $resultats['email'] ?? null])</div>
-            <div class="carte grid gap-2"><h2 class="font-extrabold">💳 Paiement (GeniusPay)</h2><p class="aide">Demande à GeniusPay le solde du compte pour vérifier que les clés sont acceptées (lecture seule).</p>
-                <button wire:click="testerPaiement" wire:loading.attr="disabled" class="btn btn-bloc">Lancer le test paiement</button>
+            <div class="carte-p"><h2 class="font-extrabold">💳 Paiement (GeniusPay)</h2><p class="aide">Demande à GeniusPay le solde du compte pour vérifier que les clés sont acceptées (lecture seule).</p>
+                <button wire:click="testerPaiement" wire:loading.attr="disabled" class="btn-pl pleine">Lancer le test paiement</button>
                 @include('livewire.parametres.resultat', ['r' => $resultats['paiement'] ?? null])
                 <x-ui.alerte type="attention">Le secret du webhook est vérifié seulement quand GeniusPay envoie un vrai message.</x-ui.alerte></div>
         </div>
 
     {{-- ====================================================== HISTORIQUE --}}
     @elseif($rubrique === 'historique')
-        <div class="carte"><h1 class="text-xl font-extrabold">Historique des modifications</h1><p class="aide">Lecture seule : l'historique ne peut ni se modifier ni se supprimer (verrouillé dans la base de données). Pour un secret, seul le fait qu'il a changé est gardé.</p></div>
+        <div class="carte-p"><h1 class="text-xl font-extrabold">Historique des modifications</h1><p class="aide">Lecture seule : l'historique ne peut ni se modifier ni se supprimer (verrouillé dans la base de données). Pour un secret, seul le fait qu'il a changé est gardé.</p></div>
         <div class="flex flex-wrap gap-2">@foreach(['' => 'Tout', 'paiement' => 'Paiement', 'securite' => 'Sécurité', 'reservation' => 'Réservation'] as $k => $n)<button wire:click="$set('filtreHistorique', '{{ $k }}')" class="puce {{ $filtreHistorique === $k ? 'puce-active' : '' }}">{{ $n }}</button>@endforeach</div>
         <div class="carte overflow-x-auto p-0 lg:p-0">
             <table class="w-full min-w-[640px] text-left text-[15px]">
@@ -63,7 +63,7 @@
 
     {{-- ====================================================== RUBRIQUES --}}
     @else
-        <form wire:submit="enregistrer" class="carte grid gap-4 xl:max-w-4xl">
+        <form wire:submit="enregistrer" class="carte-p">
             <h1 class="text-xl font-extrabold">{{ $rubriques[$rubrique] }}</h1>
             @if($rubrique === 'reservation')
                 <x-ui.alerte type="info">Un changement s'applique <b>aux nouvelles réservations seulement</b>. Les réservations existantes gardent les conditions du jour où elles ont été créées.</x-ui.alerte>
@@ -98,7 +98,7 @@
                             @break
                         @case('secret')
                             @if($secretsEnregistres[$cle] && empty($remplacer[$cle]))
-                                <div class="flex gap-2"><input value="••••••••••••" disabled class="saisie"><button type="button" wire:click="remplacer('{{ $cle }}')" class="btn btn-second sm:w-auto sm:min-w-0 px-4">Remplacer</button></div>
+                                <div class="flex gap-2"><input value="••••••••••••" disabled class="saisie"><button type="button" wire:click="remplacer('{{ $cle }}')" class="btn-sec">Remplacer</button></div>
                                 <span class="aide">Enregistré. La valeur n'est jamais réaffichée.</span>
                             @else
                                 <input id="f_{{ $k }}" type="password" autocomplete="off" wire:model="secrets.{{ $k }}" class="saisie" placeholder="{{ $secretsEnregistres[$cle] ? 'Nouvelle valeur' : 'Pas encore saisi' }}">
@@ -116,7 +116,7 @@
                                     </div>
                                 @endforeach
                             </div>
-                            @if(count($valeurs[$k] ?? []) < 4)<button type="button" wire:click="ajouterOffre" class="btn btn-second sm:w-auto">+ Ajouter une offre</button>@endif
+                            @if(count($valeurs[$k] ?? []) < 4)<button type="button" wire:click="ajouterOffre" class="btn-sec">+ Ajouter une offre</button>@endif
                             @break
                         @case('url')<input id="f_{{ $k }}" type="url" wire:model="valeurs.{{ $k }}" class="saisie" placeholder="https://" autocomplete="off">@break
                         @default<input id="f_{{ $k }}" wire:model="valeurs.{{ $k }}" class="saisie" autocomplete="off">
@@ -129,13 +129,13 @@
             @if($rubrique === 'paiement')
                 <div class="rounded-xl bg-marque-50 p-3 text-[15px]">Plancher d'acompte calculé : <b>{{ $plancher !== null ? $plancher.' %' : 'inconnu (réglez la commission et les frais)' }}</b> (commission + frais, arrondi au-dessus).</div>
                 @if($residencesSousPlancher > 0)<x-ui.alerte type="attention">{{ $residencesSousPlancher }} résidence(s) ont un acompte sous ce plancher : leurs nouvelles réservations utiliseront le plancher.</x-ui.alerte>@endif
-                <div><button type="button" wire:click="testerPaiement" class="btn btn-second btn-bloc sm:w-auto">Tester la connexion</button></div>
+                <div><button type="button" wire:click="testerPaiement" class="btn-sec">Tester la connexion</button></div>
                 @include('livewire.parametres.resultat', ['r' => $resultats['paiement'] ?? null])
             @endif
             @if($rubrique === 'notifications')
-                <div><button type="button" wire:click="testerEmail" class="btn btn-second btn-bloc sm:w-auto">Tester la connexion</button></div>
+                <div><button type="button" wire:click="testerEmail" class="btn-sec">Tester la connexion</button></div>
                 @include('livewire.parametres.resultat', ['r' => $resultats['email'] ?? null])
-                <a href="{{ route('admin.messages') }}" class="btn btn-second btn-bloc sm:w-auto">Modifier les modèles de messages</a>
+                <a href="{{ route('admin.messages') }}" class="btn-sec">Modifier les modèles de messages</a>
             @endif
 
             @if($aSensible)
@@ -145,7 +145,7 @@
                         @if(isset($erreurs['mot_de_passe']))<p class="erreur-champ" role="alert">{{ $erreurs['mot_de_passe'] }}</p>@endif</div>
                 </div>
             @endif
-            <button class="btn btn-bloc md:w-auto" wire:loading.attr="disabled">Enregistrer</button>
+            <button class="btn-pl" wire:loading.attr="disabled">Enregistrer</button>
         </form>
     @endif
 </div>

@@ -1,13 +1,13 @@
 @php $fr = fn (int $m) => \App\Noyau\Services\Format::fcfa($m); $S = \App\Sejours\Enums\StatutReservation::class; @endphp
-<div class="grid gap-4">
-    <h1 class="text-2xl font-extrabold">Réservations</h1>
-    <div class="grid max-w-md grid-cols-2 overflow-hidden rounded-xl border border-trait bg-white text-center font-bold">
-        <button wire:click="$set('onglet', 'avenir')" class="min-h-[48px] {{ $onglet === 'avenir' ? 'bg-marque-600 text-white' : '' }}">À venir ({{ $nbAVenir }})</button>
-        <button wire:click="$set('onglet', 'passees')" class="min-h-[48px] {{ $onglet === 'passees' ? 'bg-marque-600 text-white' : '' }}">Passées ({{ $nbPassees }})</button>
+<div style="display:grid;gap:16px">
+    <div class="adm-top"><div><h1>Réservations</h1><p class="petit">Toutes les réservations de vos résidences</p></div><div class="adm-act"><a href="{{ route('gerant.arrivees') }}" class="btn-sec">Arrivées et départs du jour</a></div></div>
+    <div class="onglets-a deux" style="max-width:520px">
+        <button wire:click="$set('onglet', 'avenir')" class="{{ $onglet === 'avenir' ? 'on' : '' }}" style="border:0;background:{{ $onglet === 'avenir' ? '#fff' : 'transparent' }};padding:10px;border-radius:9px;font-weight:700;cursor:pointer;min-height:44px">À venir ({{ $nbAVenir }})</button>
+        <button wire:click="$set('onglet', 'passees')" class="{{ $onglet === 'passees' ? 'on' : '' }}" style="border:0;background:{{ $onglet === 'passees' ? '#fff' : 'transparent' }};padding:10px;border-radius:9px;font-weight:700;cursor:pointer;min-height:44px">Passées ({{ $nbPassees }})</button>
     </div>
     <div class="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
         @forelse($reservations as $r)
-            <article class="carte grid gap-1.5">
+            <article class="carte-p">
                 <div class="flex items-center justify-between gap-2"><x-ui.badge-statut :statut="$r->statut" /><span class="aide">#{{ $r->id }}</span></div>
                 <h2 class="text-lg font-extrabold">{{ $r->client?->nom ?? $r->nom_client }} · {{ $r->unite->nom }}</h2>
                 <p class="aide">{{ $r->unite->residence->nom }} · {{ $r->date_arrivee->translatedFormat('j M') }} → {{ $r->date_depart->translatedFormat('j M Y') }}</p>
@@ -30,5 +30,4 @@
             <div class="carte md:col-span-2"><p class="font-semibold">{{ $onglet === 'passees' ? 'Aucune réservation passée.' : 'Aucune réservation à venir pour le moment.' }}</p><p class="aide">Les réservations confirmées apparaissent ici.</p></div>
         @endforelse
     </div>
-    <a href="{{ route('gerant.arrivees') }}" class="btn btn-second md:w-auto">Arrivées et départs du jour</a>
 </div>

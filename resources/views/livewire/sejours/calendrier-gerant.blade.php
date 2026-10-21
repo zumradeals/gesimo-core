@@ -1,11 +1,11 @@
 <div class="grid gap-4">
-    <h1 class="text-2xl font-extrabold">Calendrier</h1>
+    <div class="adm-top"><div><h1>Calendrier</h1></div></div>
 
     @if($residences->isEmpty())
-        <div class="carte grid place-items-center gap-3 py-10 text-center md:max-w-xl">
+        <div class="carte-p">
             <x-ui.icone nom="calendrier" classe="h-10 w-10 text-marque-500" />
             <p class="text-lg font-semibold">Aucune résidence à afficher.</p>
-            @can('create', \App\Sejours\Models\Residence::class)<a href="{{ route('gerant.residence.nouvelle') }}" class="btn">Ajouter ma résidence</a>@endcan
+            @can('create', \App\Sejours\Models\Residence::class)<a href="{{ route('gerant.residence.nouvelle') }}" class="btn-pl">Ajouter ma résidence</a>@endcan
         </div>
     @elseif($unite === null)
         <x-ui.alerte type="attention">Cette résidence n'a pas encore de logement.</x-ui.alerte>
@@ -22,7 +22,7 @@
     </div>
 
     <div class="grid gap-4 xl:grid-cols-[1.3fr_1fr] xl:items-start">
-        <div class="carte">
+        <div class="carte-p">
             <div class="mb-2 flex items-center justify-between">
                 <button type="button" wire:click="moisPrecedent" class="rounded-xl p-2 hover:bg-fond" aria-label="Mois précédent"><x-ui.icone nom="fleche-gauche" /></button>
                 <b class="text-lg capitalize">{{ $debutMois->translatedFormat('F Y') }}</b>
@@ -47,21 +47,21 @@
         <div class="grid gap-4">
             @if($message)<x-ui.alerte type="succes">{{ $message }}</x-ui.alerte>@endif
             @if(session('message'))<x-ui.alerte type="succes">{{ session('message') }}</x-ui.alerte>@endif
-            @if($peutSaisirTelephone)<a href="{{ route('gerant.telephone', ['unite' => $unite->id]) }}" class="btn btn-bloc">Ajouter une réservation par téléphone</a>@endif
+            @if($peutSaisirTelephone)<a href="{{ route('gerant.telephone', ['unite' => $unite->id]) }}" class="btn-pl pleine">Ajouter une réservation par téléphone</a>@endif
 
-            <form wire:submit="bloquer" class="carte grid gap-3">
-                <h2 class="text-lg font-extrabold">Bloquer des dates</h2>
+            <form wire:submit="bloquer" class="carte-p">
+                <h2>Bloquer des dates</h2>
                 <div class="grid grid-cols-2 gap-3">
                     <div class="champ"><label class="etiquette" for="debut">Du</label><input id="debut" type="date" wire:model="debut" class="saisie">@error('debut')<p class="erreur-champ">{{ $message }}</p>@enderror</div>
                     <div class="champ"><label class="etiquette" for="fin">Au (dernier jour bloqué)</label><input id="fin" type="date" wire:model="fin" class="saisie">@error('fin')<p class="erreur-champ">{{ $message }}</p>@enderror</div>
                 </div>
                 <div class="champ"><label class="etiquette" for="motif">Raison (facultatif)</label><input id="motif" wire:model="motif" class="saisie" placeholder="Ex. Travaux"></div>
                 @if($erreur)<x-ui.alerte type="erreur">{{ $erreur }}</x-ui.alerte>@endif
-                <button class="btn btn-bloc" wire:loading.attr="disabled">Bloquer</button>
+                <button class="btn-pl pleine" wire:loading.attr="disabled">Bloquer</button>
             </form>
 
-            <div class="carte grid gap-2">
-                <h2 class="text-lg font-extrabold">Ce mois-ci</h2>
+            <div class="carte-p">
+                <h2>Ce mois-ci</h2>
                 @forelse($reservations as $r)
                     <div class="flex items-start justify-between gap-2 border-b border-dashed border-trait pb-2">
                         <div>

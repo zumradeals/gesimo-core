@@ -4,6 +4,7 @@ use App\Noyau\Enums\Role;
 use App\Parametres\Livewire\EspaceParametres;
 use App\Parametres\Services\Marque;
 use App\Parametres\Services\Parametres;
+use App\Sejours\Livewire\EditerResidence;
 use App\Sejours\Livewire\Recherche;
 use App\Sejours\Models\Avis;
 use Illuminate\Http\UploadedFile;
@@ -172,4 +173,25 @@ it('le tableau de bord admin compare la semaine à la précédente et liste les 
     $this->actingAs(creerUtilisateur(Role::Admin))->get('/admin')->assertOk()
         ->assertSee('Réservations (7 jours)')->assertSee('vs semaine passée')->assertSee('Dernières réservations')->assertSee('#'.$r->id)
         ->assertSee('Réservations par jour');
+});
+
+it('l\'assistant de résidence avance en 3 étapes et ne saute pas une étape tant que la résidence n\'existe pas', function () {
+    $gerant = creerUtilisateur(Role::Gerant);
+    $unite = creerLogement(15000, null, ['gerant_id' => $gerant->id]);
+    $residence = $unite->residence;
+
+    Livewire::actingAs($gerant)->test(EditerResidence::class)->call('allerEtape', 3)->assertSet('etape', 1);
+
+    $page = Livewire::actingAs($gerant)->test(EditerResidence::class, ['residence' => $residence])
+        ->assertSet('etape', 1)->assertSee('1 Ma résidence')->assertSee('Étape suivante : mes logements');
+    $page->call('allerEtape', 2)->assertSet('etape', 2)->assertSee('Mes logements')->assertSee($unite->nom);
+    $page->call('allerEtape', 3)->assertSet('etape', 3)->assertSee('Envoyer pour vérification')->assertSee('Pièce d\'identité du gérant', false);
+    $page->call('allerEtape', 9)->assertSet('etape', 1);
+});
+
+it('chaque espace connecté a la même structure : menu latéral, titre de page, aucun en-tête du site', function () {
+    $client = creerUtilisateur(Role::Client);
+    foreach (['/compte', '/mes-reservations', '/compte/profil'] as $url) {
+        $this->actingAs($client)->get($url)->assertOk()->assertSee('class="adm-side"', false)->assertSee('barre-bas adm-bas', false)->assertDontSee('class="site-h"', false);
+    }
 });

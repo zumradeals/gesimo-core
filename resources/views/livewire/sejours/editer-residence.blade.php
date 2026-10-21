@@ -1,7 +1,7 @@
 @php $fr = fn (int $m) => \App\Noyau\Services\Format::fcfa($m); @endphp
 <div class="grid gap-5">
     <div class="flex flex-wrap items-center justify-between gap-2">
-        <h1 class="text-2xl font-extrabold">{{ $residence ? $residence->nom : 'Ma résidence' }}</h1>
+        <div class="adm-top"><div><h1>{{ $residence ? $residence->nom : 'Ma résidence' }}</h1></div></div>
         @if($residence) @include('livewire.sejours.partiels.statut-residence', ['r' => $residence]) @endif
     </div>
 
@@ -11,14 +11,17 @@
     @if($residence?->statut_verification === 'refusee' && $residence->motif_refus)
         <x-ui.alerte type="erreur"><b>Refusée par l'équipe GESIMO :</b> {{ $residence->motif_refus }}. Corrigez puis renvoyez pour vérification.</x-ui.alerte>
     @endif
-    @if(! $residence)
-        <p class="text-[13px] font-bold text-marque-600">1. Résidence <span class="text-gris-doux">› 2. Logements › 3. Envoi pour vérification</span></p>
-    @endif
+    <div class="stepper st3" role="tablist" aria-label="Étapes">
+        @foreach([1 => 'Ma résidence', 2 => 'Mes logements', 3 => 'Envoyer pour vérification'] as $n => $libelle)
+            <button type="button" wire:click="allerEtape({{ $n }})" @disabled($n > 1 && ! $residence) class="st {{ $etape === $n ? 'on' : ($n < $etape ? 'fait' : '') }}" style="cursor:pointer" @if($etape === $n) aria-current="step" @endif>{{ $n }} {{ $libelle }}</button>
+        @endforeach
+    </div>
 
-    <div class="grid gap-5 lg:grid-cols-2 lg:items-start">
+    <div style="max-width:880px;display:grid;gap:16px">
         {{-- 1. Résidence --}}
-        <form wire:submit="enregistrerResidence" class="carte grid gap-3">
-            <h2 class="text-lg font-extrabold">1. Ma résidence</h2>
+        @if($etape === 1)
+        <form wire:submit="enregistrerResidence" class="carte-p">
+            <h2>1. Ma résidence</h2>
             <div class="champ"><label class="etiquette" for="nom">Nom</label><input id="nom" wire:model="nom" class="saisie">@error('nom')<p class="erreur-champ">{{ $message }}</p>@enderror</div>
             <div class="grid grid-cols-2 gap-3">
                 <div class="champ"><label class="etiquette" for="commune">Commune</label><input id="commune" wire:model="commune" class="saisie" placeholder="Ex. Cocody">@error('commune')<p class="erreur-champ">{{ $message }}</p>@enderror</div>
@@ -48,16 +51,18 @@
                 <p class="font-bold">Annulation : politique flexible</p>
                 <p class="aide !text-[14px]">Remboursement intégral jusqu'à 24 h avant l'arrivée ; moins de 24 h avant, une nuit est retenue ; absence sans annulation : aucun remboursement. Une politique plus stricte pourra être proposée plus tard.</p>
             </div>
-            <button class="btn btn-bloc" wire:loading.attr="disabled">{{ $residence ? 'Enregistrer la résidence' : 'Enregistrer et continuer' }}</button>
+            <button class="btn-pl pleine" wire:loading.attr="disabled">{{ $residence ? 'Enregistrer la résidence' : 'Enregistrer et continuer' }}</button>
+            @if($residence)<button type="button" wire:click="allerEtape(2)" class="btn-sec pleine">Étape suivante : mes logements →</button>@endif
         </form>
+        @endif
 
-        @if($residence)
+        @if($residence && $etape === 2)
         {{-- 2. Logements --}}
         <div class="grid gap-4">
-            <div class="carte grid gap-3">
+            <div class="carte-p">
                 <div class="flex items-center justify-between gap-2">
-                    <h2 class="text-lg font-extrabold">2. Mes logements</h2>
-                    <button type="button" wire:click="nouveauLogement" class="btn btn-second !min-h-[44px] !text-[15px] !min-w-0"><x-ui.icone nom="plus" classe="h-4 w-4" /> Ajouter</button>
+                    <h2>2. Mes logements</h2>
+                    <button type="button" wire:click="nouveauLogement" class="btn-sec"><x-ui.icone nom="plus" classe="h-4 w-4" /> Ajouter</button>
                 </div>
                 @forelse($residence->unites as $u)
                     <div class="rounded-xl border border-trait p-3 {{ $u->active ? '' : 'opacity-60' }}">
@@ -80,7 +85,7 @@
             </div>
 
             @if($formulaireLogement)
-            <form wire:submit="enregistrerLogement" class="carte grid gap-3 border-marque-500">
+            <form wire:submit="enregistrerLogement" class="carte-p">
                 <h3 class="text-lg font-extrabold">{{ $uniteId ? 'Modifier le logement' : 'Un logement' }}</h3>
                 <div class="champ"><label class="etiquette" for="uNom">Nom</label><input id="uNom" wire:model="uNom" class="saisie" placeholder="Ex. Chambre climatisée 1">@error('uNom')<p class="erreur-champ">{{ $message }}</p>@enderror</div>
                 <div class="grid grid-cols-2 gap-3">
@@ -124,19 +129,20 @@
                     @error('nouvellesPhotos.*')<p class="erreur-champ">{{ $message }}</p>@enderror
                 </div>
                 <div class="grid gap-2 sm:grid-cols-2">
-                    <button class="btn btn-bloc" wire:loading.attr="disabled">Enregistrer le logement</button>
-                    <button type="button" wire:click="$set('formulaireLogement', false)" class="btn btn-second btn-bloc">Annuler</button>
+                    <button class="btn-pl pleine" wire:loading.attr="disabled">Enregistrer le logement</button>
+                    <button type="button" wire:click="$set('formulaireLogement', false)" class="btn-sec pleine">Annuler</button>
                 </div>
             </form>
             @endif
         </div>
+            <div style="display:flex;gap:10px;flex-wrap:wrap"><button type="button" wire:click="allerEtape(1)" class="btn-sec">← Ma résidence</button><button type="button" wire:click="allerEtape(3)" class="btn-pl">Étape suivante : envoi →</button></div>
         @endif
     </div>
 
-    @if($residence)
+    @if($residence && $etape === 3)
     {{-- 3. Pièces et envoi --}}
-    <div class="carte grid gap-3 lg:max-w-3xl">
-        <h2 class="text-lg font-extrabold">3. Envoyer pour vérification</h2>
+    <div class="carte-p">
+        <h2>3. Envoyer pour vérification</h2>
         <p class="aide !text-[15px]">La résidence reste invisible tant qu'un admin GESIMO ne l'a pas validée.</p>
         <div class="grid gap-3 md:grid-cols-2">
             <div class="champ"><label class="etiquette" for="piece">Pièce d'identité du gérant</label>
@@ -149,8 +155,8 @@
                 @error('justificatif')<p class="erreur-champ">{{ $message }}</p>@enderror</div>
         </div>
         <div class="grid gap-2 sm:grid-cols-2">
-            <button type="button" wire:click="envoyerPieces" class="btn btn-second btn-bloc" wire:loading.attr="disabled">Enregistrer les pièces</button>
-            <button type="button" wire:click="soumettre" class="btn btn-bloc" wire:loading.attr="disabled">Envoyer pour vérification</button>
+            <button type="button" wire:click="envoyerPieces" class="btn-sec pleine" wire:loading.attr="disabled">Enregistrer les pièces</button>
+            <button type="button" wire:click="soumettre" class="btn-pl pleine" wire:loading.attr="disabled">Envoyer pour vérification</button>
         </div>
     </div>
     @endif

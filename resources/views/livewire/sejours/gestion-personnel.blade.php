@@ -1,5 +1,5 @@
 <div class="grid gap-4">
-    <h1 class="text-2xl font-extrabold">Mon personnel</h1>
+    <div class="adm-top"><div><h1>Mon personnel</h1></div></div>
     @if($message)<x-ui.alerte type="succes">{{ $message }}</x-ui.alerte>@endif
     @if($erreur)<x-ui.alerte type="erreur">{{ $erreur }}</x-ui.alerte>@endif
 
@@ -7,8 +7,8 @@
         <x-ui.alerte type="attention">Ajoutez d'abord une résidence avant d'inviter du personnel.</x-ui.alerte>
     @else
     <div class="grid gap-4 lg:grid-cols-2 lg:items-start">
-        <form wire:submit="inviter" class="carte grid gap-3">
-            <h2 class="text-lg font-extrabold">Inviter une personne</h2>
+        <form wire:submit="inviter" class="carte-p">
+            <h2>Inviter une personne</h2>
             <div class="champ"><label class="etiquette" for="residence">Résidence</label>
                 <select id="residence" wire:model="residenceId" class="saisie">@foreach($residences as $r)<option value="{{ $r->id }}">{{ $r->nom }}</option>@endforeach</select></div>
             <div class="champ"><label class="etiquette" for="nom">Nom</label><input id="nom" wire:model="nom" class="saisie" placeholder="Ex. Yao (gardien)">@error('nom')<p class="erreur-champ">{{ $message }}</p>@enderror</div>
@@ -21,12 +21,12 @@
                     <label class="puce {{ $droitCalendrier ? 'puce-active' : '' }}"><input type="checkbox" class="sr-only" wire:model.live="droitCalendrier">Calendrier</label>
                 </div>
             </div>
-            <button class="btn btn-bloc" wire:loading.attr="disabled">Envoyer l'invitation</button>
+            <button class="btn-pl pleine" wire:loading.attr="disabled">Envoyer l'invitation</button>
             <p class="aide">La personne reçoit un lien par e-mail pour créer son accès. Elle ne voit que cette résidence.</p>
         </form>
 
-        <div class="carte grid gap-2">
-            <h2 class="text-lg font-extrabold">Mon personnel</h2>
+        <div class="carte-p">
+            <h2>Mon personnel</h2>
             @foreach($membres as $m)
                 <div class="flex items-start justify-between gap-2 border-b border-dashed border-trait pb-2">
                     <div><p class="font-bold">{{ $m->utilisateur->nom }} <span class="rounded-full bg-green-100 px-2 py-0.5 text-[12px] text-green-800">Actif</span></p>
