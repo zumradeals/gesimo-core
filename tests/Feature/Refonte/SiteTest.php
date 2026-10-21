@@ -1,13 +1,16 @@
 <?php
 
 use App\Noyau\Enums\Role;
+use App\Noyau\Services\Navigation;
 use App\Parametres\Livewire\EspaceParametres;
 use App\Parametres\Services\Marque;
 use App\Parametres\Services\Parametres;
 use App\Sejours\Livewire\EditerResidence;
 use App\Sejours\Livewire\Recherche;
 use App\Sejours\Models\Avis;
+use App\Sejours\Models\Unite;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Livewire;
 
@@ -29,9 +32,9 @@ beforeEach(function () {
     configurerGeniusPay('sandbox', 10.0);
 });
 
-it('la page d\'accueil masque les sections sans contenu réel : aucun faux logement, commune ni avis', function () {
+it('l’accueil distingue les exemples non réservables des annonces publiées et des avis réels', function () {
     $this->get('/')->assertOk()
-        ->assertSee('Trouvez votre résidence meublée')->assertSee('Comment ça marche')->assertSee('Devenir gérant partenaire')
+        ->assertSee('Un lieu à vous.')->assertSee('Comment ça marche')->assertSee('Devenir gérant partenaire')
         ->assertDontSee('Logements à la une')->assertDontSee('Choisissez votre commune')->assertDontSee('Ce que disent nos voyageurs');
 });
 
@@ -134,12 +137,12 @@ it('« Devenir gérant partenaire » calcule un exemple chiffré avec le taux r�
 });
 
 it('chaque rôle reçoit le bon habillage : site, menu latéral d\'administration ou espace gérant', function () {
-    // Visiteur : en-tête du site, pied de page, menu d'application seulement visible dans l'application installée.
-    $this->get('/')->assertSee('class="site-h"', false)->assertSee('class="site-f"', false)->assertSee('barre-bas-visiteur', false)->assertSee('Créer un compte');
+    // Visiteur : site et navigation mobile, dans le navigateur comme dans la PWA.
+    $this->get('/')->assertSee('class="site-h"', false)->assertSee('class="site-f"', false)->assertSee('mobile-tabs', false)->assertSee('Créer un compte');
 
     // Client connecté : sur les pages publiques, le site avec « Mon compte » ; dans son espace, menu latéral et rien du site public.
     $client = creerUtilisateur(Role::Client);
-    $this->actingAs($client)->get('/')->assertSee('class="site-h"', false)->assertSee('Mon compte')->assertDontSee('barre-bas-visiteur', false)->assertDontSee('Créer un compte');
+    $this->actingAs($client)->get('/')->assertSee('class="site-h"', false)->assertSee('Mon compte')->assertSee('mobile-tabs', false)->assertDontSee('Créer un compte');
     $this->actingAs($client)->get('/compte')->assertSee('class="adm-side"', false)->assertSee('Mon espace')->assertSee('Chercher un logement')->assertDontSee('class="site-h"', false)->assertDontSee('class="site-f"', false);
 
     // Administrateur : menu latéral, et « Réglages » seulement pour le super-administrateur.
@@ -192,6 +195,36 @@ it('l\'assistant de résidence avance en 3 étapes et ne saute pas une étape ta
 it('chaque espace connecté a la même structure : menu latéral, titre de page, aucun en-tête du site', function () {
     $client = creerUtilisateur(Role::Client);
     foreach (['/compte', '/mes-reservations', '/compte/profil'] as $url) {
-        $this->actingAs($client)->get($url)->assertOk()->assertSee('class="adm-side"', false)->assertSee('barre-bas adm-bas', false)->assertDontSee('class="site-h"', false);
+        $this->actingAs($client)->get($url)->assertOk()->assertSee('class="adm-side"', false)->assertSee('mobile-tabs', false)->assertDontSee('class="site-h"', false);
     }
+});
+
+it('les trois exemples sont visibles mais ne créent aucun logement ni lien de réservation', function () {
+    $avant = Unite::count();
+    $rep = $this->get('/')->assertOk()->assertSee('offres fictives, non réservables')->assertSee('Exemple fictif');
+    $dom = new DOMDocument;
+    @$dom->loadHTML('<?xml encoding="utf-8" ?>'.$rep->getContent());
+    $xpath = new DOMXPath($dom);
+    expect($xpath->query('//*[@data-offre-fictive]')->length)->toBe(3)
+        ->and($xpath->query('//*[@data-offre-fictive]//a | //*[@data-offre-fictive]//form | //*[@data-offre-fictive]//button')->length)->toBe(0)
+        ->and(Unite::count())->toBe($avant);
+});
+
+it('le menu mobile commun reste cohérent et conserve les accès protégés', function () {
+    $menus = Navigation::visiteur();
+    expect(array_column($menus, 'libelle'))->toBe(['Accueil', 'Logements', 'Réservations', 'Compte']);
+    foreach (['accueil', 'recherche', 'mes-reservations', 'compte'] as $nom) {
+        expect(Route::has($nom))->toBeTrue();
+    }
+    $this->get('/mes-reservations')->assertRedirect(route('connexion'));
+    $this->get('/compte')->assertRedirect(route('connexion'));
+    $this->actingAs(creerUtilisateur(Role::Client))->get('/compte')->assertOk()
+        ->assertSee('mobile-tabs', false)->assertSee('aria-current="page"', false);
+});
+
+it('le sélecteur de l’accueil ne propose pas les communes de gérants sans identité validée', function () {
+    $u = creerLogement(18000, null, ['commune' => 'COMMUNE_VISIBLE']);
+    $autre = creerLogement(20000, null, ['commune' => 'COMMUNE_PRIVEE']);
+    $autre->residence->gerant->profilGerant->documents()->delete();
+    $this->get('/')->assertSee('COMMUNE_VISIBLE')->assertDontSee('COMMUNE_PRIVEE');
 });

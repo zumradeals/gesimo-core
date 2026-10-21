@@ -18,6 +18,8 @@ $gerant = Utilisateur::create(['nom' => 'ESSAI Identité privée', 'telephone' =
 $gerant->attribuerRole(Role::Gerant);
 $admin = Utilisateur::create(['nom' => 'ESSAI Administrateur', 'telephone' => '0799000002', 'email' => 'admin@example.test', 'mot_de_passe' => 'mot-de-passe-essai-navigateur']);
 $admin->attribuerRole(Role::Admin);
+$client = Utilisateur::create(['nom' => 'ESSAI Client accueil', 'telephone' => '0799000003', 'email' => 'client@example.test', 'mot_de_passe' => 'mot-de-passe-essai-navigateur']);
+$client->attribuerRole(Role::Client);
 $profil = ProfilGerant::pour($gerant);
 $profil->update(['nom_public' => 'Maison Naya — ESSAI', 'adresse' => 'Adresse personnelle confidentielle ESSAI', 'commune_publique' => 'Cocody', 'presentation' => 'Des logements accueillants pour vos séjours à Abidjan.']);
 $r = Residence::create(['gerant_id' => $gerant->id, 'nom' => 'Villa Papaye — ESSAI', 'commune' => 'Cocody']);

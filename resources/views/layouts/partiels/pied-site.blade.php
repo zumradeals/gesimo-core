@@ -7,8 +7,8 @@
     $reseaux = Marque::reseaux();
     $legale = Marque::ligneLegale();
     $colonnes = [
-        'Découvrir' => [['Accueil', route('accueil')], ['Chercher un logement', route('recherche')], ['Comment ça marche', route('accueil').'#comment']],
-        Marque::nom() => [['À propos', route('a-propos')], ['Devenir gérant partenaire', route('devenir-partenaire')], ['Questions fréquentes', route('faq')], ['Contact', route('contact')]],
+        'Explorer' => [['Les logements', route('recherche')], ['Comment ça marche', route('accueil').'#comment'], ['À propos', route('a-propos')]],
+        'Vous accompagner' => [['Aide et questions fréquentes', route('faq')], ['Contact', route('contact')], ['Devenir gérant partenaire', route('devenir-partenaire')], ['Mon compte', route('compte')]],
         'Informations' => [['Conditions générales', route('conditions')], ['Politique de confidentialité', route('confidentialite')], ['Mentions légales', route('mentions-legales')]],
     ];
     $icones = [
@@ -23,7 +23,7 @@
         <div class="f-haut">
             <div class="f-col f-marque">
                 <x-ui.logo :clair="true" />
-                <p>{{ Marque::slogan() ?: 'La réservation de résidences meublées en Côte d\'Ivoire : prix total clair, paiement sécurisé, gérants vérifiés.' }}</p>
+                <p>{{ Marque::slogan() ?: 'Des séjours meublés en Côte d’Ivoire, avec des informations claires pour choisir en confiance.' }}</p>
                 <div class="f-contact">
                     @if($adresse)<div><x-ui.icone nom="pin" classe="ic" /> {{ $adresse }}</div>@endif
                     @if($tel)<div><x-ui.icone nom="tel" classe="ic" /> <a href="{{ Marque::lienTelephone($tel) }}">{{ $tel }}</a></div>@endif
@@ -39,16 +39,13 @@
                 @endif
             </div>
             @foreach($colonnes as $titre => $liens)
-                <div class="f-col" x-data="{ o: window.matchMedia('(min-width:1024px)').matches }" :class="{ replie: ! o }">
-                    <button type="button" class="f-tit" @click="o = ! o" :aria-expanded="o">{{ $titre }} <x-ui.icone nom="fleche-droite" classe="ic" style="transform:rotate(90deg)" /></button>
+                <div class="f-col">
+                    <h2 class="f-titre">{{ $titre }}</h2>
                     <div class="f-liens">@foreach($liens as [$nom, $url])<a href="{{ $url }}">{{ $nom }}</a>@endforeach</div>
                 </div>
             @endforeach
-            <div class="f-col f-paie"><p class="f-titre">Paiement sécurisé</p>
-                <div class="pastilles"><span>Wave</span><span>Orange Money</span><span>MTN Money</span><span>Carte</span></div>
-                <p class="petit">Vos paiements passent par GeniusPay. {{ Marque::nom() }} ne voit jamais votre numéro de carte.</p>
-            </div>
         </div>
+        <div class="f-paiements"><span>Moyens de paiement</span><div class="pastilles"><span>Wave</span><span>Orange Money</span><span>MTN Money</span><span>Carte</span></div><p>Les moyens disponibles sont précisés avant le paiement.</p></div>
         <div class="f-bas"><span>© {{ now()->year }} {{ Marque::nom() }} — tous droits réservés</span>@if($legale)<span>{{ $legale }}</span>@endif</div>
     </div>
 </footer>
