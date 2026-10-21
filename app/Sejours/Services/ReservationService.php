@@ -21,6 +21,9 @@ class ReservationService
 {
     public const CHEVAUCHEMENT = '23P01';
 
+    /** PostgreSQL a interrompu l'une de deux transactions qui se bloquaient mutuellement (deadlock_detected). */
+    public const INTERBLOCAGE = '40P01';
+
     public function __construct(private TarifCalculateur $tarifs) {}
 
     /** Durée de garde d'une réservation en attente, lue dans les Paramètres (RG-2) : 2 heures par défaut. */
@@ -185,7 +188,9 @@ class ReservationService
     private function enregistrer(callable $creation, Unite $unite, CarbonInterface $arrivee, CarbonInterface $depart): Reservation
     {
         try {
-            return DB::transaction($creation); // point de sauvegarde : l'éventuelle transaction englobante reste utilisable
+            // Point de sauvegarde : l'éventuelle transaction englobante reste utilisable. Si deux réservations des mêmes dates
+            // se croisent, PostgreSQL peut en interrompre une (« deadlock ») : Laravel la rejoue, et elle reçoit alors le refus normal.
+            return DB::transaction($creation, 5);
         } catch (QueryException $e) {
             throw $this->traduire($e, $unite, $arrivee, $depart);
         }
@@ -193,6 +198,9 @@ class ReservationService
 
     private function traduire(QueryException $e, Unite $unite, CarbonInterface $arrivee, CarbonInterface $depart): \Throwable
     {
+        if ((string) $e->getCode() === self::INTERBLOCAGE) {
+            return new ReservationImpossible('Beaucoup de personnes réservent en même temps : réessayez dans un instant. Rien n\'a été réservé.');
+        }
         if ((string) $e->getCode() !== self::CHEVAUCHEMENT) {
             return $e;
         }
