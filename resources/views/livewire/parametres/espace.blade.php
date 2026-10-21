@@ -73,8 +73,13 @@
             @endif
             @if(isset($erreurs['mot_de_passe']) && ! $aSensible)<x-ui.alerte type="erreur">{{ $erreurs['mot_de_passe'] }}</x-ui.alerte>@endif
 
+            @php $sectionCourante = null; @endphp
             @foreach($defs as $cle => $def)
                 @php $k = P::cle($cle); @endphp
+                @if(($def['section'] ?? null) && $def['section'] !== $sectionCourante)
+                    @php $sectionCourante = $def['section']; @endphp
+                    <h2 class="mt-2 border-b border-trait pb-1 text-lg font-extrabold">{{ $sectionCourante }}</h2>
+                @endif
                 <div class="champ">
                     @if($def['type'] !== 'offres')<label class="etiquette" for="f_{{ $k }}">{{ $def['label'] }}@if($def['type'] === 'secret') 🔒@endif</label>@endif
                     @switch($def['type'])
@@ -83,8 +88,13 @@
                         @case('entier')@case('decimal')<input id="f_{{ $k }}" wire:model="valeurs.{{ $k }}" inputmode="{{ $def['type'] === 'entier' ? 'numeric' : 'decimal' }}" class="saisie">@break
                         @case('heure')<input id="f_{{ $k }}" wire:model="valeurs.{{ $k }}" placeholder="14:00" class="saisie">@break
                         @case('logo')
-                            <div class="flex items-center gap-3">@if($logoUrl)<img src="{{ $logoUrl }}" alt="Logo actuel" class="h-16 w-auto rounded border border-trait">@else<div class="flex h-16 w-16 items-center justify-center rounded border border-trait text-gris-doux">Logo</div>@endif
-                            <input id="f_{{ $k }}" type="file" wire:model="logo" accept="image/png,image/jpeg" class="text-[15px]"></div>@error('logo')<p class="erreur-champ">{{ $message }}</p>@enderror
+                            <div class="flex flex-wrap items-center gap-3">@if($logoUrl)<img src="{{ $logoUrl }}" alt="Logo actuel" class="h-16 w-auto rounded border border-trait">@else<div class="flex h-16 w-16 items-center justify-center rounded border border-trait text-gris-doux">Logo</div>@endif
+                            <input id="f_{{ $k }}" type="file" wire:model="logo" accept="image/png,image/jpeg" class="w-full max-w-full text-[15px]"></div>@error('logo')<p class="erreur-champ">{{ $message }}</p>@enderror
+                            @break
+                        @case('image')
+                            <div class="flex flex-wrap items-center gap-3">@if($imageAccueilUrl)<img src="{{ $imageAccueilUrl }}" alt="Image d'accueil actuelle" class="h-20 w-36 rounded border border-trait object-cover">@else<div class="flex h-20 w-36 items-center justify-center rounded border border-trait text-gris-doux">Aucune</div>@endif
+                            <input id="f_{{ $k }}" type="file" wire:model="imageAccueil" accept="image/png,image/jpeg" class="w-full max-w-full text-[15px]">
+                            @if($imageAccueilUrl)<button type="button" wire:click="retirerImageAccueil" class="min-h-[44px] font-semibold text-red-700">Retirer l'image</button>@endif</div>@error('imageAccueil')<p class="erreur-champ">{{ $message }}</p>@enderror
                             @break
                         @case('secret')
                             @if($secretsEnregistres[$cle] && empty($remplacer[$cle]))
@@ -108,6 +118,7 @@
                             </div>
                             @if(count($valeurs[$k] ?? []) < 4)<button type="button" wire:click="ajouterOffre" class="btn btn-second sm:w-auto">+ Ajouter une offre</button>@endif
                             @break
+                        @case('url')<input id="f_{{ $k }}" type="url" wire:model="valeurs.{{ $k }}" class="saisie" placeholder="https://" autocomplete="off">@break
                         @default<input id="f_{{ $k }}" wire:model="valeurs.{{ $k }}" class="saisie" autocomplete="off">
                     @endswitch
                     @if($def['aide'])<span class="aide">{{ $def['aide'] }}</span>@endif

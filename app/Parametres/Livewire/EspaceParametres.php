@@ -46,6 +46,8 @@ class EspaceParametres extends Component
 
     public $logo = null;
 
+    public $imageAccueil = null;
+
     /** @var array<string, string> */
     public array $erreurs = [];
 
@@ -95,7 +97,7 @@ class EspaceParametres extends Component
 
         $valeurs = [];
         foreach (Reglages::pourRubrique($this->rubrique) as $cle => $def) {
-            if (! in_array($def['type'], ['secret', 'logo'], true)) {
+            if (! in_array($def['type'], ['secret', 'logo', 'image'], true)) {
                 $valeurs[$cle] = $this->valeurs[self::cle($cle)] ?? null;
             }
         }
@@ -108,6 +110,9 @@ class EspaceParametres extends Component
             if ($this->rubrique === 'general' && $this->logo !== null) {
                 $this->enregistrerLogo();
             }
+            if ($this->rubrique === 'general' && $this->imageAccueil !== null) {
+                $this->enregistrerImageAccueil();
+            }
             $modifies = Reglages::enregistrer($this->rubrique, $valeurs, $secrets, auth()->user(), $this->motDePasse);
         } catch (ReglageInvalide $e) {
             $this->erreurs = $e->erreurs;
@@ -119,8 +124,9 @@ class EspaceParametres extends Component
         $this->remplacer = [];
         $this->motDePasse = '';
         $this->charger();
-        $this->message = $modifies === [] && $this->logo === null ? 'Aucun changement à enregistrer.' : 'Réglages enregistrés.';
+        $this->message = $modifies === [] && $this->logo === null && $this->imageAccueil === null ? 'Aucun changement à enregistrer.' : 'Réglages enregistrés.';
         $this->logo = null;
+        $this->imageAccueil = null;
     }
 
     public function testerEmail(TestsConnexion $tests): void
@@ -153,6 +159,7 @@ class EspaceParametres extends Component
             'plancher' => $plancher,
             'residencesSousPlancher' => $plancher === null ? 0 : Residence::where('mode_paiement', 'acompte')->where('pourcentage_acompte', '<', $plancher)->count(),
             'logoUrl' => Marque::logoUrl(),
+            'imageAccueilUrl' => Marque::imageAccueilUrl(),
             'historique' => $this->rubrique === 'historique' ? $this->historique() : null,
             'webhookUrl' => url('/webhooks/geniuspay'),
             'mode' => Reglages::valeur('geniuspay.mode'),
@@ -168,7 +175,7 @@ class EspaceParametres extends Component
     {
         $this->valeurs = [];
         foreach (Reglages::definitions() as $cle => $def) {
-            if (in_array($def['type'], ['secret', 'logo'], true)) {
+            if (in_array($def['type'], ['secret', 'logo', 'image'], true)) {
                 continue;
             }
             $valeur = Reglages::valeur($cle);
@@ -193,6 +200,50 @@ class EspaceParametres extends Component
             Storage::disk('public')->delete($ancien);
         }
         Audit::enregistrer('reglages.logo_change', null, [], auth()->user());
+    }
+
+    /** Image du bandeau d'accueil : contrôlée, redessinée (≤ 1600 px, JPEG) pour ne jamais garder un fichier piégé ni trop lourd. */
+    private function enregistrerImageAccueil(): void
+    {
+        $this->validate(['imageAccueil' => 'image|mimes:png,jpg,jpeg|max:4096'], [
+            'imageAccueil.image' => 'L\'image d\'accueil doit être une image PNG ou JPG.',
+            'imageAccueil.mimes' => 'L\'image d\'accueil doit être une image PNG ou JPG.',
+            'imageAccueil.max' => 'L\'image d\'accueil est trop lourde (4 Mo au maximum).',
+        ]);
+        $source = @imagecreatefromstring((string) file_get_contents($this->imageAccueil->getRealPath()));
+        if ($source === false) {
+            throw new ReglageInvalide(['imageAccueil' => 'Cette image n\'a pas pu être lue. Essayez un autre fichier.']);
+        }
+        $l = imagesx($source);
+        $h = imagesy($source);
+        $echelle = min(1, 1600 / max($l, $h));
+        $image = imagecreatetruecolor((int) round($l * $echelle), (int) round($h * $echelle));
+        imagefill($image, 0, 0, imagecolorallocate($image, 255, 255, 255));
+        imagecopyresampled($image, $source, 0, 0, 0, 0, imagesx($image), imagesy($image), $l, $h);
+        ob_start();
+        imagejpeg($image, null, 80);
+        $jpeg = (string) ob_get_clean();
+
+        $ancien = Parametres::obtenir('general.image_accueil');
+        $chemin = 'accueil/'.Str::random(24).'.jpg';
+        Storage::disk('public')->put($chemin, $jpeg);
+        Parametres::definir('general.image_accueil', $chemin, auth()->user(), false, 'general');
+        if ($ancien) {
+            Storage::disk('public')->delete($ancien);
+        }
+        Audit::enregistrer('reglages.image_accueil_change', null, [], auth()->user());
+    }
+
+    public function retirerImageAccueil(): void
+    {
+        Gate::authorize('modifier-parametres');
+        $ancien = Parametres::obtenir('general.image_accueil');
+        if ($ancien) {
+            Parametres::definir('general.image_accueil', null, auth()->user(), false, 'general');
+            Storage::disk('public')->delete($ancien);
+            Audit::enregistrer('reglages.image_accueil_change', null, [], auth()->user());
+        }
+        $this->message = 'Image d\'accueil retirée.';
     }
 
     /** @return array<string, array{etat: string, texte: string, ton: string}> */

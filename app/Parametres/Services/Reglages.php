@@ -27,7 +27,7 @@ class Reglages
     ];
 
     /**
-     * Types : texte, long, entier, decimal, heure, choix, secret, logo, offres.
+     * Types : texte, long, url, entier, decimal, heure, choix, secret, logo, image, offres.
      *
      * @return array<string, array<string, mixed>>
      */
@@ -39,14 +39,25 @@ class Reglages
         };
 
         // Général
-        $ajouter('general.nom', 'general', 'Nom de la plateforme', 'texte', ['defaut' => 'GESIMO Séjours', 'max' => 80]);
-        $ajouter('general.logo', 'general', 'Logo', 'logo', ['aide' => 'Image PNG ou JPG, 1 Mo maximum.']);
-        $ajouter('contact.email', 'general', 'E-mail de contact', 'texte', ['max' => 190, 'aide' => 'Les messages du formulaire « Contact » arrivent ici.']);
-        $ajouter('general.telephone', 'general', 'Téléphone de contact', 'texte', ['max' => 30]);
-        $ajouter('general.adresse', 'general', 'Adresse', 'texte', ['max' => 190]);
-        $ajouter('general.a_propos', 'general', 'À propos', 'long', ['max' => 20000, 'aide' => 'Affiché sur la page « À propos ». Vide : le texte provisoire du site reste affiché.']);
-        $ajouter('general.conditions', 'general', 'Conditions générales', 'long', ['max' => 40000, 'aide' => 'Remplace le brouillon du site dès qu\'il est rempli.']);
-        $ajouter('general.confidentialite', 'general', 'Politique de confidentialité', 'long', ['max' => 40000, 'aide' => 'Vide : le brouillon du site reste affiché.']);
+        $ajouter('general.nom', 'general', 'Nom de la plateforme', 'texte', ['defaut' => 'GESIMO Séjours', 'max' => 80, 'section' => 'Identité']);
+        $ajouter('general.slogan', 'general', 'Slogan', 'texte', ['max' => 120, 'section' => 'Identité', 'aide' => 'Phrase courte affichée sous le titre de la page d\'accueil et dans le pied de page.']);
+        $ajouter('general.logo', 'general', 'Logo', 'logo', ['section' => 'Identité', 'aide' => 'Image PNG ou JPG, 1 Mo maximum.']);
+        $ajouter('general.image_accueil', 'general', 'Image de la page d\'accueil', 'image', ['section' => 'Identité', 'aide' => 'Photo large (PNG ou JPG, 4 Mo maximum) derrière le titre de l\'accueil. Vide : fond vert.']);
+        $ajouter('contact.email', 'general', 'E-mail de contact', 'texte', ['max' => 190, 'section' => 'Coordonnées', 'aide' => 'Les messages du formulaire « Contact » arrivent ici.']);
+        $ajouter('general.telephone', 'general', 'Téléphone de contact', 'texte', ['max' => 30, 'section' => 'Coordonnées']);
+        $ajouter('general.whatsapp', 'general', 'Numéro WhatsApp', 'texte', ['max' => 30, 'section' => 'Coordonnées', 'aide' => 'Avec l\'indicatif, par exemple +225 07 00 00 00 00. Vide : aucun lien WhatsApp.']);
+        $ajouter('general.adresse', 'general', 'Adresse', 'texte', ['max' => 190, 'section' => 'Coordonnées']);
+        $ajouter('general.horaires', 'general', 'Horaires du service client', 'texte', ['max' => 120, 'section' => 'Coordonnées', 'aide' => 'Par exemple : Lundi au samedi, 8 h – 18 h.']);
+        foreach (['facebook' => 'Facebook', 'instagram' => 'Instagram', 'linkedin' => 'LinkedIn', 'tiktok' => 'TikTok'] as $reseau => $nom) {
+            $ajouter("social.{$reseau}", 'general', "Page {$nom}", 'url', ['max' => 200, 'section' => 'Réseaux sociaux', 'aide' => $reseau === 'facebook' ? 'Adresse complète commençant par https://. Vide : l\'icône n\'est pas affichée.' : null]);
+        }
+        $ajouter('general.raison_sociale', 'general', 'Raison sociale', 'texte', ['max' => 120, 'section' => 'Informations légales']);
+        $ajouter('general.rccm', 'general', 'Numéro RCCM', 'texte', ['max' => 60, 'section' => 'Informations légales']);
+        $ajouter('general.nif', 'general', 'Numéro de compte contribuable (NIF)', 'texte', ['max' => 60, 'section' => 'Informations légales']);
+        $ajouter('general.a_propos', 'general', 'À propos', 'long', ['max' => 20000, 'section' => 'Textes des pages', 'aide' => 'Affiché sur la page « À propos ». Vide : le texte provisoire du site reste affiché.']);
+        $ajouter('general.conditions', 'general', 'Conditions générales', 'long', ['max' => 40000, 'section' => 'Textes des pages', 'aide' => 'Remplace le brouillon du site dès qu\'il est rempli.']);
+        $ajouter('general.confidentialite', 'general', 'Politique de confidentialité', 'long', ['max' => 40000, 'section' => 'Textes des pages', 'aide' => 'Vide : le brouillon du site reste affiché.']);
+        $ajouter('general.mentions_legales', 'general', 'Mentions légales', 'long', ['max' => 20000, 'section' => 'Textes des pages', 'aide' => 'Vide : la page affiche automatiquement la raison sociale, le RCCM, le NIF et l\'adresse ci-dessus.']);
 
         // Réservation
         $ajouter('reservation.duree_blocage_minutes', 'reservation', 'Durée du blocage des dates (minutes)', 'entier', ['defaut' => '120', 'min' => 15, 'max' => 1440, 'aide' => 'Défaut 120. Les réservations déjà en attente gardent leur durée.']);
@@ -127,7 +138,7 @@ class Reglages
         $changes = []; // cle => [valeurNormalisee, estSecret]
 
         foreach ($defs as $cle => $def) {
-            if ($def['type'] === 'logo') {
+            if (in_array($def['type'], ['logo', 'image'], true)) {
                 continue; // géré par l'écran (téléversement)
             }
             if ($def['type'] === 'secret') {
@@ -186,6 +197,10 @@ class Reglages
         switch ($def['type']) {
             case 'texte':
             case 'long':
+            case 'url':
+                if ($def['type'] === 'url' && $v !== '' && (! preg_match('#^https://[^\s/]+\.[^\s/]+(/\S*)?$#i', $v) || filter_var($v, FILTER_VALIDATE_URL) === false)) {
+                    throw new ReglageInvalide([$def['cle'] => 'Indiquez une adresse complète commençant par https:// (exemple : https://www.facebook.com/gesimo).']);
+                }
                 if ($v === '' && ($def['cle'] === 'general.nom')) {
                     throw new ReglageInvalide([$def['cle'] => 'Le nom de la plateforme ne peut pas être vide.']);
                 }
@@ -198,7 +213,7 @@ class Reglages
                 if ($def['cle'] === 'email.hote' && $v !== '' && ! preg_match('/^[a-z0-9]([a-z0-9.\-]*[a-z0-9])?$/i', $v)) {
                     throw new ReglageInvalide([$def['cle'] => 'Le nom du serveur n\'est pas valide (exemple : smtp.exemple.ci).']);
                 }
-                if ($def['cle'] === 'general.telephone' && $v !== '' && ! preg_match('/^[0-9 +().\-]{6,30}$/', $v)) {
+                if (in_array($def['cle'], ['general.telephone', 'general.whatsapp'], true) && $v !== '' && ! preg_match('/^[0-9 +().\-]{6,30}$/', $v)) {
                     throw new ReglageInvalide([$def['cle'] => 'Le numéro de téléphone n\'est pas valide.']);
                 }
 
