@@ -12,10 +12,10 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
 use Throwable;
 
-/** Les deux pièces sont conservées pour les soumissions suivantes de cette résidence. */
+/** Justificatifs de gestion facultatifs. Les pièces personnelles appartiennent au dossier du gérant. */
 class PiecesVerification
 {
-    public const CHAMPS = ['piece_gerant' => 'pieceGerant', 'justificatif_droit_gestion' => 'justificatif'];
+    public const CHAMPS = ['justificatif_droit_gestion' => 'justificatif'];
 
     /** @param array<string, UploadedFile> $fichiers Pièces nouvelles seulement, indexées par leur type. */
     public static function enregistrer(Residence $residence, array $fichiers): bool
@@ -28,6 +28,7 @@ class PiecesVerification
         $chemins = [];
         try {
             foreach ($fichiers as $type => $fichier) {
+                abort_unless(array_key_exists($type, self::CHAMPS), 422);
                 $champ = self::CHAMPS[$type];
                 $chemin = $fichier->store("documents/{$residence->id}", 'local');
                 if ($chemin === false) {
@@ -42,14 +43,8 @@ class PiecesVerification
             DB::transaction(function () use ($residence, $chemins) {
                 $residence = Residence::lockForUpdate()->findOrFail($residence->id);
                 foreach ($chemins as $type => $chemin) {
-                    DocumentVerification::updateOrCreate(
-                        ['residence_id' => $residence->id, 'type' => $type],
-                        ['chemin' => $chemin, 'statut' => 'en_attente', 'verifie_par' => null, 'verifie_le' => null],
-                    );
-                }
-                if ($residence->estVerifiee()) {
-                    $residence->update(['statut_verification' => 'en_attente', 'badge_verifie' => false, 'soumise_le' => now(), 'motif_refus' => null]);
-                    Audit::enregistrer('residence.reverification_demandee', $residence);
+                    $residence->documents()->where('type', $type)->where('statut', '<>', 'accepte')->whereNull('remplace_le')->update(['remplace_le' => now()]);
+                    DocumentVerification::create(['residence_id' => $residence->id, 'type' => $type, 'chemin' => $chemin, 'statut' => 'en_attente']);
                 }
                 Audit::enregistrer('residence.pieces_enregistrees', $residence, ['types' => array_keys($chemins)]);
             });

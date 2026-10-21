@@ -13,12 +13,13 @@
     <div class="cont fiche-cont">
         <p class="fil"><a href="{{ route('accueil') }}">Accueil</a> › <a href="{{ route('recherche') }}">Logements</a> › {{ $r->commune }} › {{ $u->nom }}</p>
         <h1 class="h1-fiche">{{ $u->nom }}
-            @if($r->badge_verifie)<span class="etq vert">✔ Vérifié Avelis</span>@endif
+            @if($r->aBadgeGestion())<span class="etq vert">✔ Droit de gestion vérifié</span>@endif
             @if($sponsorise)<span class="etq" style="background:var(--or);color:#3a2a00">★ Sponsorisé</span>@endif
         </h1>
         <p class="aide-l">{{ $r->nom }} · {{ $r->commune }}@if($r->quartier), {{ $r->quartier }}@endif · jusqu'à {{ $u->capacite }} personne{{ $u->capacite > 1 ? 's' : '' }}
             @if($resumeAvis['nombre'] > 0) · <x-ui.etoiles :note="$resumeAvis['moyenne']" /> {{ number_format($resumeAvis['moyenne'], 1, ',', '') }} ({{ $resumeAvis['nombre'] }}) @endif</p>
 
+        @if($r->gerant->profilGerant && $r->estPubliee())<p class="aide-l">Proposé par <a class="font-bold text-marque-600 underline" href="{{ route('hebergeur', $r->gerant->profilGerant->slug) }}">{{ $r->gerant->profilGerant->nom_public }} · Voir ses autres offres →</a>@if($r->gerant->profilGerant->estCertifie()) <span class="pg-badge or">✓ Gérant certifié</span>@endif</p>@endif
         <div class="galerie {{ $photos->count() < 2 ? 'seule' : '' }}">
             @forelse($photos as $p)
                 <div><img src="{{ $p->url() }}" alt="Photo {{ $loop->iteration }} de {{ $u->nom }}" width="1600" height="1067" decoding="async" @if($loop->first) fetchpriority="high" @else loading="lazy" @endif></div>

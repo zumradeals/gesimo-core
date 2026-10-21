@@ -24,9 +24,9 @@ class Accueil extends Component
 
         $unites = Unite::query()
             ->where('active', true)
-            ->whereHas('residence', fn ($q) => $q->where('statut_verification', 'verifiee'))
+            ->whereHas('residence', fn ($q) => $q->publiee())
             ->whereHas('tarifs', fn ($q) => $q->where('type_periode', 'standard'))
-            ->with(['residence.photos', 'photos', 'tarifs', 'equipements'])
+            ->with(['residence.documents', 'residence.photos', 'photos', 'tarifs', 'equipements'])
             ->addSelect(['note_moyenne' => Avis::query()
                 ->selectRaw('avg(avis.note)')
                 ->join('reservation', 'reservation.id', '=', 'avis.reservation_id')
@@ -40,7 +40,7 @@ class Accueil extends Component
             ->take(3)->values();
 
         $communes = Residence::query()
-            ->where('statut_verification', 'verifiee')
+            ->publiee()
             ->join('unite', 'unite.residence_id', '=', 'residence.id')
             ->where('unite.active', true)
             ->select('residence.commune', DB::raw('count(unite.id) as nombre'))
@@ -48,7 +48,7 @@ class Accueil extends Component
             ->orderByDesc('nombre')->orderBy('residence.commune')
             ->limit(6)->get();
 
-        $avis = Avis::query()
+        $avis = Avis::query()->whereHas('reservation.unite.residence', fn ($q) => $q->publiee())
             ->where('note', '>=', 4)->whereNotNull('commentaire')->whereRaw("trim(commentaire) <> ''")
             ->with(['client', 'reservation.unite.residence'])
             ->latest('id')->limit(3)->get();

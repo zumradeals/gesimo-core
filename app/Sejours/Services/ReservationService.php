@@ -39,7 +39,7 @@ class ReservationService
         $this->verifierDates($arrivee, $depart);
 
         $unite->loadMissing('residence', 'tarifs');
-        if (! $unite->active || ! $unite->residence->estVerifiee()) {
+        if (! $unite->active || ! $unite->residence->estPubliee()) {
             throw new ReservationImpossible('Ce logement n\'est pas disponible à la réservation.');
         }
         if ($personnes < 1 || $personnes > $unite->capacite) {

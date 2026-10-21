@@ -103,30 +103,22 @@ it('refuse un logement sans prix, un fichier qui n\'est pas une image, avec des 
     expect($residence->unites()->count())->toBe(0)->and(Photo::count())->toBe(0);
 });
 
-it('l\'envoi pour vérification exige logement, photo et deux pièces ; les pièces restent privées', function () {
+it('la soumission réutilise le dossier gérant et le justificatif facultatif reste privé', function () {
     Storage::fake('public');
     Storage::fake('local');
     $gerant = creerUtilisateur(Role::Gerant);
     $residence = residenceBrouillon($gerant);
     $test = Livewire::actingAs($gerant)->test(EditerResidence::class, ['residence' => $residence]);
-
-    $test->call('soumettre')->assertSet('etape', 2)->assertSee('Ajoutez et enregistrez au moins un logement avec son prix par nuit');
-    expect($residence->fresh()->soumise_le)->toBeNull();
-
+    $test->call('soumettre')->assertSet('etape', 2)->assertSee('Ajoutez et enregistrez au moins un logement');
     $test->call('nouveauLogement')->set('uNom', 'Studio')->set('uCapacite', '2')->set('uPrix', '15000')
         ->set('nouvellesPhotos', [UploadedFile::fake()->image('a.jpg')])->call('enregistrerLogement');
-    $test->set('pieceGerant', UploadedFile::fake()->create('cni.pdf', 200, 'application/pdf'))->call('envoyerPieces');
-    $test->call('soumettre')->assertSee('justificatif du droit de gérer');
-
-    $test->set('justificatif', UploadedFile::fake()->create('titre.pdf', 200, 'application/pdf'))->call('envoyerPieces')->call('soumettre')
-        ->assertSee('Envoyée pour vérification');
-
-    $residence = $residence->fresh();
-    expect($residence->soumise_le)->not->toBeNull()->and($residence->statut_verification)->toBe('en_attente');
-    $document = DocumentVerification::where('type', 'piece_gerant')->firstOrFail();
+    $test->set('justificatif', UploadedFile::fake()->create('titre.pdf', 200, 'application/pdf'))->call('soumettre')->assertRedirect(route('gerant.residences'));
+    expect($residence->fresh()->soumise_le)->not->toBeNull();
+    $document = $residence->documents()->sole();
     Storage::disk('local')->assertExists($document->chemin);
     Storage::disk('public')->assertMissing($document->chemin);
-    expect($document->chemin)->not->toContain('cni'); // nom tiré au hasard
+    expect($document->type)->toBe('justificatif_droit_gestion');
+    expect($gerant->profilGerant->identiteValidee())->toBeTrue();
 });
 
 it('un gérant ne voit et ne modifie que ses propres résidences', function () {
@@ -156,6 +148,9 @@ function residenceSoumise($gerant): Residence
     $residence = residenceBrouillon($gerant, ['soumise_le' => now()]);
     $unite = $residence->unites()->create(['nom' => 'Studio', 'type' => 'studio', 'capacite' => 2]);
     $unite->tarifs()->create(['type_periode' => 'standard', 'prix_nuit' => 15000]);
+
+    Storage::disk('local')->put('tests-gestion/'.$residence->id.'.pdf', 'Justificatif fictif');
+    $residence->documents()->create(['type' => 'justificatif_droit_gestion', 'chemin' => 'tests-gestion/'.$residence->id.'.pdf']);
 
     return $residence;
 }

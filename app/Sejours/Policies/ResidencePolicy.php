@@ -13,7 +13,7 @@ class ResidencePolicy
     /** Une résidence vérifiée est publique ; les autres ne sont visibles que par leurs responsables. */
     public function view(?Utilisateur $utilisateur, Residence $residence): bool
     {
-        if ($residence->estVerifiee()) {
+        if ($residence->estPubliee()) {
             return true;
         }
 

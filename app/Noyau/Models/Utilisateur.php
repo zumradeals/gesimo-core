@@ -3,8 +3,10 @@
 namespace App\Noyau\Models;
 
 use App\Noyau\Enums\Role;
+use App\Sejours\Models\ProfilGerant;
 use App\Sejours\Models\Reservation;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -36,6 +38,11 @@ class Utilisateur extends Authenticatable
     public function roles(): HasMany
     {
         return $this->hasMany(RoleUtilisateur::class);
+    }
+
+    public function profilGerant(): HasOne
+    {
+        return $this->hasOne(ProfilGerant::class);
     }
 
     public function reservations(): HasMany

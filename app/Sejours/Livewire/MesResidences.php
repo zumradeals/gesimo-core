@@ -13,7 +13,7 @@ class MesResidences extends Component
     {
         return view('livewire.sejours.mes-residences', [
             // Un gérant ne voit que SES résidences.
-            'residences' => Residence::where('gerant_id', auth()->id())->withCount('unites')->latest('id')->get(),
+            'residences' => Residence::where('gerant_id', auth()->id())->with(['documents', 'gerant.profilGerant'])->withCount('unites')->latest('id')->get(),
         ]);
     }
 }

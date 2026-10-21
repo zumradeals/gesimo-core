@@ -12,7 +12,7 @@
         <div class="carte-p"><p class="font-semibold">Aucune offre n'est proposée pour le moment.</p><p class="aide">Revenez bientôt.</p></div>
     @else
     <div class="carte-p"><h2 class="font-extrabold">1. Choisissez la résidence</h2>
-        <select wire:model="residenceId" class="saisie" aria-label="Résidence">@foreach($residences as $r)<option value="{{ $r->id }}">{{ $r->nom }} · {{ $r->commune }}{{ $r->estVerifiee() ? '' : ' (non vérifiée)' }}</option>@endforeach</select></div>
+        <select wire:model="residenceId" class="saisie" aria-label="Résidence">@foreach($residences as $r)<option value="{{ $r->id }}">{{ $r->nom }} · {{ $r->commune }}{{ $r->estPubliee() ? '' : ' (non vérifiée)' }}</option>@endforeach</select></div>
     <div class="carte-p"><h2 class="font-extrabold">2. Choisissez la durée</h2>
         <div class="grid gap-2 sm:grid-cols-2" role="radiogroup" aria-label="Durée">
             @foreach($offres as $i => $o)

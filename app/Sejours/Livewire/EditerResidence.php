@@ -12,7 +12,6 @@ use App\Sejours\Services\Photos;
 use App\Sejours\Services\PiecesVerification;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
 use InvalidArgumentException;
 use Livewire\Attributes\Title;
@@ -74,8 +73,6 @@ class EditerResidence extends Component
     public array $nouvellesPhotos = [];
 
     // Pièces
-    public $pieceGerant = null;
-
     public $justificatif = null;
 
     public int $versionPieces = 0;
@@ -338,92 +335,67 @@ class EditerResidence extends Component
     {
         $this->etape = 3;
         $this->reinitialiser();
-        $residence = $this->residence();
-        $etaitVerifiee = $residence->estVerifiee();
-        if ($this->enregistrerPieces($residence)) {
-            $this->message = 'Pièces enregistrées.'.($etaitVerifiee ? ' La résidence est repassée en vérification après le remplacement des pièces.' : '');
-        } else {
-            $this->message = 'Aucune nouvelle pièce sélectionnée. Les pièces déjà enregistrées sont conservées.';
-        }
+        $this->message = $this->enregistrerPieces($this->residence())
+            ? 'Justificatif enregistré pour contrôle. La publication de l’annonce est indépendante du badge.'
+            : 'Aucun nouveau justificatif sélectionné. Votre dossier est conservé.';
     }
 
     private function enregistrerPieces(Residence $residence): bool
     {
-        $this->validate([
-            'pieceGerant' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:5120',
-            'justificatif' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:5120',
-        ], [
-            'pieceGerant.mimes' => 'Choisissez une pièce d’identité en PDF, JPEG ou PNG.',
-            'justificatif.mimes' => 'Choisissez un justificatif du droit de gérer en PDF, JPEG ou PNG.',
-            'pieceGerant.max' => 'La pièce d’identité ne doit pas dépasser 5 Mo.',
+        $this->validate(['justificatif' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:5120'], [
+            'justificatif.mimes' => 'Choisissez un justificatif en PDF, JPEG ou PNG.',
             'justificatif.max' => 'Le justificatif ne doit pas dépasser 5 Mo.',
-        ], ['pieceGerant' => 'La pièce d’identité', 'justificatif' => 'Le justificatif']);
-
-        $fichiers = [];
-        foreach (PiecesVerification::CHAMPS as $type => $champ) {
-            if ($this->{$champ} !== null) {
-                $fichiers[$type] = $this->{$champ};
-            }
-        }
-        $modifiees = PiecesVerification::enregistrer($residence, $fichiers);
-        if ($modifiees) {
-            $this->reset('pieceGerant', 'justificatif');
+        ], ['justificatif' => 'Le justificatif du droit de gérer']);
+        $modifie = PiecesVerification::enregistrer($residence, $this->justificatif ? ['justificatif_droit_gestion' => $this->justificatif] : []);
+        if ($modifie) {
+            $this->reset('justificatif');
             $this->versionPieces++;
         }
 
-        return $modifiees;
+        return $modifie;
     }
 
-    public function soumettre(): void
+    public function soumettre()
     {
         $this->reinitialiser();
-        // Une action directe ne peut pas contourner les contrôles des étapes précédentes.
         $this->etape = 1;
         $this->enregistrerResidence();
         if ($this->getErrorBag()->isNotEmpty()) {
-            return;
+            return null;
         }
         $this->message = null;
         if (! $this->preparerLogements()) {
-            return;
+            return null;
         }
         $this->etape = 3;
         $residence = $this->residence();
+        if (! auth()->user()->profilGerant?->identiteValidee()) {
+            $this->erreur = 'Votre pièce d’identité doit être validée dans votre profil gérant avant l’envoi. Le certificat de résidence reste facultatif.';
+
+            return null;
+        }
         $this->enregistrerPieces($residence);
-        $residence = $residence->fresh()->load(['photos', 'documents']);
+        if ($residence->photos()->doesntExist()) {
+            $this->erreur = 'Il manque : au moins une photo.';
 
-        $manques = [];
-        if ($residence->photos->isEmpty()) {
-            $manques[] = 'au moins une photo';
+            return null;
         }
-        foreach (['piece_gerant' => 'la pièce d’identité du gérant', 'justificatif_droit_gestion' => 'le justificatif du droit de gérer'] as $type => $libelle) {
-            $document = $residence->documents->firstWhere('type', $type);
-            if (! $document || $document->statut === 'refuse' || ! Storage::disk('local')->exists($document->chemin)) {
-                $manques[] = $libelle;
-            }
-        }
-        if ($manques !== []) {
-            $this->erreur = 'Il manque : '.implode(', ', $manques).'. Les pièces déjà enregistrées sont conservées.';
-
-            return;
-        }
-
-        DB::transaction(function () use ($residence) {
+        $dejaPubliee = DB::transaction(function () use ($residence) {
             $residence = Residence::lockForUpdate()->findOrFail($residence->id);
             if ($residence->estVerifiee()) {
-                $this->message = 'Cette résidence est déjà validée et en ligne.';
-
-                return;
+                return true;
             }
-            if ($residence->statut_verification === 'en_attente' && $residence->soumise_le !== null) {
-                $this->message = 'Envoyée pour vérification. Votre dossier est déjà en attente de décision.';
-
-                return;
+            if ($residence->statut_verification !== 'en_attente' || $residence->soumise_le === null) {
+                $residence->update(['statut_verification' => 'en_attente', 'badge_verifie' => false, 'soumise_le' => now(), 'motif_refus' => null]);
+                Audit::enregistrer('residence.soumise', $residence);
             }
-            $residence->update(['statut_verification' => 'en_attente', 'badge_verifie' => false, 'soumise_le' => now(), 'motif_refus' => null]);
-            Audit::enregistrer('residence.soumise', $residence);
-            $this->message = 'Envoyée pour vérification. Vous serez prévenu dès la décision de l’équipe Avelis.';
+
+            return false;
         });
+
+        return redirect()->route('gerant.residences')
+            ->with('message', $dejaPubliee ? 'Cette résidence est déjà validée.' : 'Votre résidence « '.$residence->nom.' » a bien été envoyée pour validation. Elle sera visible après accord d’Avelis.')
+            ->with('residence_soumise', $dejaPubliee ? null : $residence->id);
     }
 
     public function updatedNouvellesPhotos(): void
@@ -442,14 +414,9 @@ class EditerResidence extends Component
     {
         $residence = $this->residenceId ? $this->residence()->load(['unites.tarifs', 'unites.photos', 'unites.equipements', 'documents']) : null;
 
-        $piecesDisponibles = [];
-        foreach (PiecesVerification::CHAMPS as $type => $champ) {
-            $document = $residence?->documents->firstWhere('type', $type);
-            $piecesDisponibles[$type] = $document && $document->statut !== 'refuse' && Storage::disk('local')->exists($document->chemin);
-        }
-
         return view('livewire.sejours.editer-residence', [
-            'piecesDisponibles' => $piecesDisponibles,
+            'profilGerant' => auth()->user()->profilGerant,
+            'justificatifActuel' => $residence?->documents()->where('type', 'justificatif_droit_gestion')->whereNull('remplace_le')->latest('id')->first(),
             'residence' => $residence,
             'equipements' => Equipement::orderBy('id')->get(),
             'plancher' => PlancherAcompte::pourcentageMinimum(),

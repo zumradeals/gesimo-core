@@ -1,5 +1,7 @@
 # Correction du parcours gérant — 21 octobre 2026
 
+> Rapport historique du premier correctif. Les exigences documentaires par résidence décrites ici sont remplacées par le contrat `docs/contrats/profil-gerant-certification-v1.md` et la validation `docs/rapports/profil-gerant-certification-2026-10-21.md`.
+
 ## Périmètre et constat
 
 Relecture du dépôt `zumradeals/gesimo-core`, base `047961f`, et des trois captures fournies par le porteur.

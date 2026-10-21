@@ -16,6 +16,14 @@ Toute autre technologie : seulement si indispensable, et après accord du porteu
 `docs/GESIMO_Cahier_des_charges_v0.3_et_Modele_de_donnees.pdf` (à relire avant chaque lot) et
 `docs/GESIMO_Prompts_Claude_Code.md` (les lots).
 
+## Évolution du profil gérant (21 octobre 2026)
+
+Référence cible : `docs/contrats/profil-gerant-certification-v1.md`. Le porteur a validé la distinction suivante :
+pièce d’identité obligatoire pour publier après contrôle ; certificat de résidence facultatif pour devenir « Gérant certifié » ;
+justificatif de gestion facultatif pour le badge de la résidence concernée. Les pièces personnelles appartiennent au profil du gérant.
+Les règles fondatrices et les quatre maquettes ont été validées en conversation le 21 octobre 2026.
+Le code met en œuvre cette organisation ; le contrat décrit aussi la reprise prudente des anciens dossiers et le renouvellement des documents.
+
 ## Règles absolues
 1. Ne jamais inventer une règle de gestion. Cahier muet ou contradictoire : s'arrêter et poser la question avec une recommandation.
 2. Travailler uniquement dans le périmètre du lot demandé.

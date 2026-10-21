@@ -9,10 +9,10 @@ use App\Noyau\Models\Utilisateur;
 class Navigation
 {
     /** Pages publiques qui occupent toute la largeur (elles dessinent elles-mêmes leurs sections). */
-    public const PAGES_PLEINES = ['accueil', 'recherche', 'logement', 'a-propos', 'devenir-partenaire', 'faq', 'contact', 'conditions', 'confidentialite', 'mentions-legales', 'connexion', 'inscription', 'connexion.lien', 'invitation'];
+    public const PAGES_PLEINES = ['accueil', 'recherche', 'logement', 'hebergeur', 'a-propos', 'devenir-partenaire', 'faq', 'contact', 'conditions', 'confidentialite', 'mentions-legales', 'connexion', 'inscription', 'connexion.lien', 'invitation'];
 
     /** Pages d'un compte (client, gérant) qui gardent le site public autour d'elles. */
-    public const PAGES_PUBLIQUES = ['accueil', 'recherche', 'logement', 'a-propos', 'devenir-partenaire', 'faq', 'contact', 'conditions', 'confidentialite', 'mentions-legales', 'connexion', 'inscription', 'connexion.lien', 'invitation'];
+    public const PAGES_PUBLIQUES = ['accueil', 'recherche', 'logement', 'hebergeur', 'a-propos', 'devenir-partenaire', 'faq', 'contact', 'conditions', 'confidentialite', 'mentions-legales', 'connexion', 'inscription', 'connexion.lien', 'invitation'];
 
     /**
      * Habillage de la page : « site » (visiteur et pages publiques), « admin », « gerant » (gérant et personnel)
@@ -67,6 +67,7 @@ class Navigation
             $menu[] = ['libelle' => 'Réservations', 'icone' => 'liste', 'route' => 'gerant.reservations', 'actif' => ['gerant.reservations', 'gerant.probleme']];
             $menu[] = ['libelle' => 'Argent', 'icone' => 'argent', 'route' => 'gerant.argent', 'actif' => ['gerant.argent']];
             $menu[] = ['libelle' => 'Mes résidences', 'icone' => 'batiment', 'route' => 'gerant.residences', 'actif' => ['gerant.residences', 'gerant.residence.nouvelle', 'gerant.residence']];
+            $menu[] = ['libelle' => 'Mon profil gérant', 'icone' => 'compte', 'route' => 'gerant.profil', 'actif' => ['gerant.profil', 'gerant.profil.apercu']];
             $menu[] = ['libelle' => 'Mises en avant', 'icone' => 'etoile', 'route' => 'gerant.mises-en-avant', 'actif' => ['gerant.mises-en-avant', 'gerant.mise-en-avant.acheter', 'gerant.mise-en-avant.retour']];
             $menu[] = ['libelle' => 'Mon personnel', 'icone' => 'equipe', 'route' => 'gerant.personnel', 'actif' => ['gerant.personnel']];
             $menu[] = ['libelle' => 'Aide du gérant', 'icone' => 'aide', 'route' => 'gerant.aide', 'actif' => ['gerant.aide']];
@@ -119,7 +120,7 @@ class Navigation
     {
         $menu = [
             ['libelle' => 'Tableau de bord', 'icone' => 'maison', 'route' => 'admin.tableau', 'actif' => ['admin.tableau']],
-            ['libelle' => 'Résidences à valider', 'icone' => 'batiment', 'route' => 'admin.residences', 'actif' => ['admin.residences', 'admin.residence']],
+            ['libelle' => 'Résidences à valider', 'icone' => 'batiment', 'route' => 'admin.residences', 'actif' => ['admin.residences', 'admin.residence', 'admin.gerant']],
             ['libelle' => 'Réservations', 'icone' => 'liste', 'route' => 'admin.reservations', 'actif' => ['admin.reservations']],
             ['libelle' => 'Litiges', 'icone' => 'alerte', 'route' => 'admin.litiges', 'actif' => ['admin.litiges']],
             ['libelle' => 'Paiements', 'icone' => 'carte', 'route' => 'admin.paiements', 'actif' => ['admin.paiements']],

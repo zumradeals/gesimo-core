@@ -85,8 +85,8 @@ it('parcours gérant complet : création de la résidence, validation admin, ré
     $page = Livewire::actingAs($gerant)->test(EditerResidence::class, ['residence' => $residence])
         ->call('nouveauLogement')->set('uNom', 'Studio')->set('uCapacite', '2')->set('uPrix', '20000')
         ->set('nouvellesPhotos', [UploadedFile::fake()->image('a.jpg')])->call('enregistrerLogement')
-        ->set('pieceGerant', UploadedFile::fake()->create('cni.pdf', 200, 'application/pdf'))->set('justificatif', UploadedFile::fake()->create('titre.pdf', 200, 'application/pdf'))
-        ->call('envoyerPieces')->call('soumettre')->assertSee('Envoyée pour vérification');
+        ->set('justificatif', UploadedFile::fake()->create('titre.pdf', 200, 'application/pdf'))
+        ->call('envoyerPieces')->call('soumettre')->assertRedirect(route('gerant.residences'));
 
     // Invisible avant la validation de l'admin.
     expect(app(Disponibilites::class)->rechercher(CarbonImmutable::today(), CarbonImmutable::today()->addDay()))->toBeEmpty();

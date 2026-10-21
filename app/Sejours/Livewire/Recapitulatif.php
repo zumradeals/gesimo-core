@@ -32,7 +32,7 @@ class Recapitulatif extends Component
     public function mount(Unite $unite): void
     {
         $unite->load('residence');
-        abort_unless($unite->active && $unite->residence->estVerifiee(), 404);
+        abort_unless($unite->active && $unite->residence->estPubliee(), 404);
         $this->unite = $unite;
     }
 
