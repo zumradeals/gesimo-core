@@ -12,7 +12,7 @@ Le porteur a validé en conversation le 21 octobre 2026 la maquette ordinateur p
 - Hero photographique, titre « Un lieu à vous. Le temps d’un séjour. », recherche commune/dates/voyageurs.
 - Offres réellement publiées uniquement ; carte large pour une seule offre, deux ou trois colonnes selon le nombre d’annonces. Aucune section « Pour vous projeter » ni mention de démonstration.
 - Contrôles d’identité, certification et gestion expliqués sans les confondre ; avis uniquement issus de séjours réels.
-- Communes présentes en base, aucune géographie ou disponibilité inventée.
+- Communes présentes en base, aucune géographie ou disponibilité inventée. À la demande du porteur, chaque commune est une carte compacte avec aperçu réel, nombre d’offres et lien de recherche, assortie à l’accueil ; une seule commune ne forme plus un bandeau étiré. Les aperçus excluent les résidences non publiées et les unités inactives. Sans photo, un emplacement neutre remplace l’image.
 - Parcours en trois étapes, invitation aux gérants, FAQ puis footer professionnel avec coordonnées et mentions réglées dans la base.
 - Sur téléphone : Accueil, Logements, Réservations, Compte, dans le navigateur comme dans l’application installée ; onglet actif visible et espace réservé au-dessus de la zone de sécurité.
 

@@ -44,7 +44,19 @@
     @endif
 
     @if($communes->isNotEmpty())
-    <section class="av-section av-destinations" aria-labelledby="communes-titre"><div class="cont"><div class="av-section-titre"><div><span class="surtitre">Choisissez votre commune</span><h2 id="communes-titre">La Côte d’Ivoire, à votre rythme.</h2><p>Retrouvez les communes où nos gérants proposent des offres publiées.</p></div></div><div class="av-communes">@foreach($communes as $c)<a href="{{ route('recherche', ['commune' => $c->commune]) }}"><x-ui.icone nom="pin" classe="ic" /><span><b>{{ $c->commune }}</b><small>{{ $c->nombre }} logement{{ $c->nombre > 1 ? 's' : '' }} publié{{ $c->nombre > 1 ? 's' : '' }}</small></span><span aria-hidden="true">↗</span></a>@endforeach</div></div></section>
+    <section class="av-section av-destinations" aria-labelledby="communes-titre">
+        <div class="cont av-destinations-grille {{ $communes->count() === 1 ? 'av-destination-unique' : '' }}">
+            <div class="av-section-titre"><div><span class="surtitre">Choisissez votre commune</span><h2 id="communes-titre">La Côte d’Ivoire,<br>à votre rythme.</h2><p>Choisissez votre destination et découvrez les logements proposés pour votre prochain séjour.</p></div></div>
+            <div class="av-communes">
+                @foreach($communes as $c)
+                    <a class="av-commune-carte" href="{{ route('recherche', ['commune' => $c->commune]) }}" aria-label="Découvrir les logements à {{ $c->commune }}">
+                        <div class="av-commune-photo"><x-ui.photo :photo="$c->photoApercu" classe="h-full w-full" :plat="true" :alt="'Aperçu d’un logement à '.$c->commune" sizes="(max-width: 639px) 100vw, (max-width: 1023px) 50vw, 400px" /></div>
+                        <div class="av-commune-corps"><span class="av-commune-lieu"><x-ui.icone nom="pin" classe="ic" /><h3>{{ $c->commune }}</h3></span><p>{{ $c->nombre }} logement{{ $c->nombre > 1 ? 's' : '' }} publié{{ $c->nombre > 1 ? 's' : '' }}</p><span class="av-commune-action">Découvrir les logements <span aria-hidden="true">→</span></span></div>
+                    </a>
+                @endforeach
+            </div>
+        </div>
+    </section>
     @endif
 
     <section class="av-section" id="engagements" aria-labelledby="engagements-titre"><div class="cont av-confiance"><div class="av-confiance-visuel"><img src="{{ asset('images/sejours/salon-balcon.webp') }}" alt="Intérieur illustratif d’un séjour meublé chaleureux" width="768" height="700" loading="lazy" decoding="async"><p>Des contrôles concrets,<br>des informations claires.</p></div><div class="av-confiance-texte"><span class="surtitre">La confiance se construit</span><h2 id="engagements-titre">Sachez ce que<br>vous réservez.</h2>

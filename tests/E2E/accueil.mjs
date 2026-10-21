@@ -23,6 +23,9 @@ try {
         assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false, `Débordement à ${width} px`);
         assert.equal(await page.locator('.mobile-tabs').isVisible(), width < 1024);
         if (width >= 1024) {
+            const destination = await page.locator('.av-commune-carte').first().boundingBox();
+            assert(destination.width <= 422, 'Une commune reste une carte compacte sur ordinateur.');
+            assert(await page.locator('.av-commune-photo img').first().isVisible(), 'La commune présente un aperçu réel.');
             const contenu = await page.locator('#engagements > .cont').boundingBox();
             assert(contenu.width >= width * .9, `Le contenu doit occuper l’écran à ${width} px`);
             const cartes = await page.locator('.av-offres-reelles').boundingBox();
@@ -37,6 +40,9 @@ try {
     assert(bouton.y + bouton.height <= menu.y, 'Le bouton de recherche initial ne doit pas être sous les onglets à 390 × 844.');
     await page.screenshot({ path: output + '/accueil-telephone.png', fullPage: true });
     await page.screenshot({ path: output + '/accueil-telephone-ecran.png' });
+    await page.locator('.av-commune-carte').first().click();
+    await page.waitForURL(u => u.pathname === '/recherche' && u.searchParams.get('commune') === 'Cocody');
+    await page.goto(base);
     await page.locator('.site-f').scrollIntoViewIfNeeded();
     await page.getByRole('link', { name: 'Mentions légales', exact: true }).click();
     await page.waitForURL('**/mentions-legales');
@@ -67,7 +73,7 @@ try {
     await page.waitForURL(base + '/');
     assert.equal(await page.locator('.mobile-tabs').count(), 1);
     assert.deepEqual(errors, []);
-    console.log('✓ Accueil ordinateur/téléphone, photos, exemples non réservables, recherche réelle et quatre onglets vérifiés.');
+    console.log('✓ Accueil ordinateur/téléphone, photos, cartes des communes, absence d’offres fictives, recherche réelle et quatre onglets vérifiés.');
 } catch (e) {
     await page.screenshot({ path: output + '/echec-accueil.png', fullPage: true }).catch(() => {});
     writeFileSync(output + '/echec-accueil.txt', await page.locator('body').innerText());

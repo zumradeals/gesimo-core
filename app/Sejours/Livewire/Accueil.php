@@ -5,6 +5,7 @@ namespace App\Sejours\Livewire;
 use App\Paiement\Services\MiseEnAvantService;
 use App\Parametres\Services\Reglages;
 use App\Sejours\Models\Avis;
+use App\Sejours\Models\Photo;
 use App\Sejours\Models\Residence;
 use App\Sejours\Models\Unite;
 use Illuminate\Support\Facades\DB;
@@ -39,14 +40,28 @@ class Accueil extends Component
             ])
             ->take(3)->values();
 
+        // Un aperçu réel par commune, sans charger toutes les photos du catalogue.
+        $apercuCommune = Photo::query()->select('photo.id')
+            ->join('residence as residence_apercu', 'residence_apercu.id', '=', 'photo.residence_id')
+            ->whereColumn('residence_apercu.commune', 'residence.commune')
+            ->whereIn('photo.residence_id', Residence::query()->publiee()
+                ->whereHas('unites', fn ($q) => $q->where('active', true))->select('residence.id'))
+            ->where(fn ($q) => $q->whereNull('photo.unite_id')
+                ->orWhereIn('photo.unite_id', Unite::query()->where('active', true)->select('id')))
+            ->orderBy('photo.ordre')->orderBy('photo.id')->limit(1);
+
         $communes = Residence::query()
             ->publiee()
             ->join('unite', 'unite.residence_id', '=', 'residence.id')
             ->where('unite.active', true)
             ->select('residence.commune', DB::raw('count(unite.id) as nombre'))
+            ->selectSub($apercuCommune, 'photo_apercu_id')
             ->groupBy('residence.commune')
             ->orderByDesc('nombre')->orderBy('residence.commune')
             ->limit(6)->get();
+
+        $photosCommunes = Photo::query()->whereIn('id', $communes->pluck('photo_apercu_id')->filter())->get()->keyBy('id');
+        $communes->each(fn ($commune) => $commune->setRelation('photoApercu', $photosCommunes->get($commune->photo_apercu_id)));
 
         $avis = Avis::query()->whereHas('reservation.unite.residence', fn ($q) => $q->publiee())
             ->where('note', '>=', 4)->whereNotNull('commentaire')->whereRaw("trim(commentaire) <> ''")
