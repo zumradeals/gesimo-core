@@ -2,6 +2,7 @@
 
 use App\Noyau\Enums\Role;
 use App\Noyau\Services\Navigation;
+use App\Paiement\Models\MiseEnAvant;
 use App\Parametres\Livewire\EspaceParametres;
 use App\Parametres\Services\Marque;
 use App\Parametres\Services\Parametres;
@@ -46,7 +47,7 @@ it('la page d\'accueil montre les vrais logements, communes et avis', function (
     Avis::create(['reservation_id' => $reservation->id, 'client_id' => $reservation->client_id, 'note' => 5, 'commentaire' => 'Séjour parfait, merci beaucoup.']);
 
     $this->get('/')->assertOk()
-        ->assertSee('Logements à la une')->assertSee($unite->nom)->assertSee("18\u{202F}000")
+        ->assertSee('À chaque séjour, son cadre.')->assertSee($unite->nom)->assertSee("18\u{202F}000")
         ->assertSee('Choisissez votre commune')->assertSee('Cocody')
         ->assertSee('Ce que disent nos voyageurs')->assertSee('Séjour parfait, merci beaucoup.');
 });
@@ -258,4 +259,40 @@ it('une commune sans photo garde sa carte et son lien sans inventer de visuel', 
     expect($cartes->length)->toBe(1)
         ->and($cartes->item(0)->getAttribute('href'))->toBe(route('recherche', ['commune' => 'Cocody']))
         ->and($xpath->query('//a[contains(@class,"av-commune-carte")]//img')->length)->toBe(0);
+});
+
+it('l’accueil sépare six annonces à la une de six offres ordinaires sans doublons', function () {
+    for ($i = 0; $i < 12; $i++) {
+        $u = creerLogement(18000, null, ['commune' => 'Commune '.$i]);
+        if ($i < 7) {
+            MiseEnAvant::create(['residence_id' => $u->residence_id, 'cree_par' => $u->residence->gerant_id,
+                'date_debut' => today()->subDays(3), 'date_fin' => $i === 6 ? today()->subDay() : today()->addDays(3),
+                'prix' => 10000, 'offre' => 'Essai', 'jours' => 7, 'statut' => 'active']);
+        }
+    }
+    $reponse = $this->get('/')->assertOk()->assertSee('Logements à la une')->assertSee('À chaque séjour, son cadre.');
+    $dom = new DOMDocument;
+    @$dom->loadHTML('<?xml encoding="utf-8" ?>'.$reponse->getContent());
+    $xpath = new DOMXPath($dom);
+    $une = $xpath->query('//section[@aria-labelledby="offres-titre"]//article[@data-logement]');
+    $ordinaires = $xpath->query('//section[@aria-labelledby="ordinaires-titre"]//article[@data-logement]');
+    expect($une->length)->toBe(6)->and($ordinaires->length)->toBe(6)
+        ->and($xpath->query('//*[@id="carrousel-communes"]/a')->length)->toBe(12);
+    $ids = [];
+    foreach ([$une, $ordinaires] as $cartes) {
+        foreach ($cartes as $carte) {
+            $ids[] = $carte->getAttribute('data-logement');
+        }
+    }
+    expect(array_unique($ids))->toHaveCount(12);
+    $expiration = MiseEnAvant::whereDate('date_fin', '<', today())->first();
+    $expiree = Unite::where('residence_id', $expiration->residence_id)->first();
+    expect($xpath->query('//section[@aria-labelledby="ordinaires-titre"]//article[@data-logement="'.$expiree->id.'"]')->length)->toBe(1);
+});
+
+it('un petit catalogue conserve une carte ordinaire sans inventer six annonces ni sponsor', function () {
+    $u = creerLogement();
+    $reponse = $this->get('/')->assertOk()->assertDontSee('Logements à la une')->assertSee('À chaque séjour, son cadre.');
+    expect(substr_count($reponse->getContent(), 'data-logement="'))->toBe(1)
+        ->and(Unite::count())->toBe(1);
 });

@@ -82,6 +82,13 @@ jobs:
       - name: Vérifier le parcours gérant dans Chromium
         run: node tests/E2E/profil-gerant.mjs "$RUNNER_TEMP/avelis-playwright" "$RUNNER_TEMP/avelis-parcours"
 
+      - name: Préparer le catalogue du parcours accueil
+        env:
+          APP_ENV: testing
+          APP_KEY: base64:dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHQ=
+          DB_URL: pgsql://gesimo:gesimo_test@127.0.0.1:5432/gesimo_test
+        run: php tests/Support/preparer-accueil.php
+
       - name: Vérifier l’accueil et sa navigation dans Chromium
         run: node tests/E2E/accueil.mjs "$RUNNER_TEMP/avelis-playwright" "$RUNNER_TEMP/avelis-parcours"
 

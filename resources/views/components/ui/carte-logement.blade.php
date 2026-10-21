@@ -1,0 +1,6 @@
+@props(['u', 'enAvant' => []])
+@php $r = $u->residence; $prix = $u->tarifs->firstWhere('type_periode', 'standard'); $photo = $u->photos->first() ?? $r->photos->first(); @endphp
+            <article class="av-offre" data-logement="{{ $u->id }}">
+                <a class="av-offre-photo" href="{{ route('logement', $u) }}" aria-label="Découvrir {{ $u->nom }}"><x-ui.photo :photo="$photo" classe="h-full w-full" :plat="true" sizes="(max-width: 639px) 100vw, (max-width: 1023px) 50vw, 400px" :alt="'Photo de '.$u->nom" />@if(in_array($u->residence_id, $enAvant, true))<span class="av-etiquette">Sponsorisé</span>@endif</a>
+                <div class="av-offre-corps">@if($r->aBadgeGestion())<span class="pg-badge">✓ Gestion vérifiée</span>@endif<h3><a href="{{ route('logement', $u) }}">{{ $u->nom }}</a></h3><p>{{ $r->commune }}@if($r->quartier) · {{ $r->quartier }}@endif</p><p>{{ $u->capacite }} voyageur(s) · {{ ucfirst($u->type) }}</p><div class="av-offre-bas"><p><b>{{ number_format($prix->prix_nuit, 0, ',', "\u{202F}") }} FCFA</b><span> / nuit</span></p><a href="{{ route('logement', $u) }}" class="lien-fl">Voir le logement <span aria-hidden="true">→</span></a></div></div>
+            </article>

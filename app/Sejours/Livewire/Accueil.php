@@ -23,7 +23,7 @@ class Accueil extends Component
     {
         $enAvant = MiseEnAvantService::residencesEnAvant();
 
-        $unites = Unite::query()
+        $catalogue = Unite::query()
             ->where('active', true)
             ->whereHas('residence', fn ($q) => $q->publiee())
             ->whereHas('tarifs', fn ($q) => $q->where('type_periode', 'standard'))
@@ -33,12 +33,10 @@ class Accueil extends Component
                 ->join('reservation', 'reservation.id', '=', 'avis.reservation_id')
                 ->whereColumn('reservation.unite_id', 'unite.id'),
             ])
-            ->latest('id')->limit(30)->get()
-            ->sortBy([
-                fn ($a, $b) => (int) in_array($b->residence_id, $enAvant, true) <=> (int) in_array($a->residence_id, $enAvant, true),
-                fn ($a, $b) => ((float) $b->note_moyenne) <=> ((float) $a->note_moyenne),
-            ])
-            ->take(3)->values();
+            ->orderByRaw('note_moyenne DESC NULLS LAST')->latest('id');
+
+        $unites = (clone $catalogue)->whereIn('residence_id', $enAvant)->limit(6)->get();
+        $ordinaires = (clone $catalogue)->whereNotIn('residence_id', $enAvant)->limit(6)->get();
 
         // Un aperçu réel par commune, sans charger toutes les photos du catalogue.
         $apercuCommune = Photo::query()->select('photo.id')
@@ -58,7 +56,7 @@ class Accueil extends Component
             ->selectSub($apercuCommune, 'photo_apercu_id')
             ->groupBy('residence.commune')
             ->orderByDesc('nombre')->orderBy('residence.commune')
-            ->limit(6)->get();
+            ->get();
 
         $photosCommunes = Photo::query()->whereIn('id', $communes->pluck('photo_apercu_id')->filter())->get()->keyBy('id');
         $communes->each(fn ($commune) => $commune->setRelation('photoApercu', $photosCommunes->get($commune->photo_apercu_id)));
@@ -72,6 +70,7 @@ class Accueil extends Component
 
         return view('livewire.sejours.accueil', [
             'unites' => $unites,
+            'ordinaires' => $ordinaires,
             'enAvant' => $enAvant,
             'communes' => $communes,
             'toutesCommunes' => Residence::query()->publiee()->distinct()->orderBy('commune')->pluck('commune'),
