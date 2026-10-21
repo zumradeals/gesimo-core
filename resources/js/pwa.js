@@ -46,36 +46,15 @@ const retirer = (id) => document.getElementById(id)?.remove();
 const bouton = (texte, second = false, extra = '') => `<button type="button" class="btn ${second ? 'btn-second' : ''} ${extra}" style="min-height:48px;font-size:16px">${texte}</button>`;
 
 // ------------------------------------------------------------------ service worker et mises à jour
-let registration = null;
-let rechargementDemande = false;
-let miseAJourReportee = sansStockage(() => sessionStorage.getItem('gesimo:pwa:maj-reportee') === '1', false);
-
-function proposerMiseAJour() {
-  if (miseAJourReportee || !registration?.waiting || !navigator.serviceWorker.controller) return;
-  if (surPageSensible()) return retirer('pwa-maj'); // jamais au milieu d'un paiement ou d'une réservation
-  if (document.getElementById('pwa-maj')) return;
-  const el = bandeau('pwa-maj', `<p class="mb-2">🔄 <b>Une nouvelle version est disponible.</b></p><div class="grid grid-cols-2 gap-2">${bouton('Mettre à jour', false, 'js-maj')}${bouton('Plus tard', true, 'js-plus-tard')}</div>`);
-  el.querySelector('.js-maj').onclick = () => { rechargementDemande = true; registration.waiting.postMessage({ type: 'passer-a-la-nouvelle-version' }); };
-  el.querySelector('.js-plus-tard').onclick = () => {
-    miseAJourReportee = true;
-    sansStockage(() => sessionStorage.setItem('gesimo:pwa:maj-reportee', '1'));
-    retirer('pwa-maj');
-  };
-}
+// Aucune invitation de mise à jour : activation normale du navigateur après fermeture
+// des anciens onglets, sans rechargement imposé pendant un formulaire ou un paiement.
+quandPret(() => retirer('pwa-maj'));
 
 if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost' || location.hostname === '127.0.0.1')) {
   quandCharge(() => {
     navigator.serviceWorker.register('/sw.js', { scope: '/' }).then((reg) => {
-      registration = reg;
-      proposerMiseAJour();
-      reg.addEventListener('updatefound', () => {
-        const nouveau = reg.installing;
-        nouveau?.addEventListener('statechange', () => { if (nouveau.state === 'installed') proposerMiseAJour(); });
-      });
       document.addEventListener('visibilitychange', () => { if (!document.hidden) reg.update().catch(() => {}); });
-      setInterval(proposerMiseAJour, 30000);
     }).catch(() => {});
-    navigator.serviceWorker.addEventListener('controllerchange', () => { if (rechargementDemande) location.reload(); });
   });
 
   // Déconnexion : la copie privée de ce téléphone est effacée (le service worker le refait aussi côté réseau).

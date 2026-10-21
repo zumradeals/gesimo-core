@@ -96,24 +96,19 @@ try {
   await page.screenshot({ path: dossier + '/apres-deconnexion-hors-connexion.png' });
   await reseau(false);
 
-  // --- 6. mise à jour : « Une nouvelle version est disponible », jamais pendant un paiement ----------------------
+  // --- 6. Une mise à jour reste silencieuse et ne force pas le rechargement ----------------------
   await page.goto(base + '/faq', { waitUntil: 'networkidle' });
   const v1 = await page.evaluate(async () => (await (await fetch('/sw.js')).text()).match(/VERSION = '([0-9a-f]+)'/)[1]);
   writeFileSync(SW, swOrigine + '\n// nouvelle version de démonstration\n');
   try {
     const v2 = await page.evaluate(async () => (await (await fetch('/sw.js', { cache: 'reload' })).text()).match(/VERSION = '([0-9a-f]+)'/)[1]);
-    assert.notEqual(v1, v2); ok(`le numéro de version change à chaque mise en ligne (${v1} → ${v2})`);
-    await page.evaluate(() => navigator.serviceWorker.getRegistration().then((r) => r.update()));
-    await pause(2500);
-    await page.evaluate(() => document.dispatchEvent(new Event('visibilitychange')));
-    await pause(32000 > 0 ? 100 : 0);
-    // le bandeau est vérifié toutes les 30 s : on force la vérification
-    await page.waitForSelector('#pwa-maj', { timeout: 40000 });
-    assert.match(await texte(), /Une nouvelle version est disponible/); ok('le message « Une nouvelle version est disponible » apparaît, avec un bouton');
-    await page.screenshot({ path: dossier + '/nouvelle-version.png' });
-    await page.click('#pwa-maj .js-maj'); await page.waitForLoadState('load'); await pause(1500);
-    const v3 = await page.evaluate(async () => (await (await fetch('/sw.js', { cache: 'reload' })).text()).match(/VERSION = '([0-9a-f]+)'/)[1]);
-    assert.equal(v3, v2); ok('« Mettre à jour » recharge la page avec la nouvelle version');
+    assert.notEqual(v1, v2);
+    await page.evaluate(() => navigator.serviceWorker.getRegistration().then(r => r.update()));
+    await page.waitForFunction(async () => !!(await navigator.serviceWorker.getRegistration()).waiting, {}, { timeout: 40000 });
+    assert.equal(await page.locator('#pwa-maj').count(), 0);
+    assert.doesNotMatch(await texte(), /Une nouvelle version est disponible/);
+    assert.equal(new URL(page.url()).pathname, '/faq');
+    ok('mise à jour silencieuse : aucune bannière ni activation forcée');
   } finally { writeFileSync(SW, swOrigine); }
   console.log('PWA : tous les essais réussissent.');
 } catch (e) {
