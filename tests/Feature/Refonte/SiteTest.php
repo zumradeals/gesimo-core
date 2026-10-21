@@ -32,7 +32,7 @@ beforeEach(function () {
     configurerGeniusPay('sandbox', 10.0);
 });
 
-it('l’accueil distingue les exemples non réservables des annonces publiées et des avis réels', function () {
+it('l’accueil présente uniquement les annonces publiées et les avis réels', function () {
     $this->get('/')->assertOk()
         ->assertSee('Un lieu à vous.')->assertSee('Comment ça marche')->assertSee('Devenir gérant partenaire')
         ->assertDontSee('Logements à la une')->assertDontSee('Choisissez votre commune')->assertDontSee('Ce que disent nos voyageurs');
@@ -199,15 +199,14 @@ it('chaque espace connecté a la même structure : menu latéral, titre de page,
     }
 });
 
-it('les trois exemples sont visibles mais ne créent aucun logement ni lien de réservation', function () {
+it('l’accueil ne présente aucune offre fictive et ne crée aucun logement', function () {
     $avant = Unite::count();
-    $rep = $this->get('/')->assertOk()->assertSee('offres fictives, non réservables')->assertSee('Exemple fictif');
-    $dom = new DOMDocument;
-    @$dom->loadHTML('<?xml encoding="utf-8" ?>'.$rep->getContent());
-    $xpath = new DOMXPath($dom);
-    expect($xpath->query('//*[@data-offre-fictive]')->length)->toBe(3)
-        ->and($xpath->query('//*[@data-offre-fictive]//a | //*[@data-offre-fictive]//form | //*[@data-offre-fictive]//button')->length)->toBe(0)
-        ->and(Unite::count())->toBe($avant);
+    $this->get('/')->assertOk()
+        ->assertDontSee('Pour vous projeter')->assertDontSee('Exemples de présentation')
+        ->assertDontSee('data-offre-fictive')->assertDontSee('Exemple fictif')
+        ->assertDontSee('Studio lumineux à Cocody')->assertDontSee('Appartement cosy à Marcory')
+        ->assertDontSee('Séjour paisible à Riviera');
+    expect(Unite::count())->toBe($avant);
 });
 
 it('le menu mobile commun reste cohérent et conserve les accès protégés', function () {

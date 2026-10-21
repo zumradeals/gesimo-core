@@ -2,11 +2,6 @@
     use App\Parametres\Services\Marque;
     $nom = Marque::nom();
     $image = Marque::imageAccueilUrl() ?: asset('images/sejours/salon-balcon.webp');
-    $exemples = [
-        ['titre' => 'Studio lumineux à Cocody', 'lieu' => 'Cocody', 'details' => '2 voyageurs · Studio', 'prix' => 25000, 'photo' => 'studio.webp'],
-        ['titre' => 'Appartement cosy à Marcory', 'lieu' => 'Marcory', 'details' => '4 voyageurs · Appartement', 'prix' => 40000, 'photo' => 'appartement.webp'],
-        ['titre' => 'Séjour paisible à Riviera', 'lieu' => 'Cocody · Riviera', 'details' => '4 voyageurs · Appartement', 'prix' => 55000, 'photo' => 'salon-balcon.webp'],
-    ];
 @endphp
 <div class="accueil-v2">
     <section class="av-hero" aria-labelledby="titre-accueil">
@@ -36,27 +31,17 @@
     @if($unites->isNotEmpty())
     <section class="av-section" aria-labelledby="offres-titre"><div class="cont">
         <div class="av-section-titre"><div><span class="surtitre">Logements à la une</span><h2 id="offres-titre">Posez vos valises,<br class="av-desktop"> sentez-vous chez vous.</h2><p>Des offres publiées par nos gérants, à découvrir pour votre prochain séjour.</p></div><a href="{{ route('recherche') }}" class="lien-fl">Voir les logements <span aria-hidden="true">→</span></a></div>
-        <div class="av-offres">
+        <div class="av-offres av-offres-reelles av-offres-{{ $unites->count() }}">
         @foreach($unites as $u)
             @php $r = $u->residence; $prix = $u->tarifs->firstWhere('type_periode', 'standard'); $photo = $u->photos->first() ?? $r->photos->first(); @endphp
             <article class="av-offre">
-                <a class="av-offre-photo" href="{{ route('logement', $u) }}" aria-label="Découvrir {{ $u->nom }}"><x-ui.photo :photo="$photo" classe="h-full w-full" :plat="true" :alt="'Photo de '.$u->nom" />@if(in_array($u->residence_id, $enAvant, true))<span class="av-etiquette">Sponsorisé</span>@endif</a>
+                <a class="av-offre-photo" href="{{ route('logement', $u) }}" aria-label="Découvrir {{ $u->nom }}"><x-ui.photo :photo="$photo" classe="h-full w-full" :plat="true" :sizes="'(max-width: 1023px) 100vw, '.($unites->count() === 1 ? '53vw' : ($unites->count() === 2 ? '46vw' : '30vw'))" :alt="'Photo de '.$u->nom" />@if(in_array($u->residence_id, $enAvant, true))<span class="av-etiquette">Sponsorisé</span>@endif</a>
                 <div class="av-offre-corps">@if($r->aBadgeGestion())<span class="pg-badge">✓ Gestion vérifiée</span>@endif<h3><a href="{{ route('logement', $u) }}">{{ $u->nom }}</a></h3><p>{{ $r->commune }}@if($r->quartier) · {{ $r->quartier }}@endif</p><p>{{ $u->capacite }} voyageur(s) · {{ ucfirst($u->type) }}</p><div class="av-offre-bas"><p><b>{{ number_format($prix->prix_nuit, 0, ',', "\u{202F}") }} FCFA</b><span> / nuit</span></p><a href="{{ route('logement', $u) }}" class="lien-fl">Voir le logement <span aria-hidden="true">→</span></a></div></div>
             </article>
         @endforeach
         </div>
     </div></section>
     @endif
-
-    <section class="av-section av-exemples" aria-labelledby="exemples-titre"><div class="cont">
-        <div class="av-section-titre"><div><span class="surtitre">Pour vous projeter</span><h2 id="exemples-titre">À chaque séjour, son cadre.</h2><p>Un studio pour une escapade, un appartement pour quelques jours : imaginez votre prochain pied-à-terre.</p></div></div>
-        <div class="av-demo-notice" role="note"><x-ui.icone nom="photo" classe="ic" /><p><b>Exemples de présentation — offres fictives, non réservables.</b> Les visuels sont des illustrations et les tarifs sont donnés pour la démonstration. <a href="{{ route('recherche') }}">Consulter les vrais logements →</a></p></div>
-        <div class="av-offres">
-        @foreach($exemples as $e)
-            <article class="av-offre av-demo" data-offre-fictive><div class="av-offre-photo"><img src="{{ asset('images/sejours/'.$e['photo']) }}" alt="Illustration d’un logement fictif : {{ $e['titre'] }}" width="768" height="512" loading="lazy" decoding="async"><span class="av-etiquette">Exemple fictif</span></div><div class="av-offre-corps"><h3>{{ $e['titre'] }}</h3><p>{{ $e['lieu'] }} · {{ $e['details'] }}</p><div class="av-offre-bas"><p><b>{{ number_format($e['prix'], 0, ',', "\u{202F}") }} FCFA</b><span> / nuit · tarif fictif</span></p></div><span class="av-non-reservable">Illustration uniquement · Non réservable</span></div></article>
-        @endforeach
-        </div>
-    </div></section>
 
     @if($communes->isNotEmpty())
     <section class="av-section av-destinations" aria-labelledby="communes-titre"><div class="cont"><div class="av-section-titre"><div><span class="surtitre">Choisissez votre commune</span><h2 id="communes-titre">La Côte d’Ivoire, à votre rythme.</h2><p>Retrouvez les communes où nos gérants proposent des offres publiées.</p></div></div><div class="av-communes">@foreach($communes as $c)<a href="{{ route('recherche', ['commune' => $c->commune]) }}"><x-ui.icone nom="pin" classe="ic" /><span><b>{{ $c->commune }}</b><small>{{ $c->nombre }} logement{{ $c->nombre > 1 ? 's' : '' }} publié{{ $c->nombre > 1 ? 's' : '' }}</small></span><span aria-hidden="true">↗</span></a>@endforeach</div></div></section>

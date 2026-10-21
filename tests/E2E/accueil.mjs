@@ -13,15 +13,23 @@ page.on('pageerror', e => errors.push(e.message));
 try {
     await page.goto(base);
     await page.getByRole('heading', { name: 'Un lieu à vous. Le temps d’un séjour.' }).waitFor();
-    assert.equal(await page.locator('[data-offre-fictive]').count(), 3);
+    assert.equal(await page.locator('[data-offre-fictive], .av-exemples, .av-demo-notice').count(), 0);
     assert.equal(await page.locator('[data-offre-fictive] a, [data-offre-fictive] button, [data-offre-fictive] form').count(), 0);
     await page.getByText('Studio Papaye — ESSAI', { exact: true }).waitFor();
     await page.locator('img').evaluateAll(imgs => Promise.all(imgs.map(img => img.decode())));
     await page.screenshot({ path: output + '/accueil-ordinateur.png', fullPage: true });
-    for (const width of [320, 390, 768, 1024, 1440]) {
+    for (const width of [320, 390, 768, 1024, 1440, 1920, 2560]) {
         await page.setViewportSize({ width, height: 844 });
         assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false, `Débordement à ${width} px`);
         assert.equal(await page.locator('.mobile-tabs').isVisible(), width < 1024);
+        if (width >= 1024) {
+            const contenu = await page.locator('#engagements > .cont').boundingBox();
+            assert(contenu.width >= width * .9, `Le contenu doit occuper l’écran à ${width} px`);
+            const cartes = await page.locator('.av-offres-reelles').boundingBox();
+            const carte = await page.locator('.av-offres-reelles .av-offre').first().boundingBox();
+            assert(carte.width >= cartes.width * .99, 'L’offre unique occupe toute sa grille.');
+            assert(await page.locator('.av-confiance-texte p').first().evaluate(el => parseFloat(getComputedStyle(el).fontSize)) >= 18, 'Les explications restent lisibles sur ordinateur.');
+        }
     }
     await page.setViewportSize({ width: 390, height: 844 });
     const bouton = await page.getByRole('button', { name: 'Rechercher un logement', exact: true }).boundingBox();

@@ -12,8 +12,8 @@ use Livewire\Attributes\Title;
 use Livewire\Component;
 
 /**
- * Les offres réservables et avis viennent de la plateforme. Les exemples visuels sont
- * séparés dans la vue, explicitement fictifs, sans identité de logement ni lien de réservation.
+ * Les offres réservables, communes et avis viennent de la plateforme.
+ * Aucun exemple fictif ne complète les annonces publiées.
  */
 #[Title('Résidences meublées en Côte d\'Ivoire')]
 class Accueil extends Component
