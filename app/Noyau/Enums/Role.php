@@ -19,7 +19,7 @@ enum Role: string
             self::Client => 'Client',
             self::Gerant => 'Gérant',
             self::Personnel => 'Personnel',
-            self::Admin => 'Admin GESIMO',
+            self::Admin => 'Admin Avelis',
             self::SuperAdmin => 'Super-administrateur',
         };
     }

@@ -43,7 +43,7 @@ class ReservationPolicy
         return $utilisateur->estActif() && $reservation->client_id === $utilisateur->getKey();
     }
 
-    /** Reçu et confirmation : le client concerné, ou l'équipe GESIMO. */
+    /** Reçu et confirmation : le client concerné, ou l'équipe Avelis. */
     public function voirRecu(Utilisateur $utilisateur, Reservation $reservation): bool
     {
         return $utilisateur->estActif() && ($reservation->client_id === $utilisateur->getKey() || $utilisateur->estAdmin());

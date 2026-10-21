@@ -9,7 +9,7 @@
     @if($message) <x-ui.alerte type="succes">{{ $message }}</x-ui.alerte> @endif
     @if($erreur) <x-ui.alerte type="erreur">{{ $erreur }}</x-ui.alerte> @endif
     @if($residence?->statut_verification === 'refusee' && $residence->motif_refus)
-        <x-ui.alerte type="erreur"><b>Refusée par l'équipe GESIMO :</b> {{ $residence->motif_refus }}. Corrigez puis renvoyez pour vérification.</x-ui.alerte>
+        <x-ui.alerte type="erreur"><b>Refusée par l'équipe Avelis :</b> {{ $residence->motif_refus }}. Corrigez puis renvoyez pour vérification.</x-ui.alerte>
     @endif
     <div class="stepper st3" role="tablist" aria-label="Étapes">
         @foreach([1 => 'Ma résidence', 2 => 'Mes logements', 3 => 'Envoyer pour vérification'] as $n => $libelle)
@@ -39,7 +39,7 @@
                     <label class="puce {{ $modePaiement === 'total' ? 'puce-active' : '' }}"><input type="radio" class="sr-only" wire:model.live="modePaiement" value="total">Tout payer en ligne</label>
                     <label class="puce {{ $modePaiement === 'acompte' ? 'puce-active' : '' }} {{ $plancher === null ? 'opacity-50' : '' }}"><input type="radio" class="sr-only" wire:model.live="modePaiement" value="acompte" @disabled($plancher === null)>Acompte en ligne</label>
                 </div>
-                @if($plancher === null)<p class="aide">L'acompte sera proposé dès que la commission et les frais de paiement seront réglés par GESIMO.</p>@endif
+                @if($plancher === null)<p class="aide">L'acompte sera proposé dès que la commission et les frais de paiement seront réglés par Avelis.</p>@endif
                 @error('modePaiement')<p class="erreur-champ">{{ $message }}</p>@enderror
             </div>
             @if($modePaiement === 'acompte')
@@ -143,7 +143,7 @@
     {{-- 3. Pièces et envoi --}}
     <div class="carte-p">
         <h2>3. Envoyer pour vérification</h2>
-        <p class="aide !text-[15px]">La résidence reste invisible tant qu'un admin GESIMO ne l'a pas validée.</p>
+        <p class="aide !text-[15px]">La résidence reste invisible tant qu'un admin Avelis ne l'a pas validée.</p>
         <div class="grid gap-3 md:grid-cols-2">
             <div class="champ"><label class="etiquette" for="piece">Pièce d'identité du gérant</label>
                 <input id="piece" type="file" accept="application/pdf,image/jpeg,image/png" wire:model="pieceGerant" class="saisie py-3">

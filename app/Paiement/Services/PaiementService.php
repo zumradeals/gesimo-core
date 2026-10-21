@@ -207,7 +207,7 @@ class PaiementService
         if ($paiement === null) {
             $nouveau = $this->enregistrerEvenement($evenement, 'paiement_inconnu');
             if ($nouveau && $evenement->type === EvenementPaiement::REUSSI) {
-                Alertes::creer('paiement_inconnu', "Paiement {$reference} signalé comme réussi par le fournisseur mais inconnu de GESIMO.");
+                Alertes::creer('paiement_inconnu', "Paiement {$reference} signalé comme réussi par le fournisseur mais inconnu d'Avelis.");
             }
 
             return 'paiement_inconnu';
@@ -247,7 +247,7 @@ class PaiementService
             if ($evenement !== null) {
                 $this->enregistrerEvenement($evenement, 'montant_different');
             }
-            Alertes::creer('montant_different', "Paiement {$paiement->reference_geniuspay} : le fournisseur annonce {$etat->montant} FCFA, GESIMO attendait {$paiement->montant} FCFA. Aucune confirmation automatique.", $paiement->reservation_id, $paiement->id);
+            Alertes::creer('montant_different', "Paiement {$paiement->reference_geniuspay} : le fournisseur annonce {$etat->montant} FCFA, Avelis attendait {$paiement->montant} FCFA. Aucune confirmation automatique.", $paiement->reservation_id, $paiement->id);
 
             return 'montant_different';
         }
@@ -369,7 +369,7 @@ class PaiementService
             }
             $remboursement = Remboursement::where('paiement_id', $paiement->id)->where('statut', 'en_attente')->first();
             if ($remboursement === null) {
-                Alertes::creer('remboursement_externe', "Paiement {$paiement->reference_geniuspay} remboursé chez le fournisseur sans demande de GESIMO : vérifier.", $paiement->reservation_id, $paiement->id);
+                Alertes::creer('remboursement_externe', "Paiement {$paiement->reference_geniuspay} remboursé chez le fournisseur sans demande d'Avelis : vérifier.", $paiement->reservation_id, $paiement->id);
 
                 return 'rembourse_externe';
             }

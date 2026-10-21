@@ -8,7 +8,7 @@ use App\Sejours\Models\Residence;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
 
-/** Les pièces d'identité et justificatifs ne sont jamais publics : lecture réservée à l'équipe GESIMO, et journalisée. */
+/** Les pièces d'identité et justificatifs ne sont jamais publics : lecture réservée à l'équipe Avelis, et journalisée. */
 class TelechargerDocument
 {
     public function __invoke(DocumentVerification $document)

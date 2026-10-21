@@ -3,7 +3,7 @@
     <div class="adm-top"><div><h1>Mises en avant</h1></div></div>
     @if($message)<x-ui.alerte type="succes">{{ $message }}</x-ui.alerte>@endif
     @if($erreur)<x-ui.alerte type="erreur">{{ $erreur }}</x-ui.alerte>@endif
-    <div class="carte-p"><b class="text-xl">{{ $fr($revenus) }}</b><p class="aide">Revenus des mises en avant (pour GESIMO)</p></div>
+    <div class="carte-p"><b class="text-xl">{{ $fr($revenus) }}</b><p class="aide">Revenus des mises en avant (pour Avelis)</p></div>
     <div class="flex flex-wrap gap-2">
         @foreach(['en_cours' => 'En cours ('.$compteurs['en_cours'].')', 'programmees' => 'Programmées ('.$compteurs['programmees'].')', 'terminees' => 'Terminées', 'suspendues' => 'Suspendues ('.$compteurs['suspendues'].')'] as $k => $n)
             <button wire:click="$set('filtre', '{{ $k }}')" class="puce {{ $filtre === $k ? 'puce-active' : '' }}">{{ $n }}</button>

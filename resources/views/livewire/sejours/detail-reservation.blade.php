@@ -24,7 +24,7 @@
                     <div><span class="petit">Personnes</span><b>{{ $r->nombre_personnes }}</b></div>
                     <div><span class="petit">Nuits</span><b>{{ $r->date_arrivee->diffInDays($r->date_depart) }}</b></div>
                 </div>
-                @if($litigeOuvert)<x-ui.alerte type="attention">Vous avez signalé un problème : l'équipe GESIMO l'étudie et vous répond sous 48 h.</x-ui.alerte>@endif
+                @if($litigeOuvert)<x-ui.alerte type="attention">Vous avez signalé un problème : l'équipe Avelis l'étudie et vous répond sous 48 h.</x-ui.alerte>@endif
             </section>
             @if($contactVisible)
                 <section class="carte-p"><h2>Le gérant</h2>

@@ -9,7 +9,7 @@
     @if($etape === 1)
         <form wire:submit="creerCompte" class="grid gap-4">
             <div class="carte grid gap-2">
-                <h1 class="text-xl font-extrabold">Bienvenue sur GESIMO Séjours 👋</h1>
+                <h1 class="text-xl font-extrabold">Bienvenue sur Avelis Séjours 👋</h1>
                 <p class="aide">Cette installation ne se fait qu'une seule fois. Elle crée le compte du super-administrateur puis règle l'essentiel.</p>
                 @if(! $codeGenere)<x-ui.alerte type="attention">Aucun code d'installation n'a encore été généré. Sur le serveur, lancez : <b>php artisan gesimo:installation</b></x-ui.alerte>@endif
                 <div class="champ"><label class="etiquette" for="code">Code d'installation</label><input id="code" wire:model="code" class="saisie uppercase" placeholder="XXXX-XXXX-XXXX" autocomplete="off">
@@ -55,7 +55,7 @@
             <div class="champ"><label class="etiquette" for="p1">Clé publique (test)</label><input id="p1" wire:model="valeurs.geniuspay__sandbox__cle_publique" class="saisie" autocomplete="off"></div>
             <div class="champ"><label class="etiquette" for="p2">Clé secrète (test) 🔒</label><input id="p2" type="password" wire:model="secrets.geniuspay__sandbox__cle_secrete" class="saisie" autocomplete="off"></div>
             <div class="champ"><label class="etiquette" for="p3">Secret du webhook (test) 🔒</label><input id="p3" type="password" wire:model="secrets.geniuspay__sandbox__webhook_secret" class="saisie" autocomplete="off"><span class="aide">Adresse du webhook à donner à GeniusPay : <b class="break-all">{{ url('/webhooks/geniuspay') }}</b></span></div>
-            <div class="champ"><label class="etiquette" for="p4">Taux de commission GESIMO (%)</label><input id="p4" wire:model="valeurs.commission__pourcentage" inputmode="decimal" class="saisie"><span class="aide">Obligatoire pour ouvrir le paiement en ligne.</span>@if(isset($erreurs['commission.pourcentage']))<p class="erreur-champ" role="alert">{{ $erreurs['commission.pourcentage'] }}</p>@endif</div>
+            <div class="champ"><label class="etiquette" for="p4">Taux de commission Avelis (%)</label><input id="p4" wire:model="valeurs.commission__pourcentage" inputmode="decimal" class="saisie"><span class="aide">Obligatoire pour ouvrir le paiement en ligne.</span>@if(isset($erreurs['commission.pourcentage']))<p class="erreur-champ" role="alert">{{ $erreurs['commission.pourcentage'] }}</p>@endif</div>
             <div class="champ"><label class="etiquette" for="p5">Frais GeniusPay estimés (%)</label><input id="p5" wire:model="valeurs.paiement__frais_pourcentage" inputmode="decimal" class="saisie">@if(isset($erreurs['paiement.frais_pourcentage']))<p class="erreur-champ" role="alert">{{ $erreurs['paiement.frais_pourcentage'] }}</p>@endif</div>
             @if($plancher !== null)<div class="rounded-xl bg-marque-50 p-3 text-[15px]">Acompte minimum calculé : <b>{{ $plancher }} %</b> (commission + frais)</div>@endif
             <div class="grid gap-3 sm:grid-cols-2"><button type="button" wire:click="passer" class="btn btn-second btn-bloc">Passer pour l'instant</button><button class="btn btn-bloc">Continuer</button></div>

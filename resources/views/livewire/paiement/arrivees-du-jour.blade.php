@@ -17,9 +17,9 @@
         <div class="k"><span class="k-i b"><x-ui.icone nom="porte" classe="ic" /></span><b>{{ $attendues->count() }}</b><span>Arrivées du jour</span></div>
         <div class="k"><span class="k-i g"><x-ui.icone nom="batiment" classe="ic" /></span><b>{{ $presents->count() }}</b><span>Dans la résidence</span></div>
         <div class="k"><span class="k-i o"><x-ui.icone nom="calendrier" classe="ic" /></span><b>{{ $nbAVenir }}</b><span>À venir (7 jours)</span></div>
-        @if($sommeDue !== null)<a href="{{ route('gerant.argent') }}" class="k"><span class="k-i v"><x-ui.icone nom="argent" classe="ic" /></span><b>{{ number_format($sommeDue, 0, ',', "\u{202F}") }}</b><span>FCFA dus par GESIMO</span></a>@endif
+        @if($sommeDue !== null)<a href="{{ route('gerant.argent') }}" class="k"><span class="k-i v"><x-ui.icone nom="argent" classe="ic" /></span><b>{{ number_format($sommeDue, 0, ',', "\u{202F}") }}</b><span>FCFA dus par Avelis</span></a>@endif
     </div>
-    @if($litiges > 0)<x-ui.alerte type="attention">{{ $litiges }} problème(s) signalé(s) en cours de traitement par l'équipe GESIMO. <a class="font-bold underline" href="{{ route('gerant.reservations') }}">Voir mes réservations</a></x-ui.alerte>@endif
+    @if($litiges > 0)<x-ui.alerte type="attention">{{ $litiges }} problème(s) signalé(s) en cours de traitement par l'équipe Avelis. <a class="font-bold underline" href="{{ route('gerant.reservations') }}">Voir mes réservations</a></x-ui.alerte>@endif
 
     <h2 class="h2-s">Arrivées ({{ $attendues->count() }})</h2>
     <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
@@ -60,6 +60,6 @@
             <p class="aide md:col-span-2">Personne pour le moment.</p>
         @endforelse
     </div>
-    <x-ui.alerte type="info"><b>Ce que ça déclenche :</b> l'arrivée enregistrée rend votre part « à reverser » par GESIMO (voir « Argent »). Le départ termine le séjour. « Client absent » : le client n'est pas remboursé et votre part est aussi « à reverser ».</x-ui.alerte>
+    <x-ui.alerte type="info"><b>Ce que ça déclenche :</b> l'arrivée enregistrée rend votre part « à reverser » par Avelis (voir « Argent »). Le départ termine le séjour. « Client absent » : le client n'est pas remboursé et votre part est aussi « à reverser ».</x-ui.alerte>
     @endif
 </div>

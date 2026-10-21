@@ -4,7 +4,7 @@ namespace App\Paiement\Services\Fournisseur;
 
 /**
  * Le fournisseur de paiement est derrière cette interface : GeniusPay aujourd'hui,
- * un autre demain, sans toucher au reste de GESIMO.
+ * un autre demain, sans toucher au reste d'Avelis.
  */
 interface FournisseurPaiement
 {

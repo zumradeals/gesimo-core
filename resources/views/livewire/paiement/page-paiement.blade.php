@@ -30,7 +30,7 @@
                 @if($erreur)<x-ui.alerte type="erreur">{{ $erreur }}</x-ui.alerte>@endif
                 @if(! $disponible)<x-ui.alerte type="erreur">Le paiement en ligne est momentanément indisponible. Vos dates restent gardées : réessayez plus tard.</x-ui.alerte>@endif
                 <button wire:click="payer" wire:loading.attr="disabled" class="btn-pl grand pleine" @disabled(! $disponible)>Payer {{ $fr($r->acompte) }}</button>
-                <p class="petit" style="margin:0">Vous quittez GESIMO pour la page de paiement sécurisée de GeniusPay, puis vous revenez ici.</p>
+                <p class="petit" style="margin:0">Vous quittez Avelis pour la page de paiement sécurisée de GeniusPay, puis vous revenez ici.</p>
                 <ul class="garanties"><li><x-ui.icone nom="ok" classe="ic" /> Paiement sécurisé</li></ul>
             </section>
         </aside>

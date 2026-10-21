@@ -49,19 +49,19 @@ class ModelesMessages
                 'titre' => 'Reversement effectué (au gérant)',
                 'destinataire' => 'gérant',
                 'sujet' => 'Reversement effectué : {montant}',
-                'corps' => "Bonjour {nom},\n\nGESIMO vient de vous reverser {montant} pour la réservation n° {numero} ({logement}).\n\nVous retrouvez le détail dans « Argent ».",
+                'corps' => "Bonjour {nom},\n\nAvelis vient de vous reverser {montant} pour la réservation n° {numero} ({logement}).\n\nVous retrouvez le détail dans « Argent ».",
             ],
             'litige_ouvert' => [
                 'titre' => 'Litige ouvert',
                 'destinataire' => 'les deux parties',
                 'sujet' => 'Un problème a été signalé : réservation n° {numero}',
-                'corps' => "Bonjour {nom},\n\nUn problème a été signalé pour la réservation n° {numero} ({logement}, {dates}).\nMotif : {motif}\n\nL'équipe GESIMO étudie la situation et vous répond sous 48 h.",
+                'corps' => "Bonjour {nom},\n\nUn problème a été signalé pour la réservation n° {numero} ({logement}, {dates}).\nMotif : {motif}\n\nL'équipe Avelis étudie la situation et vous répond sous 48 h.",
             ],
             'litige_clos' => [
                 'titre' => 'Litige clos',
                 'destinataire' => 'les deux parties',
                 'sujet' => 'Problème traité : réservation n° {numero}',
-                'corps' => "Bonjour {nom},\n\nLe problème signalé pour la réservation n° {numero} ({logement}) est clos.\nDécision de l'équipe GESIMO : {decision}",
+                'corps' => "Bonjour {nom},\n\nLe problème signalé pour la réservation n° {numero} ({logement}) est clos.\nDécision de l'équipe Avelis : {decision}",
             ],
         ];
     }

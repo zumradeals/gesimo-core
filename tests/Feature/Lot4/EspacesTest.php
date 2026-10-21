@@ -26,7 +26,7 @@ beforeEach(function () {
 });
 
 it('les pages publiques s\'ouvrent sans compte et le pied de page y mène', function () {
-    foreach (['a-propos' => 'À propos de GESIMO', 'faq' => 'Questions fréquentes', 'contact' => 'Écrivez-nous', 'conditions' => 'Conditions générales', 'confidentialite' => 'Politique de confidentialité', 'devenir-partenaire' => 'Gérez vos résidences'] as $route => $texte) {
+    foreach (['a-propos' => 'À propos d\'Avelis', 'faq' => 'Questions fréquentes', 'contact' => 'Écrivez-nous', 'conditions' => 'Conditions générales', 'confidentialite' => 'Politique de confidentialité', 'devenir-partenaire' => 'Gérez vos résidences'] as $route => $texte) {
         $this->get(route($route))->assertOk()->assertSee($texte)->assertSee('Devenir gérant partenaire')->assertSee('aria-label="Menu principal"', false);
     }
     $this->get(route('gerant.aide'))->assertRedirect(route('connexion')); // l'aide du gérant n'est pas publique
@@ -111,7 +111,7 @@ it('tableau de bord du gérant : arrivées, départs, à venir, sommes dues et l
     payerEtConfirmer($this, $faux, $avenir);
 
     Livewire::actingAs($gerant)->test(ArriveesDuJour::class)
-        ->assertSee('Arrivées du jour')->assertSee('À venir (7 jours)')->assertSee('dus par GESIMO')->assertSee($aujourdhui->client->nom)
+        ->assertSee('Arrivées du jour')->assertSee('À venir (7 jours)')->assertSee('dus par Avelis')->assertSee($aujourdhui->client->nom)
         ->assertDontSee('problème(s) signalé(s)');
 
     app(LitigeService::class)->ouvrir($avenir->fresh(), $avenir->client, 'Le client demande un autre logement.');

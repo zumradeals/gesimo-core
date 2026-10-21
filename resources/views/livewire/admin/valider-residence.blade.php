@@ -22,7 +22,7 @@
 
         <div class="carte-p">
             <h2>Décision</h2>
-            <label class="puce {{ $badge ? 'puce-active' : '' }}"><input type="checkbox" class="sr-only" wire:model.live="badge">Accorder le badge « Vérifié GESIMO »</label>
+            <label class="puce {{ $badge ? 'puce-active' : '' }}"><input type="checkbox" class="sr-only" wire:model.live="badge">Accorder le badge « Vérifié Avelis »</label>
             <button wire:click="valider" wire:confirm="Valider et mettre cette résidence en ligne ?" class="btn-pl pleine" wire:loading.attr="disabled">Valider et mettre en ligne</button>
             <div class="champ"><label class="etiquette" for="motif">Motif du refus</label><textarea id="motif" rows="2" wire:model="motifRefus" class="saisie py-2" placeholder="Ex. Photo floue, justificatif manquant"></textarea>@error('motifRefus')<p class="erreur-champ">{{ $message }}</p>@enderror</div>
             <button wire:click="refuser" class="btn-sec rouge-b2 pleine">Refuser</button>

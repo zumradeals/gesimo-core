@@ -4,7 +4,7 @@ namespace App\Paiement\Services;
 
 use App\Paiement\Models\AlerteAdmin;
 
-/** Alertes pour l'équipe GESIMO : paiements tardifs, doubles paiements, remboursements en échec… */
+/** Alertes pour l'équipe Avelis : paiements tardifs, doubles paiements, remboursements en échec… */
 class Alertes
 {
     public static function creer(string $type, string $message, ?int $reservationId = null, ?int $paiementId = null, ?int $remboursementId = null): AlerteAdmin

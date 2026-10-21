@@ -488,7 +488,7 @@ it('le message « remboursé » de GeniusPay constate le remboursement en attent
     expect(Remboursement::firstOrFail()->statut)->toBe('effectue')->and(DB::table('ecriture_comptable')->where('type', 'remboursement')->count())->toBe(1);
 });
 
-it('un remboursement fait directement chez GeniusPay, sans demande de GESIMO, est signalé', function () {
+it('un remboursement fait directement chez GeniusPay, sans demande d\'Avelis, est signalé', function () {
     $faux = fauxGeniusPay();
     $reservation = reservationAPayer();
     $paiement = payerEtConfirmer($this, $faux, $reservation);

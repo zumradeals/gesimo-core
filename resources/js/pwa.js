@@ -141,7 +141,7 @@ function proposerInstallation() {
       ? `<ol class="mt-2 grid gap-1 text-[15px]"><li><b>1.</b> Touchez <b>Partager</b> (le carré avec une flèche) en bas de Safari ⬆️</li><li><b>2.</b> Choisissez <b>« Sur l'écran d'accueil »</b> ➕</li><li><b>3.</b> Touchez <b>« Ajouter »</b> ✔️</li></ol>`
       : `<p class="mt-2">Ouvrez cette page dans <b>Safari</b> pour installer l'application.</p>`)
     : '';
-  const corps = `<div class="flex items-center gap-3"><div class="flex h-[52px] w-[52px] shrink-0 items-center justify-center rounded-2xl bg-marque-600 text-[28px] font-extrabold text-white">G</div><div><b>Installer GESIMO sur votre téléphone</b><div class="aide">Un accès direct depuis l'écran d'accueil, et vos réservations même avec un réseau faible.</div></div></div>
+  const corps = `<div class="flex items-center gap-3"><div class="flex h-[52px] w-[52px] shrink-0 items-center justify-center rounded-2xl bg-marque-600 text-[28px] font-extrabold text-white">G</div><div><b>Installer Avelis sur votre téléphone</b><div class="aide">Un accès direct depuis l'écran d'accueil, et vos réservations même avec un réseau faible.</div></div></div>
     <div id="pwa-aide-ios"></div>
     <div class="mt-2 grid grid-cols-2 gap-2">${bouton(estIOS ? 'Comment faire' : 'Installer', false, 'js-installer')}${bouton('Plus tard', true, 'js-plus-tard')}</div>`;
   const el = bandeau('pwa-installer', corps);

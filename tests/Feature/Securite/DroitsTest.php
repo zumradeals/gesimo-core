@@ -44,7 +44,7 @@ it('réserve les Paramètres au super-administrateur', function () {
         ->and(Gate::forUser(creerUtilisateur(Role::Client))->allows('modifier-parametres'))->toBeFalse();
 });
 
-it('réserve journal d\'audit, comptabilité et reversements à l\'équipe GESIMO', function (string $droit) {
+it('réserve journal d\'audit, comptabilité et reversements à l\'équipe Avelis', function (string $droit) {
     expect(Gate::forUser(creerUtilisateur(Role::Admin))->allows($droit))->toBeTrue()
         ->and(Gate::forUser(creerUtilisateur(Role::Gerant, Role::Client, Role::Personnel))->allows($droit))->toBeFalse();
 })->with(['voir-journal-audit', 'voir-comptabilite', 'enregistrer-reversement']);

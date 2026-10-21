@@ -13,9 +13,9 @@ use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\Gate;
 
 /**
- * Mise en avant payante (RG-18, RG-19) : le gérant choisit une offre (durée et prix venant des Paramètres), paie à GESIMO,
+ * Mise en avant payante (RG-18, RG-19) : le gérant choisit une offre (durée et prix venant des Paramètres), paie à Avelis,
  * l'annonce passe en tête de recherche avec la mention « Sponsorisé » pendant la période, puis redevient normale toute seule.
- * L'argent est entièrement à GESIMO : pas de commission, pas de part de gérant, pas de remboursement automatique.
+ * L'argent est entièrement à Avelis : pas de commission, pas de part de gérant, pas de remboursement automatique.
  */
 class MiseEnAvantService
 {
@@ -32,7 +32,7 @@ class MiseEnAvantService
     {
         Gate::forUser($gerant)->authorize('update', $residence);
         if (! $residence->estVerifiee()) {
-            throw new PaiementImpossible('Seule une résidence vérifiée par GESIMO peut être mise en avant.');
+            throw new PaiementImpossible('Seule une résidence vérifiée par Avelis peut être mise en avant.');
         }
         $offre = self::offres()[$indexOffre] ?? throw new PaiementImpossible('Cette offre n\'existe plus : choisissez-en une autre.');
 

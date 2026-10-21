@@ -1,7 +1,9 @@
-# GESIMO Séjours — règles permanentes
+# Avelis Séjours — règles permanentes
 
-GESIMO Séjours est une plateforme de réservation et de gestion de résidences meublées en Côte d'Ivoire.
+Avelis Séjours est une plateforme de réservation et de gestion de résidences meublées en Côte d'Ivoire.
 C'est un projet indépendant : ne le rattache à aucun autre projet ou organisation.
+Nom : le projet s'appelait « GESIMO Séjours » ; il s'appelle désormais **Avelis Séjours** (décision du porteur du 21 octobre 2026).
+Les identifiants techniques internes gardent l'ancien nom (dépôt `gesimo-core`, dossier serveur `/var/www/gesimo`, base `gesimo`, service `gesimo-queue`, commandes `gesimo:*`, domaine actuel) pour ne pas casser le serveur ; ils ne sont jamais visibles du public.
 Le porteur du projet n'est pas technicien : on lui parle en français simple, sans jargon. Il valide les maquettes,
 les rapports et les décisions importantes. On ne remplace jamais sa décision.
 

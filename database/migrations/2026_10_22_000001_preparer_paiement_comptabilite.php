@@ -141,7 +141,7 @@ return new class extends Migration
         DB::statement("CREATE UNIQUE INDEX ecriture_un_remboursement_par_remboursement ON ecriture_comptable (remboursement_id) WHERE type = 'remboursement' AND correction_de IS NULL");
         DB::statement("CREATE UNIQUE INDEX ecriture_un_reversement_par_reversement ON ecriture_comptable (reversement_id) WHERE type = 'reversement' AND correction_de IS NULL");
 
-        // --- Alertes pour l'équipe GESIMO -------------------------------------------------------------------
+        // --- Alertes pour l'équipe Avelis -------------------------------------------------------------------
         Schema::create('alerte_admin', function (Blueprint $table) {
             $table->id();
             $table->string('type', 40);

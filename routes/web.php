@@ -125,7 +125,7 @@ Route::middleware(['auth', 'role:gerant'])->prefix('gerant')->group(function () 
     Route::livewire('/aide', PageStatique::class)->defaults('page', 'aide-gerant')->name('gerant.aide');
 });
 
-// --- Admin GESIMO ----------------------------------------------------------------------------------
+// --- Admin Avelis ----------------------------------------------------------------------------------
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
     Route::livewire('/', TableauDeBord::class)->name('admin.tableau');
     Route::livewire('/reservations', ToutesLesReservations::class)->name('admin.reservations');

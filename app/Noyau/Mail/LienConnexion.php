@@ -17,7 +17,7 @@ class LienConnexion extends Mailable implements ShouldQueue
 
     public function envelope(): Envelope
     {
-        return new Envelope(subject: 'Votre lien de connexion GESIMO');
+        return new Envelope(subject: 'Votre lien de connexion Avelis');
     }
 
     public function content(): Content

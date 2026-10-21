@@ -4,13 +4,13 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Reçu {{ $paiement->numeroRecu() }} — GESIMO Séjours</title>
+    <title>Reçu {{ $paiement->numeroRecu() }} — Avelis Séjours</title>
     @vite(['resources/css/app.css'])
 </head>
 <body class="bg-white p-4 text-encre sm:p-8">
 <main class="mx-auto max-w-2xl rounded-2xl border border-trait p-6 print:border-0">
     <div class="flex items-start justify-between border-b border-trait pb-4">
-        <div><p class="text-xl font-extrabold text-marque-600">GESIMO Séjours</p><p class="text-sm text-gris-doux">Reçu de paiement</p></div>
+        <div><p class="text-xl font-extrabold text-marque-600">Avelis Séjours</p><p class="text-sm text-gris-doux">Reçu de paiement</p></div>
         <p class="text-right text-sm"><b>{{ $paiement->numeroRecu() }}</b><br>{{ $paiement->updated_at->translatedFormat('j F Y, H \h i') }}</p>
     </div>
     <dl class="my-4 grid gap-2 text-[15px]">
@@ -26,7 +26,7 @@
         <div class="flex justify-between text-lg font-extrabold"><span>{{ $r->solde > 0 ? 'Acompte payé en ligne' : 'Total payé en ligne' }}</span><span>{{ $fr($paiement->montant) }}</span></div>
         @if($r->solde > 0)<div class="flex justify-between"><span>Reste à régler au gérant à l'arrivée</span><span>{{ $fr($r->solde) }}</span></div>@endif
     </div>
-    <p class="mt-4 text-xs text-gris-doux">Paiement encaissé par GESIMO via GeniusPay. GESIMO est une plateforme de mise en relation ; le solde éventuel est réglé directement au gérant.</p>
+    <p class="mt-4 text-xs text-gris-doux">Paiement encaissé par Avelis via GeniusPay. Avelis est une plateforme de mise en relation ; le solde éventuel est réglé directement au gérant.</p>
     <div class="mt-6 flex gap-3 print:hidden">
         <button onclick="window.print()" class="btn">Télécharger / imprimer (PDF)</button>
         <a href="{{ route('mes-reservations') }}" class="btn btn-second">Retour</a>

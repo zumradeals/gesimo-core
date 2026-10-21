@@ -342,7 +342,7 @@ class EditerResidence extends Component
 
         $residence->update(['statut_verification' => 'en_attente', 'soumise_le' => now(), 'motif_refus' => null]);
         Audit::enregistrer('residence.soumise', $residence);
-        $this->message = 'Envoyée pour vérification. Vous serez prévenu dès la décision de l\'équipe GESIMO.';
+        $this->message = 'Envoyée pour vérification. Vous serez prévenu dès la décision de l\'équipe Avelis.';
     }
 
     public function updatedNouvellesPhotos(): void

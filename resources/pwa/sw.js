@@ -1,4 +1,4 @@
-/* GESIMO Séjours — service worker (version __VERSION__).
+/* Avelis Séjours — service worker (version __VERSION__).
  *
  * Règles de sécurité (Lot 6) :
  *  - on n'enregistre QUE les pages que le serveur marque « X-Gesimo-Cache: public » (visiteur) ou « prive » (client connecté) ;

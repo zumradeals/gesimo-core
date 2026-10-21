@@ -39,7 +39,7 @@ return new class extends Migration
             $$
         SQL);
 
-        // Une mise en avant payée n'est écrite qu'une seule fois dans le livre de comptes (revenu de GESIMO).
+        // Une mise en avant payée n'est écrite qu'une seule fois dans le livre de comptes (revenu d'Avelis).
         DB::statement("CREATE UNIQUE INDEX ecriture_mise_en_avant_unique ON ecriture_comptable (paiement_id) WHERE type = 'mise_en_avant' AND correction_de IS NULL");
         DB::statement('ALTER TABLE mise_en_avant DROP CONSTRAINT mise_en_avant_statut_valide');
         DB::statement("ALTER TABLE mise_en_avant ADD CONSTRAINT mise_en_avant_statut_valide CHECK (statut IN ('en_attente_paiement', 'active', 'suspendue', 'terminee', 'annulee'))");

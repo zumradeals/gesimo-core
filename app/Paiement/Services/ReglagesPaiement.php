@@ -8,7 +8,7 @@ use App\Parametres\Services\Reglages;
 /** Réglages d'argent lus dans les Paramètres (jamais dans un fichier technique). */
 class ReglagesPaiement
 {
-    /** Pourcentage de commission, ou null tant que GESIMO ne l'a pas fixé (0 est une valeur valide). */
+    /** Pourcentage de commission, ou null tant qu'Avelis ne l'a pas fixé (0 est une valeur valide). */
     public static function commissionPourcentage(): ?float
     {
         $valeur = Parametres::obtenir('commission.pourcentage');

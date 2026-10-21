@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# GESIMO Séjours — mise à jour du site (à lancer en root, à chaque nouvelle version) :
+# Avelis Séjours — mise à jour du site (à lancer en root, à chaque nouvelle version) :
 #   sudo bash /var/www/gesimo/deploy/mise-a-jour.sh
 set -euo pipefail
 

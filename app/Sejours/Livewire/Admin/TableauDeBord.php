@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Gate;
 use Livewire\Attributes\Title;
 use Livewire\Component;
 
-/** Ce qui demande l'équipe GESIMO, et les indicateurs du cahier (section 9). */
+/** Ce qui demande l'équipe Avelis, et les indicateurs du cahier (section 9). */
 #[Title('Tableau de bord')]
 class TableauDeBord extends Component
 {

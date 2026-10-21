@@ -1,5 +1,5 @@
 [Unit]
-Description=GESIMO Séjours — traitement en arrière-plan (e-mails)
+Description=Avelis Séjours — traitement en arrière-plan (e-mails)
 After=network.target postgresql.service
 
 [Service]

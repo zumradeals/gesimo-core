@@ -249,7 +249,7 @@ function messageSigne(string $evenement, string $reference, int $montant, array 
         'timestamp' => now()->toIso8601ZuluString(),
         'data' => [
             'transaction' => ['id' => 1, 'reference' => $reference, 'amount' => $montant, 'status' => 'completed', 'metadata' => []],
-            'merchant' => ['id' => 'uuid-marchand', 'name' => 'GESIMO'],
+            'merchant' => ['id' => 'uuid-marchand', 'name' => 'Avelis'],
             'environment' => $options['environnement'] ?? 'sandbox',
         ],
     ]);

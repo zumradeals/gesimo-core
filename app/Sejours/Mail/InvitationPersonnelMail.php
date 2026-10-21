@@ -17,7 +17,7 @@ class InvitationPersonnelMail extends Mailable implements ShouldQueue
 
     public function envelope(): Envelope
     {
-        return new Envelope(subject: "Invitation à rejoindre {$this->residence} sur GESIMO");
+        return new Envelope(subject: "Invitation à rejoindre {$this->residence} sur Avelis");
     }
 
     public function content(): Content

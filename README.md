@@ -1,4 +1,4 @@
-# GESIMO Séjours
+# Avelis Séjours
 
 Plateforme de réservation et de gestion de résidences meublées en Côte d'Ivoire.
 Dépôt : `gesimo-core`. Les documents de conception sont dans le dossier [`docs/`](docs/).

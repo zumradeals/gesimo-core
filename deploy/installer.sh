@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# GESIMO Séjours — installation complète sur un VPS neuf (Ubuntu 24.04), à lancer UNE SEULE FOIS, en root.
+# Avelis Séjours — installation complète sur un VPS neuf (Ubuntu 24.04), à lancer UNE SEULE FOIS, en root.
 #
 #   sudo DOMAINE=gesimo.dgafrique.com EMAIL_CERTIFICAT=vous@exemple.com bash installer.sh
 #

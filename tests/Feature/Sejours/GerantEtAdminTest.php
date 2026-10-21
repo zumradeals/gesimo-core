@@ -213,7 +213,7 @@ it('seuls les admins accèdent à la validation ; un gérant ne valide pas sa pr
     $this->actingAs(creerUtilisateur(Role::SuperAdmin))->get(route('admin.residences'))->assertOk();
 });
 
-it('les pièces ne sont lisibles que par l\'équipe GESIMO, et chaque lecture est journalisée', function () {
+it('les pièces ne sont lisibles que par l\'équipe Avelis, et chaque lecture est journalisée', function () {
     Storage::fake('local');
     $gerant = creerUtilisateur(Role::Gerant);
     $residence = residenceSoumise($gerant);

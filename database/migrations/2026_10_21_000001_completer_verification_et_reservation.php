@@ -10,9 +10,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('residence', function (Blueprint $table) {
-            // Envoyée à la vérification (vide = brouillon, invisible de l'équipe GESIMO).
+            // Envoyée à la vérification (vide = brouillon, invisible de l'équipe Avelis).
             $table->timestampTz('soumise_le')->nullable();
-            // Badge « Vérifié GESIMO » : accordé en plus de la validation (F-A2).
+            // Badge « Vérifié Avelis » : accordé en plus de la validation (F-A2).
             $table->boolean('badge_verifie')->default(false);
             $table->text('motif_refus')->nullable();
             $table->foreignId('verifiee_par')->nullable()->constrained('utilisateur');

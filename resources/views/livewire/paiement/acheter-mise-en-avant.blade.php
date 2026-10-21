@@ -22,6 +22,6 @@
         <p class="aide">La mise en avant commence dès que le paiement est confirmé. Si une mise en avant est déjà en cours, la nouvelle période commence juste après.</p>
         <x-ui.alerte type="attention">Une mise en avant payée n'est pas remboursable.</x-ui.alerte></div>
     <button wire:click="payer" wire:loading.attr="disabled" @disabled(! $disponible) class="btn-pl">Payer {{ $fr($offres[$offre]['prix'] ?? 0) }}</button>
-    <p class="aide">Vous quittez GESIMO pour la page de paiement sécurisée de GeniusPay, puis vous revenez ici.</p>
+    <p class="aide">Vous quittez Avelis pour la page de paiement sécurisée de GeniusPay, puis vous revenez ici.</p>
     @endif
 </div>

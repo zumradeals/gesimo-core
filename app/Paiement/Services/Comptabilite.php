@@ -32,7 +32,7 @@ class Comptabilite
         );
     }
 
-    /** Revenu de GESIMO : une mise en avant payée (aucune commission, aucune part de gérant). */
+    /** Revenu d'Avelis : une mise en avant payée (aucune commission, aucune part de gérant). */
     public static function miseEnAvant(Paiement $paiement, ?Utilisateur $auteur = null): ?EcritureComptable
     {
         return self::ecrire(

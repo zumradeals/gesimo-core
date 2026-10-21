@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\DB;
 /**
  * Rapprochement : compare les paiements enregistrés et les écritures comptables, et signale toute différence.
  *
- * Fonds détenus par GESIMO = encaissements − remboursements − commissions − parts du gérant.
+ * Fonds détenus par Avelis = encaissements − remboursements − commissions − parts du gérant.
  * Pour chaque réservation : tant que rien n'est « acquis » (réservation confirmée, pas encore arrivée), commission et part
  * doivent être nulles ; une fois acquis, commission + part + remboursement (effectué ou demandé) = somme encaissée.
  */

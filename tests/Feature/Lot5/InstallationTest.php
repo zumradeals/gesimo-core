@@ -63,14 +63,14 @@ it('les étapes enregistrent les réglages (secrets chiffrés) sans demander le 
     $this->actingAs($su);
     $page = Livewire::test(Page::class)->assertSet('etape', 2);
 
-    $page->set('valeurs.general__nom', 'GESIMO Test')->set('valeurs.contact__email', 'equipe@exemple.ci')->call('etapeGenerale')->assertSet('etape', 3);
+    $page->set('valeurs.general__nom', 'Avelis Test')->set('valeurs.contact__email', 'equipe@exemple.ci')->call('etapeGenerale')->assertSet('etape', 3);
     $page->set('valeurs.email__hote', 'smtp.exemple.ci')->set('secrets.email__mot_de_passe', 'MDP-SMTP-SECRET')->call('etapeEmail')->assertSet('etape', 4);
     $page->set('valeurs.commission__pourcentage', '-4')->call('etapePaiement')->assertSet('etape', 4)->assertSee('pas de valeur négative');
     $page->set('valeurs.commission__pourcentage', '10')->set('valeurs.paiement__frais_pourcentage', '2')
         ->set('valeurs.geniuspay__sandbox__cle_publique', 'pk_sandbox_x')->set('secrets.geniuspay__sandbox__cle_secrete', 'sk_sandbox_SECRET-INSTALL')->call('etapePaiement')->assertSet('etape', 5)
         ->assertDontSee('SECRET-INSTALL');
 
-    expect(Parametres::obtenir('general.nom'))->toBe('GESIMO Test')->and(Parametres::obtenir('email.hote'))->toBe('smtp.exemple.ci')
+    expect(Parametres::obtenir('general.nom'))->toBe('Avelis Test')->and(Parametres::obtenir('email.hote'))->toBe('smtp.exemple.ci')
         ->and(Parametres::obtenir('geniuspay.sandbox.cle_secrete'))->toBe('sk_sandbox_SECRET-INSTALL')
         ->and(DB::table('parametre')->where('cle', 'email.mot_de_passe')->value('valeur'))->not->toContain('MDP-SMTP');
     expect(json_encode(DB::table('parametre_historique')->get()))->not->toContain('SECRET-INSTALL')->not->toContain('MDP-SMTP');

@@ -53,7 +53,7 @@ class ArriveesDuJour extends Component
 
             return;
         }
-        $this->agir(fn ($r) => $service->enregistrerArrivee($r, auth()->user(), $type, $numero), $id, 'Arrivée enregistrée. Votre part est maintenant « à reverser » par GESIMO.');
+        $this->agir(fn ($r) => $service->enregistrerArrivee($r, auth()->user(), $type, $numero), $id, 'Arrivée enregistrée. Votre part est maintenant « à reverser » par Avelis.');
         unset($this->pieces[$id]);
     }
 

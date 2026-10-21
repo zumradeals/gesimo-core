@@ -51,7 +51,7 @@ class MiseEnAvant extends Model
         $jour = now()->startOfDay();
 
         return match (true) {
-            $this->statut === 'suspendue' => 'Suspendue par GESIMO',
+            $this->statut === 'suspendue' => 'Suspendue par Avelis',
             $this->statut === 'terminee' => 'Terminée',
             $this->statut === 'annulee' => 'Annulée',
             $this->statut === 'en_attente_paiement' => 'En attente de paiement',

@@ -1,7 +1,7 @@
 @php $fr = fn (int $m) => \App\Noyau\Services\Format::fcfa($m); @endphp
 <div class="grid gap-4">
     <div class="adm-top"><div><h1>Reversements</h1></div></div>
-    <x-ui.alerte type="info">GESIMO ne verse rien automatiquement : vous envoyez l'argent par Mobile Money <b>en dehors de la plateforme</b>, puis vous l'enregistrez ici (référence et date).</x-ui.alerte>
+    <x-ui.alerte type="info">Avelis ne verse rien automatiquement : vous envoyez l'argent par Mobile Money <b>en dehors de la plateforme</b>, puis vous l'enregistrez ici (référence et date).</x-ui.alerte>
     @if($message)<x-ui.alerte type="succes">{{ $message }}</x-ui.alerte>@endif
 
     <div class="grid gap-4 lg:grid-cols-[380px_1fr] lg:items-start">

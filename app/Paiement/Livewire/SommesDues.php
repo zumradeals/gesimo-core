@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Title;
 use Livewire\Component;
 
-/** Ce que GESIMO doit au gérant : uniquement SES montants. */
+/** Ce qu'Avelis doit au gérant : uniquement SES montants. */
 #[Title('Argent')]
 class SommesDues extends Component
 {

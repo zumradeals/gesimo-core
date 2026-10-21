@@ -19,7 +19,7 @@
         <h2 class="font-extrabold">Calcul</h2>
         <div class="flex justify-between border-b border-dashed border-trait py-1.5"><span>Encaissé</span><span>{{ $fr($t['encaisse']) }}</span></div>
         <div class="flex justify-between border-b border-dashed border-trait py-1.5"><span>− Remboursé − Commissions − Parts des gérants</span><span>− {{ $fr($t['rembourse'] + $t['commissions'] + $t['parts']) }}</span></div>
-        <div class="flex justify-between py-1.5"><b>= Fonds encore détenus par GESIMO (séjours pas encore arrivés)</b><b>{{ $fr($bilan['detenus']) }}</b></div>
+        <div class="flex justify-between py-1.5"><b>= Fonds encore détenus par Avelis (séjours pas encore arrivés)</b><b>{{ $fr($bilan['detenus']) }}</b></div>
         <p class="aide">Déjà reversé aux gérants (hors plateforme, par Mobile Money) : {{ $fr($t['reverse']) }}.</p>
     </div>
 

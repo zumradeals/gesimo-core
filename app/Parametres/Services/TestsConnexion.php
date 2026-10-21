@@ -36,7 +36,7 @@ class TestsConnexion
 
         try {
             Courriel::appliquerLesReglages();
-            Mail::to($admin->email)->send(new MessageGesimo('Test de connexion e-mail', "Bonjour {$admin->nom},\n\nSi vous lisez ce message, l'envoi d'e-mails de GESIMO Séjours fonctionne."));
+            Mail::to($admin->email)->send(new MessageGesimo('Test de connexion e-mail', "Bonjour {$admin->nom},\n\nSi vous lisez ce message, l'envoi d'e-mails d'Avelis Séjours fonctionne."));
         } catch (Throwable $e) {
             return $this->resultat($admin, 'email', false, 'Le serveur d\'e-mail n\'a pas accepté le message : '.$this->sansSecret($e->getMessage()).' Vérifiez le serveur, le port, le chiffrement et le mot de passe.');
         }

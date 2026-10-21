@@ -39,7 +39,7 @@ class Reglages
         };
 
         // Général
-        $ajouter('general.nom', 'general', 'Nom de la plateforme', 'texte', ['defaut' => 'GESIMO Séjours', 'max' => 80, 'section' => 'Identité']);
+        $ajouter('general.nom', 'general', 'Nom de la plateforme', 'texte', ['defaut' => 'Avelis Séjours', 'max' => 80, 'section' => 'Identité']);
         $ajouter('general.slogan', 'general', 'Slogan', 'texte', ['max' => 120, 'section' => 'Identité', 'aide' => 'Phrase courte affichée sous le titre de la page d\'accueil et dans le pied de page.']);
         $ajouter('general.logo', 'general', 'Logo', 'logo', ['section' => 'Identité', 'aide' => 'Image PNG ou JPG, 1 Mo maximum.']);
         $ajouter('general.image_accueil', 'general', 'Image de la page d\'accueil', 'image', ['section' => 'Identité', 'aide' => 'Photo large (PNG ou JPG, 4 Mo maximum) derrière le titre de l\'accueil. Vide : fond vert.']);
@@ -82,7 +82,7 @@ class Reglages
         $ajouter('email.chiffrement', 'notifications', 'Chiffrement', 'choix', ['defaut' => 'tls', 'choix' => ['tls' => 'TLS (port 587)', 'ssl' => 'SSL (port 465)']]);
         $ajouter('email.utilisateur', 'notifications', 'Utilisateur', 'texte', ['max' => 190]);
         $ajouter('email.mot_de_passe', 'notifications', 'Mot de passe du serveur d\'e-mail', 'secret');
-        $ajouter('email.expediteur_nom', 'notifications', 'Nom de l\'expéditeur', 'texte', ['defaut' => 'GESIMO Séjours', 'max' => 80]);
+        $ajouter('email.expediteur_nom', 'notifications', 'Nom de l\'expéditeur', 'texte', ['defaut' => 'Avelis Séjours', 'max' => 80]);
         $ajouter('email.expediteur_adresse', 'notifications', 'Adresse de l\'expéditeur', 'texte', ['max' => 190]);
         $ajouter('sms.actif', 'notifications', 'Connexion par code SMS', 'choix', ['defaut' => '0', 'choix' => ['0' => 'Désactivée (par défaut)', '1' => 'Activée'], 'aide' => 'Désactivée : connexion par mot de passe ou lien e-mail. L\'activation demande un fournisseur SMS (pas encore branché).']);
 

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Génère les icônes de l'application (un « G » blanc sur fond vert GESIMO). À relancer seulement pour changer l'icône :
+ * Génère les icônes de l'application (un « A » blanc sur fond vert Avelis). À relancer seulement pour changer l'icône :
  *   php scripts/generer-icones.php
  * Les fichiers produits sont dans public/icons (ils sont versionnés : le déploiement n'a rien à générer).
  */
@@ -13,7 +13,7 @@ function icone(int $taille, bool $masquable, string $chemin, bool $arrondie = tr
     $transparent = imagecolorallocatealpha($im, 0, 0, 0, 127);
     imagefill($im, 0, 0, $transparent);
 
-    // Dégradé vert GESIMO (#0f766e -> #1aa395), en diagonale.
+    // Dégradé vert Avelis (#0f766e -> #1aa395), en diagonale.
     $rayon = $arrondie && ! $masquable ? (int) round($taille * 0.22) : 0;
     for ($y = 0; $y < $taille; $y++) {
         for ($x = 0; $x < $taille; $x++) {
@@ -33,22 +33,24 @@ function icone(int $taille, bool $masquable, string $chemin, bool $arrondie = tr
         }
     }
 
-    // Le « G » : un anneau ouvert à droite avec une barre, dessiné en blanc. Pour une icône « masquable », il reste dans la zone sûre (80 %).
+    // Le « A » : deux jambes réunies au sommet et une barre, dessinés en blanc. Pour une icône « masquable », il reste dans la zone sûre (80 %).
     imagealphablending($im, true);
     $blanc = imagecolorallocate($im, 255, 255, 255);
     $zone = $masquable ? 0.40 : 0.50;
-    $rExt = $taille * $zone * 0.62;
-    $epaisseur = $taille * 0.105;
+    $demiLargeur = $taille * $zone * 0.62;
+    $demiHauteur = $taille * $zone * 0.68;
+    $epaisseur = $taille * 0.115;
     $cx = $taille / 2;
-    $cy = $taille / 2;
-    for ($ang = 35; $ang <= 325; $ang += 0.25) {
-        $a = deg2rad($ang);
-        for ($e = 0; $e < $epaisseur; $e += 0.7) {
-            $rr = $rExt - $e;
-            imagefilledellipse($im, (int) round($cx + $rr * cos($a)), (int) round($cy - $rr * sin($a)), 3 + (int) ($taille / 90), 3 + (int) ($taille / 90), $blanc);
-        }
-    }
-    imagefilledrectangle($im, (int) ($cx + 0.02 * $taille), (int) ($cy - $epaisseur / 2 + 0.02 * $taille), (int) ($cx + $rExt - 1), (int) ($cy + $epaisseur / 2 + 0.02 * $taille), $blanc);
+    $haut = $taille / 2 - $demiHauteur;
+    $bas = $taille / 2 + $demiHauteur;
+    $t = $epaisseur;
+    // Jambe gauche puis jambe droite : des parallélogrammes qui se rejoignent au sommet.
+    imagefilledpolygon($im, [(int) ($cx - $t * 0.55), (int) $haut, (int) ($cx + $t * 0.55), (int) $haut, (int) ($cx - $demiLargeur + $t * 1.1), (int) $bas, (int) ($cx - $demiLargeur), (int) $bas], $blanc);
+    imagefilledpolygon($im, [(int) ($cx - $t * 0.55), (int) $haut, (int) ($cx + $t * 0.55), (int) $haut, (int) ($cx + $demiLargeur), (int) $bas, (int) ($cx + $demiLargeur - $t * 1.1), (int) $bas], $blanc);
+    // La barre du « A », à environ 62 % de la hauteur.
+    $yBarre = $haut + ($bas - $haut) * 0.62;
+    $demiBarre = $demiLargeur * 0.50;
+    imagefilledrectangle($im, (int) ($cx - $demiBarre), (int) $yBarre, (int) ($cx + $demiBarre), (int) ($yBarre + $t * 0.8), $blanc);
 
     imagepng($im, $chemin, 9);
     imagedestroy($im);

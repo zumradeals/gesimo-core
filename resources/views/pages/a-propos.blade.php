@@ -1,6 +1,6 @@
 @php $nom = \App\Parametres\Services\Marque::nom(); @endphp
 <div>
-    <x-site.bandeau :titre="'À propos de '.$nom" sous="Une plateforme qui rend la réservation de résidences meublées simple, claire et sûre." surtitre="Qui sommes-nous" />
+    <x-site.bandeau :titre="'À propos '.\App\Parametres\Services\Marque::deNom()" sous="Une plateforme qui rend la réservation de résidences meublées simple, claire et sûre." surtitre="Qui sommes-nous" />
     <section class="sect"><div class="cont deux-col">
         <div class="bloc">
             <span class="surtitre">Notre mission</span>

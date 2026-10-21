@@ -43,7 +43,7 @@ class Courriel
             ],
             'mail.from' => [
                 'address' => Parametres::obtenir('email.expediteur_adresse', 'ne-pas-repondre@localhost'),
-                'name' => Parametres::obtenir('email.expediteur_nom', 'GESIMO Séjours'),
+                'name' => Parametres::obtenir('email.expediteur_nom', 'Avelis Séjours'),
             ],
         ]);
     }

@@ -129,7 +129,7 @@ class Connexion
 
         $code = str_pad((string) random_int(0, 999999), 6, '0', STR_PAD_LEFT);
         $this->creerJeton($utilisateur, 'code_sms', $code, self::VALIDITE_CODE_MINUTES);
-        $this->sms->envoyer($telephone, "GESIMO : votre code est {$code}. Il expire dans ".self::VALIDITE_CODE_MINUTES.' minutes.');
+        $this->sms->envoyer($telephone, "Avelis : votre code est {$code}. Il expire dans ".self::VALIDITE_CODE_MINUTES.' minutes.');
     }
 
     public function verifierCodeSms(string $telephone, string $code, string $ip): Utilisateur

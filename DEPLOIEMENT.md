@@ -1,4 +1,4 @@
-# Mettre GESIMO Séjours en ligne sur votre VPS
+# Mettre Avelis Séjours en ligne sur votre VPS
 
 Site visé : **https://gesimo.dgafrique.com**
 
@@ -159,3 +159,7 @@ L'application s'installe depuis le navigateur, sans magasin d'applications. Elle
 - La base PostgreSQL n'écoute que sur le serveur lui-même (jamais sur Internet).
 - Pare-feu : seuls SSH (22), HTTP (80) et HTTPS (443) sont ouverts.
 - Les pièces d'identité des gérants ne sont jamais accessibles par une adresse publique.
+
+## Changement de nom : Avelis Séjours
+
+Après la mise à jour (§ 6), ouvrir **Réglages ▸ Général** et remplacer le nom de la plateforme par « Avelis Séjours » (et, si vous l'aviez saisi, le nom de l'expéditeur dans **Réglages ▸ Notifications**). Le logo (lettre « A ») et l'icône de l'application changent d'eux-mêmes ; sur un téléphone où l'application est déjà installée, désinstallez puis réinstallez pour voir la nouvelle icône. Les noms techniques du serveur (dossier `/var/www/gesimo`, base, services) ne changent pas : le public ne les voit jamais. Un changement de nom de domaine demande d'adapter `deploy/nginx-gesimo.conf`, le certificat et l'adresse indiquée dans Réglages / GeniusPay (webhook) : à faire en une seule opération planifiée.

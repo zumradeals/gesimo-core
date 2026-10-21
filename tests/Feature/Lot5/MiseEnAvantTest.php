@@ -56,7 +56,7 @@ it('le gérant paie une mise en avant : elle devient active pour la durée de l\
 
     $mea = $mea->fresh();
     expect($mea->statut)->toBe('active')->and($mea->date_debut->toDateString())->toBe(today()->toDateString())->and($mea->date_fin->toDateString())->toBe(today()->addDays(6)->toDateString());
-    // Revenu de GESIMO : une seule écriture, pas de commission, pas de part de gérant, pas d'encaissement de réservation.
+    // Revenu d'Avelis : une seule écriture, pas de commission, pas de part de gérant, pas d'encaissement de réservation.
     expect(DB::table('ecriture_comptable')->where('type', 'mise_en_avant')->count())->toBe(1)->and((int) DB::table('ecriture_comptable')->where('type', 'mise_en_avant')->sum('montant'))->toBe(10000)
         ->and(DB::table('ecriture_comptable')->whereIn('type', ['commission', 'part_gerant', 'encaissement'])->count())->toBe(0);
     expect(Rapprochement::class)->toBeString();
@@ -145,7 +145,7 @@ it('l\'admin suspend une mise en avant : l\'annonce redevient normale tout de su
     expect($mea->fresh()->statut)->toBe('suspendue')->and(MiseEnAvantService::residencesEnAvant())->toBe([])->and($mea->fresh()->suspendue_par)->toBe($admin->id);
     expect(DB::table('journal_audit')->where('action', 'mise_en_avant.suspendue')->exists())->toBeTrue();
 
-    Livewire::actingAs($unite->residence->gerant)->test(MisesEnAvantGerant::class)->assertSee('Suspendue par GESIMO')->assertSee('n\'est plus mise en avant', false);
+    Livewire::actingAs($unite->residence->gerant)->test(MisesEnAvantGerant::class)->assertSee('Suspendue par Avelis')->assertSee('n\'est plus mise en avant', false);
 
     Livewire::actingAs($admin)->test(MisesEnAvantAdmin::class)->call('reprendre', $mea->id)->assertSee('reprise');
     expect($mea->fresh()->statut)->toBe('active')->and(MiseEnAvantService::residencesEnAvant())->toBe([$unite->residence_id]);

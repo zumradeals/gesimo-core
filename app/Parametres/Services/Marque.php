@@ -11,7 +11,15 @@ class Marque
 
     public static function nom(): string
     {
-        return Reglages::valeur('general.nom') ?: 'GESIMO Séjours';
+        return Reglages::valeur('general.nom') ?: 'Avelis Séjours';
+    }
+
+    /** « d'Avelis Séjours » ou « de Maison Test » : la préposition « de » s'élide devant une voyelle. */
+    public static function deNom(): string
+    {
+        $nom = self::nom();
+
+        return (preg_match('/^[aeiouyàâäéèêëîïôöùûüh]/iu', $nom) ? "d'" : 'de ').$nom;
     }
 
     /** @return array{0: string, 1: string} le premier mot, puis le reste (mis en gras dans le logo) */
