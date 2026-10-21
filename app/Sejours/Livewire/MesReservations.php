@@ -41,7 +41,7 @@ class MesReservations extends Component
         return view('livewire.sejours.mes-reservations', [
             'reservations' => ($this->onglet === 'passees'
                 ? (clone $mes)->whereNotIn('id', (clone $avenir)->select('id'))->latest('date_arrivee')
-                : (clone $avenir)->orderBy('date_arrivee'))->with('unite.residence.gerant')->get(),
+                : (clone $avenir)->orderBy('date_arrivee'))->with(['unite.photos', 'unite.residence.photos', 'unite.residence.gerant'])->get(),
             'nbAVenir' => (clone $avenir)->count(),
             'nbPassees' => (clone $mes)->whereNotIn('id', (clone $avenir)->select('id'))->count(),
         ]);

@@ -15,7 +15,7 @@ class Compte extends Component
     {
         $u = auth()->user()->load('roles');
         $client = $u->aRole(Role::Client);
-        $mes = $client ? Reservation::where('client_id', $u->id)->with('unite.residence.gerant') : null;
+        $mes = $client ? Reservation::where('client_id', $u->id)->with(['unite.photos', 'unite.residence.photos', 'unite.residence.gerant']) : null;
 
         return view('livewire.noyau.compte', [
             'utilisateur' => $u,

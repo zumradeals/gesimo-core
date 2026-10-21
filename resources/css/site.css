@@ -190,3 +190,43 @@ input[type=file]{max-width:100%;min-width:0}
 .sect .filtres h2,.sect .filtres h3,.sect .carte-p h2,.sect .carte-p h3{font-size:17px;margin:0;letter-spacing:0}
 .sr-only-site{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 .adm-role{display:block;margin:-10px 4px 0;font-size:12px;color:#9fbab6}
+
+/* ===== Espaces connectés : composants des maquettes « autres pages » ===== */
+
+/* ===== refonte 2 : compte client, espace gérant, administration ===== */
+.cal-g{grid-template-columns:repeat(7,minmax(0,1fr))!important}.cols>*,.cols2>*,.split>*,.adm-main>*,.grille-c>*{min-width:0}.adm-act{flex-wrap:wrap}.pleine{white-space:normal!important;text-align:center}
+.thumb{background:linear-gradient(135deg,#bfe0db,#f1e9d8);border-radius:12px;display:flex;align-items:center;justify-content:center;color:#5a7370;width:100%}
+.banniere{background:linear-gradient(135deg,#0b5a54,#14958a);color:#fff;border-radius:18px;padding:20px;display:grid;gap:12px;margin-bottom:16px}.banniere h1{margin:0;font-size:24px}.banniere p{margin:2px 0 8px;opacity:.95}.etq-b{background:#ffffff33;border-radius:999px;padding:3px 12px;font-size:13px;font-weight:700}
+.cols,.cols2{display:grid;gap:16px}.col-g,.col-d{display:grid;gap:16px;align-content:start}
+.kpi2{display:grid;grid-template-columns:1fr 1fr;gap:12px}.kpi2 .k b{font-size:26px}
+.res-item{display:flex;gap:12px}.res-item .ri,.ri{display:grid;gap:3px;align-content:start;min-width:0}.ri-t{display:flex;justify-content:space-between;gap:8px;align-items:flex-start;flex-wrap:wrap}.ri-t h2{margin:0}
+.res-card{display:grid;gap:12px}.res-card .thumb{height:140px!important;width:100%!important}.ri-a{display:grid;gap:8px;align-content:start}
+.liste-r{display:grid;gap:14px;margin-top:14px}
+.lien-l{display:flex;gap:8px;align-items:center;padding:10px 0;font-weight:700;color:var(--vert);border-bottom:1px dashed var(--bord)}.lien-l.rouge,.rouge{color:var(--rouge)}.lien-l .ic{width:18px;height:18px}
+.fil{font-size:13px;color:var(--gris);margin:0 0 10px}.fil a{color:var(--vert);font-weight:600}
+.duo2{display:grid;grid-template-columns:1fr 1fr;gap:12px}.duo2 div{display:grid}
+.suivi{list-style:none;margin:0;padding:0;display:grid;gap:10px}.suivi li{padding-left:26px;position:relative;color:var(--gris)}.suivi li:before{content:"";position:absolute;left:4px;top:5px;width:12px;height:12px;border-radius:50%;border:2px solid var(--bord);background:#fff}.suivi li.fait{color:var(--texte)}.suivi li.fait:before{background:var(--vert);border-color:var(--vert)}
+.stepper{display:flex;gap:8px;margin:0 0 16px}.st{flex:1;text-align:center;padding:10px 6px;border-radius:12px;background:#fff;border:1px solid var(--bord);font-size:13px;font-weight:700;color:var(--gris)}.st.fait{background:var(--clair);color:var(--vert);border-color:var(--vert)}.st.on{background:var(--vert);color:#fff;border-color:var(--vert)}
+.timer{display:flex;gap:8px;align-items:center;background:#fff4e5;color:#b54708;border-radius:12px;padding:10px 12px;font-size:14px}.timer .ic{width:18px;height:18px}
+.gros{font-size:30px;font-weight:800;letter-spacing:-.02em}.carte-p h1{margin:0}.carte-p h2{margin:0;font-size:18px}
+.succes-b{text-align:center;justify-items:center;margin-bottom:16px}.gros-ok{width:64px;height:64px;border-radius:50%;background:#e3f6e8;color:#116b2b;display:flex;align-items:center;justify-content:center}.gros-ok .ic{width:34px;height:34px}
+.encart{border:2px dashed var(--bord);border-radius:14px;padding:12px;display:grid;gap:6px}.rouge-b{background:var(--rouge)!important;box-shadow:0 2px 0 #7a1810!important}.rouge-b2{color:var(--rouge)!important;border-color:var(--rouge)!important}
+.gros-e{font-size:34px}.pastilles.clairs span{background:#eef2f4;color:var(--texte)}
+.cit{margin:0;border-left:4px solid var(--bord);padding:6px 12px;color:var(--gris)}
+.filtres-h{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.h2-s{font-size:18px;margin:4px 0 -4px}.h3-s{font-size:13px;margin:12px 0 4px;color:var(--vert);text-transform:uppercase;letter-spacing:.04em}
+.grille-c{display:grid;gap:14px}.ligne-c{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}.ligne-c div{display:grid}
+.carte-p small,.tab small{color:var(--gris)}
+.split{display:grid;gap:14px}.liste-s{display:grid;gap:6px;align-content:start}.item{display:grid;gap:2px;padding:10px;border-radius:12px;border:1px solid var(--bord);justify-items:start}.item.on{border-color:var(--vert);background:var(--clair)}.item small{color:var(--gris)}
+.cal-g{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}.jh{text-align:center;font-size:12px;color:var(--gris);font-weight:700}.jc{border:1px solid var(--bord);border-radius:8px;min-height:50px;padding:4px;display:grid;align-content:space-between;font-size:11px;background:#fff}.jc small{font-size:10px;color:var(--gris)}.jc.res{background:#e3f6e8;border-color:#bfe3c8}.jc.blo{background:#e7eaee}.jc.tel{background:#e3ecff;border-color:#c4d6ff}
+.cal-t{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:10px}.legende{display:flex;gap:6px;align-items:center;font-size:12px;color:var(--gris)}.legende i{display:inline-block;width:14px;height:14px;min-height:0;padding:0}
+.offre{border:2px solid var(--bord);border-radius:14px;padding:14px;display:grid;gap:2px}.offre.on{border-color:var(--vert);background:var(--clair)}.cases{display:flex;gap:8px;flex-wrap:wrap}.case{display:flex;flex-direction:row;gap:6px;align-items:center;border:1.5px solid var(--bord);border-radius:999px;padding:8px 12px;font-size:14px}
+.info-b{background:#eaf2ff;color:#175cd3;border-radius:12px;padding:12px;font-size:14px}.galerie-m{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.galerie-m .thumb{height:70px}
+.st3 .st{font-size:12px}.bd.rouge{background:#fdecea;color:var(--rouge)}.bd.bleu{background:#e3ecff;color:#175cd3}
+@media (min-width:1024px){
+.banniere{grid-template-columns:1fr auto;align-items:center;padding:28px 34px}.banniere h1{font-size:30px}
+ .cols{grid-template-columns:1fr 360px;gap:24px}.cols2{grid-template-columns:1fr 1fr;gap:24px}.col-d .resa,.cols>.col-d>.carte-p.resa{position:sticky;top:90px}
+ .res-card{grid-template-columns:150px 1fr auto;align-items:center}.res-card .thumb{height:110px!important}
+ .filtres-h{grid-template-columns:repeat(4,1fr)}.grille-c{grid-template-columns:repeat(2,1fr)}.split{grid-template-columns:320px 1fr;gap:18px}
+ .jc{min-height:74px;font-size:13px;padding:6px}.galerie-m .thumb{height:110px}
+}
