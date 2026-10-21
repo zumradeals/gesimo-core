@@ -30,12 +30,14 @@ use App\Paiement\Livewire\ReversementsAdmin;
 use App\Paiement\Livewire\SommesDues;
 use App\Parametres\Livewire\EspaceParametres;
 use App\Sejours\Http\TelechargerDocument;
+use App\Sejours\Http\TelechargerDocumentGerant;
 use App\Sejours\Livewire\Accueil;
 use App\Sejours\Livewire\Admin\ListeVerifications;
 use App\Sejours\Livewire\Admin\LitigesAdmin;
 use App\Sejours\Livewire\Admin\TableauDeBord;
 use App\Sejours\Livewire\Admin\ToutesLesReservations;
 use App\Sejours\Livewire\Admin\ValiderResidence;
+use App\Sejours\Livewire\Admin\VerifierGerant;
 use App\Sejours\Livewire\CalendrierGerant;
 use App\Sejours\Livewire\DetailReservation;
 use App\Sejours\Livewire\DonnerAvis;
@@ -45,6 +47,8 @@ use App\Sejours\Livewire\GestionPersonnel;
 use App\Sejours\Livewire\MesReservations;
 use App\Sejours\Livewire\MesResidences;
 use App\Sejours\Livewire\OuvrirLitige;
+use App\Sejours\Livewire\ProfilGerant;
+use App\Sejours\Livewire\ProfilPublicGerant;
 use App\Sejours\Livewire\Recapitulatif;
 use App\Sejours\Livewire\Recherche;
 use App\Sejours\Livewire\ReservationsGerant;
@@ -55,6 +59,7 @@ use Illuminate\Support\Facades\Route;
 Route::livewire('/', Accueil::class)->name('accueil');
 Route::livewire('/recherche', Recherche::class)->name('recherche');
 Route::livewire('/logement/{unite}', FicheLogement::class)->name('logement');
+Route::livewire('/hebergeurs/{slug}', ProfilPublicGerant::class)->where('slug', '[A-Za-z0-9]{24}')->name('hebergeur');
 
 Route::middleware('guest')->group(function () {
     Route::livewire('/connexion', Connexion::class)->name('connexion');
@@ -111,6 +116,8 @@ Route::middleware(['auth', 'role:gerant,personnel'])->group(function () {
     Route::livewire('/gerant/arrivees', ArriveesDuJour::class)->name('gerant.arrivees');
 });
 Route::middleware(['auth', 'role:gerant'])->prefix('gerant')->group(function () {
+    Route::livewire('/profil', ProfilGerant::class)->name('gerant.profil');
+    Route::livewire('/profil/apercu', ProfilPublicGerant::class)->name('gerant.profil.apercu');
     Route::livewire('/residences', MesResidences::class)->name('gerant.residences');
     Route::livewire('/residences/nouvelle', EditerResidence::class)->name('gerant.residence.nouvelle');
     Route::livewire('/residences/{residence}', EditerResidence::class)->name('gerant.residence');
@@ -135,6 +142,8 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
     Route::livewire('/reglages/{rubrique?}', EspaceParametres::class)->name('admin.reglages');
     Route::livewire('/residences', ListeVerifications::class)->name('admin.residences');
     Route::livewire('/residences/{residence}', ValiderResidence::class)->name('admin.residence');
+    Route::livewire('/gerants/{profil}', VerifierGerant::class)->name('admin.gerant');
+    Route::get('/documents-gerants/{document}', TelechargerDocumentGerant::class)->name('admin.document-gerant');
     Route::get('/documents/{document}', TelechargerDocument::class)->name('admin.document');
     Route::livewire('/paiements', PaiementsEtEcritures::class)->name('admin.paiements');
     Route::livewire('/reversements', ReversementsAdmin::class)->name('admin.reversements');

@@ -45,3 +45,18 @@ html.hors-ligne [data-reseau] { opacity: .5; pointer-events: none; }
     .puce { @apply inline-flex min-h-[44px] cursor-pointer items-center rounded-full border-[1.5px] border-trait bg-white px-4 text-[15px]; }
     .puce-active { @apply border-marque-600 bg-marque-50 font-bold text-marque-600; }
 }
+
+/* Profil gérant : styles propres aux écrans validés, sans surcharger les composants existants. */
+.pg-shell { display:grid; grid-template-columns:minmax(0,1fr) 290px; gap:24px; align-items:start; max-width:1200px; }
+.pg-tabs { display:flex; gap:22px; border-bottom:1px solid var(--bord,#d9dfe6); margin-bottom:20px; }
+.pg-tabs button { padding:0 0 13px; color:var(--gris,#5b6675); font-weight:600; min-height:44px; }
+.pg-tabs button[aria-selected="true"] { color:var(--vert,#0f766e); border-bottom:2px solid currentColor; }
+.pg-badge { display:inline-flex; align-items:center; border-radius:6px; padding:4px 9px; background:#e8f4ef; color:#215e4b; font-size:12px; font-weight:750; }
+.pg-badge.or { background:#fbf1dc; color:#82551a; }.pg-badge.neutre { background:#edf1ef; color:#55665e; }
+.pg-doc { padding:17px; border:1px solid #dce5e1; border-radius:10px; display:grid; gap:12px; background:#fbfdfc; }
+.pg-situation { background:#102f2b; color:#fff; border-radius:14px; padding:24px; display:grid; gap:17px; }.pg-situation .aide { color:#b4d0c3; }.pg-situation p { font-size:14px; }.pg-situation .btn-sec { background:#fff; }
+.pg-recap { display:flex; justify-content:space-between; gap:16px; align-items:center; padding:8px 0 16px; border-bottom:1px solid #dce5e1; }
+.pg-confirmation { display:flex; gap:16px; align-items:start; border:1px solid #bfdccf; background:#eaf5f1; border-radius:14px; padding:23px; }.pg-confirmation h2 { font-size:18px; margin-bottom:8px; }.pg-confirmation-icon { flex:none; display:grid; place-items:center; width:42px; height:42px; border-radius:50%; background:#0f766e; color:#fff; font-size:24px; }
+.pg-public { padding-top:30px; padding-bottom:48px; }.pg-public-hero { display:flex; gap:22px; align-items:center; border-radius:18px; padding:34px; background:#eef5ef; margin:20px 0 30px; }.pg-public-hero h1 { font-size:32px; margin:7px 0 12px; line-height:1.2; }.pg-avatar { width:90px; height:90px; display:grid; place-items:center; flex:none; border-radius:20px; background:white; color:#0f766e; object-fit:cover; font-size:42px; }.pg-public-intro { display:grid; grid-template-columns:1fr 300px; gap:40px; margin-bottom:32px; }.pg-public-intro p { margin-top:10px; color:#5b6675; }.pg-public-intro aside { border-left:2px solid #dcc48e; padding-left:18px; font-size:13px; }
+@media(max-width:900px) { .pg-shell { grid-template-columns:1fr; }.pg-public-intro { grid-template-columns:1fr; gap:22px; } }
+@media(max-width:600px) { .pg-public-hero { align-items:start; gap:15px; padding:22px 18px; }.pg-public-hero h1 { font-size:24px; }.pg-avatar { width:56px; height:60px; border-radius:12px; font-size:28px; }.pg-confirmation { padding:18px; gap:12px; }.pg-confirmation-icon { width:32px; height:32px; font-size:19px; } }

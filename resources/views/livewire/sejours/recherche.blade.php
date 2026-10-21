@@ -65,7 +65,7 @@
                                     <x-ui.photo :photo="$u->photos->first() ?? $r->photos->first()" classe="h-full" :plat="true" :alt="'Photo de '.$u->nom" />
                                 </div>
                                 <div class="lg-c">
-                                    <div class="lg-t"><b>{{ $u->nom }}</b>@if($r->badge_verifie)<span class="etq vert">✔ Vérifié</span>@endif</div>
+                                    <div class="lg-t"><b>{{ $u->nom }}</b>@if($r->aBadgeGestion())<span class="etq vert">✔ Gestion vérifiée</span>@endif</div>
                                     <div class="lg-l"><x-ui.icone nom="pin" classe="ic pt" /> {{ $r->nom }} · {{ $r->commune }}@if($r->quartier), {{ $r->quartier }}@endif · jusqu'à {{ $u->capacite }} pers.</div>
                                     <div class="lg-p"><b>{{ \App\Noyau\Services\Format::fcfa($ligne['total']) }}</b> <small>pour {{ $nuits }} nuit{{ $nuits > 1 ? 's' : '' }}</small></div>
                                 </div>

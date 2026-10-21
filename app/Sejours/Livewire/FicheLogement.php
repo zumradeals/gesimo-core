@@ -37,7 +37,8 @@ class FicheLogement extends Component
 
     public function render(TarifCalculateur $tarifs, Disponibilites $disponibilites)
     {
-        $unite = $this->unite->load(['residence.photos', 'photos', 'tarifs', 'equipements']);
+        abort_unless($this->unite->fresh()->active && Gate::allows('view', $this->unite->fresh()->residence), 404);
+        $unite = $this->unite->load(['residence.gerant.profilGerant', 'residence.photos', 'photos', 'tarifs', 'equipements']);
         $detail = null;
         $total = null;
         $libre = null;

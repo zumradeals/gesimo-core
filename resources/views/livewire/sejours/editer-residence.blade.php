@@ -12,7 +12,7 @@
         <x-ui.alerte type="erreur"><b>Refusée par l'équipe Avelis :</b> {{ $residence->motif_refus }}. Corrigez puis renvoyez pour vérification.</x-ui.alerte>
     @endif
     <div class="stepper st3" role="tablist" aria-label="Étapes">
-        @foreach([1 => 'Ma résidence', 2 => 'Mes logements', 3 => 'Envoyer pour vérification'] as $n => $libelle)
+        @foreach([1 => 'Ma résidence', 2 => 'Mes logements', 3 => 'Vérification et envoi'] as $n => $libelle)
             <button type="button" wire:click="allerEtape({{ $n }})" @disabled($n > 1 && ! $residence) class="st {{ $etape === $n ? 'on' : ($n < $etape ? 'fait' : '') }}" style="cursor:pointer" @if($etape === $n) aria-current="step" @endif>{{ $n }} {{ $libelle }}</button>
         @endforeach
     </div>
@@ -141,32 +141,33 @@
     </div>
 
     @if($residence && $etape === 3)
-    {{-- 3. Pièces et envoi --}}
-    <div class="carte-p" x-data="{ transfertPieces: 0 }"
-         x-on:livewire-upload-start="transfertPieces++"
-         x-on:livewire-upload-finish="transfertPieces = Math.max(0, transfertPieces - 1)"
-         x-on:livewire-upload-error="transfertPieces = Math.max(0, transfertPieces - 1)"
-         x-on:livewire-upload-cancel="transfertPieces = Math.max(0, transfertPieces - 1)">
-        <h2>3. Envoyer pour vérification</h2>
-        <p class="aide !text-[15px]">La résidence reste invisible tant qu'un admin Avelis ne l'a pas validée.</p>
-        <p class="aide">Deux documents distincts sont demandés : votre identité et votre droit de gérer cette résidence (par exemple un mandat de gestion ou un titre de propriété). Les pièces déjà enregistrées sont conservées pour les prochains envois de cette résidence.</p>
-        <p class="aide">PDF, JPEG ou PNG, 5 Mo maximum par document. Le bouton « Envoyer pour vérification » enregistre aussi les fichiers sélectionnés.</p>
-        @error('pieces')<p class="erreur-champ" role="alert">{{ $message }}</p>@enderror
-        <div wire:loading wire:target="pieceGerant,justificatif" class="aide" role="status">Transfert des pièces en cours… Attendez la fin avant de continuer.</div>
-        <div class="grid gap-3 md:grid-cols-2">
-            <div class="champ"><label class="etiquette" for="piece">Pièce d'identité du gérant</label>
-                <input id="piece" wire:key="piece-{{ $versionPieces }}" type="file" accept="application/pdf,image/jpeg,image/png" wire:model="pieceGerant" class="saisie py-3">
-                @if($piecesDisponibles['piece_gerant'])<span class="aide text-green-700">✔ Déjà envoyée (vous pouvez la remplacer)</span>@else<span class="aide">À fournir : pièce manquante, refusée ou indisponible.</span>@endif
-                @error('pieceGerant')<p class="erreur-champ">{{ $message }}</p>@enderror</div>
-            <div class="champ"><label class="etiquette" for="justif">Justificatif du droit de gérer</label>
-                <input id="justif" wire:key="justif-{{ $versionPieces }}" type="file" accept="application/pdf,image/jpeg,image/png" wire:model="justificatif" class="saisie py-3">
-                @if($piecesDisponibles['justificatif_droit_gestion'])<span class="aide text-green-700">✔ Déjà envoyé (vous pouvez le remplacer)</span>@else<span class="aide">À fournir pour cette résidence : justificatif manquant, refusé ou indisponible.</span>@endif
-                @error('justificatif')<p class="erreur-champ">{{ $message }}</p>@enderror</div>
+    <div class="pg-shell">
+        <div class="grid gap-4" x-data="{ transferts: 0 }" x-on:livewire-upload-start="transferts++" x-on:livewire-upload-finish="transferts = Math.max(0, transferts - 1)" x-on:livewire-upload-error="transferts = Math.max(0, transferts - 1)" x-on:livewire-upload-cancel="transferts = Math.max(0, transferts - 1)">
+            @if($profilGerant?->identiteValidee())
+                <x-ui.alerte type="succes"><b>Votre identité est validée.</b> Aucune pièce personnelle à renvoyer pour cette résidence. <a class="underline" href="{{ route('gerant.profil') }}">Voir mon dossier</a></x-ui.alerte>
+            @else
+                <x-ui.alerte type="attention"><b>Votre identité doit d’abord être validée.</b> Votre brouillon reste disponible. Le certificat de résidence est facultatif. <a class="underline" href="{{ route('gerant.profil') }}">Compléter mon profil gérant →</a></x-ui.alerte>
+            @endif
+            <div class="carte-p">
+                <h2>3. Vérifier avant d’envoyer</h2>
+                <div class="pg-recap"><div><b>{{ $residence->nom }}</b><p class="aide">{{ $residence->commune }} · {{ $residence->unites->where('active', true)->count() }} logement(s) actif(s)</p></div><button type="button" wire:click="allerEtape(1)" class="btn-sec">Modifier</button></div>
+                <div class="pg-doc">
+                    <div class="flex flex-wrap items-center justify-between gap-2"><h3>Justificatif du droit de gestion</h3><span class="pg-badge or">Facultatif</span></div>
+                    <p class="aide">Un titre de propriété ou un mandat de gestion peut permettre l’attribution du badge de cette résidence, après contrôle par Avelis. Vous pouvez publier sans ce document.</p>
+                    @if($justificatifActuel)
+                        <p class="aide"><b>Document déjà enregistré</b> · {{ ['en_attente' => 'En cours de contrôle', 'accepte' => 'Validé', 'refuse' => 'Refusé'][$justificatifActuel->statut] }}</p>
+                        @if($justificatifActuel->motif_refus)<p class="erreur-champ">{{ $justificatifActuel->motif_refus }}</p>@endif
+                    @endif
+                    <div class="champ"><label for="justif" class="etiquette">{{ $justificatifActuel ? 'Remplacer le justificatif (facultatif)' : 'Ajouter un justificatif (facultatif)' }}</label><input id="justif" wire:key="justif-{{ $versionPieces }}" type="file" accept="application/pdf,image/jpeg,image/png" wire:model="justificatif" class="saisie py-3"><p class="aide">PDF, JPEG ou PNG · 5 Mo maximum.</p>@error('justificatif')<p class="erreur-champ">{{ $message }}</p>@enderror</div>
+                    @error('pieces')<p class="erreur-champ" role="alert">{{ $message }}</p>@enderror
+                    <button type="button" wire:click="envoyerPieces" class="btn-sec" wire:loading.attr="disabled" x-bind:disabled="transferts > 0">Enregistrer le justificatif seul</button>
+                </div>
+                <div wire:loading wire:target="justificatif" role="status" class="aide">Transfert du fichier en cours…</div>
+                <div class="flex flex-wrap gap-3"><button type="button" wire:click="soumettre" class="btn-pl" wire:loading.attr="disabled" x-bind:disabled="transferts > 0" @disabled(! $profilGerant?->identiteValidee())>Envoyer pour validation →</button><a class="btn-sec" href="{{ route('gerant.residences') }}">Revenir à mes brouillons</a></div>
+                <p class="aide">Les informations et logements enregistrés sont conservés. La résidence deviendra visible après validation de son annonce par Avelis.</p>
+            </div>
         </div>
-        <div class="grid gap-2 sm:grid-cols-2">
-            <button type="button" wire:click="envoyerPieces" class="btn-sec pleine" wire:loading.attr="disabled" x-bind:disabled="transfertPieces > 0">Enregistrer les pièces</button>
-            <button type="button" wire:click="soumettre" class="btn-pl pleine" wire:loading.attr="disabled" x-bind:disabled="transfertPieces > 0">Envoyer pour vérification</button>
-        </div>
+        <aside class="carte-p"><h2>Après votre envoi</h2><p class="aide">Vous revenez à « Mes résidences » avec une confirmation et le statut <b>En attente de validation</b>.</p><p class="aide">La certification du gérant et le badge de la résidence sont facultatifs. Ils ne remplacent pas la validation de l’annonce.</p></aside>
     </div>
     @endif
 </div>

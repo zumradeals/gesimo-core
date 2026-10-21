@@ -8,7 +8,12 @@ class DocumentVerification extends Model
 {
     protected $table = 'document_verification';
 
-    protected $fillable = ['residence_id', 'type', 'chemin', 'statut', 'verifie_par', 'verifie_le'];
+    protected $fillable = ['residence_id', 'type', 'chemin', 'statut', 'verifie_par', 'verifie_le', 'remplace_le', 'motif_refus'];
+
+    protected function casts(): array
+    {
+        return ['verifie_le' => 'datetime', 'remplace_le' => 'datetime'];
+    }
 
     public function libelle(): string
     {

@@ -31,7 +31,7 @@ class MiseEnAvantService
     public function creerAchat(Utilisateur $gerant, Residence $residence, int $indexOffre): MiseEnAvant
     {
         Gate::forUser($gerant)->authorize('update', $residence);
-        if (! $residence->estVerifiee()) {
+        if (! $residence->estPubliee()) {
             throw new PaiementImpossible('Seule une résidence vérifiée par Avelis peut être mise en avant.');
         }
         $offre = self::offres()[$indexOffre] ?? throw new PaiementImpossible('Cette offre n\'existe plus : choisissez-en une autre.');

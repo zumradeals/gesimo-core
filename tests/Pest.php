@@ -6,6 +6,7 @@ use App\Paiement\Models\Paiement;
 use App\Paiement\Services\ArriveeService;
 use App\Paiement\Services\PaiementService;
 use App\Parametres\Services\Parametres;
+use App\Sejours\Models\ProfilGerant;
 use App\Sejours\Models\Reservation;
 use App\Sejours\Models\Residence;
 use App\Sejours\Models\Unite;
@@ -17,6 +18,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Testing\TestResponse;
 use Tests\TestCase;
@@ -41,7 +43,22 @@ function creerUtilisateur(Role ...$roles): Utilisateur
         $utilisateur->attribuerRole($role);
     }
 
+    if (in_array(Role::Gerant, $roles, true)) {
+        identiteGerantValidee($utilisateur);
+    }
+
     return $utilisateur;
+}
+
+/** Fixture : les parcours de réservation existants utilisent un hébergeur déjà contrôlé. */
+function identiteGerantValidee(Utilisateur $gerant): ProfilGerant
+{
+    $profil = ProfilGerant::pour($gerant);
+    $chemin = 'tests-identites/'.$gerant->id.'.pdf';
+    Storage::disk('local')->put($chemin, 'Identité fictive réservée aux tests');
+    $profil->documents()->firstOrCreate(['type' => 'identite', 'statut' => 'accepte'], ['chemin' => $chemin, 'verifie_le' => now()]);
+
+    return $profil;
 }
 
 function creerResidence(?Utilisateur $gerant = null, array $attributs = []): Residence
@@ -305,4 +322,15 @@ function reservationTerminee(TestCase $test, object $faux): Reservation
     app(ArriveeService::class)->enregistrerDepart($reservation->fresh(), $gerant);
 
     return $reservation->fresh();
+}
+
+function dossierGerantComplet($gerant, array $attributs = []): Residence
+{
+    $residence = creerResidence($gerant, $attributs + ['statut_verification' => 'en_attente']);
+    $unite = creerUnite($residence);
+    $unite->tarifs()->create(['type_periode' => 'standard', 'prix_nuit' => 15000]);
+    Storage::disk('public')->put("photos/{$residence->id}/salon.jpg", 'photo');
+    $residence->photos()->create(['chemin' => "photos/{$residence->id}/salon.jpg", 'unite_id' => $unite->id, 'ordre' => 1]);
+
+    return $residence;
 }

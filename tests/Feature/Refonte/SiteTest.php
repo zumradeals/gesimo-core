@@ -185,7 +185,7 @@ it('l\'assistant de résidence avance en 3 étapes et ne saute pas une étape ta
     $page = Livewire::actingAs($gerant)->test(EditerResidence::class, ['residence' => $residence])
         ->assertSet('etape', 1)->assertSee('1 Ma résidence')->assertSee('Étape suivante : mes logements');
     $page->call('allerEtape', 2)->assertSet('etape', 2)->assertSee('Mes logements')->assertSee($unite->nom);
-    $page->call('allerEtape', 3)->assertSet('etape', 3)->assertSee('Envoyer pour vérification')->assertSee('Pièce d\'identité du gérant', false);
+    $page->call('allerEtape', 3)->assertSet('etape', 3)->assertSee('Vérification et envoi')->assertSee('Votre identité est validée.');
     $page->call('allerEtape', 9)->assertSet('etape', 1);
 });
 

@@ -30,7 +30,7 @@ class Disponibilites
             ->where('active', true)
             ->where('capacite', '>=', max(1, $personnes))
             ->whereHas('residence', function ($q) use ($commune) {
-                $q->where('statut_verification', 'verifiee');
+                $q->publiee();
                 if ($commune) {
                     $q->where('commune', $commune);
                 }
@@ -41,7 +41,7 @@ class Disponibilites
                     $q->whereHas('equipements', fn ($e) => $e->where('equipement.id', $id));
                 }
             })
-            ->with(['residence.photos', 'photos', 'tarifs', 'equipements'])
+            ->with(['residence.documents', 'residence.photos', 'photos', 'tarifs', 'equipements'])
             ->limit($limite)
             ->get();
 

@@ -6,10 +6,12 @@ use App\Noyau\Enums\Role;
 use App\Noyau\Models\Utilisateur;
 use App\Paiement\Models\Paiement;
 use App\Sejours\Models\MembreResidence;
+use App\Sejours\Models\ProfilGerant;
 use App\Sejours\Models\Reservation;
 use App\Sejours\Models\Residence;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use RuntimeException;
 
@@ -38,6 +40,11 @@ class DemoSeeder extends Seeder
                 'admin' => $this->compte('DÉMO Admin', '0700000004', 'admin', Role::Admin, $motDePasse),
                 'super_admin' => $this->compte('DÉMO Super-administrateur', '0700000005', 'superadmin', Role::SuperAdmin, $motDePasse),
             ];
+
+            // Identité fictive, uniquement dans la démonstration interdite en production.
+            $profil = ProfilGerant::pour($comptes['gerant']);
+            Storage::disk('local')->put('demo/identite-gerant.txt', 'DOCUMENT FICTIF — DÉMONSTRATION UNIQUEMENT');
+            $profil->documents()->firstOrCreate(['type' => 'identite', 'statut' => 'accepte'], ['chemin' => 'demo/identite-gerant.txt', 'verifie_par' => $comptes['admin']->id, 'verifie_le' => now()]);
 
             $residence = Residence::create([
                 'gerant_id' => $comptes['gerant']->id,
