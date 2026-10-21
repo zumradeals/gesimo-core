@@ -1,27 +1,85 @@
 @php
+    use App\Noyau\Services\Navigation;
     $utilisateur = auth()->user();
-    $menu = \App\Noyau\Services\Navigation::menu($utilisateur);
     $routeCourante = request()->route()?->getName();
+    $habillage = Navigation::habillage($utilisateur, $routeCourante);
     $estActif = fn (array $m) => in_array($routeCourante, $m['actif'], true);
 @endphp
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="theme-color" content="#0f766e">
-    <link rel="manifest" href="{{ route('pwa.manifeste') }}">
-    <link rel="icon" type="image/png" sizes="48x48" href="/icons/favicon-48.png">
-    <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <meta name="apple-mobile-web-app-title" content="{{ \Illuminate\Support\Str::limit(explode(' ', \App\Parametres\Services\Marque::nom())[0], 12, '') }}">
-    <title>{{ isset($title) ? $title.' — ' : '' }}{{ \App\Parametres\Services\Marque::nom() }}</title>
-    @livewireStyles
-    @livewireScriptConfig
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+@include('layouts.partiels.tete')
 </head>
+@if($habillage === 'site')
+@php
+    $menuSite = Navigation::site();
+    $pleine = in_array($routeCourante, Navigation::PAGES_PLEINES, true);
+    $menuBas = $utilisateur ? Navigation::menu($utilisateur) : null;
+@endphp
+<body class="site min-h-screen {{ $utilisateur ? 'bas-site' : 'bas-visiteur' }}">
+    @include('layouts.partiels.entete-site')
+    <main class="page-courante">
+        @if($pleine){{ $slot }}@else<div class="cont" style="padding-top:22px;padding-bottom:36px">{{ $slot }}</div>@endif
+    </main>
+    @include('layouts.partiels.pied-site')
+    @php $barre = $menuBas ?? Navigation::menu(null); @endphp
+    <nav class="barre-bas {{ $utilisateur ? '' : 'barre-bas-visiteur' }}" aria-label="Menu de l'application">
+        @foreach($barre as $m)
+            <a href="{{ route($m['route']) }}" class="{{ $estActif($m) ? 'on' : '' }}" @if($estActif($m)) aria-current="page" @endif><x-ui.icone :nom="$m['icone']" /><span>{{ $m['libelle'] }}</span></a>
+        @endforeach
+    </nav>
+</body>
+@elseif($habillage === 'admin')
+@php
+    $menuAdmin = Navigation::admin($utilisateur);
+    $parRoute = collect($menuAdmin)->keyBy('route');
+    $bas = collect(Navigation::ADMIN_BAS)->map(fn ($r) => $parRoute[$r] ?? null)->filter()->values();
+    $plus = collect($menuAdmin)->reject(fn ($m) => in_array($m['route'], Navigation::ADMIN_BAS, true))->values();
+    $plusActif = $plus->contains(fn ($m) => $estActif($m)) || in_array($routeCourante, ['compte', 'profil'], true);
+    $libelleBas = ['admin.tableau' => 'Accueil', 'admin.paiements' => 'Argent'];
+@endphp
+<body class="min-h-screen">
+    <div class="adm-cadre">
+        <aside class="adm-side" aria-label="Menu de l'administration">
+            <x-ui.logo :clair="true" />
+            <nav>
+                @foreach($menuAdmin as $m)
+                    <a href="{{ route($m['route']) }}" class="{{ $estActif($m) ? 'on' : '' }}" @if($estActif($m)) aria-current="page" @endif><x-ui.icone :nom="$m['icone']" classe="ic" /><span>{{ $m['libelle'] }}</span></a>
+                @endforeach
+            </nav>
+            <div class="adm-moi">
+                <span class="avatar">{{ mb_strtoupper(mb_substr($utilisateur->nom, 0, 1)) }}</span>
+                <div><b>{{ $utilisateur->nom }}</b><small>{{ $utilisateur->estSuperAdmin() ? 'Super-administrateur' : 'Administrateur' }}</small>
+                    <a href="{{ route('compte') }}">Mon compte</a> ·
+                    <form method="POST" action="{{ route('deconnexion') }}" class="inline">@csrf<button>Se déconnecter</button></form></div>
+            </div>
+        </aside>
+        <div>
+            <header class="adm-haut"><x-ui.logo :clair="true" /><span class="max-w-[55%] truncate text-[15px] font-semibold">{{ $title ?? '' }}</span></header>
+            <main class="adm-main">{{ $slot }}</main>
+        </div>
+    </div>
+    <input type="checkbox" id="plus-admin" class="plus-cb" aria-label="Plus de rubriques">
+    <div class="plus-feuille">
+        <label for="plus-admin" class="absolute inset-0" aria-label="Fermer"></label>
+        <div class="plus-liste">
+            @foreach($plus as $m)
+                <a href="{{ route($m['route']) }}"><x-ui.icone :nom="$m['icone']" classe="ic" />{{ $m['libelle'] }}</a>
+            @endforeach
+            <a href="{{ route('compte') }}"><x-ui.icone nom="compte" classe="ic" />Mon compte</a>
+            <a href="{{ route('accueil') }}"><x-ui.icone nom="recherche" classe="ic" />Voir le site</a>
+            <form method="POST" action="{{ route('deconnexion') }}">@csrf<button><x-ui.icone nom="sortie" classe="ic" />Se déconnecter</button></form>
+        </div>
+    </div>
+    <nav class="barre-bas adm-bas" aria-label="Menu principal">
+        @foreach($bas as $m)
+            <a href="{{ route($m['route']) }}" class="{{ $estActif($m) ? 'on' : '' }}" @if($estActif($m)) aria-current="page" @endif><x-ui.icone :nom="$m['icone']" /><span>{{ $libelleBas[$m['route']] ?? $m['libelle'] }}</span></a>
+        @endforeach
+        <label for="plus-admin" class="{{ $plusActif ? 'on' : '' }}"><x-ui.icone nom="plus-menu" /><span>Plus</span></label>
+    </nav>
+</body>
+@else
+@php $menu = Navigation::menu($utilisateur); @endphp
 <body class="min-h-screen">
     {{-- Ordinateur : barre du haut, pleine largeur --}}
     <header class="sticky top-0 z-30 hidden h-16 items-center gap-2 border-b border-trait bg-white px-8 lg:flex">
@@ -34,12 +92,8 @@
             </a>
         @endforeach
         <div class="ml-auto flex items-center gap-3 text-sm text-gris-doux">
-            @if($utilisateur)
-                <span>{{ $utilisateur->nom }}</span>
-                <form method="POST" action="{{ route('deconnexion') }}">@csrf<button class="rounded-xl px-3 py-2 font-semibold hover:bg-fond">Se déconnecter</button></form>
-            @else
-                <a href="{{ route('inscription') }}" class="rounded-xl bg-marque-600 px-4 py-2 font-bold text-white">Créer un compte</a>
-            @endif
+            <span>{{ $utilisateur->nom }}</span>
+            <form method="POST" action="{{ route('deconnexion') }}">@csrf<button class="rounded-xl px-3 py-2 font-semibold hover:bg-fond">Se déconnecter</button></form>
         </div>
     </header>
 
@@ -57,6 +111,7 @@
             <a class="py-2 hover:underline" href="{{ route('contact') }}">Contact</a>
             <a class="py-2 hover:underline" href="{{ route('conditions') }}">Conditions</a>
             <a class="py-2 hover:underline" href="{{ route('confidentialite') }}">Confidentialité</a>
+            <a class="py-2 hover:underline" href="{{ route('mentions-legales') }}">Mentions légales</a>
             <a class="py-2 hover:underline" href="{{ route('devenir-partenaire') }}">Devenir gérant partenaire</a>
         </footer>
     </main>
@@ -71,4 +126,5 @@
         @endforeach
     </nav>
 </body>
+@endif
 </html>

@@ -30,6 +30,7 @@ use App\Paiement\Livewire\ReversementsAdmin;
 use App\Paiement\Livewire\SommesDues;
 use App\Parametres\Livewire\EspaceParametres;
 use App\Sejours\Http\TelechargerDocument;
+use App\Sejours\Livewire\Accueil;
 use App\Sejours\Livewire\Admin\ListeVerifications;
 use App\Sejours\Livewire\Admin\LitigesAdmin;
 use App\Sejours\Livewire\Admin\TableauDeBord;
@@ -51,7 +52,7 @@ use App\Sejours\Livewire\ReservationTelephone;
 use Illuminate\Support\Facades\Route;
 
 // --- Public --------------------------------------------------------------------------------
-Route::livewire('/', Recherche::class)->name('accueil');
+Route::livewire('/', Accueil::class)->name('accueil');
 Route::livewire('/recherche', Recherche::class)->name('recherche');
 Route::livewire('/logement/{unite}', FicheLogement::class)->name('logement');
 
@@ -69,7 +70,7 @@ Route::livewire('/installation', Installation::class)->name('installation');
 
 // Pages d'information
 Route::livewire('/contact', Contact::class)->name('contact');
-foreach (['a-propos', 'faq', 'conditions', 'confidentialite'] as $page) {
+foreach (['a-propos', 'faq', 'conditions', 'confidentialite', 'mentions-legales'] as $page) {
     Route::livewire('/'.$page, PageStatique::class)->defaults('page', $page)->name($page);
 }
 Route::livewire('/devenir-partenaire', PageStatique::class)->defaults('page', 'devenir-partenaire')->name('devenir-partenaire');

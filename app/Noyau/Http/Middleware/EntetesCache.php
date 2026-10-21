@@ -16,7 +16,7 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class EntetesCache
 {
-    private const PUBLIQUES = ['accueil', 'recherche', 'logement', 'faq', 'a-propos', 'conditions', 'confidentialite', 'devenir-partenaire', 'contact'];
+    private const PUBLIQUES = ['accueil', 'recherche', 'logement', 'faq', 'a-propos', 'conditions', 'confidentialite', 'devenir-partenaire', 'contact', 'mentions-legales'];
 
     private const PRIVEES_CLIENT = ['mes-reservations', 'reservation.detail'];
 

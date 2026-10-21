@@ -11,7 +11,7 @@ class Navigation
     /** @return list<array{libelle: string, icone: string, route: string, actif: list<string>}> */
     public static function menu(?Utilisateur $u): array
     {
-        $chercher = ['libelle' => 'Chercher', 'icone' => 'recherche', 'route' => 'accueil', 'actif' => ['accueil', 'recherche', 'logement', 'reserver']];
+        $chercher = ['libelle' => 'Chercher', 'icone' => 'recherche', 'route' => 'recherche', 'actif' => ['accueil', 'recherche', 'logement', 'reserver']];
 
         $aide = ['libelle' => 'Aide', 'icone' => 'aide', 'route' => 'faq', 'actif' => ['faq', 'contact', 'a-propos', 'conditions', 'confidentialite', 'devenir-partenaire']];
 
@@ -49,4 +49,68 @@ class Navigation
 
         return $menu;
     }
+
+    /** Pages publiques qui occupent toute la largeur (elles dessinent elles-mêmes leurs sections). */
+    public const PAGES_PLEINES = ['accueil', 'recherche', 'logement', 'a-propos', 'devenir-partenaire', 'faq', 'contact', 'conditions', 'confidentialite', 'mentions-legales', 'connexion', 'inscription', 'connexion.lien', 'invitation'];
+
+    /** Pages d'un compte (client, gérant) qui gardent le site public autour d'elles. */
+    public const PAGES_PUBLIQUES = ['accueil', 'recherche', 'logement', 'a-propos', 'devenir-partenaire', 'faq', 'contact', 'conditions', 'confidentialite', 'mentions-legales', 'connexion', 'inscription', 'connexion.lien', 'invitation'];
+
+    /**
+     * Habillage de la page : « site » (visiteur et client), « admin » (menu latéral) ou « app » (gérant et personnel).
+     */
+    public static function habillage(?Utilisateur $u, ?string $route): string
+    {
+        $route ??= '';
+        if ($u !== null && $u->estAdmin() && (str_starts_with($route, 'admin.') || in_array($route, ['compte', 'profil'], true))) {
+            return 'admin';
+        }
+        if ($u !== null && ($u->estAdmin() || $u->aRole(Role::Gerant) || $u->aRole(Role::Personnel)) && ! in_array($route, self::PAGES_PUBLIQUES, true)) {
+            return 'app';
+        }
+
+        return 'site';
+    }
+
+    /** Menu de l'en-tête du site public. @return list<array{libelle: string, route: string, actif: list<string>}> */
+    public static function site(): array
+    {
+        return [
+            ['libelle' => 'Accueil', 'route' => 'accueil', 'actif' => ['accueil']],
+            ['libelle' => 'Logements', 'route' => 'recherche', 'actif' => ['recherche', 'logement']],
+            ['libelle' => 'À propos', 'route' => 'a-propos', 'actif' => ['a-propos']],
+            ['libelle' => 'Devenir partenaire', 'route' => 'devenir-partenaire', 'actif' => ['devenir-partenaire']],
+            ['libelle' => 'Aide', 'route' => 'faq', 'actif' => ['faq']],
+            ['libelle' => 'Contact', 'route' => 'contact', 'actif' => ['contact']],
+        ];
+    }
+
+    /**
+     * Menu latéral de l'administration.
+     *
+     * @return list<array{libelle: string, icone: string, route: string, actif: list<string>}>
+     */
+    public static function admin(Utilisateur $u): array
+    {
+        $menu = [
+            ['libelle' => 'Tableau de bord', 'icone' => 'maison', 'route' => 'admin.tableau', 'actif' => ['admin.tableau']],
+            ['libelle' => 'Résidences à valider', 'icone' => 'batiment', 'route' => 'admin.residences', 'actif' => ['admin.residences', 'admin.residence']],
+            ['libelle' => 'Réservations', 'icone' => 'liste', 'route' => 'admin.reservations', 'actif' => ['admin.reservations']],
+            ['libelle' => 'Litiges', 'icone' => 'alerte', 'route' => 'admin.litiges', 'actif' => ['admin.litiges']],
+            ['libelle' => 'Paiements', 'icone' => 'carte', 'route' => 'admin.paiements', 'actif' => ['admin.paiements']],
+            ['libelle' => 'Reversements', 'icone' => 'argent', 'route' => 'admin.reversements', 'actif' => ['admin.reversements']],
+            ['libelle' => 'Contrôle', 'icone' => 'balance', 'route' => 'admin.controle', 'actif' => ['admin.controle']],
+            ['libelle' => 'Mises en avant', 'icone' => 'etoile', 'route' => 'admin.mises-en-avant', 'actif' => ['admin.mises-en-avant']],
+            ['libelle' => 'Journal d\'audit', 'icone' => 'equipe', 'route' => 'admin.journal', 'actif' => ['admin.journal']],
+        ];
+        if ($u->estSuperAdmin()) {
+            $menu[] = ['libelle' => 'Modèles d\'e-mails', 'icone' => 'mail', 'route' => 'admin.messages', 'actif' => ['admin.messages']];
+            $menu[] = ['libelle' => 'Réglages', 'icone' => 'reglage', 'route' => 'admin.reglages', 'actif' => ['admin.reglages']];
+        }
+
+        return $menu;
+    }
+
+    /** Les cinq entrées du menu du bas (téléphone) ; le reste est derrière « Plus ». @return list<string> routes */
+    public const ADMIN_BAS = ['admin.tableau', 'admin.reservations', 'admin.paiements', 'admin.controle'];
 }
