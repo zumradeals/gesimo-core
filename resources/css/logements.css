@@ -181,3 +181,6 @@
 @media(max-width:900px){.lo-btn.lo-apply{display:flex}
 }
 
+
+@media(min-width:901px){.lo-side{top:110px}}
+@media(min-width:901px) and (max-width:1279px){.lo-side{top:160px}}

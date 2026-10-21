@@ -10,7 +10,8 @@ export default () => ({
     adapter() {
         this.$refs.panel.close();
         this.ouvert = false;
-        if (!this.media.matches) this.$refs.panel.show();
+        // L’attribut ouvre la colonne sans voler le focus ni faire défiler la page.
+        if (!this.media.matches) this.$refs.panel.setAttribute('open', '');
     },
     ouvrir() {
         if (!this.media.matches) return;

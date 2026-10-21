@@ -14,6 +14,7 @@ try {
     await page.goto(base + '/recherche');
     await page.waitForFunction(() => !!document.querySelector('[x-data="filtresLogements"]')._x_dataStack);
     assert(await cards.count() >= 12);
+    assert.equal(await page.evaluate(() => window.scrollY), 0, 'La colonne de filtres ne déplace pas le lecteur à l’ouverture.');
     await page.getByText('Tarif de référence', { exact: true }).first().waitFor();
     assert(await page.locator('#budget').isDisabled());
     assert.equal(await page.getByText('Montant du séjour', { exact: true }).count(), 0);
@@ -26,6 +27,7 @@ try {
     }
     await page.setViewportSize({ width: 1440, height: 1000 });
     await page.locator('img').evaluateAll(imgs => Promise.all(imgs.map(img => { img.loading = 'eager'; return img.decode(); })));
+    await page.evaluate(() => window.scrollTo(0, 0));
     await page.screenshot({ path: output + '/logements-ordinateur.png', fullPage: true });
     await page.locator('#commune').selectOption('Marcory');
     await page.getByRole('button', { name: 'Rechercher', exact: true }).click();
@@ -60,6 +62,7 @@ try {
     await page.locator('#budget').fill('');
     await cards.first().waitFor({ state: 'attached' });
     await page.getByRole('button', { name: 'Afficher les logements', exact: true }).click();
+    await page.evaluate(() => window.scrollTo(0, 0));
     await page.screenshot({ path: output + '/logements-telephone.png', fullPage: true });
     const lien = new URL(await page.locator('.lo-details').first().getAttribute('href'), base);
     assert.equal(lien.searchParams.get('arrivee'), date(40));
