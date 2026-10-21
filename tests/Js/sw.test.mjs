@@ -84,6 +84,14 @@ assert.equal(await r.text(), 'FAQ publique'); ok('réseau coupé : la page publi
 assert.equal(await r.text(), 'HORS CONNEXION'); ok('réseau coupé : une page jamais consultée affiche la page « hors connexion »');
 reseau = 'ok';
 
+// --- illustrations publiques de l’accueil : conservées hors connexion -------------------------
+reponses['/images/sejours/studio.webp'] = () => new Response('ILLUSTRATION_PUBLIQUE', { headers: { 'Content-Type': 'image/webp' } });
+await evenement('fetch', nav('/images/sejours/studio.webp'));
+reseau = 'coupe';
+({ r } = await evenement('fetch', nav('/images/sejours/studio.webp')));
+assert.equal(await r.text(), 'ILLUSTRATION_PUBLIQUE'); ok('les illustrations publiques de l’accueil restent lisibles hors connexion');
+reseau = 'ok';
+
 // --- « Mes réservations » (client) -------------------------------------------------------------
 reponses['/mes-reservations'] = page('prive', 'MES RESERVATIONS Awa');
 await evenement('fetch', nav('/mes-reservations'));

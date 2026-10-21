@@ -8,6 +8,7 @@ Les quatre onglets mobiles sont visibles dans le navigateur et la PWA, avec un o
 Les espaces métier gérant et administrateur conservent leur navigation ; le site public adapte l’accès aux réservations au rôle.
 Le visuel principal reste remplaçable dans les Réglages. Coordonnées, marque, réseaux et informations légales continuent à provenir de la base.
 Les trois exemples fictifs demandés sont clairement séparés et non réservables ; ils ne créent aucun compte, logement, paiement ou disponibilité.
+Les illustrations publiques sont aussi prises en charge par le cache PWA, avec un test de coupure réseau ; les pièces privées restent exclues.
 Les annonces réelles et les données déjà présentes sont conservées. Aucun seeder n’a été lancé sur le serveur.
 
 ## Contrat

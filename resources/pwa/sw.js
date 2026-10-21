@@ -26,7 +26,7 @@ const NE_JAMAIS = [
   /^\/livewire(?!-[^/]+\/livewire(\.min)?\.js)/,
 ];
 const STATIQUES = [/^\/build\/assets\//, /^\/icons\//, /^\/livewire-[^/]+\/livewire(\.min)?\.js$/];
-const IMAGES = [/^\/storage\/(photos|logo)\//];
+const IMAGES = [/^\/storage\/(photos|logo)\//, /^\/images\/sejours\/[^/]+\.webp$/];
 
 function classer(url, methode) {
   const u = new URL(url, 'https://exemple.invalid');
