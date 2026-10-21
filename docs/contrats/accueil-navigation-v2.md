@@ -6,21 +6,23 @@ Donner envie de séjourner, expliquer les contrôles réels et rendre la recherc
 
 ## Conception validée
 
-Le porteur a validé en conversation le 21 octobre 2026 la maquette ordinateur puis la déclinaison téléphone avec quatre onglets fixes. Références conservées dans `docs/maquettes/accueil-v2/ordinateur.webp` et `telephone.webp`. L’intégration de l’accueil et de sa navigation est explicitement autorisée, ainsi que la conservation des offres fictives de présentation.
+Le porteur a validé en conversation le 21 octobre 2026 la maquette ordinateur puis la déclinaison téléphone avec quatre onglets fixes. Références conservées dans `docs/maquettes/accueil-v2/ordinateur.webp` et `telephone.webp`. L’intégration de l’accueil et de sa navigation est explicitement autorisée, puis corrigée à sa demande : largeur fluide sur ordinateur, textes plus grands et suppression des offres fictives. Cette dernière décision remplace leur conservation initialement demandée.
 
 - Header compact, aide visible sur téléphone, navigation complète sur ordinateur.
 - Hero photographique, titre « Un lieu à vous. Le temps d’un séjour. », recherche commune/dates/voyageurs.
-- Offres réellement publiées en premier, puis exemples illustratifs dans une section séparée.
+- Offres réellement publiées uniquement ; carte large pour une seule offre, deux ou trois colonnes selon le nombre d’annonces. Aucune section « Pour vous projeter » ni mention de démonstration.
 - Contrôles d’identité, certification et gestion expliqués sans les confondre ; avis uniquement issus de séjours réels.
 - Communes présentes en base, aucune géographie ou disponibilité inventée.
 - Parcours en trois étapes, invitation aux gérants, FAQ puis footer professionnel avec coordonnées et mentions réglées dans la base.
 - Sur téléphone : Accueil, Logements, Réservations, Compte, dans le navigateur comme dans l’application installée ; onglet actif visible et espace réservé au-dessus de la zone de sécurité.
 
-## Données et limites de la démonstration
+## Données et réglages
 
-Les trois exemples sont de simples contenus éditoriaux de présentation : chaque carte indique son caractère fictif, ses tarifs illustratifs et son absence de réservation. Aucun identifiant de logement, aucun bouton ni formulaire de réservation, aucune insertion en base. Ils ne figurent pas dans la recherche, les disponibilités ou le paiement. Les données de démonstration déjà présentes et le DemoSeeder restent conservés ; le seeder n’est pas exécuté sur le serveur de production.
+Aucune offre fictive éditoriale n’est affichée. Aucun logement de substitution n’est créé lorsque l’inventaire est vide. Les données existantes en base et le DemoSeeder ne sont pas modifiés ni exécutés en production.
 
-Les photographies d’illustration générées ne remplacent jamais les photos d’une annonce réelle. Le visuel principal est remplaçable par le réglage existant « Image de la page d’accueil ». Les exemples éditoriaux se modifient dans la vue versionnée, sans nouveau système d’administration dans ce lot.
+Les photographies d’ambiance ne remplacent jamais les photos d’une annonce réelle. Les réglages Général permettent déjà de modifier le nom, le slogan, le logo, le visuel principal, les coordonnées, les réseaux sociaux et les textes institutionnels/légaux. Les titres et blocs de l’accueil restent dans la vue versionnée : aucun éditeur de sections n’est ajouté dans ce lot.
+
+Sur ordinateur, les conteneurs de l’accueil, du header et du footer ont des marges proportionnelles à l’écran ; les textes explicatifs sont agrandis. Le héros et la navigation téléphone validés sont conservés.
 
 ## Implémentation
 

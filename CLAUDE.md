@@ -27,7 +27,7 @@ Le code met en œuvre cette organisation ; le contrat décrit aussi la reprise p
 ## Refonte accueil et navigation (21 octobre 2026)
 
 Les maquettes ordinateur et téléphone ont été validées. Référence : `docs/contrats/accueil-navigation-v2.md`.
-Le porteur demande de conserver les exemples fictifs ; ils restent séparés, explicitement non réservables et sans insertion en base.
+Dernière décision du porteur : retirer les offres fictives et leurs mentions de l’accueil. Seules les annonces réellement publiées sont présentées. Le contenu sur ordinateur occupe une largeur fluide avec une typographie plus lisible ; le héros validé est conservé.
 
 ## Règles absolues
 1. Ne jamais inventer une règle de gestion. Cahier muet ou contradictoire : s'arrêter et poser la question avec une recommandation.
