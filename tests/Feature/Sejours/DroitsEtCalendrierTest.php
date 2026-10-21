@@ -151,11 +151,12 @@ it('le personnel ne peut pas retirer un blocage ni annuler une réservation de l
     expect(BlocageCalendrier::count())->toBe(1);
 });
 
-it('chaque rôle voit son propre menu : barre d\'onglets en bas sur téléphone, barre du haut sur ordinateur', function () {
+it('chaque rôle voit son propre menu : menu latéral sur ordinateur, menu du bas sur téléphone, jamais le site public autour', function () {
     $this->get('/')->assertOk()->assertSee('Se connecter')->assertSee('aria-label="Menu principal"', false)->assertDontSee('Mes réservations');
-    $this->actingAs(creerUtilisateur(Role::Client))->get('/')->assertSee('Mes réservations')->assertSee('Chercher')->assertDontSee('Calendrier');
-    $this->actingAs(creerUtilisateur(Role::Gerant))->get('/gerant/residences')->assertSee('Calendrier')->assertSee('Résidences')->assertSee('Arrivées')->assertSee('Argent')->assertDontSee('Mes réservations');
-    $this->actingAs(creerUtilisateur(Role::Admin))->get('/admin/residences')->assertSee('Accueil')->assertSee('Paiements')->assertSee('Reversements')->assertSee('Contrôle');
+    $this->actingAs(creerUtilisateur(Role::Client))->get('/mes-reservations')->assertSee('Mes réservations')->assertSee('Chercher un logement')->assertSee('Mon profil')->assertDontSee('Calendrier')->assertDontSee('class="site-f"', false);
+    $this->actingAs(creerUtilisateur(Role::Gerant))->get('/gerant/residences')->assertSee('Calendrier')->assertSee('Mes résidences')->assertSee('Aujourd\'hui')->assertSee('Argent')->assertDontSee('Mes réservations')->assertDontSee('class="site-f"', false);
+    $this->actingAs(creerUtilisateur(Role::Personnel))->get('/gerant/calendrier')->assertSee('Calendrier')->assertDontSee('Argent')->assertDontSee('Mes résidences');
+    $this->actingAs(creerUtilisateur(Role::Admin))->get('/admin/residences')->assertSee('Tableau de bord')->assertSee('Paiements')->assertSee('Reversements')->assertSee('Contrôle');
 });
 
 it('toutes les pages s\'affichent sans erreur pour la bonne personne', function () {

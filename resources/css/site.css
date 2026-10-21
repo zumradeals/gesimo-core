@@ -189,3 +189,4 @@ input[type=file]{max-width:100%;min-width:0}
 .site .btn-pl,.site .btn-sec,.site .btn-or{font-weight:800}
 .sect .filtres h2,.sect .filtres h3,.sect .carte-p h2,.sect .carte-p h3{font-size:17px;margin:0;letter-spacing:0}
 .sr-only-site{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.adm-role{display:block;margin:-10px 4px 0;font-size:12px;color:#9fbab6}

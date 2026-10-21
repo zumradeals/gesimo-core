@@ -5,51 +5,9 @@ namespace App\Noyau\Services;
 use App\Noyau\Enums\Role;
 use App\Noyau\Models\Utilisateur;
 
-/** Menus selon le rôle : barre du haut sur ordinateur, barre d'onglets en bas sur téléphone. */
+/** Menus : site public (en-tête) et espaces connectés (menu latéral sur ordinateur, menu du bas sur téléphone). */
 class Navigation
 {
-    /** @return list<array{libelle: string, icone: string, route: string, actif: list<string>}> */
-    public static function menu(?Utilisateur $u): array
-    {
-        $chercher = ['libelle' => 'Chercher', 'icone' => 'recherche', 'route' => 'recherche', 'actif' => ['accueil', 'recherche', 'logement', 'reserver']];
-
-        $aide = ['libelle' => 'Aide', 'icone' => 'aide', 'route' => 'faq', 'actif' => ['faq', 'contact', 'a-propos', 'conditions', 'confidentialite', 'devenir-partenaire']];
-
-        if ($u === null) {
-            return [$chercher, $aide, ['libelle' => 'Se connecter', 'icone' => 'compte', 'route' => 'connexion', 'actif' => ['connexion', 'inscription', 'connexion.lien']]];
-        }
-
-        $menu = [];
-        if ($u->estAdmin()) {
-            $menu[] = ['libelle' => 'Accueil', 'icone' => 'maison', 'route' => 'admin.tableau', 'actif' => ['admin.tableau', 'admin.reservations', 'admin.litiges', 'admin.journal', 'admin.messages', 'admin.mises-en-avant', 'admin.residences', 'admin.residence']];
-            $menu[] = ['libelle' => 'Paiements', 'icone' => 'carte', 'route' => 'admin.paiements', 'actif' => ['admin.paiements']];
-            $menu[] = ['libelle' => 'Reversements', 'icone' => 'argent', 'route' => 'admin.reversements', 'actif' => ['admin.reversements']];
-            $menu[] = ['libelle' => 'Contrôle', 'icone' => 'balance', 'route' => 'admin.controle', 'actif' => ['admin.controle']];
-            if ($u->estSuperAdmin()) {
-                // Six onglets sur un téléphone de 360 px : « Reversements » devient « Verser » pour tenir.
-                $menu[2]['libelle'] = 'Verser';
-                $menu[] = ['libelle' => 'Réglages', 'icone' => 'cle', 'route' => 'admin.reglages', 'actif' => ['admin.reglages']];
-            }
-        }
-        if ($u->aRole(Role::Gerant)) {
-            $menu[] = ['libelle' => 'Arrivées', 'icone' => 'porte', 'route' => 'gerant.arrivees', 'actif' => ['gerant.arrivees']];
-            $menu[] = ['libelle' => 'Calendrier', 'icone' => 'calendrier', 'route' => 'gerant.calendrier', 'actif' => ['gerant.calendrier', 'gerant.telephone', 'gerant.reservations', 'gerant.probleme']];
-            $menu[] = ['libelle' => 'Argent', 'icone' => 'argent', 'route' => 'gerant.argent', 'actif' => ['gerant.argent']];
-            $menu[] = ['libelle' => 'Résidences', 'icone' => 'batiment', 'route' => 'gerant.residences', 'actif' => ['gerant.residences', 'gerant.residence.nouvelle', 'gerant.residence', 'gerant.personnel', 'gerant.aide', 'gerant.mises-en-avant', 'gerant.mise-en-avant.acheter', 'gerant.mise-en-avant.retour']];
-        } elseif ($u->aRole(Role::Personnel)) {
-            $menu[] = ['libelle' => 'Arrivées', 'icone' => 'porte', 'route' => 'gerant.arrivees', 'actif' => ['gerant.arrivees']];
-            $menu[] = ['libelle' => 'Calendrier', 'icone' => 'calendrier', 'route' => 'gerant.calendrier', 'actif' => ['gerant.calendrier']];
-        }
-        if ($u->aRole(Role::Client)) {
-            $menu[] = $chercher;
-            $menu[] = ['libelle' => 'Mes réservations', 'icone' => 'liste', 'route' => 'mes-reservations', 'actif' => ['mes-reservations', 'payer', 'paiement.retour', 'reservation.confirmation', 'reservation.annuler', 'reservation.detail', 'reservation.avis', 'reservation.probleme']];
-            $menu[] = $aide;
-        }
-        $menu[] = ['libelle' => 'Compte', 'icone' => 'compte', 'route' => 'compte', 'actif' => ['compte', 'profil']];
-
-        return $menu;
-    }
-
     /** Pages publiques qui occupent toute la largeur (elles dessinent elles-mêmes leurs sections). */
     public const PAGES_PLEINES = ['accueil', 'recherche', 'logement', 'a-propos', 'devenir-partenaire', 'faq', 'contact', 'conditions', 'confidentialite', 'mentions-legales', 'connexion', 'inscription', 'connexion.lien', 'invitation'];
 
@@ -57,19 +15,86 @@ class Navigation
     public const PAGES_PUBLIQUES = ['accueil', 'recherche', 'logement', 'a-propos', 'devenir-partenaire', 'faq', 'contact', 'conditions', 'confidentialite', 'mentions-legales', 'connexion', 'inscription', 'connexion.lien', 'invitation'];
 
     /**
-     * Habillage de la page : « site » (visiteur et client), « admin » (menu latéral) ou « app » (gérant et personnel).
+     * Habillage de la page : « site » (visiteur et pages publiques), « admin », « gerant » (gérant et personnel)
+     * ou « client » : chaque espace connecté a son menu latéral et n'affiche pas le site public autour de lui.
      */
     public static function habillage(?Utilisateur $u, ?string $route): string
     {
         $route ??= '';
-        if ($u !== null && $u->estAdmin() && (str_starts_with($route, 'admin.') || in_array($route, ['compte', 'profil'], true))) {
+        if ($u === null || in_array($route, self::PAGES_PUBLIQUES, true)) {
+            return 'site';
+        }
+        $gerant = $u->aRole(Role::Gerant) || $u->aRole(Role::Personnel);
+        if ($gerant && str_starts_with($route, 'gerant.')) {
+            return 'gerant';
+        }
+        if ($u->estAdmin()) {
             return 'admin';
         }
-        if ($u !== null && ($u->estAdmin() || $u->aRole(Role::Gerant) || $u->aRole(Role::Personnel)) && ! in_array($route, self::PAGES_PUBLIQUES, true)) {
-            return 'app';
+        if ($gerant) {
+            return 'gerant';
         }
 
-        return 'site';
+        return 'client';
+    }
+
+    /**
+     * Tout ce qu'il faut pour dessiner un espace connecté : menu latéral, quatre entrées du menu du bas (téléphone)
+     * et le reste derrière « Plus ».
+     *
+     * @return array{menu: list<array{libelle: string, icone: string, route: string, actif: list<string>}>, bas: list<string>, libelles: array<string, string>, role: string}
+     */
+    public static function coque(Utilisateur $u, string $habillage): array
+    {
+        if ($habillage === 'admin') {
+            return ['menu' => self::admin($u), 'bas' => self::ADMIN_BAS, 'libelles' => ['admin.tableau' => 'Accueil', 'admin.paiements' => 'Argent'], 'role' => $u->estSuperAdmin() ? 'Super-administrateur' : 'Administrateur'];
+        }
+        if ($habillage === 'gerant') {
+            return ['menu' => self::gerant($u), 'bas' => $u->aRole(Role::Gerant) ? ['gerant.arrivees', 'gerant.calendrier', 'gerant.argent', 'gerant.residences'] : ['gerant.arrivees', 'gerant.calendrier'], 'libelles' => ['gerant.arrivees' => 'Aujourd\'hui', 'gerant.residences' => 'Résidences'], 'role' => $u->aRole(Role::Gerant) ? 'Gérant' : 'Personnel'];
+        }
+
+        return ['menu' => self::client(), 'bas' => ['compte', 'mes-reservations', 'recherche', 'faq', 'profil'], 'libelles' => ['compte' => 'Accueil', 'mes-reservations' => 'Réservations', 'recherche' => 'Chercher', 'profil' => 'Profil'], 'role' => 'Client'];
+    }
+
+    /** Menu latéral du gérant (le personnel n'en voit qu'une partie). */
+    public static function gerant(Utilisateur $u): array
+    {
+        $menu = [
+            ['libelle' => 'Aujourd\'hui', 'icone' => 'porte', 'route' => 'gerant.arrivees', 'actif' => ['gerant.arrivees']],
+            ['libelle' => 'Calendrier', 'icone' => 'calendrier', 'route' => 'gerant.calendrier', 'actif' => ['gerant.calendrier', 'gerant.telephone']],
+        ];
+        if ($u->aRole(Role::Gerant)) {
+            $menu[] = ['libelle' => 'Réservations', 'icone' => 'liste', 'route' => 'gerant.reservations', 'actif' => ['gerant.reservations', 'gerant.probleme']];
+            $menu[] = ['libelle' => 'Argent', 'icone' => 'argent', 'route' => 'gerant.argent', 'actif' => ['gerant.argent']];
+            $menu[] = ['libelle' => 'Mes résidences', 'icone' => 'batiment', 'route' => 'gerant.residences', 'actif' => ['gerant.residences', 'gerant.residence.nouvelle', 'gerant.residence']];
+            $menu[] = ['libelle' => 'Mises en avant', 'icone' => 'etoile', 'route' => 'gerant.mises-en-avant', 'actif' => ['gerant.mises-en-avant', 'gerant.mise-en-avant.acheter', 'gerant.mise-en-avant.retour']];
+            $menu[] = ['libelle' => 'Mon personnel', 'icone' => 'equipe', 'route' => 'gerant.personnel', 'actif' => ['gerant.personnel']];
+            $menu[] = ['libelle' => 'Aide du gérant', 'icone' => 'aide', 'route' => 'gerant.aide', 'actif' => ['gerant.aide']];
+        }
+
+        return $menu;
+    }
+
+    /** Menu latéral du client. Chercher et Aide mènent au site public. */
+    public static function client(): array
+    {
+        return [
+            ['libelle' => 'Mon espace', 'icone' => 'maison', 'route' => 'compte', 'actif' => ['compte']],
+            ['libelle' => 'Mes réservations', 'icone' => 'liste', 'route' => 'mes-reservations', 'actif' => ['mes-reservations', 'reserver', 'payer', 'paiement.retour', 'reservation.confirmation', 'reservation.annuler', 'reservation.detail', 'reservation.avis', 'reservation.probleme']],
+            ['libelle' => 'Chercher un logement', 'icone' => 'recherche', 'route' => 'recherche', 'actif' => []],
+            ['libelle' => 'Mon profil', 'icone' => 'compte', 'route' => 'profil', 'actif' => ['profil']],
+            ['libelle' => 'Aide', 'icone' => 'aide', 'route' => 'faq', 'actif' => []],
+        ];
+    }
+
+    /** Menu du bas du site pour un visiteur dans l'application installée. */
+    public static function visiteur(): array
+    {
+        return [
+            ['libelle' => 'Chercher', 'icone' => 'recherche', 'route' => 'recherche', 'actif' => ['accueil', 'recherche', 'logement']],
+            ['libelle' => 'Aide', 'icone' => 'aide', 'route' => 'faq', 'actif' => ['faq', 'contact', 'a-propos', 'conditions', 'confidentialite', 'devenir-partenaire', 'mentions-legales']],
+            ['libelle' => 'Se connecter', 'icone' => 'compte', 'route' => 'connexion', 'actif' => ['connexion', 'inscription', 'connexion.lien']],
+        ];
     }
 
     /** Menu de l'en-tête du site public. @return list<array{libelle: string, route: string, actif: list<string>}> */

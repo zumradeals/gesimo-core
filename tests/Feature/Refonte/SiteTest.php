@@ -136,16 +136,18 @@ it('chaque rôle reçoit le bon habillage : site, menu latéral d\'administratio
     // Visiteur : en-tête du site, pied de page, menu d'application seulement visible dans l'application installée.
     $this->get('/')->assertSee('class="site-h"', false)->assertSee('class="site-f"', false)->assertSee('barre-bas-visiteur', false)->assertSee('Créer un compte');
 
-    // Client connecté : même site, avec son compte et le menu du bas.
-    $this->actingAs(creerUtilisateur(Role::Client))->get('/')->assertSee('class="site-h"', false)->assertSee('Mon compte')->assertDontSee('barre-bas-visiteur', false)->assertDontSee('Créer un compte');
+    // Client connecté : sur les pages publiques, le site avec « Mon compte » ; dans son espace, menu latéral et rien du site public.
+    $client = creerUtilisateur(Role::Client);
+    $this->actingAs($client)->get('/')->assertSee('class="site-h"', false)->assertSee('Mon compte')->assertDontSee('barre-bas-visiteur', false)->assertDontSee('Créer un compte');
+    $this->actingAs($client)->get('/compte')->assertSee('class="adm-side"', false)->assertSee('Mon espace')->assertSee('Chercher un logement')->assertDontSee('class="site-h"', false)->assertDontSee('class="site-f"', false);
 
     // Administrateur : menu latéral, et « Réglages » seulement pour le super-administrateur.
     $this->actingAs(creerUtilisateur(Role::Admin))->get('/admin')->assertSee('class="adm-side"', false)->assertSee('Résidences à valider')->assertDontSee('Réglages')->assertDontSee('class="site-f"', false);
     $this->actingAs(superAdminSite())->get('/admin')->assertSee('class="adm-side"', false)->assertSee('Réglages')->assertSee('Modèles d\'e-mails');
 
-    // Gérant : espace de travail habituel, mais le site public autour des pages publiques.
+    // Gérant : menu latéral à lui, mais le site public autour des pages publiques.
     $gerant = creerUtilisateur(Role::Gerant);
-    $this->actingAs($gerant)->get('/gerant/arrivees')->assertOk()->assertDontSee('class="site-h"', false)->assertDontSee('class="adm-side"', false);
+    $this->actingAs($gerant)->get('/gerant/arrivees')->assertOk()->assertSee('class="adm-side"', false)->assertSee('Espace gérant')->assertSee('Mises en avant')->assertDontSee('class="site-h"', false)->assertDontSee('class="site-f"', false);
     $this->actingAs($gerant)->get('/a-propos')->assertSee('class="site-h"', false);
 });
 
