@@ -19,7 +19,9 @@ Les communes sont disposées sur une seule ligne : quatre visibles de 1 024 à 1
 | Flèches et clavier | Défilement réel contrôlé dans Chromium |
 | Téléphone | 320 et 390 px sans débordement global |
 
-Compilation Vite, Pint et compilation Blade contrôlés localement. Résultat CI à compléter après exécution. Les données supplémentaires du navigateur sont isolées dans un script qui refuse de fonctionner hors de l’environnement testing.
+Compilation Vite, Pint et compilation Blade contrôlés localement. CI réussie sur le commit applicatif `a9b5dd93b5125721e05feaef2739ae2a84aa1da4` : **409 tests / 2 539 assertions**, migrations réversibles, PWA/hors connexion, build et deux parcours Chromium réussis. Le parcours accueil vérifie six annonces par catégorie sans doublons, quatre/cinq communes visibles, les deux flèches, le clavier, la désactivation en fin de piste et le lien vers la recherche. Captures ordinateur/téléphone inspectées.
+
+Preuve : https://github.com/zumradeals/gesimo-core/actions/runs/39662694200. Le commit suivant finalise uniquement le rapport. Les données supplémentaires du navigateur sont isolées dans un script qui refuse de fonctionner hors de l’environnement testing.
 
 ## Vérification manuelle
 
