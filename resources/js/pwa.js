@@ -7,7 +7,10 @@ const quandPret = (f) => (document.readyState === 'loading' ? document.addEventL
 const quandCharge = (f) => (document.readyState === 'complete' ? f() : window.addEventListener('load', f));
 
 const sansStockage = (f, defaut = null) => { try { return f(); } catch (e) { return defaut; } };
-const lire = () => sansStockage(() => JSON.parse(localStorage.getItem('gesimo:pwa') || '{}'), {});
+const lire = () => sansStockage(() => {
+  const d = JSON.parse(localStorage.getItem('gesimo:pwa') || '{}');
+  return d && typeof d === 'object' && !Array.isArray(d) ? d : {};
+}, {});
 const ecrire = (d) => sansStockage(() => localStorage.setItem('gesimo:pwa', JSON.stringify(d)));
 
 const CHEMINS_SENSIBLES = /^\/(payer|paiement|reserver|connexion|inscription|installation|invitation)(\/|$)|^\/reservation\/\d+\/(annuler|confirmation)/;
@@ -45,14 +48,19 @@ const bouton = (texte, second = false, extra = '') => `<button type="button" cla
 // ------------------------------------------------------------------ service worker et mises à jour
 let registration = null;
 let rechargementDemande = false;
+let miseAJourReportee = sansStockage(() => sessionStorage.getItem('gesimo:pwa:maj-reportee') === '1', false);
 
 function proposerMiseAJour() {
-  if (!registration?.waiting || !navigator.serviceWorker.controller) return;
+  if (miseAJourReportee || !registration?.waiting || !navigator.serviceWorker.controller) return;
   if (surPageSensible()) return retirer('pwa-maj'); // jamais au milieu d'un paiement ou d'une réservation
   if (document.getElementById('pwa-maj')) return;
   const el = bandeau('pwa-maj', `<p class="mb-2">🔄 <b>Une nouvelle version est disponible.</b></p><div class="grid grid-cols-2 gap-2">${bouton('Mettre à jour', false, 'js-maj')}${bouton('Plus tard', true, 'js-plus-tard')}</div>`);
   el.querySelector('.js-maj').onclick = () => { rechargementDemande = true; registration.waiting.postMessage({ type: 'passer-a-la-nouvelle-version' }); };
-  el.querySelector('.js-plus-tard').onclick = () => retirer('pwa-maj');
+  el.querySelector('.js-plus-tard').onclick = () => {
+    miseAJourReportee = true;
+    sansStockage(() => sessionStorage.setItem('gesimo:pwa:maj-reportee', '1'));
+    retirer('pwa-maj');
+  };
 }
 
 if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost' || location.hostname === '127.0.0.1')) {
@@ -124,33 +132,42 @@ document.addEventListener('livewire:init', () => {
 
 // ------------------------------------------------------------------ invitation à installer
 let invitationAndroid = null;
+let installationProposee = false;
+const estAppareilMobile = () => (navigator.userAgentData?.mobile === true || /Android|iPhone|iPad|iPod/.test(ua)
+  || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1))
+  && window.matchMedia('(pointer: coarse) and (max-width: 1023px)').matches;
 window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); invitationAndroid = e; proposerInstallation(); });
 window.addEventListener('appinstalled', () => { const d = lire(); d.installee = true; ecrire(d); retirer('pwa-installer'); });
 
 function proposerInstallation() {
-  // Seulement sur téléphone ou tablette (écran tactile, largeur < 1024 px) : jamais sur un ordinateur.
-  if (!window.matchMedia('(pointer: coarse) and (max-width: 1023px)').matches) return;
+  // La largeur et le tactile seuls peuvent aussi décrire un ordinateur hybride.
+  if (!estAppareilMobile() || installationProposee) return;
+  // Si le stockage de session est indisponible, ne pas risquer une relance à chaque page.
+  if (sansStockage(() => sessionStorage.getItem('gesimo:pwa:installation-proposee'), '1')) return;
   const d = lire();
   if (installee() || d.installee || surPageSensible() || document.getElementById('pwa-installer')) return;
   if (d.refuse_le && Date.now() - d.refuse_le < 30 * 24 * 3600 * 1000) return;
   if ((d.visites || 0) < 2 && (d.pages || 0) < 3) return; // pas à la première visite
   if (!invitationAndroid && !estIOS) return;
 
+  installationProposee = true;
+  sansStockage(() => sessionStorage.setItem('gesimo:pwa:installation-proposee', '1'));
   const aide = estIOS
     ? (estSafariIOS
       ? `<ol class="mt-2 grid gap-1 text-[15px]"><li><b>1.</b> Touchez <b>Partager</b> (le carré avec une flèche) en bas de Safari ⬆️</li><li><b>2.</b> Choisissez <b>« Sur l'écran d'accueil »</b> ➕</li><li><b>3.</b> Touchez <b>« Ajouter »</b> ✔️</li></ol>`
       : `<p class="mt-2">Ouvrez cette page dans <b>Safari</b> pour installer l'application.</p>`)
     : '';
-  const corps = `<div class="flex items-center gap-3"><div class="flex h-[52px] w-[52px] shrink-0 items-center justify-center rounded-2xl bg-marque-600 text-[28px] font-extrabold text-white">G</div><div><b>Installer Avelis sur votre téléphone</b><div class="aide">Un accès direct depuis l'écran d'accueil, et vos réservations même avec un réseau faible.</div></div></div>
+  const corps = `<div class="flex items-center gap-3"><div class="flex h-[52px] w-[52px] shrink-0 items-center justify-center rounded-2xl bg-marque-600 text-[28px] font-extrabold text-white">A</div><div><b>Installer Avelis sur votre téléphone</b><div class="aide">Un accès direct depuis l'écran d'accueil, et vos réservations même avec un réseau faible.</div></div></div>
     <div id="pwa-aide-ios"></div>
-    <div class="mt-2 grid grid-cols-2 gap-2">${bouton(estIOS ? 'Comment faire' : 'Installer', false, 'js-installer')}${bouton('Plus tard', true, 'js-plus-tard')}</div>`;
+    <div class="mt-2 grid grid-cols-2 gap-2">${bouton('Installer', false, 'js-installer')}${bouton('Plus tard', true, 'js-plus-tard')}</div>`;
   const el = bandeau('pwa-installer', corps);
   el.querySelector('.js-plus-tard').onclick = () => { const x = lire(); x.refuse_le = Date.now(); ecrire(x); retirer('pwa-installer'); };
   el.querySelector('.js-installer').onclick = async () => {
     if (invitationAndroid) {
-      invitationAndroid.prompt();
-      const choix = await invitationAndroid.userChoice.catch(() => null);
+      const invitation = invitationAndroid;
       invitationAndroid = null;
+      let choix = null;
+      try { await invitation.prompt(); choix = await invitation.userChoice; } catch {}
       const x = lire();
       if (choix?.outcome === 'accepted') x.installee = true; else x.refuse_le = Date.now();
       ecrire(x);
