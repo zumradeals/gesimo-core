@@ -59,6 +59,36 @@ class Disponibilites
             ->values();
     }
 
+    /** Catalogue sans dates : un tarif de référence, jamais une promesse de disponibilité. */
+    public function catalogue(?string $commune = null, int $personnes = 1, array $equipements = [], int $limite = 60): Collection
+    {
+        $enAvant = MiseEnAvantService::residencesEnAvant();
+        $resultats = Unite::query()
+            ->where('active', true)->where('capacite', '>=', max(1, $personnes))
+            ->whereHas('residence', function ($q) use ($commune) {
+                $q->publiee();
+                if ($commune) {
+                    $q->where('commune', $commune);
+                }
+            })
+            ->whereHas('tarifs', fn ($q) => $q->where('type_periode', 'standard'))
+            ->when($equipements, function ($q) use ($equipements) {
+                foreach ($equipements as $id) {
+                    $q->whereHas('equipements', fn ($e) => $e->where('equipement.id', $id));
+                }
+            })
+            ->with(['residence.documents', 'residence.photos', 'photos', 'tarifs', 'equipements'])
+            ->limit($limite)->get()
+            ->map(fn (Unite $u) => [
+                'unite' => $u,
+                'prix_reference' => $u->tarifs->firstWhere('type_periode', 'standard')->prix_nuit,
+                'sponsorise' => in_array($u->residence_id, $enAvant, true),
+            ]);
+
+        return $resultats->where('sponsorise', true)->shuffle()
+            ->concat($resultats->where('sponsorise', false)->sortBy('prix_reference'))->values();
+    }
+
     public function estLibre(Unite $unite, CarbonInterface $arrivee, CarbonInterface $depart): bool
     {
         return ! Unite::query()->whereKey($unite->getKey())

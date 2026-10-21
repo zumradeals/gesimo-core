@@ -95,6 +95,9 @@ jobs:
       - name: Vérifier la page partenaire et le menu public dans Chromium
         run: node tests/E2E/partenaire-navigation.mjs "$RUNNER_TEMP/avelis-playwright" "$RUNNER_TEMP/avelis-parcours"
 
+      - name: Vérifier le catalogue et les filtres dans Chromium
+        run: node tests/E2E/logements.mjs "$RUNNER_TEMP/avelis-playwright" "$RUNNER_TEMP/avelis-parcours"
+
       - name: Afficher les erreurs du serveur de test
         if: failure()
         run: tail -n 100 storage/logs/laravel.log || true
