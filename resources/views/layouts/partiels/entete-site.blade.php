@@ -17,6 +17,14 @@
                 <a href="{{ route('inscription') }}" class="btn-sec">Créer un compte</a>
             @endif
         </div>
-        <a class="aide-mobile" href="{{ route('faq') }}" aria-label="Aide et questions fréquentes"><x-ui.icone nom="aide" classe="ic" /></a>
+        <details class="site-menu-mobile" x-data @keydown.escape="$el.removeAttribute('open'); $el.querySelector('summary').focus()" @click.outside="$el.removeAttribute('open')">
+            <summary><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg><span>Menu</span></summary>
+            <nav aria-label="Menu principal mobile">
+                @foreach($menuSite as $m)
+                    <a href="{{ route($m['route']) }}" @if($estActif($m)) aria-current="page" @endif>{{ $m['libelle'] }}</a>
+                @endforeach
+                <a class="site-menu-compte" href="{{ $u ? ($u->estAdmin() ? route('admin.tableau') : route('compte')) : route('connexion') }}">{{ $u ? 'Mon compte' : 'Se connecter' }}</a>
+            </nav>
+        </details>
     </div>
 </header>

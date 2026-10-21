@@ -26,7 +26,7 @@ beforeEach(function () {
 });
 
 it('les pages publiques s\'ouvrent sans compte et le pied de page y mène', function () {
-    foreach (['a-propos' => 'À propos d\'Avelis', 'faq' => 'Questions fréquentes', 'contact' => 'Écrivez-nous', 'conditions' => 'Conditions générales', 'confidentialite' => 'Politique de confidentialité', 'devenir-partenaire' => 'Gérez vos résidences'] as $route => $texte) {
+    foreach (['a-propos' => 'À propos d\'Avelis', 'faq' => 'Questions fréquentes', 'contact' => 'Écrivez-nous', 'conditions' => 'Conditions générales', 'confidentialite' => 'Politique de confidentialité', 'devenir-partenaire' => 'Votre résidence mérite'] as $route => $texte) {
         $this->get(route($route))->assertOk()->assertSee($texte)->assertSee('Devenir gérant partenaire')->assertSee('aria-label="Menu principal"', false);
     }
     $this->get(route('gerant.aide'))->assertRedirect(route('connexion')); // l'aide du gérant n'est pas publique

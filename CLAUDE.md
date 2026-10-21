@@ -29,6 +29,10 @@ Le code met en œuvre cette organisation ; le contrat décrit aussi la reprise p
 Les maquettes ordinateur et téléphone ont été validées. Référence : `docs/contrats/accueil-navigation-v2.md`.
 Dernière décision du porteur : retirer les offres fictives et leurs mentions de l’accueil. Seules les annonces réellement publiées sont présentées. Le contenu sur ordinateur occupe une largeur fluide avec une typographie plus lisible ; le héros validé est conservé.
 
+## Page partenaire et menu public (21 octobre 2026)
+
+Maquette et menu approuvés en conversation, intégration autorisée. Référence : `docs/contrats/devenir-partenaire-v2.md`. Le catalogue Logements est conservé ; le menu public comprend Accueil, Logements, À propos, Devenir partenaire, Aide et Contact, avec un menu complémentaire sur téléphone.
+
 ## Règles absolues
 1. Ne jamais inventer une règle de gestion. Cahier muet ou contradictoire : s'arrêter et poser la question avec une recommandation.
 2. Travailler uniquement dans le périmètre du lot demandé.

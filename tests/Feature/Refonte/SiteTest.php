@@ -296,3 +296,27 @@ it('un petit catalogue conserve une carte ordinaire sans inventer six annonces n
     expect(substr_count($reponse->getContent(), 'data-logement="'))->toBe(1)
         ->and(Unite::count())->toBe(1);
 });
+
+it('le menu public validé expose ses six pages et indique la page active', function () {
+    $menu = Navigation::site();
+    expect(array_column($menu, 'libelle'))->toBe(['Accueil', 'Logements', 'À propos', 'Devenir partenaire', 'Aide', 'Contact']);
+    foreach ($menu as $entree) {
+        $reponse = $this->get(route($entree['route']))->assertOk();
+        $dom = new DOMDocument;
+        @$dom->loadHTML('<?xml encoding="utf-8" ?>'.$reponse->getContent());
+        $xpath = new DOMXPath($dom);
+        $actif = $xpath->query('//nav[@aria-label="Menu principal"]//a[@aria-current="page"]');
+        expect($actif->length)->toBe(1)
+            ->and($actif->item(0)->getAttribute('href'))->toBe(route($entree['route']));
+        expect($xpath->query('//nav[@aria-label="Menu principal mobile"]/a')->length)->toBe(7);
+    }
+});
+
+it('la page partenaire présente les étapes, justificatifs et liens utiles sans inventer de résultat', function () {
+    $this->get('/devenir-partenaire')->assertOk()
+        ->assertSee('Votre résidence mérite')->assertSee('Présentez votre résidence')
+        ->assertSee('Obligatoire pour publier')->assertSee('Badge gérant facultatif')->assertSee('Badge résidence facultatif')
+        ->assertSee('certificat de résidence')->assertSee('sans commission')
+        ->assertSee(route('inscription', ['profil' => 'gerant']), false)->assertSee(route('contact'), false)
+        ->assertDontSee('en 2 minutes');
+});
