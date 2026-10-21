@@ -29,6 +29,10 @@ Aucune invitation automatique à installer sur ordinateur. Sur téléphone, deux
 
 `node --test tests/Js/pwa-invitation.test.mjs` : 8 tests réussis. `npm run build` : réussi.
 Le nouveau test exécute le vrai script de page dans un navigateur simulé Node, avec événements et stockage partagés ; aucune dépendance ajoutée. Il est inclus dans GitHub Actions avec les tests existants du service worker.
+Un essai local dans Chromium, avec événements d’installation simulés, confirme aussi : aucun bandeau sur ordinateur tactile en fenêtre de 390 px ; deux choix sur Android simulé ; fermeture puis navigation sans nouvelle proposition ; aucune erreur JavaScript. Cet essai ne prétend pas installer une application dans le système du téléphone.
+
+La vérification générale GitHub a été déclenchée et est encore en file d’attente lors de la rédaction : https://github.com/zumradeals/gesimo-core/actions/runs/39617842816. Aucun nouveau résultat de la suite PHP complète n’est revendiqué pour cette correction JavaScript.
+
 La capture transmise n’était pas disponible au chemin local annoncé : aucun diagnostic visuel n’est revendiqué. Les défauts de relance sont confirmés par le code et les tests.
 
 ## Limites et recette
