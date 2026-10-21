@@ -11,6 +11,8 @@ Le service worker, l’installation et les protections hors connexion restent fo
 | Pas d’activation forcée | Test d’absence de message au worker |
 | Compatibilité hors connexion | Suite de tests existante |
 
-Validation locale : neuf tests JavaScript réussis (dont la suite worker), syntaxe du parcours PWA et build Vite réussis. Résultat CI à compléter. Déploiement et nouvelle navigation nécessaires pour qu’un onglet déjà ouvert reçoive les fichiers corrigés. Les onglets contenant encore les anciens fichiers ne peuvent pas être modifiés à distance.
+Validation locale : neuf tests JavaScript réussis (dont la suite worker), syntaxe du parcours PWA et build Vite réussis. CI réussie sur le commit applicatif `825da993ef27d0e495f7f792e7af02b91cbbdd0c` : 409 tests PHP / 2 539 assertions, tests JavaScript, migrations, build et deux parcours Chromium réussis. Le parcours navigateur historique PWA a été adapté à la nouvelle règle et contrôlé syntaxiquement ; il n’est pas exécuté par cette CI.
+
+Preuve : https://github.com/zumradeals/gesimo-core/actions/runs/39665547874. Le commit suivant finalise uniquement ce rapport. Déploiement et nouvelle navigation nécessaires pour qu’un onglet déjà ouvert reçoive les fichiers corrigés. Les onglets contenant encore les anciens fichiers ne peuvent pas être modifiés à distance.
 
 Demandes connexes : proposition de navigation et maquette partenaire préparées pour validation ; aucune suppression du catalogue ni nouvelle règle métier dans ce correctif.
