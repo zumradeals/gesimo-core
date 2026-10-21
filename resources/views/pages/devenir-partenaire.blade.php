@@ -27,7 +27,7 @@
         <div class="sect-t"><span class="surtitre">Pour démarrer</span><h2>Trois étapes</h2></div>
         <div class="etapes-par">
             <div class="etape"><span class="num">1</span><h3>Créez votre compte</h3><p>Téléphone et e-mail, en 2 minutes.</p></div>
-            <div class="etape"><span class="num">2</span><h3>Ajoutez votre résidence</h3><p>Photos, prix, règlement et pièces.</p></div>
+            <div class="etape"><span class="num">2</span><h3>Ajoutez votre résidence</h3><p>Pièce d’identité dans votre profil, puis photos, prix et règlement de la résidence. Les justificatifs complémentaires sont facultatifs.</p></div>
             <div class="etape"><span class="num">3</span><h3>Nous vérifions</h3><p>Puis vos logements apparaissent et reçoivent des réservations.</p></div>
         </div>
     </div></section>

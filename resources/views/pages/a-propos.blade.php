@@ -14,7 +14,7 @@
     <section class="sect alt"><div class="cont">
         <div class="sect-t"><span class="surtitre">Nos engagements</span><h2>Ce que vous pouvez attendre de nous</h2></div>
         <div class="grille3">
-            <div class="av"><x-ui.icone nom="bouclier" classe="ic gros" /><h3>Résidences vérifiées</h3><p>Pièces et photos contrôlées avant publication, badge « Vérifié » sur les annonces.</p></div>
+            <div class="av"><x-ui.icone nom="bouclier" classe="ic gros" /><h3>Résidences vérifiées</h3><p>Identité du gérant et annonce contrôlées avant publication. La certification du gérant et le badge de gestion de chaque résidence sont distincts et facultatifs.</p></div>
             <div class="av"><x-ui.icone nom="prix" classe="ic gros" /><h3>Prix clair</h3><p>Le prix total est affiché avant de payer, sans frais cachés.</p></div>
             <div class="av"><x-ui.icone nom="carte" classe="ic gros" /><h3>Paiement sécurisé</h3><p>Wave, Orange Money, MTN Money ou carte, via un prestataire de paiement sécurisé.</p></div>
         </div>

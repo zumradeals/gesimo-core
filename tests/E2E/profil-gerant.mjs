@@ -1,7 +1,7 @@
 // Usage : node tests/E2E/profil-gerant.mjs <répertoire Playwright temporaire> <captures> [URL locale]
 // Comptes fictifs préparés par tests/Support/preparer-profil-gerant.php, exclusivement en environnement testing.
 import { createRequire } from 'node:module';
-import { readFileSync } from 'node:fs';
+import { readFileSync, writeFileSync } from 'node:fs';
 import assert from 'node:assert/strict';
 const [runtime, output, base = 'http://127.0.0.1:8123'] = process.argv.slice(2);
 assert(['127.0.0.1', 'localhost'].includes(new URL(base).hostname), 'Ce parcours doit viser uniquement un serveur local de test.');
@@ -16,6 +16,7 @@ async function session(telephone) {
     contexts.push(ctx);
     const page = await ctx.newPage();
     page.on('pageerror', e => errors.push(e.message));
+    page.on('response', r => { if (r.status() >= 400) console.error('HTTP', r.status(), r.url()); });
     page.on('dialog', d => d.accept());
     await page.goto(base + '/connexion');
     await page.waitForFunction(() => !!window.Livewire);
@@ -97,6 +98,16 @@ try {
     assert.equal(await visitor.evaluate(() => document.documentElement.scrollWidth > innerWidth), false);
     assert.deepEqual(errors, [], 'Erreurs JavaScript du parcours : ' + errors.join('\n'));
     console.log('✓ Certification du gérant et badge de résidence attribués séparément, sans interruption de publication.');
+} catch (error) {
+    for (const [i, ctx] of contexts.entries()) {
+        for (const [j, page] of ctx.pages().entries()) {
+            await page.screenshot({ path: output + `/echec-${i}-${j}.png`, fullPage: true }).catch(() => {});
+            writeFileSync(output + `/echec-${i}-${j}.txt`, await page.locator('body').innerText());
+            console.error(await page.locator('body').innerText());
+        }
+    }
+    console.error('Erreurs JavaScript :', errors);
+    throw error;
 } finally {
     for (const ctx of contexts) await ctx.close();
     await browser.close();

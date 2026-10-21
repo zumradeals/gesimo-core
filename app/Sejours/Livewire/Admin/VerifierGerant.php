@@ -2,6 +2,7 @@
 
 namespace App\Sejours\Livewire\Admin;
 
+use App\Noyau\Services\Audit;
 use App\Sejours\Models\ProfilGerant;
 use App\Sejours\Services\DossierGerant;
 use Illuminate\Support\Facades\Gate;
@@ -17,12 +18,26 @@ class VerifierGerant extends Component
 
     public string $motif = '';
 
+    public string $nomComplet = '';
+
     public ?string $message = null;
 
     public function mount(ProfilGerant $profil): void
     {
         Gate::authorize('voir-verifications');
         $this->profilId = $profil->id;
+        $this->nomComplet = $profil->nom_complet;
+    }
+
+    public function corrigerNom(): void
+    {
+        Gate::authorize('voir-verifications');
+        $this->nomComplet = trim($this->nomComplet);
+        $this->validate(['nomComplet' => 'required|string|max:120']);
+        $profil = ProfilGerant::findOrFail($this->profilId);
+        $profil->update(['nom_complet' => $this->nomComplet]);
+        Audit::enregistrer('gerant.nom_corrige_par_admin', $profil);
+        $this->message = 'Nom complet corrigé après contrôle administratif.';
     }
 
     public function accepter(int $id): void
