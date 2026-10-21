@@ -26,8 +26,15 @@ La migration conserve les fichiers et signale les anciennes identités divergent
 
 ## Vérifications exécutées
 
-Résultats définitifs du parcours navigateur et de la CI à compléter après la dernière exécution.
+La suite PostgreSQL a réussi : **402 tests, 2 492 assertions**. Le parcours réel Chromium a également réussi : dépôt des deux fichiers, acceptation de l’identité, soumission sans justificatif facultatif, redirection mobile, publication sans badge ni certification, puis attribution séparée des deux reconnaissances.
+Première recette complète réussie : https://github.com/zumradeals/gesimo-core/actions/runs/39611558608 (commit `d8af527`).
+
+L’inspection des captures a relevé un chemin de photo utilisant `localhost` ; le disque public utilise désormais `/storage` sur le domaine courant. La recette finale vérifie aussi le chargement effectif des photos et le blocage du bouton suivant sur un nom vide. **Recette finale réussie**, commit applicatif `b38d4b875d4d30c000b9cba3847310068001b402` : https://github.com/zumradeals/gesimo-core/actions/runs/39611929016 — 402 tests / 2 492 assertions, formatage, migrations aller-retour, construction Vite et parcours Chromium réussis. Le navigateur confirme les champs obligatoires, les photos chargées, l’absence de débordement horizontal public à 390 px et l’absence d’erreurs JavaScript.
+Les captures fictives du parcours sont téléchargeables depuis l’artefact `parcours-gerant` de cette exécution (conservation CI : 7 jours).
+Le navigateur de test fonctionne en environnement local avec une base fictive préparée exclusivement en environnement `testing`. Cette distinction est nécessaire : Livewire réserve ce dernier environnement à son disque simulé de tests unitaires. Aucun contournement d’authentification n’est ajouté au site.
+
 Compilation locale des vues (`php artisan view:cache`) et formatage (`vendor/bin/pint --dirty`) réussis.
+Les 22 scénarios JavaScript du service worker réussissent (`node --test tests/Js/sw.test.mjs`), notamment l’exclusion des documents et espaces privés du cache.
 Les tests PostgreSQL sont exécutés dans GitHub Actions ; aucun serveur PostgreSQL local exploitable dans cet environnement.
 
 ## Décisions et limites
