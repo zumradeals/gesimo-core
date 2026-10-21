@@ -69,7 +69,7 @@ Le code empêche un inconnu de créer le compte à votre place avant vous. Aucun
 **régénérez-la** avant de la saisir, et ne l'envoyez plus jamais par message.
 
 - **Réglages ▸ Notifications** : serveur d'e-mail (hôte, port, utilisateur, mot de passe masqué, adresse d'expédition), puis **Tester la connexion** (un e-mail de test vous est envoyé : « Réussi » ou « Échec » avec l'explication).
-- **Réglages ▸ Général** : nom, logo, e-mail de contact de l'équipe (les messages du formulaire « Contact » y arrivent), textes légaux validés par votre juriste.
+- **Réglages ▸ Général** (par sections) : *Identité* (nom, slogan, logo, image du bandeau d'accueil), *Coordonnées* (e-mail de contact — les messages du formulaire « Contact » y arrivent —, téléphone, WhatsApp, adresse, horaires), *Réseaux sociaux* (adresses complètes en `https://` ; une icône n'apparaît que si l'adresse est remplie), *Informations légales* (raison sociale, RCCM, NIF, affichés dans le pied de page et les mentions légales), *Textes des pages* (à propos, conditions, confidentialité, mentions légales : validés par votre juriste).
 - **Réglages ▸ Paiement** : dans GeniusPay (mode test), créez un **webhook** vers `https://gesimo.dgafrique.com/webhooks/geniuspay`
   avec les événements `payment.success`, `payment.failed`, `payment.cancelled`, `payment.refunded` ; copiez le secret (`whsec_…`).
   Puis saisissez clé publique, clé secrète et secret du webhook (ils sont chiffrés et jamais réaffichés), le **taux de commission**
