@@ -26,6 +26,19 @@ class TableauDeBord extends Component
         $ligne = fn () => Reservation::where('origine', 'plateforme')->where('created_at', '>=', now()->subDays(30));
         $enLigne = max(1, $ligne()->count());
         $semaine = now()->subDays(7);
+        $semainePrecedente = now()->subDays(14);
+        $surPlateforme = fn () => Reservation::where('origine', 'plateforme');
+        $resa7 = $surPlateforme()->where('created_at', '>=', $semaine)->count();
+        $resa7Avant = $surPlateforme()->where('created_at', '>=', $semainePrecedente)->where('created_at', '<', $semaine)->count();
+        $commissions7 = (int) EcritureComptable::where('type', 'commission')->where('created_at', '>=', $semaine)->sum('montant');
+        $commissions7Avant = (int) EcritureComptable::where('type', 'commission')->where('created_at', '>=', $semainePrecedente)->where('created_at', '<', $semaine)->sum('montant');
+
+        // Réservations par jour sur les 7 derniers jours (aujourd'hui compris).
+        $parJour = collect(range(6, 0))->map(function (int $i) use ($surPlateforme) {
+            $jour = now()->subDays($i);
+
+            return ['jour' => $jour->translatedFormat('D'), 'nombre' => $surPlateforme()->whereDate('created_at', $jour->toDateString())->count()];
+        });
 
         return view('livewire.admin.tableau-de-bord', [
             'aValider' => Residence::where('statut_verification', 'en_attente')->whereNotNull('soumise_le')->orderBy('soumise_le')->limit(5)->get(),
@@ -38,7 +51,13 @@ class TableauDeBord extends Component
             'confirmeesSemaine' => Reservation::where('origine', 'plateforme')->where('created_at', '>=', $semaine)->whereIn('statut', [StatutReservation::Confirmee->value, StatutReservation::ArriveeEnregistree->value, StatutReservation::Terminee->value])->count(),
             'tauxExpiration' => (int) round(100 * $ligne()->where('statut', StatutReservation::Expiree->value)->count() / $enLigne),
             'tauxAnnulation' => (int) round(100 * $ligne()->where('statut', StatutReservation::Annulee->value)->count() / $enLigne),
-            'commissionsSemaine' => (int) EcritureComptable::where('type', 'commission')->where('created_at', '>=', $semaine)->sum('montant'),
+            'commissionsSemaine' => $commissions7,
+            'resa7' => $resa7,
+            'resa7Evolution' => $resa7 - $resa7Avant,
+            'commissionsEvolution' => $commissions7Avant > 0 ? (int) round(100 * ($commissions7 - $commissions7Avant) / $commissions7Avant) : null,
+            'parJour' => $parJour,
+            'maxJour' => max(1, $parJour->max('nombre')),
+            'dernieres' => Reservation::where('origine', 'plateforme')->with(['unite.residence', 'client'])->latest('id')->limit(5)->get(),
         ]);
     }
 }
