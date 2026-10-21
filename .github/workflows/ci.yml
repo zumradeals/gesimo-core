@@ -71,7 +71,9 @@ jobs:
           php tests/Support/preparer-profil-gerant.php "$RUNNER_TEMP/avelis-parcours"
           npm install --prefix "$RUNNER_TEMP/avelis-playwright" --ignore-scripts playwright@1.51.1
           "$RUNNER_TEMP/avelis-playwright/node_modules/.bin/playwright" install chromium --with-deps
-          php artisan serve --host=127.0.0.1 --port=8123 > "$RUNNER_TEMP/avelis-parcours/serveur.log" 2>&1 &
+          # Livewire réserve APP_ENV=testing aux fichiers simulés des tests unitaires.
+          # Le navigateur doit utiliser le vrai stockage, sur cette base fictive locale.
+          APP_ENV=local php artisan serve --host=127.0.0.1 --port=8123 > "$RUNNER_TEMP/avelis-parcours/serveur.log" 2>&1 &
           for essai in $(seq 1 30); do curl -fsS -o /dev/null http://127.0.0.1:8123/up && break; sleep 1; done
 
       - name: Vérifier le parcours gérant dans Chromium

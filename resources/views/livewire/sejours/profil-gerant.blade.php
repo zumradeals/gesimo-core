@@ -25,7 +25,7 @@
                 <button class="btn-pl" wire:loading.attr="disabled">Enregistrer mon profil</button>
             </form>
             @else
-            <form wire:submit="envoyerDocuments" class="grid gap-4" x-data="{ transferts: 0 }" x-on:livewire-upload-start="transferts++" x-on:livewire-upload-finish="transferts = Math.max(0, transferts - 1)" x-on:livewire-upload-error="transferts = Math.max(0, transferts - 1)" x-on:livewire-upload-cancel="transferts = Math.max(0, transferts - 1)">
+            <form wire:submit="envoyerDocuments" class="grid gap-4" x-data="{ transferts: 0, erreurTransfert: false }" x-on:livewire-upload-start="transferts++; erreurTransfert = false" x-on:livewire-upload-finish="transferts = Math.max(0, transferts - 1)" x-on:livewire-upload-error="transferts = Math.max(0, transferts - 1); erreurTransfert = true" x-on:livewire-upload-cancel="transferts = Math.max(0, transferts - 1)">
                 @if($profil->reprise_a_revoir)<x-ui.alerte type="attention">Plusieurs pièces différentes proviennent de vos anciennes résidences. Avelis doit contrôler leur reprise ; les fichiers déjà fournis sont conservés.</x-ui.alerte>@endif
                 @foreach(['identite' => 'Pièce d’identité', 'certificat_residence' => 'Certificat de résidence'] as $type => $titre)
                     @php $dernier = $documents->firstWhere('type', $type); $valide = $profil->documentValide($type); @endphp
@@ -40,7 +40,8 @@
                 @endforeach
                 @error('documents')<p class="erreur-champ" role="alert">{{ $message }}</p>@enderror
                 <div wire:loading wire:target="identite,certificat_residence" role="status" class="aide">Transfert en cours… Attendez la fin avant d’envoyer.</div>
-                <button class="btn-pl" wire:loading.attr="disabled" x-bind:disabled="transferts > 0">Envoyer les documents pour contrôle</button>
+                <p x-cloak x-show="erreurTransfert" class="erreur-champ" role="alert">Le transfert a échoué. Sélectionnez à nouveau le document et attendez la fin du transfert.</p>
+                <button class="btn-pl" wire:loading.attr="disabled" x-bind:disabled="transferts > 0 || erreurTransfert">Envoyer les documents pour contrôle</button>
                 <x-ui.alerte type="info"><b>Vos documents restent privés.</b> Seule l’équipe Avelis autorisée peut les consulter. Aucun document ni votre adresse personnelle n’apparaît sur votre profil public.</x-ui.alerte>
             </form>
             @endif
