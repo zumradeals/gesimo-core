@@ -14,6 +14,7 @@ use App\Sejours\Services\BlocageService;
 use Carbon\CarbonImmutable;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Support\Collection;
+use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Title;
 use Livewire\Attributes\Url;
 use Livewire\Component;
@@ -183,7 +184,7 @@ class CalendrierGerant extends Component
         if ($unite === null) {
             $this->uniteId = null;
             if ($obligatoire) {
-                throw \Illuminate\Validation\ValidationException::withMessages(['debut' => 'Ajoutez un logement actif avant de gérer son calendrier.']);
+                throw ValidationException::withMessages(['debut' => 'Ajoutez un logement actif avant de gérer son calendrier.']);
             }
 
             return null;
