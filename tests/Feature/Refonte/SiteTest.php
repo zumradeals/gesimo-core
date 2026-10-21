@@ -11,7 +11,9 @@ use App\Sejours\Livewire\Recherche;
 use App\Sejours\Models\Avis;
 use App\Sejours\Models\Photo;
 use App\Sejours\Models\Unite;
+use App\Sejours\Services\ReservationService;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Livewire;
@@ -336,4 +338,15 @@ it('un administrateur ou un gérant qui clique sur « Réserver » reçoit une e
 it('un visiteur non connecté qui clique sur « Réserver » est envoyé vers la connexion', function () {
     $unite = creerLogement();
     $this->get(route('reserver', ['unite' => $unite->id, 'arrivee' => prochainVendredi()->toDateString(), 'depart' => prochainVendredi()->addDay()->toDateString(), 'personnes' => 2]))->assertRedirect(route('connexion'));
+});
+
+it('la base de données travaille toujours dans le fuseau de l\'application, même si le serveur PostgreSQL est réglé autrement', function () {
+    expect(DB::selectOne('show timezone')->TimeZone)->toBe(config('app.timezone'));
+
+    $unite = creerLogement();
+    $arrivee = prochainVendredi();
+    $reservation = app(ReservationService::class)->garderDates(creerUtilisateur(Role::Client), $unite, $arrivee, $arrivee->addDays(2), 2);
+    // Le délai de garde commence bien « maintenant » et dure la durée réglée, quel que soit le fuseau du serveur.
+    $minutes = (int) now()->diffInMinutes($reservation->fresh()->expire_le, false);
+    expect($minutes)->toBeGreaterThan(100)->toBeLessThanOrEqual(120);
 });

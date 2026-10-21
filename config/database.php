@@ -97,6 +97,9 @@ return [
             'prefix_indexes' => true,
             'search_path' => 'public',
             'sslmode' => env('DB_SSLMODE', 'prefer'),
+            // Même fuseau que l'application (config/app.php) : sans cela, un serveur PostgreSQL réglé sur un autre fuseau
+            // décale toutes les heures enregistrées (par exemple, le délai de garde de 2 h serait déjà écoulé).
+            'timezone' => 'Africa/Abidjan',
         ],
 
         'sqlsrv' => [
