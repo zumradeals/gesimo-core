@@ -319,4 +319,20 @@ it('la page partenaire présente les étapes, justificatifs et liens utiles sans
         ->assertSee('certificat de résidence')->assertSee('sans commission')
         ->assertSee(route('inscription', ['profil' => 'gerant']), false)->assertSee(route('contact'), false)
         ->assertDontSee('en 2 minutes');
+
+it('un administrateur ou un gérant qui clique sur « Réserver » reçoit une explication claire et non une page vide', function () {
+    $unite = creerLogement();
+    $q = ['arrivee' => prochainVendredi()->toDateString(), 'depart' => prochainVendredi()->addDays(2)->toDateString(), 'personnes' => 2];
+
+    foreach ([Role::Admin, Role::Gerant, Role::SuperAdmin] as $role) {
+        $this->actingAs(creerUtilisateur($role))->get(route('reserver', ['unite' => $unite->id] + $q))
+            ->assertForbidden()->assertSee('Seuls les comptes « Client » peuvent réserver', false)->assertSee('Me déconnecter pour utiliser un compte client');
+    }
+    // Un client réserve normalement.
+    $this->actingAs(creerUtilisateur(Role::Client))->get(route('reserver', ['unite' => $unite->id] + $q))->assertOk();
+});
+
+it('un visiteur non connecté qui clique sur « Réserver » est envoyé vers la connexion', function () {
+    $unite = creerLogement();
+    $this->get(route('reserver', ['unite' => $unite->id, 'arrivee' => prochainVendredi()->toDateString(), 'depart' => prochainVendredi()->addDay()->toDateString(), 'personnes' => 2]))->assertRedirect(route('connexion'));
 });
