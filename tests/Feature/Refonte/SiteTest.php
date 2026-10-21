@@ -8,6 +8,7 @@ use App\Parametres\Services\Parametres;
 use App\Sejours\Livewire\EditerResidence;
 use App\Sejours\Livewire\Recherche;
 use App\Sejours\Models\Avis;
+use App\Sejours\Models\Photo;
 use App\Sejours\Models\Unite;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Route;
@@ -226,4 +227,35 @@ it('le sélecteur de l’accueil ne propose pas les communes de gérants sans id
     $autre = creerLogement(20000, null, ['commune' => 'COMMUNE_PRIVEE']);
     $autre->residence->gerant->profilGerant->documents()->delete();
     $this->get('/')->assertSee('COMMUNE_VISIBLE')->assertDontSee('COMMUNE_PRIVEE');
+});
+
+it('les cartes de communes utilisent les photos des offres publiées et actives uniquement', function () {
+    $visible = creerLogement(18000, null, ['commune' => 'Cocody']);
+    $prive = creerLogement(19000, null, ['commune' => 'Cocody']);
+    $prive->residence->update(['statut_verification' => 'en_attente']);
+    $inactif = creerLogement(20000, null, ['commune' => 'Cocody']);
+    $inactif->update(['active' => false]);
+    foreach ([[$prive, 'prive.jpg'], [$inactif, 'inactif.jpg'], [$visible, 'visible.jpg']] as [$unite, $chemin]) {
+        Photo::create(['residence_id' => $unite->residence_id, 'unite_id' => $unite->id, 'chemin' => $chemin, 'ordre' => 1]);
+    }
+    $reponse = $this->get('/')->assertOk()->assertSee('Aperçu d’un logement à Cocody')
+        ->assertDontSee('prive.jpg')->assertDontSee('inactif.jpg');
+    $dom = new DOMDocument;
+    @$dom->loadHTML('<?xml encoding="utf-8" ?>'.$reponse->getContent());
+    $xpath = new DOMXPath($dom);
+    $photos = $xpath->query('//a[contains(@class,"av-commune-carte")]//img');
+    expect($photos->length)->toBe(1)
+        ->and($photos->item(0)->getAttribute('src'))->toContain('visible.jpg');
+});
+
+it('une commune sans photo garde sa carte et son lien sans inventer de visuel', function () {
+    creerLogement(18000, null, ['commune' => 'Cocody']);
+    $reponse = $this->get('/')->assertOk()->assertSee('Découvrir les logements à Cocody');
+    $dom = new DOMDocument;
+    @$dom->loadHTML('<?xml encoding="utf-8" ?>'.$reponse->getContent());
+    $xpath = new DOMXPath($dom);
+    $cartes = $xpath->query('//a[contains(@class,"av-commune-carte")]');
+    expect($cartes->length)->toBe(1)
+        ->and($cartes->item(0)->getAttribute('href'))->toBe(route('recherche', ['commune' => 'Cocody']))
+        ->and($xpath->query('//a[contains(@class,"av-commune-carte")]//img')->length)->toBe(0);
 });

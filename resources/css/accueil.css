@@ -342,36 +342,49 @@
 }
 .av-communes{
     display:grid;
-    gap:12px;
-    grid-template-columns:repeat(2,minmax(0,1fr))
+    gap:22px;
+    grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr));
+    align-items:start
 }
-.av-communes>a{
-    background:linear-gradient(135deg,#0f766e,#102f2b);
-    padding:22px 16px;
-    border-radius:12px;
-    color:#fff;
+.av-commune-carte{
+    display:block;
+    width:100%;
+    max-width:420px;
+    border-radius:16px;
+    overflow:hidden;
+    background:#fff;
+    color:var(--texte);
+    border:1px solid #e1e6e4;
+    box-shadow:0 6px 20px #102f2b08
+}
+.av-commune-photo{
+    aspect-ratio:1.65;
+    overflow:hidden;
+    background:#e9eeea
+}
+.av-commune-photo img{
+    width:100%;
+    height:100%;
+    object-fit:cover
+}
+.av-commune-corps{padding:22px}
+.av-commune-lieu{display:flex;align-items:center;gap:9px}
+.av-commune-lieu .ic{color:var(--vert);width:21px;height:21px}
+.av-commune-lieu h3{margin:0;font-size:23px}
+.av-commune-corps p{margin:8px 0 20px;font-size:15px;color:#475c59}
+.av-commune-action{
     display:flex;
     align-items:center;
+    justify-content:space-between;
     gap:12px;
-    min-height:110px
+    padding-top:17px;
+    border-top:1px solid #e1e6e4;
+    color:var(--vert);
+    font-weight:700;
+    font-size:15px
 }
-.av-communes b{
-    display:block;
-    font-size:18px;
-    overflow-wrap:anywhere
-}
-.av-communes small{
-    display:block;
-    font-size:11px;
-    margin-top:5px;
-    color:#c9e1da
-}
-.av-communes>a>span:last-child{
-    margin-left:auto
-}
-.av-communes .ic{
-    display:none
-}
+.av-commune-carte:hover{border-color:var(--vert)}
+.av-destinations-grille{display:grid;gap:8px}
 .av-confiance{
     display:grid;
     gap:30px
@@ -585,9 +598,6 @@
     .av-offres{
         grid-template-columns:repeat(2,minmax(0,1fr))
     }
-    .av-communes{
-        grid-template-columns:repeat(3,minmax(0,1fr))
-    }
     .av-reassurance{
         grid-template-columns:repeat(3,minmax(0,1fr))
     }
@@ -650,8 +660,6 @@
     .av-offre-corps>p,.av-offre-bas p{font-size:16px}
     .av-offre-bas b{font-size:24px}
     .av-offre-bas .lien-fl{font-size:16px}
-    .av-communes b{font-size:24px}
-    .av-communes small{font-size:15px}
     .av-confiance-texte h3,.av-etapes h3{font-size:22px}
     .av-confiance-texte p,.av-etapes p,.av-partenaire p{font-size:18px}
     .av-confiance-texte ol{gap:30px}
@@ -764,13 +772,18 @@
     .av-offre h3{
         font-size:24px
     }
-    .av-communes{
-        grid-template-columns:repeat(auto-fit,minmax(240px,1fr))
+    .av-destinations-grille{
+        grid-template-columns:minmax(280px,.8fr) minmax(0,1.4fr);
+        align-items:center;
+        gap:clamp(32px,5vw,100px)
     }
-    .av-communes>a{padding:28px;min-height:130px}
-    .av-communes .ic{
-        display:block
-    }
+    .av-destination-unique{grid-template-columns:minmax(0,1fr) minmax(280px,420px)}
+    .av-destinations .av-section-titre{margin:0}
+    .av-destinations .av-section-titre p{max-width:520px}
+    .av-communes{grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:24px}
+    .av-commune-corps{padding:26px}
+    .av-commune-lieu h3{font-size:26px}
+    .av-commune-corps p,.av-commune-action{font-size:17px}
     .av-confiance{
         grid-template-columns:1fr 1.1fr;
         align-items:center;
