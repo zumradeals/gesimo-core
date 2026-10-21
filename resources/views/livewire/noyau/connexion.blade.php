@@ -1,11 +1,9 @@
-<div class="mx-auto grid max-w-xl gap-4 lg:max-w-4xl lg:grid-cols-2 lg:gap-8">
-    <div class="grid grid-cols-2 overflow-hidden rounded-2xl border border-trait bg-white text-center font-bold lg:col-span-2 lg:max-w-sm">
-        <span class="bg-marque-600 p-3 text-white">Se connecter</span>
-        <a href="{{ route('inscription') }}" wire:navigate class="p-3 text-gris-doux">Créer un compte</a>
-    </div>
-
-    <form wire:submit="seConnecter" class="carte grid content-start gap-3">
-        <h1 class="text-xl font-extrabold">Se connecter</h1>
+<div class="auth"><div class="auth-g">
+    <aside class="auth-vis"><h2>Content de vous revoir</h2><ul class="garanties clair"><li><x-ui.icone nom="ok" classe="ic" /> Retrouvez vos réservations et vos reçus</li><li><x-ui.icone nom="ok" classe="ic" /> Réservez en quelques minutes</li><li><x-ui.icone nom="ok" classe="ic" /> Paiement sécurisé par Mobile Money ou carte</li></ul></aside>
+    <div class="auth-f">
+        <div class="onglets-a"><span class="on">Se connecter</span><a href="{{ route('inscription') }}">Créer un compte</a></div>
+    <form wire:submit="seConnecter" class="grid content-start gap-3">
+        <h1>Se connecter</h1>
 
         @if($erreur) <x-ui.alerte type="erreur">{{ $erreur }}</x-ui.alerte> @endif
         @if($info) <x-ui.alerte type="succes">{{ $info }}</x-ui.alerte> @endif
@@ -44,10 +42,5 @@
         <button type="button" wire:click="envoyerLien" class="btn btn-second btn-bloc">Recevoir un lien par e-mail</button>
         <p class="aide">Le lien arrive dans votre boîte e-mail. Il ne marche qu'une fois, pendant 15 minutes.</p>
     </form>
-
-    <div class="carte hidden content-start gap-2 lg:grid">
-        <h2 class="text-lg font-extrabold">Nouveau sur GESIMO ?</h2>
-        <p class="text-gris-doux">Créez un compte en une minute pour réserver un séjour ou proposer votre résidence.</p>
-        <a href="{{ route('inscription') }}" wire:navigate class="btn btn-second">Créer un compte</a>
     </div>
-</div>
+</div></div>

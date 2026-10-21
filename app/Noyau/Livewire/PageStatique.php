@@ -13,6 +13,7 @@ class PageStatique extends Component
         'faq' => 'Questions fréquentes',
         'conditions' => 'Conditions générales',
         'confidentialite' => 'Confidentialité',
+        'mentions-legales' => 'Mentions légales',
         'devenir-partenaire' => 'Devenir gérant partenaire',
         'aide-gerant' => 'Aide du gérant',
     ];
@@ -26,7 +27,7 @@ class PageStatique extends Component
     }
 
     /** Pages dont le texte peut être remplacé dans les Paramètres (Général). */
-    private const REGLAGES = ['a-propos' => 'general.a_propos', 'conditions' => 'general.conditions', 'confidentialite' => 'general.confidentialite'];
+    private const REGLAGES = ['a-propos' => 'general.a_propos', 'conditions' => 'general.conditions', 'confidentialite' => 'general.confidentialite', 'mentions-legales' => 'general.mentions_legales'];
 
     public function render()
     {

@@ -1,11 +1,9 @@
-<div class="mx-auto grid max-w-xl gap-4">
-    <div class="grid grid-cols-2 overflow-hidden rounded-2xl border border-trait bg-white text-center font-bold">
-        <a href="{{ route('connexion') }}" wire:navigate class="p-3 text-gris-doux">Se connecter</a>
-        <span class="bg-marque-600 p-3 text-white">Créer un compte</span>
-    </div>
-
-    <form wire:submit="inscrire" class="carte grid gap-3">
-        <h1 class="text-xl font-extrabold">Créer un compte</h1>
+<div class="auth"><div class="auth-g">
+    <aside class="auth-vis"><h2>Rejoignez la plateforme</h2><ul class="garanties clair"><li><x-ui.icone nom="ok" classe="ic" /> Voyageur : réservez un séjour en toute confiance</li><li><x-ui.icone nom="ok" classe="ic" /> Gérant : recevez plus de réservations</li><li><x-ui.icone nom="ok" classe="ic" /> Gratuit, en moins de deux minutes</li></ul></aside>
+    <div class="auth-f">
+        <div class="onglets-a"><a href="{{ route('connexion') }}">Se connecter</a><span class="on">Créer un compte</span></div>
+    <form wire:submit="inscrire" class="grid gap-3">
+        <h1>Créer un compte</h1>
 
         <div class="champ">
             <label class="etiquette" for="nom">Votre nom</label>
@@ -38,4 +36,5 @@
         <p class="aide">En créant un compte, vous acceptez les <a class="underline" href="{{ route('conditions') }}" target="_blank">conditions</a> et la <a class="underline" href="{{ route('confidentialite') }}" target="_blank">politique de confidentialité</a>.</p>
         <button class="btn btn-bloc" wire:loading.attr="disabled">Créer mon compte</button>
     </form>
-</div>
+    </div>
+</div></div>
