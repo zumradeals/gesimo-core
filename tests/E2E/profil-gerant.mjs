@@ -47,6 +47,11 @@ try {
     await visible(owner, 'Prêt à publier');
     await owner.screenshot({ path: output + '/profil-gerant-ordinateur.png', fullPage: true });
     await owner.goto(base + '/gerant/residences/' + data.residenceId);
+    await owner.locator('#nom').fill('   ');
+    await owner.getByRole('button', { name: /Étape suivante : mes logements/ }).click();
+    await visible(owner, 'Le nom est obligatoire.');
+    assert.equal(await owner.locator('#nom').count(), 1, 'Un nom vide doit bloquer le passage.');
+    await owner.locator('#nom').fill('Villa Papaye — ESSAI');
     await owner.getByRole('button', { name: /3 Vérification et envoi/ }).click();
     await visible(owner, 'Aucune pièce personnelle à renvoyer');
     await owner.setViewportSize({ width: 390, height: 844 });
@@ -94,6 +99,8 @@ try {
     await visible(visitor, '✓ Droit de gestion vérifié');
     await visitor.screenshot({ path: output + '/profil-public-ordinateur.png', fullPage: true });
     await visitor.setViewportSize({ width: 390, height: 844 });
+    await visitor.locator('.lg-photo img').evaluateAll(imgs => Promise.all(imgs.map(img => img.decode())));
+    assert(await visitor.locator('.lg-photo img').evaluateAll(imgs => imgs.length > 0 && imgs.every(img => img.naturalWidth > 0)), 'Photos publiques chargées.');
     await visitor.screenshot({ path: output + '/profil-public-telephone.png', fullPage: true });
     assert.equal(await visitor.evaluate(() => document.documentElement.scrollWidth > innerWidth), false);
     assert.deepEqual(errors, [], 'Erreurs JavaScript du parcours : ' + errors.join('\n'));

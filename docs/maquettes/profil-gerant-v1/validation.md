@@ -19,4 +19,4 @@ Les interactions ne sauvegardent pas des données métier et ne transmettent auc
 
 Les captures sont conservées dans `previews/`. Les sélecteurs et la barre de navigation de revue n'appartiennent pas aux futurs écrans de production.
 
-La validation visuelle du porteur est attendue avant l'implémentation, conformément à `CLAUDE.md` et au déroulement convenu en conversation.
+Validation visuelle accordée par le porteur en conversation le 21 octobre 2026 (« ok je valide »). La recette du code applicatif figure dans `docs/rapports/profil-gerant-certification-2026-10-21.md`.

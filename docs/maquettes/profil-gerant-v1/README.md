@@ -1,6 +1,6 @@
 # Maquettes — profil gérant v1
 
-À valider avant implémentation. Règles : `docs/contrats/profil-gerant-certification-v1.md`.
+Maquettes validées par le porteur le 21 octobre 2026. Règles : `docs/contrats/profil-gerant-certification-v1.md`.
 
 Ouvrir `index.html` dans un navigateur. Aucun service, compte, transfert de fichier ou dépendance n'est nécessaire.
 
