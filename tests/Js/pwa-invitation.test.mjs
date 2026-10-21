@@ -54,10 +54,16 @@ test('stockage invalide ou bloqué : pas de panne ni de sollicitations répété
   const bloque = { getItem() { throw Error('bloqué'); }, setItem() { throw Error('bloqué'); } };
   const p = await page({ local: habitue(), session: bloque }); await p.proposer(); assert(!p.elements.has('pwa-installer'));
 });
-test('mise à jour : Plus tard résiste à la minuterie et à la navigation, sans activation automatique', async () => {
-  const session = stockage(), p = await page({ session, maj: true }); assert(p.elements.has('pwa-maj'));
-  p.elements.get('pwa-maj').querySelector('.js-plus-tard').onclick(); p.intervals.forEach(f => f()); assert(!p.elements.has('pwa-maj')); assert.equal(p.messages.length, 0);
-  const suite = await page({ session, maj: true }); assert(!suite.elements.has('pwa-maj'));
-  const nouvelleSession = await page({ maj: true }); assert(nouvelleSession.elements.has('pwa-maj'));
-  nouvelleSession.elements.get('pwa-maj').querySelector('.js-maj').onclick(); assert.equal(nouvelleSession.messages[0].type, 'passer-a-la-nouvelle-version');
+test('aucune bannière de mise à jour sur téléphone, ordinateur ou page sensible, même avec un worker en attente', async () => {
+  for (const mobile of [false, true]) {
+    for (const chemin of ['/', '/gerant/profil', '/payer/1']) {
+      const p = await page({ mobile, chemin, maj: true });
+      p.intervals.forEach(f => f());
+      assert(!p.elements.has('pwa-maj'));
+      assert.equal(p.messages.length, 0, 'aucune activation forcée');
+      assert.equal(p.intervals.length, 0, 'aucune minuterie de rappel');
+      const suite = await page({ mobile, chemin, maj: true });
+      assert(!suite.elements.has('pwa-maj'));
+    }
+  }
 });

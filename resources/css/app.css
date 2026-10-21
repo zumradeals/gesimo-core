@@ -62,3 +62,6 @@ html.hors-ligne [data-reseau] { opacity: .5; pointer-events: none; }
 @media(max-width:600px) { .pg-public-hero { align-items:start; gap:15px; padding:22px 18px; }.pg-public-hero h1 { font-size:24px; }.pg-avatar { width:56px; height:60px; border-radius:12px; font-size:28px; }.pg-confirmation { padding:18px; gap:12px; }.pg-confirmation-icon { width:32px; height:32px; font-size:19px; } }
 
 @import "./accueil.css";
+
+/* Une ancienne version du script ne doit pas réafficher cette bannière supprimée. */
+#pwa-maj { display: none !important; }
