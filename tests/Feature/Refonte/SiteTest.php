@@ -319,6 +319,7 @@ it('la page partenaire présente les étapes, justificatifs et liens utiles sans
         ->assertSee('certificat de résidence')->assertSee('sans commission')
         ->assertSee(route('inscription', ['profil' => 'gerant']), false)->assertSee(route('contact'), false)
         ->assertDontSee('en 2 minutes');
+});
 
 it('un administrateur ou un gérant qui clique sur « Réserver » reçoit une explication claire et non une page vide', function () {
     $unite = creerLogement();
