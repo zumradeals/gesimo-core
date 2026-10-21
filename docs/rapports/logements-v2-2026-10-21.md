@@ -14,7 +14,9 @@ La page `/recherche` reprend la maquette approuvée : introduction compacte, rec
 
 ## Validation
 
-Contrôles locaux réussis : Pint, compilation Blade, build Vite, tests JavaScript/PWA et rendu des vraies vues Blade dans Chromium aux huit largeurs. Dialogue mobile ouvert/fermé par Échap sans erreur JavaScript. Validation PostgreSQL et parcours Livewire complets : résultats CI à compléter avant fusion.
+Contrôles locaux réussis : Pint, compilation Blade, build Vite, tests JavaScript/PWA et rendu des vraies vues Blade dans Chromium aux huit largeurs. Dialogue mobile ouvert/fermé par Échap sans erreur JavaScript. Validation finale réussie sur le commit applicatif `8de9258` : **421 tests / 2 621 assertions**, migrations réversibles, tests JavaScript/PWA, build et quatre parcours Chromium (gérant, accueil, partenaire/navigation, catalogue). Le nouveau parcours contrôle le catalogue sans dates, les filtres réels pendant les mises à jour Livewire, le budget total, les huit largeurs et la transmission des dates à la fiche. Le focus des filtres ne provoque aucun déplacement à l’ouverture sur ordinateur.
+
+Preuve : https://github.com/zumradeals/gesimo-core/actions/runs/39672319094. Le commit suivant finalise uniquement le rapport. Une exécution parallèle antérieure s’était arrêtée sur une attente intermittente du parcours gérant existant ; la validation finale ci-dessus réussit intégralement. Les captures finales ordinateur, téléphone et panneau de filtres ont été inspectées.
 
 ## Vérification navigateur
 
