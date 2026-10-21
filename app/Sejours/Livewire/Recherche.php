@@ -33,6 +33,10 @@ class Recherche extends Component
     #[Url]
     public array $equipements = [];
 
+    /** recommande (défaut) | prix_asc | prix_desc — les annonces « Sponsorisé » restent toujours en premier */
+    #[Url]
+    public string $tri = 'recommande';
+
     public bool $lancee = false;
 
     public ?string $erreur = null;
@@ -87,6 +91,10 @@ class Recherche extends Component
                     array_map('intval', $this->equipements),
                 );
             }
+        }
+
+        if ($this->tri === 'prix_desc') {
+            $resultats = $resultats->where('sponsorise', true)->concat($resultats->where('sponsorise', false)->sortByDesc('total'))->values();
         }
 
         return view('livewire.sejours.recherche', [
