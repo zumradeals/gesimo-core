@@ -110,16 +110,14 @@ class Navigation
         return $menu;
     }
 
-    /** Menu de l'en-tête du site public. @return list<array{libelle: string, route: string, actif: list<string>}> */
+    /** Menu de l’en-tête public ; les pages complémentaires restent accessibles depuis le footer. */
     public static function site(): array
     {
         return [
-            ['libelle' => 'Accueil', 'route' => 'accueil', 'actif' => ['accueil']],
-            ['libelle' => 'Logements', 'route' => 'recherche', 'actif' => ['recherche', 'logement']],
-            ['libelle' => 'À propos', 'route' => 'a-propos', 'actif' => ['a-propos']],
+            ['libelle' => 'Logements', 'route' => 'recherche', 'actif' => ['recherche', 'logement', 'hebergeur']],
+            ['libelle' => 'Comment ça marche', 'route' => 'accueil', 'ancre' => '#comment', 'actif' => []],
             ['libelle' => 'Devenir partenaire', 'route' => 'devenir-partenaire', 'actif' => ['devenir-partenaire']],
             ['libelle' => 'Aide', 'route' => 'faq', 'actif' => ['faq']],
-            ['libelle' => 'Contact', 'route' => 'contact', 'actif' => ['contact']],
         ];
     }
 

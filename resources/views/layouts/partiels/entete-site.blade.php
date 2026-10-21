@@ -4,10 +4,9 @@
     <div class="cont h-in">
         <x-ui.logo />
         <nav class="h-nav" aria-label="Menu principal">
-            <a href="{{ route('recherche') }}" @if(in_array($routeCourante, ['recherche', 'logement', 'hebergeur'])) class="on" aria-current="page" @endif>Logements</a>
-            <a href="{{ route('accueil') }}#comment">Comment ça marche</a>
-            <a href="{{ route('devenir-partenaire') }}" @if($routeCourante === 'devenir-partenaire') class="on" aria-current="page" @endif>Devenir partenaire</a>
-            <a href="{{ route('faq') }}" @if($routeCourante === 'faq') class="on" aria-current="page" @endif>Aide</a>
+            @foreach($menuSite as $m)
+                <a href="{{ route($m['route']).($m['ancre'] ?? '') }}" @if($estActif($m)) class="on" aria-current="page" @endif>{{ $m['libelle'] }}</a>
+            @endforeach
         </nav>
         <div class="h-droite">
             @if($u)
