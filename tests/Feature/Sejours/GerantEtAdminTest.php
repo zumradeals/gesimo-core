@@ -110,7 +110,7 @@ it('l\'envoi pour vérification exige logement, photo et deux pièces ; les piè
     $residence = residenceBrouillon($gerant);
     $test = Livewire::actingAs($gerant)->test(EditerResidence::class, ['residence' => $residence]);
 
-    $test->call('soumettre')->assertSee('Il manque : au moins un logement avec son prix par nuit, au moins une photo');
+    $test->call('soumettre')->assertSet('etape', 2)->assertSee('Ajoutez et enregistrez au moins un logement avec son prix par nuit');
     expect($residence->fresh()->soumise_le)->toBeNull();
 
     $test->call('nouveauLogement')->set('uNom', 'Studio')->set('uCapacite', '2')->set('uPrix', '15000')

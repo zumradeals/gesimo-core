@@ -22,9 +22,9 @@
         @if($etape === 1)
         <form wire:submit="enregistrerResidence" class="carte-p">
             <h2>1. Ma résidence</h2>
-            <div class="champ"><label class="etiquette" for="nom">Nom</label><input id="nom" wire:model="nom" class="saisie">@error('nom')<p class="erreur-champ">{{ $message }}</p>@enderror</div>
+            <div class="champ"><label class="etiquette" for="nom">Nom</label><input id="nom" wire:model="nom" required class="saisie">@error('nom')<p class="erreur-champ">{{ $message }}</p>@enderror</div>
             <div class="grid grid-cols-2 gap-3">
-                <div class="champ"><label class="etiquette" for="commune">Commune</label><input id="commune" wire:model="commune" class="saisie" placeholder="Ex. Cocody">@error('commune')<p class="erreur-champ">{{ $message }}</p>@enderror</div>
+                <div class="champ"><label class="etiquette" for="commune">Commune</label><input id="commune" wire:model="commune" required class="saisie" placeholder="Ex. Cocody">@error('commune')<p class="erreur-champ">{{ $message }}</p>@enderror</div>
                 <div class="champ"><label class="etiquette" for="quartier">Quartier</label><input id="quartier" wire:model="quartier" class="saisie" placeholder="Ex. Riviera">@error('quartier')<p class="erreur-champ">{{ $message }}</p>@enderror</div>
             </div>
             <div class="grid grid-cols-2 gap-3">
@@ -87,13 +87,13 @@
             @if($formulaireLogement)
             <form wire:submit="enregistrerLogement" class="carte-p">
                 <h3 class="text-lg font-extrabold">{{ $uniteId ? 'Modifier le logement' : 'Un logement' }}</h3>
-                <div class="champ"><label class="etiquette" for="uNom">Nom</label><input id="uNom" wire:model="uNom" class="saisie" placeholder="Ex. Chambre climatisée 1">@error('uNom')<p class="erreur-champ">{{ $message }}</p>@enderror</div>
+                <div class="champ"><label class="etiquette" for="uNom">Nom</label><input id="uNom" wire:model="uNom" required class="saisie" placeholder="Ex. Chambre climatisée 1">@error('uNom')<p class="erreur-champ">{{ $message }}</p>@enderror</div>
                 <div class="grid grid-cols-2 gap-3">
                     <div class="champ"><label class="etiquette" for="uType">Type</label><select id="uType" wire:model="uType" class="saisie"><option value="chambre">Chambre</option><option value="studio">Studio</option><option value="appartement">Appartement</option></select></div>
-                    <div class="champ"><label class="etiquette" for="uCapacite">Personnes</label><input id="uCapacite" inputmode="numeric" wire:model="uCapacite" class="saisie">@error('uCapacite')<p class="erreur-champ">{{ $message }}</p>@enderror</div>
+                    <div class="champ"><label class="etiquette" for="uCapacite">Personnes</label><input id="uCapacite" inputmode="numeric" wire:model="uCapacite" required class="saisie">@error('uCapacite')<p class="erreur-champ">{{ $message }}</p>@enderror</div>
                 </div>
                 <div class="grid grid-cols-2 gap-3">
-                    <div class="champ"><label class="etiquette" for="uPrix">Prix par nuit (FCFA)</label><input id="uPrix" inputmode="numeric" wire:model="uPrix" class="saisie" placeholder="15 000">@error('uPrix')<p class="erreur-champ">{{ $message }}</p>@enderror</div>
+                    <div class="champ"><label class="etiquette" for="uPrix">Prix par nuit (FCFA)</label><input id="uPrix" inputmode="numeric" wire:model="uPrix" required class="saisie" placeholder="15 000">@error('uPrix')<p class="erreur-champ">{{ $message }}</p>@enderror</div>
                     <div class="champ"><label class="etiquette" for="uPrixWeekEnd">Prix week-end (facultatif)</label><input id="uPrixWeekEnd" inputmode="numeric" wire:model="uPrixWeekEnd" class="saisie" placeholder="20 000">@error('uPrixWeekEnd')<p class="erreur-champ">{{ $message }}</p>@enderror</div>
                 </div>
                 <p class="aide">Le prix week-end s'applique aux nuits du vendredi et du samedi.</p>
@@ -120,6 +120,7 @@
                     </div>
                 </div>
 
+                @error('uEquipements.*')<p class="erreur-champ">{{ $message }}</p>@enderror
                 <div class="champ">
                     <label class="etiquette" for="photos">Photos ({{ $nbPhotos }}/{{ $maxPhotos }})</label>
                     <input id="photos" type="file" multiple accept="image/jpeg,image/png,image/webp" wire:model="nouvellesPhotos" class="saisie py-3">
@@ -141,22 +142,30 @@
 
     @if($residence && $etape === 3)
     {{-- 3. Pièces et envoi --}}
-    <div class="carte-p">
+    <div class="carte-p" x-data="{ transfertPieces: 0 }"
+         x-on:livewire-upload-start="transfertPieces++"
+         x-on:livewire-upload-finish="transfertPieces = Math.max(0, transfertPieces - 1)"
+         x-on:livewire-upload-error="transfertPieces = Math.max(0, transfertPieces - 1)"
+         x-on:livewire-upload-cancel="transfertPieces = Math.max(0, transfertPieces - 1)">
         <h2>3. Envoyer pour vérification</h2>
         <p class="aide !text-[15px]">La résidence reste invisible tant qu'un admin Avelis ne l'a pas validée.</p>
+        <p class="aide">Deux documents distincts sont demandés : votre identité et votre droit de gérer cette résidence (par exemple un mandat de gestion ou un titre de propriété). Les pièces déjà enregistrées sont conservées pour les prochains envois de cette résidence.</p>
+        <p class="aide">PDF, JPEG ou PNG, 5 Mo maximum par document. Le bouton « Envoyer pour vérification » enregistre aussi les fichiers sélectionnés.</p>
+        @error('pieces')<p class="erreur-champ" role="alert">{{ $message }}</p>@enderror
+        <div wire:loading wire:target="pieceGerant,justificatif" class="aide" role="status">Transfert des pièces en cours… Attendez la fin avant de continuer.</div>
         <div class="grid gap-3 md:grid-cols-2">
             <div class="champ"><label class="etiquette" for="piece">Pièce d'identité du gérant</label>
-                <input id="piece" type="file" accept="application/pdf,image/jpeg,image/png" wire:model="pieceGerant" class="saisie py-3">
-                @if($residence->documents->firstWhere('type', 'piece_gerant'))<span class="aide text-green-700">✔ Déjà envoyée (vous pouvez la remplacer)</span>@endif
+                <input id="piece" wire:key="piece-{{ $versionPieces }}" type="file" accept="application/pdf,image/jpeg,image/png" wire:model="pieceGerant" class="saisie py-3">
+                @if($piecesDisponibles['piece_gerant'])<span class="aide text-green-700">✔ Déjà envoyée (vous pouvez la remplacer)</span>@else<span class="aide">À fournir : pièce manquante, refusée ou indisponible.</span>@endif
                 @error('pieceGerant')<p class="erreur-champ">{{ $message }}</p>@enderror</div>
             <div class="champ"><label class="etiquette" for="justif">Justificatif du droit de gérer</label>
-                <input id="justif" type="file" accept="application/pdf,image/jpeg,image/png" wire:model="justificatif" class="saisie py-3">
-                @if($residence->documents->firstWhere('type', 'justificatif_droit_gestion'))<span class="aide text-green-700">✔ Déjà envoyé (vous pouvez le remplacer)</span>@endif
+                <input id="justif" wire:key="justif-{{ $versionPieces }}" type="file" accept="application/pdf,image/jpeg,image/png" wire:model="justificatif" class="saisie py-3">
+                @if($piecesDisponibles['justificatif_droit_gestion'])<span class="aide text-green-700">✔ Déjà envoyé (vous pouvez le remplacer)</span>@else<span class="aide">À fournir pour cette résidence : justificatif manquant, refusé ou indisponible.</span>@endif
                 @error('justificatif')<p class="erreur-champ">{{ $message }}</p>@enderror</div>
         </div>
         <div class="grid gap-2 sm:grid-cols-2">
-            <button type="button" wire:click="envoyerPieces" class="btn-sec pleine" wire:loading.attr="disabled">Enregistrer les pièces</button>
-            <button type="button" wire:click="soumettre" class="btn-pl pleine" wire:loading.attr="disabled">Envoyer pour vérification</button>
+            <button type="button" wire:click="envoyerPieces" class="btn-sec pleine" wire:loading.attr="disabled" x-bind:disabled="transfertPieces > 0">Enregistrer les pièces</button>
+            <button type="button" wire:click="soumettre" class="btn-pl pleine" wire:loading.attr="disabled" x-bind:disabled="transfertPieces > 0">Envoyer pour vérification</button>
         </div>
     </div>
     @endif

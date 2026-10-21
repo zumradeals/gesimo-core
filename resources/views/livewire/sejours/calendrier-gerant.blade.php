@@ -7,19 +7,24 @@
             <p class="text-lg font-semibold">Aucune résidence à afficher.</p>
             @can('create', \App\Sejours\Models\Residence::class)<a href="{{ route('gerant.residence.nouvelle') }}" class="btn-pl">Ajouter ma résidence</a>@endcan
         </div>
-    @elseif($unite === null)
-        <x-ui.alerte type="attention">Cette résidence n'a pas encore de logement.</x-ui.alerte>
+    @else
+    <div class="grid gap-3 md:grid-cols-2 lg:max-w-3xl">
+        <div class="champ"><label class="etiquette" for="residence">Résidence</label>
+            <select id="residence" wire:model.live="residenceId" class="saisie">@foreach($residences as $r)<option value="{{ $r->id }}">{{ $r->nom }} ({{ $r->commune }})</option>@endforeach</select></div>
+        @if($unite !== null)<div class="champ"><label class="etiquette" for="unite">Logement</label>
+            <select id="unite" wire:model.live="uniteId" class="saisie">@foreach($unites as $u)<option value="{{ $u->id }}">{{ $u->nom }}</option>@endforeach</select></div>@endif
+    </div>
+    @if($unite === null)
+        <x-ui.alerte type="attention">Cette résidence n'a pas encore de logement actif.</x-ui.alerte>
+        @can('update', $residences->firstWhere('id', $residenceId))
+            <a href="{{ route('gerant.residence', $residenceId) }}" class="btn-sec">Gérer les logements de cette résidence</a>
+        @endcan
     @else
     @php
         $jours = $debutMois->daysInMonth;
         $couleurs = ['confirmee' => 'bg-green-100 border-green-300', 'attente' => 'bg-amber-100 border-amber-300', 'tel' => 'bg-blue-100 border-blue-300', 'bloque' => 'bg-slate-200 border-slate-300 line-through'];
     @endphp
-    <div class="grid gap-3 md:grid-cols-2 lg:max-w-3xl">
-        <div class="champ"><label class="etiquette" for="residence">Résidence</label>
-            <select id="residence" wire:model.live="residenceId" class="saisie">@foreach($residences as $r)<option value="{{ $r->id }}">{{ $r->nom }} ({{ $r->commune }})</option>@endforeach</select></div>
-        <div class="champ"><label class="etiquette" for="unite">Logement</label>
-            <select id="unite" wire:model.live="uniteId" class="saisie">@foreach($unites as $u)<option value="{{ $u->id }}">{{ $u->nom }}</option>@endforeach</select></div>
-    </div>
+
 
     <div class="grid gap-4 xl:grid-cols-[1.3fr_1fr] xl:items-start">
         <div class="carte-p">
@@ -84,5 +89,6 @@
             </div>
         </div>
     </div>
+    @endif
     @endif
 </div>
