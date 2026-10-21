@@ -138,7 +138,7 @@ it('espace admin : tableau de bord, réservations, journal ; interdits aux autre
     app(LitigeService::class)->ouvrir($r->fresh(), $r->client, 'Un problème sérieux avec le logement.');
     $admin = creerUtilisateur(Role::Admin);
 
-    Livewire::actingAs($admin)->test(TableauDeBord::class)->assertSee('Litiges ouverts')->assertSee('Un problème sérieux')->assertSee('Taux d\'expiration', false);
+    Livewire::actingAs($admin)->test(TableauDeBord::class)->assertSee('À traiter maintenant')->assertSee('Litige n° ')->assertSee('Un problème sérieux')->assertSee('Taux d\'expiration', false);
     Livewire::actingAs($admin)->test(ToutesLesReservations::class)->assertSee('#'.$r->id)->set('statut', 'annulee')->assertDontSee('#'.$r->id);
     Audit::enregistrer('reversement.test', null, ['cle_secrete' => 'sk_live_abc', 'note' => 'ok'], $admin);
     $journal = Livewire::actingAs($admin)->test(JournalAudit::class)->assertSee('litige.ouvert')->set('filtre', 'litige')->assertSee('litige.ouvert')->assertDontSee('reversement.test');
