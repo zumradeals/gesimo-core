@@ -28,7 +28,7 @@ it('le manifeste rend l\'application installable : nom, démarrage, icônes rée
     $m = $r->json();
 
     expect($m['name'])->toBe('Ma Plateforme Séjours')->and($m['short_name'])->toBe('Ma')->and($m['display'])->toBe('standalone')
-        ->and($m['start_url'])->toStartWith('/')->and($m['scope'])->toBe('/')->and($m['lang'])->toBe('fr')->and($m['theme_color'])->toBe('#0f766e');
+        ->and($m['start_url'])->toStartWith('/')->and($m['scope'])->toBe('/')->and($m['lang'])->toBe('fr')->and($m['theme_color'])->toBe('#ff6a00');
     $tailles = [];
     foreach ($m['icons'] as $icone) {
         $fichier = public_path(ltrim($icone['src'], '/'));

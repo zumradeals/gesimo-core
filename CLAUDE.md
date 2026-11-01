@@ -45,7 +45,10 @@ Maquette `docs/maquettes/reservation-v3.html` validée, intégration autorisée 
 
 Maquette `docs/maquettes/mes-reservations-v3.html` validée, intégration autorisée : `docs/contrats/mes-reservations-v3.md`. L'espace client garde son menu latéral et prend la charte orange. Un bouton principal par carte ; le voyageur peut modifier l'heure d'arrivée prévue et son message jusqu'à la veille de l'arrivée ; « Réserver à nouveau » sur les séjours passés. Nouvelle adresse écrite de la résidence (champ du gérant), donnée au voyageur seulement après confirmation, jamais publique.
 
-## Règles absolues
+## Refonte de toutes les pages (2 novembre 2026)
+
+Toutes les pages passent à la charte orange, par priorité : `docs/plan-refonte-orange.md`. Le lot 0 (socle commun : `docs/contrats/socle-charte-v1.md`) est fait : classe `charte` sur toutes les pages, jetons de couleur uniques, anciens verts retirés, pages à pleine largeur. Chaque lot suivant : maquette de ses écrans, validation, contrat, intégration, tests, rapport.
+
 1. Ne jamais inventer une règle de gestion. Cahier muet ou contradictoire : s'arrêter et poser la question avec une recommandation.
 2. Travailler uniquement dans le périmètre du lot demandé.
 3. Aucun réglage dans `.env`, sauf l'adresse de la base (`DB_URL`) et la clé de chiffrement maître (`APP_KEY`),
@@ -56,7 +59,7 @@ Maquette `docs/maquettes/mes-reservations-v3.html` validée, intégration autori
 7. Sécurité par défaut : droits minimum par rôle, vérifiés côté serveur à chaque action, mots de passe hachés,
    protection contre les injections, limitation des tentatives de connexion, journal d'audit.
 8. Aucun contournement d'authentification en production. Tout outil de développement doit être impossible à activer en production.
-9. Interface : français simple, gros boutons, montants en FCFA, peu de champs, mobile d'abord, légère.
+9. Interface : français simple, gros boutons, montants en FCFA, peu de champs, mobile d'abord, légère. Les pages remplissent toute la largeur de l'écran (décision du porteur du 2 novembre 2026) : pas de plafond de largeur qui laisse un grand vide à droite ; sur grand écran, on répartit le contenu sur plus de colonnes.
 10. Chaque lot : tests automatisés, migration propre et réversible, rapport de validation.
 11. Pas de dépendance inutile ; toute bibliothèque ajoutée est justifiée en deux phrases.
 12. Commits petits et clairs, en français, un commit par sujet.

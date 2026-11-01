@@ -6,13 +6,12 @@ Critères de priorité : 1) ce que voient tous les visiteurs et voyageurs ; 2) l
 
 ## Déjà fait
 
-Accueil · fiche du logement · réservation (informations, paiement, retour de paiement, confirmation) · Mes réservations · détail d'une réservation · menu de l'espace client · pièce d'identité dans Mon profil.
+Lot 0 (socle commun, 2 novembre 2026 : couleurs, en-tête, pied de page, boutons et menus sur toutes les pages, largeur pleine) · Accueil · fiche du logement · réservation (informations, paiement, retour de paiement, confirmation) · Mes réservations · détail d'une réservation · menu de l'espace client · pièce d'identité dans Mon profil.
 
 ## À faire
 
 | Lot | Pages | Effort | Pourquoi à ce rang |
 | --- | --- | --- | --- |
-| 0. Socle commun | En-tête, pied de page, boutons, couleurs, titres sur toutes les pages publiques, gérant et administration, sans changer les mises en page | M | Aujourd'hui l'en-tête et le pied restent verts hors accueil et réservation : le site paraît incohérent. Gain visible immédiat. |
 | 1. Entrée du visiteur | Connexion, Inscription, Connexion par lien, Accepter une invitation, pages d'erreur (403 et 404, 500, session expirée), page hors connexion | S | Passage obligé avant de réserver. |
 | 2. Catalogue Logements | /recherche : filtres, cartes, résultats | M | Deuxième page la plus vue, juste avant la fiche. Aujourd'hui sa propre charte verte. |
 | 3. Fin du parcours voyageur | Mon espace, Mon profil (formulaires), Annuler, Donner un avis, Signaler un problème, reçu imprimable, e-mails (confirmation, rappels, lien de connexion, invitation) | M | Termine l'expérience du voyageur. |

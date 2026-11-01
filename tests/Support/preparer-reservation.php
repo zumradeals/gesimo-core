@@ -21,6 +21,9 @@ $gerant->attribuerRole(Role::Gerant);
 $client = Utilisateur::create(['nom' => 'ESSAI Voyageur', 'telephone' => '0799100003', 'email' => 'voyageur@example.test', 'mot_de_passe' => 'mot-de-passe-essai-navigateur']);
 $client->attribuerRole(Role::Client);
 
+$admin = Utilisateur::create(['nom' => 'ESSAI Administrateur', 'telephone' => '0799100002', 'email' => 'admin-resa@example.test', 'mot_de_passe' => 'mot-de-passe-essai-navigateur']);
+$admin->attribuerRole(Role::SuperAdmin);
+
 $profil = ProfilGerant::pour($gerant);
 $profil->update(['nom_public' => 'Confort ESSAI', 'adresse' => 'Adresse ESSAI', 'commune_publique' => 'Cocody']);
 Storage::disk('local')->put('tests-identites/essai-reservation.pdf', 'Identité fictive réservée au navigateur de test');
@@ -43,4 +46,4 @@ foreach (['climatisation', 'wifi'] as $code) {
     }
 }
 
-echo json_encode(['unite' => $u->id, 'residence' => $r->id]), "\n";
+echo json_encode(['unite' => $u->id, 'residence' => $r->id, 'slug' => $profil->slug]), "\n";
