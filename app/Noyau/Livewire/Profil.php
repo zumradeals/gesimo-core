@@ -2,6 +2,7 @@
 
 namespace App\Noyau\Livewire;
 
+use App\Noyau\Enums\Role;
 use App\Noyau\Services\Audit;
 use App\Noyau\Services\Telephone;
 use Illuminate\Support\Facades\Hash;
@@ -72,6 +73,6 @@ class Profil extends Component
 
     public function render()
     {
-        return view('livewire.noyau.profil');
+        return view('livewire.noyau.profil', ['estClient' => auth()->user()->aRole(Role::Client)]);
     }
 }

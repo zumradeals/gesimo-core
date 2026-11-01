@@ -6,6 +6,8 @@ use App\Paiement\Models\AlerteAdmin;
 use App\Paiement\Models\Paiement;
 use App\Sejours\Enums\StatutReservation;
 use App\Sejours\Models\Reservation;
+use App\Sejours\Services\PiecesVoyageur;
+use Livewire\Attributes\On;
 use Livewire\Attributes\Title;
 use Livewire\Component;
 
@@ -22,6 +24,10 @@ class Confirmation extends Component
         $this->reservationId = $r->id;
     }
 
+    /** Le voyageur vient d'ajouter sa pièce : la page se remet à jour. */
+    #[On('piece-enregistree')]
+    public function pieceEnregistree(): void {}
+
     public function render()
     {
         $r = Reservation::with('unite.residence.gerant')->findOrFail($this->reservationId);
@@ -30,6 +36,7 @@ class Confirmation extends Component
         return view('livewire.paiement.confirmation', [
             'r' => $r,
             'paiement' => $paiement,
+            'pieceFournie' => PiecesVoyageur::pieceValide(auth()->user()) !== null,
             'tardif' => $paiement && AlerteAdmin::where('paiement_id', $paiement->id)->where('type', 'paiement_tardif_reattribue')->exists(),
         ]);
     }

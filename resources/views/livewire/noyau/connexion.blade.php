@@ -5,6 +5,8 @@
     <form wire:submit="seConnecter" class="grid content-start gap-3">
         <h1>Se connecter</h1>
 
+        @if(str_contains((string) session('url.intended'), '/reserver/'))<x-ui.alerte type="info"><b>Vos dates sont conservées.</b> Connectez-vous ou créez un compte (1 minute) : vous reprenez ensuite exactement là où vous en étiez.</x-ui.alerte>@endif
+
         @if($erreur) <x-ui.alerte type="erreur">{{ $erreur }}</x-ui.alerte> @endif
         @if($info) <x-ui.alerte type="succes">{{ $info }}</x-ui.alerte> @endif
 

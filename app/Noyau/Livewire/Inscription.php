@@ -59,7 +59,8 @@ class Inscription extends Component
         Auth::guard('web')->login($utilisateur);
         session()->regenerate();
 
-        return redirect()->route($utilisateur->aRole(Role::Gerant) ? 'gerant.residence.nouvelle' : 'accueil');
+        // Un voyageur qui s'inscrit au milieu d'une réservation reprend là où il en était (dates conservées).
+        return $utilisateur->aRole(Role::Gerant) ? redirect()->route('gerant.residence.nouvelle') : redirect()->intended(route('accueil'));
     }
 
     public function render()

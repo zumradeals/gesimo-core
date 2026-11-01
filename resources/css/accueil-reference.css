@@ -2,7 +2,8 @@
  * Les jetons sont réutilisables ; leur application reste limitée à l'accueil.
  * Contrat : docs/contrats/accueil-reference-v3.md.
  */
-.site-accueil {
+/* Jetons de la charte orange : disponibles partout, une seule définition. */
+:root {
     --avelis-orange: #ff6a00;
     --avelis-orange-texte: #b94700;
     --avelis-orange-survol: #e75e00;
@@ -13,6 +14,9 @@
     --avelis-gris: #526077;
     --avelis-trait: #e4e7ed;
     --avelis-rayon: 12px;
+}
+/* Pages de référence : accueil et parcours de réservation (contrats accueil-reference-v3 et reservation-v3). */
+:is(.site-accueil, .site-reservation) {
     --vert: var(--avelis-orange-texte);
     --vert2: var(--avelis-nuit);
     --vert3: var(--avelis-orange);
@@ -23,38 +27,38 @@
     color: var(--avelis-nuit);
     background: var(--avelis-blanc);
 }
-.site-accueil .cont { max-width: 1600px; padding-inline: clamp(20px, 3.8vw, 64px); }
-.site-accueil :is(a, button, input, select, summary):focus-visible {
+:is(.site-accueil, .site-reservation) .cont { max-width: 1600px; padding-inline: clamp(20px, 3.8vw, 64px); }
+:is(.site-accueil, .site-reservation) :is(a, button, input, select, summary):focus-visible {
     outline: 3px solid var(--avelis-nuit);
     outline-offset: 4px;
 }
-.site-accueil :is(.btn-pl, .btn-or) {
+:is(.site-accueil, .site-reservation) :is(.btn-pl, .btn-or) {
     background: var(--avelis-orange);
     color: var(--avelis-nuit);
     box-shadow: none;
     border-radius: 10px;
 }
-.site-accueil :is(.btn-pl, .btn-or):hover { background: var(--avelis-orange-survol); }
-.site-accueil .lien-fl { color: var(--avelis-orange-texte); }
-.site-accueil .site-utilitaire { display: none; }
-.site-accueil .site-h .h-in { min-height: 72px; padding-block: 10px; }
-.site-accueil .site-h .logo { font-size: 21px; font-weight: 800; color: var(--avelis-nuit); }
-.site-accueil .logo-g { background: var(--avelis-orange); color: var(--avelis-nuit); }
-.site-accueil .site-h .logo-g { width: 42px; height: 42px; font-size: 28px; border-radius: 14px; }
-.site-accueil .site-h .btn-sec { background: var(--avelis-orange); color: var(--avelis-nuit); border-color: transparent; }
-.site-accueil .h-nav a { color: var(--avelis-nuit); border-radius: 0; }
-.site-accueil .h-nav a.on { color: var(--avelis-orange-texte); background: transparent; box-shadow: 0 2px var(--avelis-orange); }
-.site-accueil .h-nav a:hover { background: var(--avelis-ivoire); color: var(--avelis-orange-texte); }
-.site-accueil .site-menu-mobile nav { border-color: var(--avelis-trait); }
-.site-accueil .site-menu-mobile nav :is(a:hover, a[aria-current=page]),
-.site-accueil .mobile-tabs .on .tab-icone { background: var(--avelis-peche); }
-.site-accueil .site-f { background: var(--avelis-nuit); color: #d9dfeb; }
-.site-accueil .site-f :is(a, .f-contact a) { color: #e0e5ef; }
-.site-accueil .site-f .logo.clair { color: #fff; }
-.site-accueil .site-f .f-bas { color: #c2cad8; }
-.site-accueil .site-f .f-paiements p { color: #c2cad8; }
-.site-accueil .site-f .cont { padding-block: 24px; }
-.site-accueil .ah-footer { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 20px 36px; }
+:is(.site-accueil, .site-reservation) :is(.btn-pl, .btn-or):hover { background: var(--avelis-orange-survol); }
+:is(.site-accueil, .site-reservation) .lien-fl { color: var(--avelis-orange-texte); }
+:is(.site-accueil, .site-reservation) .site-utilitaire { display: none; }
+:is(.site-accueil, .site-reservation) .site-h .h-in { min-height: 72px; padding-block: 10px; }
+:is(.site-accueil, .site-reservation) .site-h .logo { font-size: 21px; font-weight: 800; color: var(--avelis-nuit); }
+:is(.site-accueil, .site-reservation) .logo-g { background: var(--avelis-orange); color: var(--avelis-nuit); }
+:is(.site-accueil, .site-reservation) .site-h .logo-g { width: 42px; height: 42px; font-size: 28px; border-radius: 14px; }
+:is(.site-accueil, .site-reservation) .site-h .btn-sec { background: var(--avelis-orange); color: var(--avelis-nuit); border-color: transparent; }
+:is(.site-accueil, .site-reservation) .h-nav a { color: var(--avelis-nuit); border-radius: 0; }
+:is(.site-accueil, .site-reservation) .h-nav a.on { color: var(--avelis-orange-texte); background: transparent; box-shadow: 0 2px var(--avelis-orange); }
+:is(.site-accueil, .site-reservation) .h-nav a:hover { background: var(--avelis-ivoire); color: var(--avelis-orange-texte); }
+:is(.site-accueil, .site-reservation) .site-menu-mobile nav { border-color: var(--avelis-trait); }
+:is(.site-accueil, .site-reservation) .site-menu-mobile nav :is(a:hover, a[aria-current=page]),
+:is(.site-accueil, .site-reservation) .mobile-tabs .on .tab-icone { background: var(--avelis-peche); }
+:is(.site-accueil, .site-reservation) .site-f { background: var(--avelis-nuit); color: #d9dfeb; }
+:is(.site-accueil, .site-reservation) .site-f :is(a, .f-contact a) { color: #e0e5ef; }
+:is(.site-accueil, .site-reservation) .site-f .logo.clair { color: #fff; }
+:is(.site-accueil, .site-reservation) .site-f .f-bas { color: #c2cad8; }
+:is(.site-accueil, .site-reservation) .site-f .f-paiements p { color: #c2cad8; }
+:is(.site-accueil, .site-reservation) .site-f .cont { padding-block: 24px; }
+:is(.site-accueil, .site-reservation) .ah-footer { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 20px 36px; }
 .ah-footer nav { display: flex; flex-wrap: wrap; gap: 16px 24px; font-size: 13px; }
 .ah-footer small { font-size: 12px; color: #c2cad8; }
 .ah-footer-infos { display: flex; flex-wrap: wrap; align-items: start; justify-content: space-between; gap: 16px; border-top: 1px solid #ffffff26; padding-top: 18px; margin-top: 20px; font-size: 12px; }

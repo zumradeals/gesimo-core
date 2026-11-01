@@ -5,6 +5,8 @@
     <form wire:submit="inscrire" class="grid gap-3">
         <h1>Créer un compte</h1>
 
+        @if(str_contains((string) session('url.intended'), '/reserver/'))<x-ui.alerte type="info"><b>Vos dates sont conservées.</b> Connectez-vous ou créez un compte (1 minute) : vous reprenez ensuite exactement là où vous en étiez.</x-ui.alerte>@endif
+
         <div class="champ">
             <label class="etiquette" for="nom">Votre nom</label>
             <input id="nom" autocomplete="name" wire:model="nom" class="saisie" placeholder="Ex. Awa Koné">

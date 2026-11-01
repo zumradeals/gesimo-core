@@ -1,5 +1,5 @@
 <div style="display:grid;gap:16px">
-    <div class="adm-top"><div><h1>Mon profil</h1></div></div>
+    <div class="adm-top"><div><h1>{{ $estClient ? 'Mon profil voyageur' : 'Mon profil' }}</h1></div></div>
     @if($message)<x-ui.alerte type="succes">{{ $message }}</x-ui.alerte>@endif
     @if($erreur)<x-ui.alerte type="erreur">{{ $erreur }}</x-ui.alerte>@endif
     <div class="cols2" style="align-items:start">
@@ -17,4 +17,22 @@
             <button class="btn-sec" wire:loading.attr="disabled">Changer mon mot de passe</button>
         </form>
     </div>
+    @if($estClient)
+        <div class="cols2" style="align-items:start">
+            <section class="carte-p" id="piece-identite">
+                <h2>Ma pièce d'identité</h2>
+                @livewire(\App\Sejours\Livewire\PieceIdentite::class, ['source' => 'profil'])
+            </section>
+            <section class="carte-p rv-ivoire">
+                <h2>Qui peut voir ma pièce ?</h2>
+                <ul class="rv-liste">
+                    <li>Le gérant de votre réservation, une fois celle-ci confirmée et payée</li>
+                    <li>Pendant votre séjour et quelques jours après votre départ seulement</li>
+                    <li>Chaque ouverture est enregistrée</li>
+                    <li>Jamais le public, jamais les autres gérants</li>
+                </ul>
+                <p class="petit" style="margin:0">Vous pouvez la supprimer quand vous n'avez aucune réservation en cours.</p>
+            </section>
+        </div>
+    @endif
 </div>

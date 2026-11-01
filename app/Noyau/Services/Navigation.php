@@ -12,7 +12,10 @@ class Navigation
     public const PAGES_PLEINES = ['accueil', 'recherche', 'logement', 'hebergeur', 'a-propos', 'devenir-partenaire', 'faq', 'contact', 'conditions', 'confidentialite', 'mentions-legales', 'connexion', 'inscription', 'connexion.lien', 'invitation'];
 
     /** Pages d'un compte (client, gérant) qui gardent le site public autour d'elles. */
-    public const PAGES_PUBLIQUES = ['accueil', 'recherche', 'logement', 'hebergeur', 'a-propos', 'devenir-partenaire', 'faq', 'contact', 'conditions', 'confidentialite', 'mentions-legales', 'connexion', 'inscription', 'connexion.lien', 'invitation'];
+    public const PAGES_PUBLIQUES = ['accueil', 'recherche', 'logement', 'reserver', 'payer', 'paiement.retour', 'reservation.confirmation', 'hebergeur', 'a-propos', 'devenir-partenaire', 'faq', 'contact', 'conditions', 'confidentialite', 'mentions-legales', 'connexion', 'inscription', 'connexion.lien', 'invitation'];
+
+    /** Pages du parcours de réservation : site public autour, charte orange (contrat reservation-v3). */
+    public const PAGES_RESERVATION = ['logement', 'reserver', 'payer', 'paiement.retour', 'reservation.confirmation'];
 
     /**
      * Habillage de la page : « site » (visiteur et pages publiques), « admin », « gerant » (gérant et personnel)

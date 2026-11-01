@@ -28,6 +28,7 @@
                 <div><x-ui.badge-statut :statut="$a->statut" /></div>
                 <h3 class="text-lg font-extrabold">{{ $a->client?->nom }} · {{ $a->unite->nom }}</h3>
                 <p class="aide">{{ $a->nombre_personnes }} pers. · {{ $a->date_arrivee->translatedFormat('j M') }} → {{ $a->date_depart->translatedFormat('j M') }}@if($a->client) · {{ \App\Noyau\Services\Telephone::afficher($a->client->telephone) }}@endif</p>
+                @include('livewire.sejours.partiels.voyageur-gerant', ['r' => $a])
                 @if($a->statut === \App\Sejours\Enums\StatutReservation::Confirmee)
                     @if($a->solde > 0)<div class="flex justify-between border-t border-dashed border-trait pt-2"><span>À encaisser vous-même à l'arrivée</span><b>{{ $fr($a->solde) }}</b></div>@endif
                     <div class="grid gap-2 border-t border-dashed border-trait pt-2 sm:grid-cols-2">

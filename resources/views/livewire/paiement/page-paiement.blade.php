@@ -1,7 +1,8 @@
 @php $fr = fn (int $m) => \App\Noyau\Services\Format::fcfa($m); $u = $r->unite; @endphp
-<div style="display:grid;gap:14px">
+<div class="rv-page" style="display:grid;gap:14px">
     <p class="fil"><a href="{{ route('mes-reservations') }}">← Mes réservations</a></p>
-    <div class="stepper"><span class="st fait">1 Récapitulatif</span><span class="st on">2 Paiement</span><span class="st">3 Confirmation</span></div>
+    <x-site.etapes-reservation :etape="2" />
+    <h1 class="rv-titre">Payez pour confirmer</h1>
 
     @if($modeTest)<x-ui.alerte type="attention"><b>MODE TEST :</b> aucun vrai argent n'est débité.</x-ui.alerte>@endif
 
@@ -10,9 +11,10 @@
     @else
     <div class="cols">
         <div class="col-g">
-            <section class="carte-p"><h1 style="font-size:20px">Votre séjour</h1>
+            <section class="carte-p"><h2>Votre séjour</h2>
                 <div class="res-item"><div style="width:100px;flex:none"><x-ui.photo :photo="$u->photos->first() ?? $u->residence->photos->first()" classe="h-20" :alt="'Photo de '.$u->nom" /></div>
                     <div class="ri"><b>{{ $u->nom }}</b><span class="petit">{{ $u->residence->nom }}, {{ $u->residence->commune }}</span><span>{{ $r->date_arrivee->translatedFormat('j M') }} → {{ $r->date_depart->translatedFormat('j M Y') }} ({{ $r->nombre_nuits ?? $r->date_arrivee->diffInDays($r->date_depart) }} nuits)</span></div></div>
+                @if($r->nom_client)<div class="ligne"><span>Voyageur</span><span>{{ $r->nom_client }}@if($r->motif_sejour) · {{ \App\Sejours\Enums\MotifSejour::from($r->motif_sejour)->libelle() }}@endif</span></div>@endif
                 <div class="ligne"><span>Total du séjour</span><span>{{ $fr($r->montant_total) }}</span></div>
                 @if($resteAuGerant > 0)<div class="ligne"><span>À régler au gérant à l'arrivée</span><span>{{ $fr($resteAuGerant) }}</span></div>@endif
             </section>

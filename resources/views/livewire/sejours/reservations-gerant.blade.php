@@ -9,7 +9,7 @@
         @forelse($reservations as $r)
             <article class="carte-p">
                 <div class="flex items-center justify-between gap-2"><x-ui.badge-statut :statut="$r->statut" /><span class="aide">#{{ $r->id }}</span></div>
-                <h2 class="text-lg font-extrabold">{{ $r->client?->nom ?? $r->nom_client }} · {{ $r->unite->nom }}</h2>
+                <h2 class="text-lg font-extrabold">{{ $r->nom_client ?? $r->client?->nom }} · {{ $r->unite->nom }}</h2>
                 <p class="aide">{{ $r->unite->residence->nom }} · {{ $r->date_arrivee->translatedFormat('j M') }} → {{ $r->date_depart->translatedFormat('j M Y') }}</p>
                 <button wire:click="detail({{ $r->id }})" class="text-left text-[15px] font-semibold text-marque-600">{{ $ouverte === $r->id ? 'Masquer le détail' : 'Voir le détail' }}</button>
                 @if($ouverte === $r->id)
@@ -21,6 +21,7 @@
                             @if($r->solde > 0)<div class="flex justify-between"><span>À encaisser à l'arrivée</span><b>{{ $fr($r->solde) }}</b></div>@endif
                         @endif
                     </div>
+                    @include('livewire.sejours.partiels.voyageur-gerant', ['r' => $r])
                     @if($r->origine !== 'hors_plateforme' && in_array($r->statut, [$S::Confirmee, $S::ArriveeEnregistree, $S::Terminee, $S::Annulee, $S::Litige], true) && ! in_array($r->id, $litigesOuverts, true))
                         <a href="{{ route('gerant.probleme', $r) }}" class="btn btn-second btn-bloc border-trait text-gris-doux">Signaler un problème</a>
                     @endif
