@@ -6,13 +6,12 @@ Critères de priorité : 1) ce que voient tous les visiteurs et voyageurs ; 2) l
 
 ## Déjà fait
 
-Lot 0 (socle commun, 2 novembre 2026 : couleurs, en-tête, pied de page, boutons et menus sur toutes les pages, largeur pleine) · Lot 1 (entrée du visiteur, 3 novembre 2026 : connexion, inscription, lien, invitation, pages d'erreur, hors connexion) · Accueil · fiche du logement · réservation (informations, paiement, retour de paiement, confirmation) · Mes réservations · détail d'une réservation · menu de l'espace client · pièce d'identité dans Mon profil.
+Lot 0 (socle commun, 2 novembre 2026 : couleurs, en-tête, pied de page, boutons et menus sur toutes les pages, largeur pleine) · Lot 1 (entrée du visiteur, 3 novembre 2026 : connexion, inscription, lien, invitation, pages d'erreur, hors connexion) · Lot 2 (catalogue Logements, 3 novembre 2026) · Accueil · fiche du logement · réservation (informations, paiement, retour de paiement, confirmation) · Mes réservations · détail d'une réservation · menu de l'espace client · pièce d'identité dans Mon profil.
 
 ## À faire
 
 | Lot | Pages | Effort | Pourquoi à ce rang |
 | --- | --- | --- | --- |
-| 2. Catalogue Logements | /recherche : filtres, cartes, résultats | M | Deuxième page la plus vue, juste avant la fiche. Aujourd'hui sa propre charte verte. |
 | 3. Fin du parcours voyageur | Mon espace, Mon profil (formulaires), Annuler, Donner un avis, Signaler un problème, reçu imprimable, e-mails (confirmation, rappels, lien de connexion, invitation) | M | Termine l'expérience du voyageur. |
 | 4. Pages d'information | Devenir partenaire, À propos, Aide et questions fréquentes, Contact, Conditions, Confidentialité, Mentions légales, profil public du gérant | M/L | Acquisition des gérants et confiance. |
 | 5. Gérant au quotidien | Aujourd'hui (arrivées et départs), Réservations, Calendrier, Réservation par téléphone | M/L | Ce que le gérant ouvre tous les jours. |

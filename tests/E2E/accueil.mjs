@@ -48,7 +48,7 @@ try {
         const header = await page.locator('.site-h').boundingBox();
         assert(form.y >= header.y + header.height, 'La recherche ne chevauche pas le menu.');
         assert(form.y + form.height <= height, `Formulaire entier visible sans défilement à ${width} × ${height}.`);
-        for (const id of ['accueil-commune', 'accueil-arrivee', 'accueil-depart', 'accueil-personnes']) {
+        for (const id of ['accueil-commune', 'accueil-arrivee', 'accueil-nuits', 'accueil-personnes']) {
             const field = await page.locator('#' + id).boundingBox();
             assert(field.width > 50 && field.y + field.height <= height, `${id} reste utilisable.`);
         }
@@ -86,7 +86,7 @@ try {
     const date = delta => { const d = new Date(); d.setUTCDate(d.getUTCDate() + delta); return d.toISOString().slice(0, 10); };
     await page.locator('#accueil-commune').selectOption('Cocody');
     await page.locator('#accueil-arrivee').fill(date(40));
-    await page.locator('#accueil-depart').fill(date(42));
+    await page.getByRole('button', { name: 'Une nuit de plus' }).click(); // 1 nuit par défaut, puis 2 nuits
     await page.getByRole('button', { name: 'Rechercher un logement', exact: true }).click();
     await page.waitForURL(u => u.pathname === '/recherche' && u.searchParams.get('commune') === 'Cocody');
     await page.getByText('Studio Papaye — ESSAI', { exact: true }).waitFor();
