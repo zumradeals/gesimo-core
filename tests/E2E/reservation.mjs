@@ -86,6 +86,38 @@ try {
     await page.waitForURL(/\/(mes-reservations|payer\/\d+)/);
     assert.match(await page.locator('main').innerText(), /Vos dates sont gardées|Payez pour confirmer/);
     await page.screenshot({ path: output + '/reservation-apres-gardes.png', fullPage: true });
+
+    // 5. Mes réservations : bandeau « À faire en premier », espace client à la charte orange, aucun débordement.
+    await page.goto(`${base}/mes-reservations`);
+    await page.getByRole('heading', { name: 'Payez pour garder vos dates' }).waitFor();
+    assert.equal(await page.locator('body.espace-client').count(), 1);
+    assert.match(await page.locator('.mr-liste').innerText(), /En attente de paiement/);
+    assert.match(await page.locator('.mr-liste').innerText(), /Annuler cette réservation/);
+    assert.equal(await page.locator('.adm-side').evaluate(el => getComputedStyle(el).backgroundColor), 'rgb(23, 36, 59)', 'Le menu latéral est bleu nuit.');
+    for (const w of [320, 390, 768, 1024, 1366, 1920, 2560]) assert.equal(await debordement(w), false, `Débordement de Mes réservations à ${w} px`);
+    await page.setViewportSize({ width: 1366, height: 768 });
+    await page.screenshot({ path: output + '/mes-reservations-ordinateur.png', fullPage: true });
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.screenshot({ path: output + '/mes-reservations-telephone.png', fullPage: true });
+
+    // 6. Détail d'une réservation en attente.
+    await page.setViewportSize({ width: 1366, height: 768 });
+    await page.locator('.mr-liste h3 a').first().click();
+    await page.waitForURL(/\/reservation\/\d+$/);
+    await page.getByText('Dates gardées pour vous').waitFor();
+    assert.doesNotMatch(await page.locator('main').innerText(), /Adresse/, 'Pas d\'adresse avant la confirmation.');
+    for (const w of [320, 390, 768, 1024, 1366, 1920, 2560]) assert.equal(await debordement(w), false, `Débordement du détail à ${w} px`);
+    await page.setViewportSize({ width: 1366, height: 768 });
+    await page.screenshot({ path: output + '/mes-reservations-detail-ordinateur.png', fullPage: true });
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.screenshot({ path: output + '/mes-reservations-detail-telephone.png', fullPage: true });
+
+    // 7. Annuler depuis la liste (réservation non payée) : confirmation puis disparition.
+    await page.setViewportSize({ width: 1366, height: 768 });
+    await page.goto(`${base}/mes-reservations`);
+    page.once('dialog', d => d.accept());
+    await page.getByRole('button', { name: 'Annuler cette réservation' }).first().click();
+    await page.getByText('Réservation annulée.').waitFor();
     assert.deepEqual(errors, [], 'Aucune erreur JavaScript.');
     console.log('Parcours de réservation : OK');
 } finally {

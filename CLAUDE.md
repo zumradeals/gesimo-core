@@ -41,6 +41,10 @@ Maquette approuvée et intégration autorisée : `docs/contrats/logements-v2.md`
 
 Maquette `docs/maquettes/reservation-v3.html` validée, intégration autorisée : `docs/contrats/reservation-v3.md`. Date d'arrivée + nombre de nuits (plus de plage de calendrier) ; séjour minimum 1 et maximum 30 nuits, heure de départ 11 h, accès du gérant à la pièce d'identité 7 jours après le départ : tous réglables dans Paramètres. Motif du séjour obligatoire ; pièce d'identité du voyageur déposée une fois dans son profil (après le paiement), chiffrée, visible seulement du gérant de la réservation confirmée, ouvertures journalisées. Les pages Mes réservations et Détail d'une réservation ne sont pas encore refondues.
 
+## Mes réservations et détail (2 novembre 2026)
+
+Maquette `docs/maquettes/mes-reservations-v3.html` validée, intégration autorisée : `docs/contrats/mes-reservations-v3.md`. L'espace client garde son menu latéral et prend la charte orange. Un bouton principal par carte ; le voyageur peut modifier l'heure d'arrivée prévue et son message jusqu'à la veille de l'arrivée ; « Réserver à nouveau » sur les séjours passés. Nouvelle adresse écrite de la résidence (champ du gérant), donnée au voyageur seulement après confirmation, jamais publique.
+
 ## Règles absolues
 1. Ne jamais inventer une règle de gestion. Cahier muet ou contradictoire : s'arrêter et poser la question avec une recommandation.
 2. Travailler uniquement dans le périmètre du lot demandé.
