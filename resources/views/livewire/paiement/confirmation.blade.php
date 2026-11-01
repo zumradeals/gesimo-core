@@ -35,6 +35,7 @@
             </section>
             <section class="carte-p"><h2>Contact du gérant</h2>
                 <div class="coord"><div><x-ui.icone nom="compte" classe="ic" /><span>{{ $res->gerant->nom }}</span></div><div><x-ui.icone nom="tel" classe="ic" /><span>{{ \App\Noyau\Services\Telephone::afficher($res->gerant->telephone) }}</span></div>
+                    @if($res->adresse)<div><x-ui.icone nom="pin" classe="ic" /><span>{{ $res->adresse }}@if($res->quartier), {{ $res->quartier }}@endif, {{ $res->commune }}</span></div>@endif
                     @if($res->latitude !== null)<div><x-ui.icone nom="pin" classe="ic" /><span><a target="_blank" rel="noopener" href="https://www.google.com/maps?q={{ $res->latitude }},{{ $res->longitude }}">Voir sur la carte</a></span></div>@endif</div>
                 @if($res->reglement)<p class="petit" style="margin:0">Règlement : {{ $res->reglement }}</p>@endif
             </section>

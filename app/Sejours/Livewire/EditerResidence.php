@@ -35,6 +35,8 @@ class EditerResidence extends Component
 
     public string $quartier = '';
 
+    public string $adresse = '';
+
     public string $latitude = '';
 
     public string $longitude = '';
@@ -90,6 +92,7 @@ class EditerResidence extends Component
             $this->nom = $residence->nom;
             $this->commune = $residence->commune;
             $this->quartier = (string) $residence->quartier;
+            $this->adresse = (string) $residence->adresse;
             $this->latitude = (string) $residence->latitude;
             $this->longitude = (string) $residence->longitude;
             $this->reglement = (string) $residence->reglement;
@@ -149,6 +152,7 @@ class EditerResidence extends Component
             'nom' => 'required|string|max:150',
             'commune' => 'required|string|max:100',
             'quartier' => 'nullable|string|max:100',
+            'adresse' => 'nullable|string|max:255',
             'latitude' => 'nullable|numeric|between:-90,90|required_with:longitude',
             'longitude' => 'nullable|numeric|between:-180,180|required_with:latitude',
             'reglement' => 'nullable|string|max:3000',
@@ -177,6 +181,7 @@ class EditerResidence extends Component
             'nom' => trim($donnees['nom']),
             'commune' => trim($donnees['commune']),
             'quartier' => $donnees['quartier'] !== '' ? trim($donnees['quartier']) : null,
+            'adresse' => trim((string) $donnees['adresse']) !== '' ? trim($donnees['adresse']) : null,
             'latitude' => $this->latitude !== '' ? $this->latitude : null,
             'longitude' => $this->longitude !== '' ? $this->longitude : null,
             'reglement' => $donnees['reglement'] !== '' ? $donnees['reglement'] : null,

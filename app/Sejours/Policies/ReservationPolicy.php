@@ -56,6 +56,12 @@ class ReservationPolicy
             && ($reservation->client_id === $utilisateur->getKey() || $this->estGerantDe($utilisateur, $reservation) || $utilisateur->estAdmin());
     }
 
+    /** Modifier l'heure d'arrivée prévue et le message au gérant : seulement le client de la réservation. */
+    public function modifierInformations(Utilisateur $utilisateur, Reservation $reservation): bool
+    {
+        return $utilisateur->estActif() && $reservation->client_id === $utilisateur->getKey();
+    }
+
     /** Avis : le client du séjour (la base refuse tant que le séjour n'est pas terminé). */
     public function donnerAvis(Utilisateur $utilisateur, Reservation $reservation): bool
     {

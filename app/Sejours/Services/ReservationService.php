@@ -151,6 +151,36 @@ class ReservationService
             ->where('statut', StatutReservation::EnAttente->value)->where('expire_le', '>', now())->latest('id')->first();
     }
 
+    /** Jusqu'à la veille de l'arrivée, le voyageur peut encore corriger l'heure d'arrivée prévue et son message au gérant. */
+    public static function informationsModifiables(Reservation $reservation): bool
+    {
+        return $reservation->origine === 'plateforme'
+            && in_array($reservation->statut, [StatutReservation::EnAttente, StatutReservation::Confirmee], true)
+            && now()->startOfDay()->lt($reservation->date_arrivee->startOfDay());
+    }
+
+    /** Modifie seulement l'heure d'arrivée prévue et le message : jamais les dates, le prix ni le paiement. */
+    public function modifierInformations(Reservation $reservation, Utilisateur $client, ?string $heureArrivee, ?string $message): Reservation
+    {
+        Gate::forUser($client)->authorize('modifierInformations', $reservation);
+        if (! self::informationsModifiables($reservation)) {
+            throw new ReservationImpossible('Ces informations ne peuvent plus être modifiées : la veille de l\'arrivée est passée.');
+        }
+        $heure = HeureArriveePrevue::tryFrom((string) $heureArrivee);
+        if ($heureArrivee !== null && $heureArrivee !== '' && $heure === null) {
+            throw new ReservationImpossible('Choisissez une heure d\'arrivée dans la liste.');
+        }
+        $message = trim((string) $message);
+        if (mb_strlen($message) > 500) {
+            throw new ReservationImpossible('Votre message est trop long (500 caractères au maximum).');
+        }
+
+        $reservation->update(['heure_arrivee_prevue' => $heure?->value, 'message_gerant' => $message === '' ? null : $message]);
+        Audit::enregistrer('reservation.infos_modifiees', $reservation, ['champs' => ['heure_arrivee_prevue', 'message_gerant']], $client);
+
+        return $reservation->fresh();
+    }
+
     /** RG-5 : réservation prise par téléphone, gratuite, sans commission ; elle bloque seulement le calendrier. */
     public function creerHorsPlateforme(Utilisateur $gerant, Unite $unite, CarbonInterface $arrivee, CarbonInterface $depart, string $nomClient, ?string $telephoneClient = null): Reservation
     {
