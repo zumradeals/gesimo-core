@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Maquette — Catalogue Logements · Avelis Séjours</title>
+<style>
+:root{--orange:#ff6a00;--orange-texte:#b94700;--orange-survol:#e75e00;--nuit:#17243b;--ivoire:#fff8f0;--peche:#ffeadb;--gris:#526077;--trait:#e4e7ed;--saisie:#c7cdd8;--ok:#1d7a46;--okfond:#e8f5ed;--erreur:#b42318;--erreurfond:#fdecea}
+*{box-sizing:border-box}
+body{margin:0;font:16px/1.55 system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--nuit);background:#eef0f4}
+h1,h2,h3,p{margin:0}h1,h2,h3{letter-spacing:-.03em;line-height:1.15}a{color:var(--orange-texte)}button,input,select{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--nuit);outline-offset:3px}
+.outil{position:sticky;top:0;z-index:50;background:var(--nuit);color:#fff;padding:10px 16px;display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center}
+.outil nav{display:flex;flex-wrap:wrap;gap:6px}.outil button{border:1px solid #ffffff55;background:transparent;color:#fff;border-radius:999px;padding:6px 12px;font-size:13px;cursor:pointer}
+.outil button.on{background:var(--orange);border-color:var(--orange);color:var(--nuit);font-weight:700}.outil .sep{margin-left:auto;display:flex;gap:6px;align-items:center;font-size:13px}
+.avertis{max-width:1700px;margin:14px auto 0;padding:0 16px;font-size:13px;color:var(--gris)}
+.scene{margin:12px auto 0;background:#fff;border:1px solid var(--trait);border-radius:18px;overflow:hidden;container-type:inline-size;width:min(100%,1700px);box-shadow:0 10px 40px #17243b14}
+body.mobile .scene{width:390px}
+/* chrome */
+.entete{display:flex;align-items:center;gap:16px;padding:12px 18px;border-bottom:1px solid var(--trait);background:#fff}
+.logo{display:flex;align-items:center;gap:9px;font-weight:800;font-size:19px;white-space:nowrap}
+.logo i{display:grid;place-items:center;width:36px;height:36px;border-radius:12px;background:var(--orange);color:var(--nuit);font-style:normal;font-size:24px}
+.entete .menu{margin-left:auto;display:none;gap:22px;font-size:14px;font-weight:600}.entete .menu .on{color:var(--orange-texte);box-shadow:0 2px var(--orange)}
+.entete .droite{margin-left:auto;display:flex;gap:10px;align-items:center;font-size:14px;font-weight:700}.entete .menu~.droite{margin-left:0}
+.pastille-btn{background:var(--orange);color:var(--nuit);padding:9px 14px;border-radius:10px;white-space:nowrap}
+@container (max-width:500px){.entete .droite span:not(.pastille-btn){display:none}}
+.pied{background:var(--nuit);color:#d9dfeb;padding:18px;font-size:13px;display:flex;flex-wrap:wrap;gap:8px 24px;justify-content:space-between}
+/* boutons / champs */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:50px;padding:10px 20px;border:0;border-radius:10px;background:var(--orange);color:var(--nuit);font-weight:800;font-size:16px;cursor:pointer;text-decoration:none;text-align:center}
+.btn:hover{background:var(--orange-survol)}.btn.sec{background:#fff;border:2px solid var(--nuit)}.btn.sec:hover{background:var(--ivoire)}.btn.pleine{width:100%}
+.lien{background:none;border:0;padding:6px 0;font-weight:700;color:var(--orange-texte);text-decoration:underline;cursor:pointer}
+/* en-tête de page compact */
+.page{padding:18px;display:grid;gap:16px}
+.tete{display:grid;gap:4px}.tete .fil{font-size:13px;color:var(--gris)}.tete h1{font-size:clamp(26px,3vw,36px)}.tete p{color:var(--gris);font-size:15px}
+/* recherche */
+.rech{background:#fff;border:1px solid var(--peche);border-top:4px solid var(--orange);border-radius:14px;box-shadow:0 8px 24px #9e47001a;padding:14px;display:grid;gap:10px}
+.rech .champs{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.rech label,.rech .nuits{display:grid;gap:2px;border:1px solid var(--trait);border-radius:10px;padding:8px 12px;min-width:0}
+.rech label>span,.rech .nuits>span{font-size:12px;color:var(--gris)}
+.rech input,.rech select{border:0;background:transparent;width:100%;min-height:30px;font-size:16px;padding:0}
+.rech label:focus-within{outline:2px solid var(--nuit);outline-offset:2px}
+.rech .commune{grid-column:1/-1}
+.nuits .cpt{display:grid;grid-template-columns:34px 1fr 34px;align-items:center;gap:4px}
+.nuits .cpt button{height:34px;border:1.5px solid var(--nuit);background:#fff;border-radius:8px;font-size:20px;font-weight:700;cursor:pointer;line-height:1}
+.nuits .cpt output{text-align:center;font-weight:800}
+.rech .btn{min-height:54px}
+.depart-info{font-size:13px;color:var(--gris);padding:0 4px}
+.erreur-rech{display:flex;gap:10px;background:var(--erreurfond);border:1px solid #f2b8b2;color:#7a1a12;border-radius:10px;padding:10px 14px;font-size:14.5px}
+/* communes rapides */
+.communes{display:flex;gap:8px;overflow-x:auto;padding-bottom:2px}
+.communes button{flex:none;border:1.5px solid var(--saisie);background:#fff;border-radius:999px;padding:7px 14px;font-weight:700;font-size:14.5px;cursor:pointer;white-space:nowrap}
+.communes button.on{background:var(--nuit);color:#fff;border-color:var(--nuit)}
+.communes small{font-weight:600;color:var(--gris);margin-left:4px}.communes .on small{color:#d9dfeb}
+/* corps */
+.corps{display:grid;gap:16px;align-items:start}
+.filtres{background:#fff;border:1px solid var(--trait);border-radius:14px;padding:18px;display:none;gap:16px;align-content:start}
+.filtres h2{font-size:19px}.filtres fieldset{border:0;padding:0;margin:0;display:grid;gap:8px}.filtres legend{font-weight:800;font-size:15px;padding:0 0 6px}
+.check{display:flex;align-items:center;gap:10px;min-height:40px;font-size:15px;cursor:pointer}.check input{width:20px;height:20px;accent-color:var(--orange)}
+.budget{display:flex;align-items:center;gap:8px;border:1.5px solid var(--saisie);border-radius:10px;padding:8px 12px}.budget input{border:0;width:100%;min-width:0;font-size:16px}.budget[data-off]{background:#f3f5f8;border-color:var(--trait)}
+.aide{font-size:13px;color:var(--gris)}
+.aide-carte{background:var(--ivoire);border:1px solid var(--peche);border-radius:14px;padding:16px;display:none;gap:6px;font-size:14px}
+.haut-res{display:grid;gap:10px}
+.compteur{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap}.compteur h2{font-size:clamp(22px,2.4vw,28px)}.compteur .sous{color:var(--gris);font-size:14.5px}
+.outils{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.btn-filtres{display:inline-flex;gap:8px;align-items:center;min-height:46px;border:2px solid var(--nuit);background:#fff;border-radius:10px;padding:0 16px;font-weight:800;cursor:pointer}
+.btn-filtres b{background:var(--orange);color:var(--nuit);border-radius:999px;min-width:22px;height:22px;display:inline-grid;place-items:center;font-size:12px;padding:0 6px}
+.tri{display:flex;align-items:center;gap:8px;font-size:14px;color:var(--gris)}.tri select{min-height:46px;border:1.5px solid var(--saisie);border-radius:10px;padding:0 12px;background:#fff;color:var(--nuit);font-weight:600}
+.puces{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.puce{display:inline-flex;gap:6px;align-items:center;background:var(--ivoire);border:1px solid var(--peche);border-radius:999px;padding:5px 6px 5px 12px;font-size:14px;font-weight:700}
+.puce button{border:0;background:#fff;border-radius:50%;width:24px;height:24px;cursor:pointer;font-weight:800;line-height:1}
+.note{display:flex;gap:10px;align-items:flex-start;background:var(--ivoire);border:1px solid var(--peche);border-radius:12px;padding:11px 14px;font-size:14.5px}
+/* grille de cartes : remplit la largeur */
+.grille{display:grid;gap:16px;grid-template-columns:repeat(auto-fill,minmax(min(100%,270px),1fr))}
+.carte{background:#fff;border:1px solid var(--trait);border-radius:14px;overflow:hidden;display:grid;grid-template-rows:auto 1fr}
+.carte:hover{box-shadow:0 8px 24px #17243b1a}
+.photo{position:relative;aspect-ratio:4/3;background:linear-gradient(135deg,#d7c3ab,#a98c6c 55%,#e9d9c4);display:grid;place-items:end start;padding:8px 10px;color:#ffffffcc;font-size:12px}
+.photo.p2{background:linear-gradient(135deg,#b9c8d6,#7e97ad 55%,#dbe6ef)}.photo.p3{background:linear-gradient(135deg,#c7d6b9,#8aa57a 55%,#e1ecd9)}
+.photo .spons{position:absolute;top:10px;left:10px;background:var(--orange);color:var(--nuit);font-weight:800;font-size:12px;border-radius:999px;padding:3px 10px}
+.corps-c{padding:14px 16px 16px;display:grid;gap:5px;align-content:start}
+.corps-c h3{font-size:18px}.corps-c h3 a{color:inherit;text-decoration:none}
+.loc{font-size:14px;color:var(--gris)}.meta{font-size:14px;color:var(--gris)}
+.badge{display:inline-block;justify-self:start;background:var(--okfond);color:var(--ok);font-weight:800;font-size:12.5px;border-radius:999px;padding:3px 10px}
+.prix{display:grid;gap:0;border-top:1px dashed var(--trait);padding-top:10px;margin-top:6px}
+.prix small{font-size:12.5px;color:var(--gris)}.prix b{font-size:22px;letter-spacing:-.02em}.prix span{font-size:13px;color:var(--gris)}
+.voir{margin-top:4px;font-weight:800;color:var(--orange-texte);text-decoration:none}
+/* squelette */
+.sq .photo{background:linear-gradient(90deg,#eceff3,#f7f8fa,#eceff3);animation:b 1.2s infinite}.sq .l{height:14px;border-radius:6px;background:#eceff3}
+@keyframes b{50%{opacity:.55}}
+/* vide */
+.vide{grid-column:1/-1;border:2px dashed var(--saisie);border-radius:14px;padding:30px 18px;display:grid;gap:12px;justify-items:center;text-align:center}
+.vide h3{font-size:22px}.vide p{color:var(--gris);max-width:520px}.vide .actions{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
+/* engagements */
+.engagements{display:grid;gap:12px;background:var(--ivoire);padding:20px 18px;font-size:14.5px}.engagements b{display:block}.engagements p{color:var(--gris)}
+.pied-res{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font-size:13px;color:var(--gris)}
+/* dialogue filtres (téléphone) */
+.dialogue{display:none;position:fixed;inset:0;z-index:60;background:#17243b66;align-items:flex-end;justify-content:center}
+.dialogue.on{display:flex}
+.feuille{background:#fff;border-radius:18px 18px 0 0;width:100%;max-width:420px;max-height:92%;overflow:auto;padding:18px;display:grid;gap:16px}
+.feuille .tete-f{display:flex;justify-content:space-between;align-items:center}.feuille .x{border:0;background:#f3f5f8;border-radius:50%;width:38px;height:38px;font-size:22px;cursor:pointer}
+.scene{position:relative}
+@container (min-width:900px){
+  .entete{padding:14px 40px}.entete .menu{display:flex}.pied{padding:22px 40px}
+  .page{padding:22px 40px 40px;gap:18px}
+  .rech{padding:16px 18px}.rech .champs{grid-template-columns:1.3fr 1.1fr 1fr 1fr auto;align-items:stretch;gap:0}
+  .rech label,.rech .nuits{border:0;border-right:1px solid var(--trait);border-radius:0;padding:4px 16px}.rech .commune{grid-column:auto}
+  .rech .champs .btn{margin-left:16px}
+  .corps{grid-template-columns:290px minmax(0,1fr);gap:24px}
+  .filtres{display:grid;position:sticky;top:12px}.aide-carte{display:grid}.btn-filtres{display:none}
+  .engagements{grid-template-columns:repeat(3,1fr);padding:22px 40px}
+}
+.note-ecran{max-width:1700px;margin:12px auto 0;padding:0 16px}
+.note-ecran details{background:#fff;border:1px solid var(--trait);border-radius:12px;padding:12px 16px}.note-ecran summary{cursor:pointer;font-weight:800}
+.note-ecran dl{display:grid;gap:10px;margin:12px 0 0;font-size:14.5px}.note-ecran dt{font-weight:800}.note-ecran dd{margin:0;color:var(--gris)}
+.etats{max-width:1700px;margin:10px auto 0;padding:0 16px;display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:13px}
+.etats span{color:var(--gris);font-weight:700}.etats button{border:1.5px solid var(--saisie);background:#fff;border-radius:999px;padding:5px 12px;font-size:13px;font-weight:700;cursor:pointer}.etats button.on{background:var(--nuit);color:#fff;border-color:var(--nuit)}
+.points-v{max-width:1700px;margin:22px auto 60px;padding:0 16px}.points-v .bloc{background:#fff;border:1px solid var(--trait);border-radius:14px;padding:18px;display:grid;gap:12px}.points-v ol{margin:0;padding-left:20px;display:grid;gap:8px}
+</style>
+</head>
+<body>
+<div class="outil">
+  <b>Maquette Catalogue Logements — Avelis Séjours</b>
+  <nav id="nav" aria-label="États"><button data-e="sans" class="on">1 · Sans dates</button><button data-e="avec">2 · Avec dates</button><button data-e="vide">3 · Aucun résultat</button><button data-e="erreur">4 · Dates incorrectes</button><button data-e="charge">5 · Chargement</button><button data-e="filtres">6 · Filtres (téléphone)</button></nav>
+  <span class="sep">Affichage :<button id="b-mob" class="on">Téléphone</button><button id="b-ord">Ordinateur</button></span>
+</div>
+<p class="avertis">Maquette de travail, non validée : annonces, prix et photos sont des exemples. Sur ordinateur, les cartes remplissent toute la largeur (4 colonnes sur grand écran). Les ajouts sont signalés en bas de page.</p>
+
+<div class="scene" id="scene">
+  <header class="entete"><div class="logo"><i>A</i>Avelis Séjours</div><nav class="menu"><span>Accueil</span><span class="on">Logements</span><span>À propos</span><span>Devenir partenaire</span><span>Aide</span><span>Contact</span></nav><div class="droite"><span>Se connecter</span><span class="pastille-btn">Créer un compte</span></div></header>
+
+  <div class="page">
+    <div class="tete"><p class="fil"><a href="#">Accueil</a> / <b>Logements</b></p><h1>Trouvez votre logement</h1><p>Résidences meublées en Côte d'Ivoire, avec le prix total affiché avant de payer.</p></div>
+
+    <form class="rech" onsubmit="return false" aria-label="Rechercher un logement">
+      <div class="champs">
+        <label class="commune"><span>Commune</span><select><option>Toutes les communes</option><option>Cocody</option><option>Marcory</option><option>Bingerville</option></select></label>
+        <label><span>Arrivée</span><input type="text" id="r-arr" placeholder="Choisir une date" readonly></label>
+        <div class="nuits"><span>Nombre de nuits</span><div class="cpt"><button type="button" id="n-moins" aria-label="Une nuit de moins">−</button><output id="n-val">—</output><button type="button" id="n-plus" aria-label="Une nuit de plus">+</button></div></div>
+        <label><span>Voyageurs</span><input type="text" value="2 personnes" readonly></label>
+        <button class="btn" type="button">🔍 Rechercher</button>
+      </div>
+      <p class="depart-info" id="depart-info">Choisissez une date d'arrivée pour voir les logements libres et le prix total.</p>
+      <div class="erreur-rech" id="err-rech" style="display:none" role="alert"><span>La date d'arrivée ne peut pas être dans le passé. Choisissez une date à partir d'aujourd'hui.</span></div>
+    </form>
+
+    <div class="communes" aria-label="Communes"><button class="on">Toutes <small>12</small></button><button>Cocody <small>5</small></button><button>Marcory <small>3</small></button><button>Bingerville <small>2</small></button><button>Riviera <small>2</small></button><button>Plateau <small>1</small></button></div>
+
+    <div class="corps">
+      <aside class="filtres" aria-label="Filtres">
+        <h2>Affiner votre séjour</h2>
+        <fieldset><legend>Budget du séjour</legend><div class="budget" id="budget-box" data-off><input type="text" placeholder="Montant maximum" id="budget" disabled><span>FCFA</span></div><p class="aide" id="aide-budget">Choisissez vos dates pour filtrer sur le montant total.</p></fieldset>
+        <fieldset><legend>Les équipements essentiels</legend><label class="check"><input type="checkbox">Climatisation</label><label class="check"><input type="checkbox" checked>Groupe électrogène</label><label class="check"><input type="checkbox">Eau chaude</label><label class="check"><input type="checkbox">Wi-Fi</label><label class="check"><input type="checkbox">Parking</label></fieldset>
+        <fieldset><legend>Type de logement</legend><label class="check"><input type="checkbox">Studio</label><label class="check"><input type="checkbox">Appartement</label><label class="check"><input type="checkbox">Chambre</label></fieldset>
+        <button class="lien" type="button" style="text-align:left">Réinitialiser les filtres ↺</button>
+        <div class="aide-carte" style="display:grid"><b>Besoin d'un repère ?</b><span>Notre équipe peut vous expliquer le fonctionnement de la réservation.</span><a href="#">Comprendre avant de réserver ↗</a></div>
+      </aside>
+
+      <section class="resultats" aria-live="polite" style="display:grid;gap:14px;min-width:0">
+        <div class="haut-res">
+          <div class="compteur"><div><h2 id="titre">Des adresses à découvrir</h2><p class="sous" id="sous">8 logements présentés</p></div>
+            <div class="outils"><button class="btn-filtres" id="btn-filtres" type="button">☷ Filtres <b>1</b></button><label class="tri">Trier par<select><option>Recommandés</option><option>Prix croissant</option><option>Prix décroissant</option></select></label></div></div>
+          <div class="puces" id="puces"><span class="puce">Groupe électrogène <button aria-label="Retirer Groupe électrogène">×</button></span><button class="lien" type="button">Tout effacer</button></div>
+          <div class="note" id="note"><span>📅</span><span id="note-t">Indiquez vos dates pour connaître les disponibilités et le prix total du séjour. Les tarifs par nuit sont donnés à titre de référence.</span></div>
+        </div>
+        <div class="grille" id="grille"></div>
+        <div class="pied-res"><p><b id="bas-n">8 logements présentés</b> · Chaque annonce détaille ses équipements et ses conditions.</p><p>Les offres sponsorisées sont identifiées et présentées en premier.</p></div>
+      </section>
+    </div>
+  </div>
+
+  <section class="engagements"><div><b>Un gérant identifié</b><p>Sa pièce d'identité est contrôlée avant publication.</p></div><div><b>Des conditions avant paiement</b><p>Consultez le total et les règles d'annulation avant de confirmer.</p></div><div><b>Des badges précis</b><p>Le badge de gestion correspond à un justificatif vérifié pour la résidence.</p></div></section>
+  <footer class="pied"><span>© 2026 Avelis Séjours</span><span>Aide · Contact · Conditions générales</span></footer>
+
+  <div class="dialogue" id="dialogue"><div class="feuille" role="dialog" aria-label="Filtres">
+    <div class="tete-f"><h2>Affiner votre séjour</h2><button class="x" id="fermer" aria-label="Fermer les filtres">×</button></div>
+    <fieldset style="border:0;padding:0;margin:0;display:grid;gap:8px"><legend style="font-weight:800;padding-bottom:6px">Budget du séjour</legend><div class="budget"><input type="text" value="" placeholder="Montant maximum"><span>FCFA</span></div></fieldset>
+    <fieldset style="border:0;padding:0;margin:0;display:grid;gap:4px"><legend style="font-weight:800;padding-bottom:6px">Les équipements essentiels</legend><label class="check"><input type="checkbox">Climatisation</label><label class="check"><input type="checkbox" checked>Groupe électrogène</label><label class="check"><input type="checkbox">Eau chaude</label><label class="check"><input type="checkbox">Wi-Fi</label><label class="check"><input type="checkbox">Parking</label></fieldset>
+    <fieldset style="border:0;padding:0;margin:0;display:grid;gap:4px"><legend style="font-weight:800;padding-bottom:6px">Type de logement</legend><label class="check"><input type="checkbox">Studio</label><label class="check"><input type="checkbox">Appartement</label><label class="check"><input type="checkbox">Chambre</label></fieldset>
+    <button class="lien" type="button" style="text-align:left">Réinitialiser les filtres ↺</button>
+    <button class="btn pleine" id="appliquer">Afficher 8 logements</button></div></div>
+</div>
+
+<div class="etats" id="etats"></div>
+<div class="note-ecran"><details open><summary id="nt">Fiche écran</summary><dl id="nc"></dl></details></div>
+
+<div class="points-v"><section class="bloc"><h2>Points à faire valider avant l'intégration</h2>
+<ol>
+<li><b>Résultats visibles tout de suite.</b> Le grand bandeau d'introduction (photo et gros titre) est remplacé par un titre court : la recherche et les premiers logements apparaissent sans défilement, comme sur l'accueil. L'image d'ambiance n'est plus utilisée ici.</li>
+<li><b>Date d'arrivée + nombre de nuits</b> dans la recherche, comme sur la fiche et la réservation, à la place de « Arrivée » et « Départ ». Le départ est calculé et affiché sous le formulaire. <i>Cela demande de faire de même sur le formulaire de l'accueil pour rester cohérent (petite modification hors de ce lot, à confirmer).</i></li>
+<li><b>Cartes qui remplissent la largeur</b> : 1 colonne sur petit téléphone, 2 sur tablette, 3 à 4 ou plus sur grand écran, au lieu de colonnes fixes qui laissent un grand vide quand il y a peu d'annonces.</li>
+<li><b>Puces des filtres actifs</b> au-dessus des résultats, chacune avec une croix pour la retirer, et « Tout effacer ». Ajout de ma part.</li>
+<li><b>Communes rapides</b> : une ligne de boutons (Toutes, Cocody, Marcory…) avec le nombre de logements, à la place d'ouvrir une liste. Elles reprennent les communes déjà connues de la plateforme. Ajout de ma part.</li>
+<li><b>Filtre « Type de logement »</b> (studio, appartement, chambre) : le type existe déjà sur chaque annonce mais n'est pas filtrable aujourd'hui. Ajout de ma part, facultatif.</li>
+<li><b>Aucun résultat</b> : des boutons d'aide précis (« Toutes les communes », « Retirer le filtre … », « Changer les dates ») au lieu d'un seul bouton « Élargir ma recherche ».</li>
+<li><b>Corrections</b> : « 1 logement présenté » au singulier (aujourd'hui « 1 logements ») ; l'option de tri par défaut s'appelle « Recommandés » (elle s'appelle aujourd'hui « Prix croissant » alors qu'elle met d'abord les annonces sponsorisées). Le tri reste le même.</li>
+<li><b>Ce qui ne change pas</b> : disponibilités et prix réels après recherche datée, « Tarif de référence » sans dates, budget actif seulement avec des dates, annonces sponsorisées en premier, badge « Gestion vérifiée » selon les justificatifs réels, limite de 60 annonces, aucune annonce fictive en production.</li>
+<li><b>Ce que je n'ajoute pas</b> : favoris, carte géographique, avis sur les cartes, photos multiples : aucun n'existe aujourd'hui.</li>
+</ol></section></div>
+
+<script>
+const ANNONCES=[['Studio lumineux','Marcory · Les Palmiers','2 voyageurs · Studio',18000,'','Gestion vérifiée',1],['Appartement avec terrasse','Cocody · Riviera','4 voyageurs · Appartement',35000,'p2','Gestion vérifiée',1],['Résidence familiale','Riviera · Riviera Palmeraie','6 voyageurs · Appartement',25000,'p3','',0],['Chambre confort','Bingerville','2 voyageurs · Chambre',12000,'','',0],['Studio vue lagune','Marcory · Zone 4','2 voyageurs · Studio',20000,'p2','Gestion vérifiée',0],['Appartement 3 pièces','Cocody · Angré','5 voyageurs · Appartement',30000,'p3','',0],['Villa avec jardin','Cocody · Deux-Plateaux','8 voyageurs · Villa',60000,'','Gestion vérifiée',0],['Studio centre','Plateau','2 voyageurs · Studio',22000,'p2','',0]];
+let nuits=0, etat='sans';
+const fmt=n=>new Intl.NumberFormat('fr-FR').format(n).replace(/ | /g,' ')+' FCFA';
+function carte(a,avec,i){const [nom,lieu,meta,prix,ph,badge,sp]=a;const total=prix*(nuits||3)+ (i%2?0:0);
+ return `<article class="carte"><div class="photo ${ph}">Photo${sp?'<span class="spons">Sponsorisé</span>':''}</div><div class="corps-c"><h3><a href="#">${nom}</a></h3><p class="loc">📍 ${lieu}</p><p class="meta">${meta}</p>${badge?`<span class="badge">✓ ${badge}</span>`:''}<div class="prix"><small>${avec?'Montant du séjour':'Tarif de référence'}</small><b>${avec?fmt(total):fmt(prix)}</b><span>${avec?'pour '+(nuits||3)+' nuit'+((nuits||3)>1?'s':'')+' · soit '+fmt(prix)+' / nuit':'/ nuit'}</span></div><a class="voir" href="#">Voir le logement →</a></div></article>`;}
+function sq(){return `<article class="carte sq"><div class="photo"></div><div class="corps-c"><div class="l" style="width:70%"></div><div class="l" style="width:50%"></div><div class="l" style="width:60%"></div><div class="l" style="width:40%;height:22px"></div></div></article>`;}
+const ETATS={sans:'Sans dates',avec:'Avec dates',vide:'Aucun résultat',erreur:'Dates incorrectes',charge:'Chargement',filtres:'Filtres (téléphone)'};
+const NOTES={
+ sans:['Écran 1 · Catalogue sans dates',{'But':'Parcourir les logements publiés avant de choisir ses dates.','Ce que voit l\'utilisateur':'Titre court, recherche (commune, arrivée, nombre de nuits, voyageurs), communes rapides, filtres, puces des filtres actifs, cartes avec le tarif de référence par nuit. Une note rappelle que les disponibilités s\'affichent après le choix des dates.','Actions':'Choisir une commune, une date d\'arrivée et un nombre de nuits ; filtrer ; trier ; ouvrir une annonce.','Messages d\'erreur':'Aucun logement : écran 3.'}],
+ avec:['Écran 2 · Catalogue avec dates',{'But':'Voir uniquement les logements libres aux dates choisies, avec le prix total.','Ce que voit l\'utilisateur':'Le départ calculé, « N logements libres pour X nuits », le montant total du séjour sur chaque carte avec le prix par nuit, le budget maximum actif.','Actions':'Les mêmes, plus le budget. Chaque carte ouvre la fiche avec les dates et les voyageurs déjà renseignés.','Messages d\'erreur':'Dates incorrectes : écran 4. Aucun logement libre : écran 3.'}],
+ vide:['Écran 3 · Aucun résultat',{'But':'Ne jamais laisser la personne devant une page vide.','Ce que voit l\'utilisateur':'Un message qui dit pourquoi, et des boutons précis : élargir à toutes les communes, retirer un filtre, changer les dates.','Actions':'Un clic pour relancer une recherche plus large.','Messages d\'erreur':'« Aucun logement libre à ces dates. Essayez d\'autres dates ou une autre commune. »'}],
+ erreur:['Écran 4 · Dates incorrectes',{'But':'Corriger sans perdre sa recherche.','Ce que voit l\'utilisateur':'Un message rouge sous la recherche ; le catalogue sans dates reste affiché en dessous.','Actions':'Corriger la date.','Messages d\'erreur':'« La date d\'arrivée ne peut pas être dans le passé. » · « Le nombre de nuits doit être compris entre X et Y. »'}],
+ charge:['Écran 5 · Chargement',{'But':'Montrer que la recherche travaille, surtout sur un réseau lent.','Ce que voit l\'utilisateur':'Des cartes grises à la place des annonces, qui s\'estompent doucement.','Actions':'Aucune.','Messages d\'erreur':'Réseau coupé : bouton de recherche grisé comme aujourd\'hui (réservation hors connexion impossible).'}],
+ filtres:['Écran 6 · Filtres sur téléphone',{'But':'Affiner sans quitter les résultats.','Ce que voit l\'utilisateur':'Une feuille qui monte du bas avec budget, équipements, type de logement, réinitialiser et un grand bouton « Afficher N logements ». Le bouton Filtres indique le nombre de filtres actifs.','Actions':'Cocher, fermer (croix, bouton, retour).','Messages d\'erreur':'Aucun.'}]};
+function rendre(){
+ const avec=etat==='avec',vide=etat==='vide';
+ const g=document.getElementById('grille');
+ if(etat==='charge') g.innerHTML=[0,1,2,3,4,5,6,7].map(sq).join('');
+ else if(vide) g.innerHTML=`<div class="vide"><div style="font-size:36px">🔎</div><h3>Essayons d'autres critères.</h3><p>Aucun logement libre à ces dates. Essayez d'autres dates ou une autre commune.</p><div class="actions"><button class="btn">Toutes les communes</button><button class="btn sec">Retirer « Groupe électrogène »</button><button class="btn sec">Changer les dates</button></div></div>`;
+ else g.innerHTML=ANNONCES.map((a,i)=>carte(a,avec,i)).join('');
+ const n=vide?0:8;
+ document.getElementById('titre').textContent=avec?'Votre prochain séjour commence ici':(vide?'Aucun logement trouvé':'Des adresses à découvrir');
+ document.getElementById('sous').textContent=vide?'0 logement libre pour 3 nuits':(avec?n+' logements libres pour '+(nuits||3)+' nuits':n+' logements présentés');
+ document.getElementById('bas-n').textContent=n+' logement'+(n>1?'s':'')+' présenté'+(n>1?'s':'');
+ document.getElementById('note-t').textContent=avec||vide?'Ces logements sont libres à vos dates. Les prix affichés correspondent au montant total du séjour.':'Indiquez vos dates pour connaître les disponibilités et le prix total du séjour. Les tarifs par nuit sont donnés à titre de référence.';
+ const datee=avec||vide;
+ document.getElementById('r-arr').value=datee?'ven. 20 déc. 2026':(etat==='erreur'?'ven. 1 nov. 2024':'');
+ document.getElementById('n-val').textContent=datee||etat==='erreur'?(nuits||3)+' nuits':'—';
+ document.getElementById('depart-info').textContent=datee?'Départ : lun. 23 déc. 2026, avant 11 h':(etat==='erreur'?'':'Choisissez une date d\'arrivée pour voir les logements libres et le prix total.');
+ document.getElementById('err-rech').style.display=etat==='erreur'?'flex':'none';
+ document.getElementById('budget').disabled=!datee;document.getElementById('budget-box').toggleAttribute('data-off',!datee);
+ document.getElementById('aide-budget').textContent=datee?'Le montant total, pour toutes les nuits et tous les voyageurs.':'Choisissez vos dates pour filtrer sur le montant total.';
+ document.getElementById('dialogue').classList.toggle('on',etat==='filtres'&&document.body.classList.contains('mobile'));
+ document.querySelectorAll('#etats button').forEach(b=>b.classList.toggle('on',b.dataset.s===etat));
+ document.querySelectorAll('#nav button').forEach(b=>b.classList.toggle('on',b.dataset.e===etat));
+ const[t,d]=NOTES[etat];document.getElementById('nt').textContent=t;document.getElementById('nc').innerHTML=Object.entries(d).map(([k,v])=>`<div><dt>${k}</dt><dd>${v}</dd></div>`).join('');
+}
+document.getElementById('etats').innerHTML='<span>État :</span>'+Object.entries(ETATS).map(([k,l])=>`<button data-s="${k}" type="button">${l}</button>`).join('');
+document.getElementById('etats').addEventListener('click',e=>{const b=e.target.closest('button');if(b){etat=b.dataset.s;rendre();}});
+document.getElementById('nav').addEventListener('click',e=>{const b=e.target.closest('button');if(b){etat=b.dataset.e;rendre();}});
+document.getElementById('btn-filtres').onclick=()=>{etat='filtres';rendre();};
+['fermer','appliquer'].forEach(id=>document.getElementById(id).onclick=()=>{etat='sans';rendre();});
+document.getElementById('n-plus').onclick=()=>{nuits=Math.min(30,(nuits||3)+1);rendre();};
+document.getElementById('n-moins').onclick=()=>{nuits=Math.max(1,(nuits||3)-1);rendre();};
+const setVue=m=>{document.body.classList.toggle('mobile',m);document.getElementById('b-mob').classList.toggle('on',m);document.getElementById('b-ord').classList.toggle('on',!m);rendre();};
+document.getElementById('b-mob').onclick=()=>setVue(true);document.getElementById('b-ord').onclick=()=>setVue(false);
+document.addEventListener('click',e=>{if(e.target.closest('a[href="#"]'))e.preventDefault();});
+setVue(window.innerWidth<700);
+</script>
+</body>
+</html>
