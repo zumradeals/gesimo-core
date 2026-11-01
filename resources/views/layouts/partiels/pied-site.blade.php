@@ -20,6 +20,33 @@
 @endphp
 <footer class="site-f">
     <div class="cont">
+        @if(request()->routeIs('accueil'))
+        <div class="ah-footer">
+            <x-ui.logo :clair="true" />
+            <nav aria-label="Liens du pied de page">
+                <a href="{{ route('recherche') }}">Logements</a>
+                <a href="{{ route('faq') }}">Aide</a>
+                <a href="{{ route('contact') }}">Contact</a>
+                <a href="{{ route('conditions') }}">Conditions générales</a>
+            </nav>
+            <small>© {{ now()->year }} {{ Marque::nom() }}</small>
+        </div>
+        <div class="ah-footer-infos">
+            <nav aria-label="Informations légales"><a href="{{ route('confidentialite') }}">Confidentialité</a> · <a href="{{ route('mentions-legales') }}">Mentions légales</a></nav>
+            @if($tel || $mail || $adresse || $wa || $reseaux || $legale)
+            <details><summary>Coordonnées et informations de l’éditeur</summary>
+                <div class="f-contact">
+                    @if($adresse)<p>{{ $adresse }}</p>@endif
+                    @if($tel)<a href="{{ Marque::lienTelephone($tel) }}">{{ $tel }}</a>@endif
+                    @if($mail)<a href="mailto:{{ $mail }}">{{ $mail }}</a>@endif
+                    @if($wa)<a href="{{ $wa }}" rel="noopener" target="_blank">WhatsApp</a>@endif
+                    @foreach($reseaux as $cle => $url)<a href="{{ $url }}" rel="noopener noreferrer" target="_blank">{{ Marque::RESEAUX[$cle] }}</a>@endforeach
+                    @if($legale)<p>{{ $legale }}</p>@endif
+                </div>
+            </details>
+            @endif
+        </div>
+        @else
         <div class="f-haut">
             <div class="f-col f-marque">
                 <x-ui.logo :clair="true" />
@@ -47,5 +74,6 @@
         </div>
         <div class="f-paiements"><span>Moyens de paiement</span><div class="pastilles"><span>Wave</span><span>Orange Money</span><span>MTN Money</span><span>Carte</span></div><p>Les moyens disponibles sont précisés avant le paiement.</p></div>
         <div class="f-bas"><span>© {{ now()->year }} {{ Marque::nom() }} — tous droits réservés</span>@if($legale)<span>{{ $legale }}</span>@endif</div>
+        @endif
     </div>
 </footer>

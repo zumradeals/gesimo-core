@@ -15,7 +15,7 @@
     $menuSite = Navigation::site();
     $pleine = in_array($routeCourante, Navigation::PAGES_PLEINES, true);
 @endphp
-<body class="site min-h-screen bas-site">
+<body class="site min-h-screen bas-site{{ $routeCourante === 'accueil' ? ' site-accueil' : '' }}">
     @include('layouts.partiels.entete-site')
     <main class="page-courante">
         @if($pleine){{ $slot }}@else<div class="cont" style="padding-top:22px;padding-bottom:36px">{{ $slot }}</div>@endif

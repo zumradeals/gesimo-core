@@ -1,0 +1,212 @@
+/* Avelis Séjours — référence accueil v3, validée le 01/11/2026.
+ * Les jetons sont réutilisables ; leur application reste limitée à l'accueil.
+ * Contrat : docs/contrats/accueil-reference-v3.md.
+ */
+.site-accueil {
+    --avelis-orange: #ff6a00;
+    --avelis-orange-texte: #b94700;
+    --avelis-orange-survol: #e75e00;
+    --avelis-nuit: #17243b;
+    --avelis-ivoire: #fff8f0;
+    --avelis-peche: #ffeadb;
+    --avelis-blanc: #fff;
+    --avelis-gris: #526077;
+    --avelis-trait: #e4e7ed;
+    --avelis-rayon: 12px;
+    --vert: var(--avelis-orange-texte);
+    --vert2: var(--avelis-nuit);
+    --vert3: var(--avelis-orange);
+    --texte: var(--avelis-nuit);
+    --gris: var(--avelis-gris);
+    --bord: var(--avelis-trait);
+    --clair: var(--avelis-ivoire);
+    color: var(--avelis-nuit);
+    background: var(--avelis-blanc);
+}
+.site-accueil .cont { max-width: 1600px; padding-inline: clamp(20px, 3.8vw, 64px); }
+.site-accueil :is(a, button, input, select, summary):focus-visible {
+    outline: 3px solid var(--avelis-nuit);
+    outline-offset: 4px;
+}
+.site-accueil :is(.btn-pl, .btn-or) {
+    background: var(--avelis-orange);
+    color: var(--avelis-nuit);
+    box-shadow: none;
+    border-radius: 10px;
+}
+.site-accueil :is(.btn-pl, .btn-or):hover { background: var(--avelis-orange-survol); }
+.site-accueil .lien-fl { color: var(--avelis-orange-texte); }
+.site-accueil .site-utilitaire { display: none; }
+.site-accueil .site-h .h-in { min-height: 72px; padding-block: 10px; }
+.site-accueil .site-h .logo { font-size: 21px; font-weight: 800; color: var(--avelis-nuit); }
+.site-accueil .logo-g { background: var(--avelis-orange); color: var(--avelis-nuit); }
+.site-accueil .site-h .logo-g { width: 42px; height: 42px; font-size: 28px; border-radius: 14px; }
+.site-accueil .site-h .btn-sec { background: var(--avelis-orange); color: var(--avelis-nuit); border-color: transparent; }
+.site-accueil .h-nav a { color: var(--avelis-nuit); border-radius: 0; }
+.site-accueil .h-nav a.on { color: var(--avelis-orange-texte); background: transparent; box-shadow: 0 2px var(--avelis-orange); }
+.site-accueil .h-nav a:hover { background: var(--avelis-ivoire); color: var(--avelis-orange-texte); }
+.site-accueil .site-menu-mobile nav { border-color: var(--avelis-trait); }
+.site-accueil .site-menu-mobile nav :is(a:hover, a[aria-current=page]),
+.site-accueil .mobile-tabs .on .tab-icone { background: var(--avelis-peche); }
+.site-accueil .site-f { background: var(--avelis-nuit); color: #d9dfeb; }
+.site-accueil .site-f :is(a, .f-contact a) { color: #e0e5ef; }
+.site-accueil .site-f .logo.clair { color: #fff; }
+.site-accueil .site-f .f-bas { color: #c2cad8; }
+.site-accueil .site-f .f-paiements p { color: #c2cad8; }
+.site-accueil .site-f .cont { padding-block: 24px; }
+.site-accueil .ah-footer { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 20px 36px; }
+.ah-footer nav { display: flex; flex-wrap: wrap; gap: 16px 24px; font-size: 13px; }
+.ah-footer small { font-size: 12px; color: #c2cad8; }
+.ah-footer-infos { display: flex; flex-wrap: wrap; align-items: start; justify-content: space-between; gap: 16px; border-top: 1px solid #ffffff26; padding-top: 18px; margin-top: 20px; font-size: 12px; }
+.ah-footer-infos details { max-width: 600px; }
+.ah-footer-infos summary { cursor: pointer; min-height: 32px; }
+.ah-footer-infos .f-contact { margin-top: 12px; }
+.accueil-v3 { background: #fff; }
+.accueil-v3 :is(h1, h2, h3) { color: inherit; font-weight: 800; letter-spacing: -.035em; line-height: 1.17; }
+.accueil-v3 h2 { font-size: clamp(25px, 2.5vw, 36px); margin: 0; }
+.accueil-v3 h3 { font-size: 17px; margin: 0 0 7px; letter-spacing: -.02em; }
+.accueil-v3 p { line-height: 1.55; }
+.accueil-v3 .surtitre { font-size: 12px; letter-spacing: .11em; color: var(--avelis-orange-texte); }
+.ah-entree { background: var(--avelis-ivoire); padding-bottom: 6px; }
+.ah-hero { display: grid; align-items: center; gap: 22px; padding-top: 24px; padding-bottom: 20px; }
+.ah-hero-texte { min-width: 0; }
+.ah-hero h1 { font-size: clamp(29px, 3.4vw, 50px); margin: 12px 0 14px; line-height: 1.08; }
+.ah-hero p { max-width: 520px; color: var(--avelis-gris); font-size: 17px; margin: 0; }
+.ah-hero-visuel { display: none; min-width: 0; position: relative; height: 330px; isolation: isolate; }
+.ah-hero-visuel::before { content: ''; position: absolute; inset: 12px -18px -12px 22%; background: var(--avelis-orange); border-radius: 80px 20px 24px 80px; z-index: -1; }
+.ah-hero-visuel img { width: 100%; height: 100%; object-fit: cover; object-position: center 55%; border-radius: 20px; }
+.ah-recherche-cont { position: relative; z-index: 2; }
+.ah-recherche { background: #fff; border: 1px solid var(--avelis-peche); border-top: 4px solid var(--avelis-orange); border-radius: var(--avelis-rayon); box-shadow: 0 8px 24px #9e47001a; padding: 16px; }
+.ah-recherche h2 { font-size: 18px; margin-bottom: 14px; }
+.ah-recherche-champs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.ah-recherche label { min-width: 0; display: grid; grid-template-columns: 24px minmax(0, 1fr); gap: 2px 8px; align-items: center; padding: 9px 10px; border: 1px solid var(--avelis-trait); border-radius: 8px; }
+.ah-recherche label > .ic { grid-row: span 2; color: var(--avelis-orange-texte); }
+.ah-recherche label > span { color: var(--avelis-gris); font-size: 12px; }
+.ah-recherche label:focus-within { outline: 2px solid var(--avelis-nuit); outline-offset: 2px; }
+.ah-recherche :is(input, select) { border: 0; padding: 0; min-width: 0; width: 100%; min-height: 30px; background: transparent; color: var(--avelis-nuit); font: inherit; font-size: 16px; }
+.ah-recherche input[type=date] { min-inline-size: 0; }
+.ah-recherche :is(.ah-commune, .ah-voyageurs, button) { grid-column: 1 / -1; }
+.ah-recherche button { min-height: 52px; padding: 12px; font-size: 15px; white-space: normal; }
+.ah-recherche-note { font-size: 12px; color: var(--avelis-gris); margin: 12px 0 0; }
+.ah-reassurance { display: grid; gap: 12px; padding-block: 20px; }
+.ah-reassurance > div { display: flex; align-items: center; gap: 12px; }
+.ah-reassurance .ic { color: var(--avelis-orange-texte); width: 26px; height: 26px; }
+.ah-reassurance p { margin: 0; font-size: 12px; }
+.ah-reassurance b { font-weight: 650; }
+.ah-reassurance p > span { display: none; }
+.ah-section { padding-block: 38px; scroll-margin-top: 100px; }
+.ah-section-titre { display: flex; flex-direction: column; align-items: start; gap: 14px; margin-bottom: 20px; }
+.ah-section-titre .surtitre { margin-bottom: 6px; }
+.ah-section-titre p { font-size: 15px; color: var(--avelis-gris); margin: 10px 0 0; max-width: 650px; }
+.ah-section-titre .lien-fl { flex: none; font-size: 14px; }
+.ah-offres { display: grid; gap: 20px; }
+.accueil-v3 .av-offre { border-color: var(--avelis-trait); border-radius: var(--avelis-rayon); max-width: none; box-shadow: 0 3px 10px #17243b08; }
+.accueil-v3 .av-offre-photo { aspect-ratio: 1.9; background: var(--avelis-ivoire); }
+.accueil-v3 .av-offre-corps { padding: 16px; gap: 5px; }
+.accueil-v3 .av-offre h3 { font-size: 18px; }
+.accueil-v3 .av-offre-corps > p { font-size: 13px; color: var(--avelis-gris); }
+.accueil-v3 .av-offre-bas { flex-direction: row; align-items: center; gap: 8px; margin-top: 6px; }
+.accueil-v3 .av-offre-bas p { font-size: 12px; }
+.accueil-v3 .av-offre-bas b { color: var(--avelis-nuit); font-size: 17px; }
+.accueil-v3 .av-offre-bas .lien-fl { font-size: 12px; }
+.accueil-v3 .av-etiquette { background: var(--avelis-peche); color: var(--avelis-nuit); }
+.accueil-v3 .pg-badge { background: var(--avelis-peche); color: var(--avelis-nuit); }
+.ah-destinations { background: var(--avelis-ivoire); padding-block: 28px; }
+.ah-communes { display: grid; grid-auto-flow: column; grid-auto-columns: 82%; gap: 18px; padding: 4px 0 10px; overflow-x: auto; overscroll-behavior-x: contain; scroll-snap-type: x mandatory; }
+.ah-commune-carte { display: block; position: relative; border-radius: var(--avelis-rayon); overflow: hidden; isolation: isolate; background: var(--avelis-nuit); min-width: 0; scroll-snap-align: start; }
+.ah-commune-photo { aspect-ratio: 1.8; }
+.ah-commune-photo img { width: 100%; height: 100%; object-fit: cover; }
+.ah-commune-photo > div { border-radius: 0; background: #e9edf3; color: var(--avelis-gris); }
+.ah-commune-corps { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: end; padding: 20px; color: #fff; background: linear-gradient(transparent 5%, #17243b26 40%, #17243bf5); }
+.ah-commune-lieu { display: flex; align-items: center; gap: 6px; }
+.ah-commune-lieu .ic { display: none; }
+.ah-commune-lieu h3 { font-size: 23px; margin: 0; overflow-wrap: anywhere; }
+.ah-commune-corps p { margin: 4px 0; font-size: 12px; }
+.ah-commune-action { font-size: 12px; font-weight: 650; }
+.ah-carrousel-commandes { display: flex; gap: 8px; }
+.ah-carrousel-commandes button { width: 40px; height: 40px; border: 1px solid var(--avelis-trait); border-radius: 50%; background: #fff; color: var(--avelis-nuit); cursor: pointer; }
+.ah-carrousel-commandes button:disabled { opacity: .4; cursor: default; }
+.ah-confiance { display: grid; align-items: center; gap: 26px; }
+.ah-confiance-visuel { overflow: hidden; border-radius: var(--avelis-rayon); aspect-ratio: 1.5; }
+.ah-confiance-visuel img { width: 100%; height: 100%; object-fit: cover; }
+.ah-confiance-texte h2 { margin-top: 6px; }
+.ah-confiance-texte ol { list-style: none; padding: 0; margin: 24px 0 18px; display: grid; gap: 20px; }
+.ah-confiance-texte li { display: flex; gap: 16px; align-items: start; }
+.ah-confiance-texte li > span, .ah-numero { display: grid; place-items: center; flex: none; width: 46px; height: 46px; border-radius: 50%; background: var(--avelis-orange); color: var(--avelis-nuit); font-size: 20px; font-weight: 800; }
+.ah-confiance-texte p { font-size: 14px; color: var(--avelis-gris); margin: 0; }
+.ah-confiance-texte .lien-fl { font-size: 13px; }
+.ah-comment { border-top: 1px solid var(--avelis-trait); padding-top: 24px; }
+.ah-comment h2 { font-size: clamp(25px, 2.3vw, 32px); }
+.ah-etapes { display: grid; gap: 24px; margin-top: 24px; }
+.ah-etapes > div { display: flex; align-items: start; gap: 16px; min-width: 0; }
+.ah-etapes h3 { font-size: 16px; }
+.ah-etapes p { margin: 0; color: var(--avelis-gris); font-size: 14px; }
+.ah-partenaires { padding: 0; }
+.ah-partenaires > .cont { max-width: 1600px; padding-inline: 0; }
+.ah-partenaire { display: grid; gap: 20px; background: var(--avelis-nuit); color: #fff; padding: 28px 20px; border-radius: 12px 12px 0 0; }
+.ah-partenaire > img { width: 100%; height: 180px; object-fit: cover; border-radius: 12px; order: 2; }
+.ah-partenaire > div { min-width: 0; }
+.ah-partenaire h2 { font-size: clamp(26px, 2.6vw, 36px); }
+.ah-partenaire p { font-size: 15px; color: #e0e5ef; margin: 12px 0 20px; max-width: 640px; }
+.ah-partenaire .btn-or { min-height: 48px; font-size: 15px; gap: 14px; }
+@media (min-width: 640px) {
+    .ah-offres { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .ah-communes { grid-auto-columns: calc((100% - 36px) / 3); }
+    .ah-reassurance { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+}
+@media (min-width: 1024px) {
+    .site-accueil .site-h .h-in { flex-wrap: nowrap; gap: 14px; height: 76px; padding-block: 0; }
+    .site-accueil .site-h .h-nav { order: 0; width: auto; margin-left: auto; gap: 0; justify-content: center; }
+    .site-accueil .site-h .h-nav a { padding: 12px 8px; font-size: 13px; }
+    .site-accueil .site-h .h-droite { margin-left: auto; gap: 14px; font-size: 13px; }
+    .site-accueil .site-h .btn-sec { min-height: 42px; padding-inline: 16px; font-size: 13px; }
+    .site-accueil .site-h .logo { font-size: 22px; }
+    .ah-hero { grid-template-columns: 1fr 1.4fr; gap: 30px; padding-top: 0; padding-bottom: 0; min-height: 330px; }
+    .ah-hero-visuel { display: block; }
+    .ah-hero-texte { padding-block: 24px 48px; }
+    .ah-hero h1 { font-size: clamp(36px, 3.4vw, 50px); }
+    .ah-hero p { font-size: 18px; }
+    .ah-recherche-cont { margin-top: -28px; }
+    .ah-recherche { padding: 12px; }
+    .ah-recherche h2, .ah-recherche-note { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+    .ah-recherche-champs { grid-template-columns: 1.2fr 1fr 1fr .85fr 1.2fr; align-items: center; gap: 0; }
+    .ah-recherche label { border: 0; border-right: 1px solid var(--avelis-trait); border-radius: 0; padding: 3px 16px; }
+    .ah-recherche :is(.ah-commune, .ah-voyageurs, button) { grid-column: auto; }
+    .ah-recherche :is(input, select) { font-size: 14px; }
+    .ah-recherche button { margin-left: 12px; font-size: 14px; min-height: 56px; }
+    .ah-reassurance { padding-block: 24px; }
+    .ah-reassurance > div { justify-content: center; }
+    .ah-reassurance p { font-size: 13px; }
+    .ah-section { padding-block: 34px; }
+    .ah-section-titre { flex-direction: row; align-items: end; justify-content: space-between; }
+    .ah-offres { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
+    .ah-communes { grid-auto-columns: calc((100% - 36px) / 3); }
+    .ah-destinations { padding-block: 26px; }
+    .ah-confiance { grid-template-columns: 1fr 1fr; gap: 44px; }
+    .ah-confiance-visuel { aspect-ratio: 1.7; height: 100%; max-height: 410px; }
+    .ah-confiance-texte p { font-size: 15px; }
+    .ah-etapes { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 26px; }
+    .ah-etapes > div + div { border-left: 1px solid var(--avelis-trait); padding-left: 26px; }
+    .ah-comment { padding-top: 24px; }
+    .ah-partenaire { grid-template-columns: 1.3fr 1fr; align-items: center; padding: 26px clamp(32px, 3.8vw, 64px); gap: 40px; }
+    .ah-partenaire > img { height: 190px; order: 0; }
+    .ah-partenaire > div { grid-column: 1; grid-row: 1; }
+}
+@media (min-width: 1024px) and (max-width: 1199px) {
+    .site-accueil .site-h .logo { font-size: 17px; gap: 6px; }
+    .site-accueil .site-h .logo-g { width: 34px; height: 34px; font-size: 24px; }
+    .site-accueil .site-h .h-nav a { font-size: 12px; padding-inline: 6px; }
+    .site-accueil .site-h .h-droite { gap: 10px; font-size: 12px; }
+    .site-accueil .site-h .btn-sec { padding-inline: 10px; font-size: 12px; }
+    .ah-recherche label { padding-inline: 9px; grid-template-columns: 20px minmax(0, 1fr); gap: 4px; }
+    .ah-recherche label > .ic { width: 20px; height: 20px; }
+    .ah-recherche button { font-size: 12px; }
+}
+@media (max-width: 359px) {
+    .site-accueil .site-h .logo { font-size: 18px; }
+    .ah-recherche label:not(.ah-commune):not(.ah-voyageurs) { grid-template-columns: minmax(0, 1fr); }
+    .ah-recherche label:not(.ah-commune):not(.ah-voyageurs) > .ic { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .accueil-v3 .av-offre-photo img { transition: none; }
+}

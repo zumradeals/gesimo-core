@@ -38,8 +38,8 @@ beforeEach(function () {
 
 it('l’accueil présente uniquement les annonces publiées et les avis réels', function () {
     $this->get('/')->assertOk()
-        ->assertSee('Un lieu à vous.')->assertSee('Comment ça marche')->assertSee('Devenir gérant partenaire')
-        ->assertDontSee('Logements à la une')->assertDontSee('Choisissez votre commune')->assertDontSee('Ce que disent nos voyageurs');
+        ->assertSee('Un lieu à vous.')->assertSee('De la recherche à l’arrivée, simplement.')->assertSee('Devenir gérant partenaire')
+        ->assertDontSee('Logements à la une')->assertDontSee('La Côte d’Ivoire, à votre rythme.')->assertDontSee('Ce que disent nos voyageurs');
 });
 
 it('la page d\'accueil montre les vrais logements, communes et avis', function () {
@@ -50,7 +50,7 @@ it('la page d\'accueil montre les vrais logements, communes et avis', function (
 
     $this->get('/')->assertOk()
         ->assertSee('À chaque séjour, son cadre.')->assertSee($unite->nom)->assertSee("18\u{202F}000")
-        ->assertSee('Choisissez votre commune')->assertSee('Cocody')
+        ->assertSee('La Côte d’Ivoire, à votre rythme.')->assertSee('Cocody')
         ->assertSee('Ce que disent nos voyageurs')->assertSee('Séjour parfait, merci beaucoup.');
 });
 
@@ -246,7 +246,7 @@ it('les cartes de communes utilisent les photos des offres publiées et actives 
     $dom = new DOMDocument;
     @$dom->loadHTML('<?xml encoding="utf-8" ?>'.$reponse->getContent());
     $xpath = new DOMXPath($dom);
-    $photos = $xpath->query('//a[contains(@class,"av-commune-carte")]//img');
+    $photos = $xpath->query('//a[contains(@class,"ah-commune-carte")]//img');
     expect($photos->length)->toBe(1)
         ->and($photos->item(0)->getAttribute('src'))->toContain('visible.jpg');
 });
@@ -257,10 +257,10 @@ it('une commune sans photo garde sa carte et son lien sans inventer de visuel', 
     $dom = new DOMDocument;
     @$dom->loadHTML('<?xml encoding="utf-8" ?>'.$reponse->getContent());
     $xpath = new DOMXPath($dom);
-    $cartes = $xpath->query('//a[contains(@class,"av-commune-carte")]');
+    $cartes = $xpath->query('//a[contains(@class,"ah-commune-carte")]');
     expect($cartes->length)->toBe(1)
         ->and($cartes->item(0)->getAttribute('href'))->toBe(route('recherche', ['commune' => 'Cocody']))
-        ->and($xpath->query('//a[contains(@class,"av-commune-carte")]//img')->length)->toBe(0);
+        ->and($xpath->query('//a[contains(@class,"ah-commune-carte")]//img')->length)->toBe(0);
 });
 
 it('l’accueil sépare six annonces à la une de six offres ordinaires sans doublons', function () {

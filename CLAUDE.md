@@ -70,3 +70,11 @@ décisions prises seul et décisions en attente · risques et limites · comment
 ## Fusion
 Une fois le lot terminé, testé et son rapport écrit, on fusionne sur `main` sans attendre de validation supplémentaire
 (décision du porteur du projet). Une maquette ou un écran non validé n'est jamais fusionné.
+
+## Référence accueil orange (1er novembre 2026)
+
+La maquette `docs/maquettes/accueil-v3/reference-validee.webp` est validée pour l'accueil.
+Le contrat `docs/contrats/accueil-reference-v3.md` remplace les dispositions visuelles v2 de cette page :
+orange vif, bleu nuit, ivoire, hero compact en deux colonnes et recherche visible sans défilement sur ordinateur.
+Cette charte servira de référence aux autres pages lors de leurs prochains lots ; leur refonte n'est pas anticipée ici.
+Les annonces et communes restent exclusivement réelles, avec les prix et règles existants.
