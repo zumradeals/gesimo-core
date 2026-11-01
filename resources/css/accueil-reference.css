@@ -27,7 +27,7 @@
     color: var(--avelis-nuit);
     background: var(--avelis-blanc);
 }
-.charte .cont { max-width: 1600px; padding-inline: clamp(20px, 3.8vw, 64px); }
+.charte .cont { max-width: none; padding-inline: clamp(20px, 3.8vw, 64px); }  /* pages pleine largeur (règle 9) */
 .charte :is(a, button, input, select, summary):focus-visible {
     outline: 3px solid var(--avelis-nuit);
     outline-offset: 4px;
@@ -83,14 +83,18 @@
 .ah-recherche { background: #fff; border: 1px solid var(--avelis-peche); border-top: 4px solid var(--avelis-orange); border-radius: var(--avelis-rayon); box-shadow: 0 8px 24px #9e47001a; padding: 16px; }
 .ah-recherche h2 { font-size: 18px; margin-bottom: 14px; }
 .ah-recherche-champs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
-.ah-recherche label { min-width: 0; display: grid; grid-template-columns: 24px minmax(0, 1fr); gap: 2px 8px; align-items: center; padding: 9px 10px; border: 1px solid var(--avelis-trait); border-radius: 8px; }
-.ah-recherche label > .ic { grid-row: span 2; color: var(--avelis-orange-texte); }
-.ah-recherche label > span { color: var(--avelis-gris); font-size: 12px; }
-.ah-recherche label:focus-within { outline: 2px solid var(--avelis-nuit); outline-offset: 2px; }
+.ah-recherche :is(label, .ah-nuits) { min-width: 0; display: grid; grid-template-columns: 24px minmax(0, 1fr); gap: 2px 8px; align-items: center; padding: 9px 10px; border: 1px solid var(--avelis-trait); border-radius: 8px; }
+.ah-recherche :is(label, .ah-nuits) > .ic { grid-row: span 2; color: var(--avelis-orange-texte); }
+.ah-recherche :is(label, .ah-nuits) > span { color: var(--avelis-gris); font-size: 12px; }
+.ah-recherche :is(label, .ah-nuits):focus-within { outline: 2px solid var(--avelis-nuit); outline-offset: 2px; }
 .ah-recherche :is(input, select) { border: 0; padding: 0; min-width: 0; width: 100%; min-height: 30px; background: transparent; color: var(--avelis-nuit); font: inherit; font-size: 16px; }
 .ah-recherche input[type=date] { min-inline-size: 0; }
 .ah-recherche :is(.ah-commune, .ah-voyageurs, button) { grid-column: 1 / -1; }
 .ah-recherche button { min-height: 52px; padding: 12px; font-size: 15px; white-space: normal; }
+.ah-cpt { display: grid; grid-template-columns: 30px minmax(0, 1fr) 30px; align-items: center; gap: 4px; }
+.charte .ah-recherche .ah-cpt button { grid-column: auto; width: 30px; min-height: 0; padding: 0; height: 30px; border: 1.5px solid var(--avelis-nuit); background: #fff; color: var(--avelis-nuit); border-radius: 8px; font-size: 18px; font-weight: 700; line-height: 1; cursor: pointer; }
+.ah-recherche .ah-cpt input { text-align: center; font-weight: 800; -moz-appearance: textfield; }
+.ah-cpt input::-webkit-outer-spin-button, .ah-cpt input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
 .ah-recherche-note { font-size: 12px; color: var(--avelis-gris); margin: 12px 0 0; }
 .ah-reassurance { display: grid; gap: 12px; padding-block: 20px; }
 .ah-reassurance > div { display: flex; align-items: center; gap: 12px; }
@@ -174,7 +178,7 @@
     .ah-recherche { padding: 12px; }
     .ah-recherche h2, .ah-recherche-note { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
     .ah-recherche-champs { grid-template-columns: 1.2fr 1fr 1fr .85fr 1.2fr; align-items: center; gap: 0; }
-    .ah-recherche label { border: 0; border-right: 1px solid var(--avelis-trait); border-radius: 0; padding: 3px 16px; }
+    .ah-recherche :is(label, .ah-nuits) { border: 0; border-right: 1px solid var(--avelis-trait); border-radius: 0; padding: 3px 16px; }
     .ah-recherche :is(.ah-commune, .ah-voyageurs, button) { grid-column: auto; }
     .ah-recherche :is(input, select) { font-size: 14px; }
     .ah-recherche button { margin-left: 12px; font-size: 14px; min-height: 56px; }
@@ -203,7 +207,7 @@
     .site-accueil .site-h .h-droite { gap: 10px; font-size: 12px; }
     .site-accueil .site-h .btn-sec { padding-inline: 10px; font-size: 12px; }
     .ah-recherche label { padding-inline: 9px; grid-template-columns: 20px minmax(0, 1fr); gap: 4px; }
-    .ah-recherche label > .ic { width: 20px; height: 20px; }
+    .ah-recherche :is(label, .ah-nuits) > .ic { width: 20px; height: 20px; }
     .ah-recherche button { font-size: 12px; }
 }
 @media (max-width: 639px) {

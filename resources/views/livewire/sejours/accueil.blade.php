@@ -19,11 +19,12 @@
             <div class="ah-recherche-champs">
                 <label class="ah-commune" for="accueil-commune"><x-ui.icone nom="pin" classe="ic" /><span>Commune</span><select id="accueil-commune" name="commune"><option value="">Toutes les communes</option>@foreach($toutesCommunes as $c)<option>{{ $c }}</option>@endforeach</select></label>
                 <label for="accueil-arrivee"><x-ui.icone nom="calendrier" classe="ic" /><span>Arrivée</span><input id="accueil-arrivee" type="date" name="arrivee" min="{{ now()->toDateString() }}" required></label>
-                <label for="accueil-depart"><x-ui.icone nom="calendrier" classe="ic" /><span>Départ</span><input id="accueil-depart" type="date" name="depart" min="{{ now()->addDay()->toDateString() }}" required></label>
+                <div class="ah-nuits" x-data="{ n: {{ \App\Sejours\Services\ReglesSejour::nuitsMin() }} }" role="group" aria-labelledby="accueil-nuits-lib"><x-ui.icone nom="calendrier" classe="ic" /><span id="accueil-nuits-lib">Nombre de nuits</span>
+                    <div class="ah-cpt"><button type="button" @click="n = Math.max({{ \App\Sejours\Services\ReglesSejour::nuitsMin() }}, (n || 1) - 1)" aria-label="Une nuit de moins">−</button><input id="accueil-nuits" type="number" name="nuits" min="{{ \App\Sejours\Services\ReglesSejour::nuitsMin() }}" max="{{ \App\Sejours\Services\ReglesSejour::nuitsMax() }}" value="{{ \App\Sejours\Services\ReglesSejour::nuitsMin() }}" x-model.number="n" inputmode="numeric" aria-label="Nombre de nuits" required><button type="button" @click="n = Math.min({{ \App\Sejours\Services\ReglesSejour::nuitsMax() }}, (n || 0) + 1)" aria-label="Une nuit de plus">+</button></div></div>
                 <label class="ah-voyageurs" for="accueil-personnes"><x-ui.icone nom="compte" classe="ic" /><span>Voyageurs</span><select id="accueil-personnes" name="personnes">@foreach([1, 2, 3, 4, 5, 6, 8, 10, 12] as $n)<option value="{{ $n }}" @selected($n === 2)>{{ $n }} {{ $n === 1 ? 'personne' : 'personnes' }}</option>@endforeach</select></label>
                 <button class="btn-pl" type="submit"><span>Rechercher un logement</span><span aria-hidden="true">→</span></button>
             </div>
-            <p class="ah-recherche-note">Choisissez vos dates pour consulter les logements disponibles et le montant de votre séjour.</p>
+            <p class="ah-recherche-note">Choisissez votre date d'arrivée et le nombre de nuits pour consulter les logements disponibles et le montant de votre séjour.</p>
         </form>
     </div>
     <div class="cont ah-reassurance">

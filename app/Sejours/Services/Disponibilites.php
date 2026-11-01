@@ -27,6 +27,7 @@ class Disponibilites
         ?int $budgetMax = null,
         array $equipements = [],
         int $limite = 60,
+        array $types = [],
     ): Collection {
         $unites = Unite::query()
             ->where('active', true)
@@ -38,6 +39,7 @@ class Disponibilites
                 }
             })
             ->whereNotExists(fn (Builder $q) => $this->occupation($q, $arrivee, $depart))
+            ->when($types, fn ($q) => $q->whereIn('type', $types))
             ->when($equipements, function ($q) use ($equipements) {
                 foreach ($equipements as $id) {
                     $q->whereHas('equipements', fn ($e) => $e->where('equipement.id', $id));
@@ -62,7 +64,7 @@ class Disponibilites
     }
 
     /** Catalogue sans dates : un tarif de référence, jamais une promesse de disponibilité. */
-    public function catalogue(?string $commune = null, int $personnes = 1, array $equipements = [], int $limite = 60): Collection
+    public function catalogue(?string $commune = null, int $personnes = 1, array $equipements = [], int $limite = 60, array $types = []): Collection
     {
         $enAvant = MiseEnAvantService::residencesEnAvant();
         $resultats = Unite::query()
@@ -74,6 +76,7 @@ class Disponibilites
                 }
             })
             ->whereHas('tarifs', fn ($q) => $q->where('type_periode', 'standard'))
+            ->when($types, fn ($q) => $q->whereIn('type', $types))
             ->when($equipements, function ($q) use ($equipements) {
                 foreach ($equipements as $id) {
                     $q->whereHas('equipements', fn ($e) => $e->where('equipement.id', $id));
@@ -89,6 +92,24 @@ class Disponibilites
 
         return $resultats->where('sponsorise', true)->shuffle()
             ->concat($resultats->where('sponsorise', false)->sortBy('prix_reference'))->values();
+    }
+
+    /**
+     * Nombre de logements présentés dans le catalogue, par commune (mêmes conditions que le catalogue sans dates).
+     *
+     * @return Collection<string, int>
+     */
+    public function logementsParCommune(): Collection
+    {
+        return Unite::query()
+            ->where('active', true)
+            ->whereHas('residence', fn ($q) => $q->publiee())
+            ->whereHas('tarifs', fn ($q) => $q->where('type_periode', 'standard'))
+            ->with('residence:id,commune')
+            ->get()
+            ->groupBy(fn (Unite $u) => $u->residence->commune)
+            ->map(fn (Collection $l) => $l->count())
+            ->sortKeys();
     }
 
     public function estLibre(Unite $unite, CarbonInterface $arrivee, CarbonInterface $depart): bool
