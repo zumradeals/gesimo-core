@@ -66,6 +66,7 @@ html.hors-ligne [data-reseau] { opacity: .5; pointer-events: none; }
 @import "./logements.css";
 @import "./accueil-reference.css";
 @import "./reservation.css";
+@import "./mes-reservations.css";
 
 /* Une ancienne version du script ne doit pas réafficher cette bannière supprimée. */
 #pwa-maj { display: none !important; }

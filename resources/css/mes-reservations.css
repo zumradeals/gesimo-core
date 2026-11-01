@@ -1,0 +1,75 @@
+/* Avelis Séjours — espace client : Mes réservations et détail d'une réservation (contrat docs/contrats/mes-reservations-v3.md).
+ * Jetons --avelis-* définis dans accueil-reference.css ; couleurs de statut dans reservation.css.
+ */
+
+/* ---------- Espace client : menu latéral et fond aux couleurs de la charte ---------- */
+.espace-client .adm-cadre { background: #f6f7f9; }
+.espace-client :is(.adm-side, .adm-haut) { background: var(--avelis-nuit); }
+.espace-client .adm-side nav a.on { background: #ffffff1f; box-shadow: inset 3px 0 var(--avelis-orange); }
+.espace-client .adm-moi small { color: #b9c3d6; }
+.espace-client .avatar { background: var(--avelis-orange); color: var(--avelis-nuit); }
+.espace-client .adm-moi :is(a, button) { color: #e6ebf4; }
+.espace-client .logo-g { background: var(--avelis-orange); color: var(--avelis-nuit); }
+
+/* ---------- Pages ---------- */
+.mr-page { display: grid; gap: 16px; align-content: start; min-width: 0; max-width: 1100px; }
+.mr-entete { display: grid; gap: 12px; }
+.mr-entete h1 { font-size: clamp(26px, 3vw, 32px); margin: 0; }
+.mr-entete .btn-pl { justify-self: start; }
+.mr-titre { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.mr-onglets { display: grid; grid-template-columns: 1fr 1fr; background: #e9ecf1; border-radius: 12px; padding: 4px; max-width: 520px; }
+.mr-onglets button { border: 0; background: transparent; border-radius: 9px; min-height: 46px; font-weight: 800; cursor: pointer; color: var(--avelis-gris); }
+.mr-onglets button.on { background: #fff; color: var(--avelis-nuit); box-shadow: 0 1px 3px #17243b1f; }
+.mr-surtitre { font-size: 12px; letter-spacing: .11em; text-transform: uppercase; font-weight: 800; color: var(--avelis-orange-texte); }
+.mr-etape { display: grid; gap: 10px; background: var(--avelis-ivoire); border: 2px solid var(--avelis-orange); border-radius: 14px; padding: 16px; align-content: start; }
+.mr-etape h2 { font-size: 20px; margin: 0; }
+.mr-etape p { margin: 0; }
+.mr-carte, .mr-vide { background: #fff; border: 1px solid var(--avelis-trait); border-radius: 14px; padding: 18px; display: grid; gap: 12px; align-content: start; }
+.mr-carte h2 { font-size: 19px; margin: 0; }
+.mr-vide { text-align: center; justify-items: center; padding: 40px 18px; }
+.mr-badge { display: inline-block; border-radius: 999px; padding: 3px 11px; font-size: 13px; font-weight: 800; white-space: nowrap; }
+.mr-badge.att { background: var(--avelis-peche); color: var(--avelis-orange-texte); }
+.mr-lien { background: none; border: 0; padding: 6px 0; font-weight: 700; color: var(--avelis-orange-texte); text-decoration: underline; cursor: pointer; text-align: center; }
+.mr-lien.rouge { color: var(--avelis-nuit); }
+.mr-deux { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.mr-form { display: grid; gap: 12px; }
+
+/* Liste : une carte par séjour, un bouton principal */
+.mr-liste { display: grid; gap: 14px; }
+.mr-carte-liste, .mr-liste > article { background: #fff; border: 1px solid var(--avelis-trait); border-radius: 14px; padding: 16px; display: grid; gap: 12px; grid-template-columns: 96px minmax(0, 1fr); }
+.mr-photo { display: block; min-width: 0; }
+.mr-photo > * { height: 100%; }
+.mr-corps { display: grid; gap: 4px; min-width: 0; align-content: start; }
+.mr-haut { display: flex; justify-content: space-between; gap: 8px; align-items: flex-start; flex-wrap: wrap; }
+.mr-haut h3 { font-size: 18px; margin: 0; }
+.mr-haut h3 a { color: inherit; text-decoration: none; }
+.mr-compte { font-weight: 700; font-size: 14px; color: var(--avelis-orange-texte); }
+.mr-rappel { display: flex; gap: 8px; align-items: center; font-size: 14px; background: var(--avelis-peche); border-radius: 10px; padding: 8px 12px; font-weight: 600; }
+.mr-rappel.ok { background: var(--avelis-ok-fond); color: var(--avelis-ok); }
+.mr-actions { grid-column: 1 / -1; display: grid; gap: 8px; }
+
+/* Détail */
+.mr-cols { display: grid; gap: 16px; }
+.mr-col { display: grid; gap: 16px; align-content: start; min-width: 0; }
+.mr-dates { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.mr-dates > div { display: grid; background: var(--avelis-ivoire); border: 1px solid var(--avelis-peche); border-radius: 12px; padding: 12px; }
+.mr-dates b { font-size: 17px; }
+.mr-faire { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
+.mr-faire li { display: flex; gap: 12px; align-items: flex-start; font-size: 15px; }
+.mr-faire li > div { display: grid; gap: 3px; }
+.mr-faire i { flex: none; display: grid; place-items: center; width: 26px; height: 26px; border-radius: 50%; font-style: normal; font-weight: 900; font-size: 14px; border: 2px solid var(--avelis-saisie); }
+.mr-faire li.fait i { background: var(--avelis-ok); border-color: var(--avelis-ok); color: #fff; }
+.mr-faire li.afaire i { border-color: var(--avelis-orange); color: var(--avelis-orange-texte); }
+.mr-suivi { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
+.mr-suivi li { padding-left: 28px; position: relative; color: var(--avelis-gris); }
+.mr-suivi li::before { content: ""; position: absolute; left: 3px; top: 5px; width: 14px; height: 14px; border-radius: 50%; border: 2px solid var(--avelis-saisie); background: #fff; }
+.mr-suivi li.fait { color: var(--avelis-nuit); }
+.mr-suivi li.fait::before { background: var(--avelis-ok); border-color: var(--avelis-ok); }
+
+@media (min-width: 900px) {
+    .mr-entete { grid-template-columns: 1fr auto; align-items: center; }
+    .mr-liste > article { grid-template-columns: 150px minmax(0, 1fr) 230px; align-items: center; }
+    .mr-actions { grid-column: auto; }
+    .mr-cols { grid-template-columns: minmax(0, 1fr) 380px; gap: 24px; align-items: start; }
+    .mr-colle { position: sticky; top: 20px; }
+}
