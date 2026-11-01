@@ -2,6 +2,7 @@
 
 use App\Noyau\Console\CreerSuperAdmin;
 use App\Noyau\Console\EnvoyerRappelsArrivee;
+use App\Noyau\Console\EnvoyerRappelsPiece;
 use App\Noyau\Console\GenererCodeInstallation;
 use App\Noyau\Http\Middleware\AppliquerReglages;
 use App\Noyau\Http\Middleware\EntetesCache;
@@ -22,6 +23,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withCommands([
         CreerSuperAdmin::class,
         EnvoyerRappelsArrivee::class,
+        EnvoyerRappelsPiece::class,
         GenererCodeInstallation::class,
         ExpirerReservations::class,
         DefinirParametre::class,

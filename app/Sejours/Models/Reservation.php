@@ -18,6 +18,7 @@ class Reservation extends Model
         'unite_id', 'client_id', 'nom_client', 'telephone_client', 'date_arrivee', 'date_depart',
         'montant_total', 'acompte', 'solde', 'statut', 'origine', 'expire_le', 'cree_par', 'nombre_personnes',
         'commission_pourcentage', 'annulation_motif', 'annulee_le', 'annulation_delai_heures', 'annulation_heure_arrivee',
+        'motif_sejour', 'motif_precision', 'heure_arrivee_prevue', 'message_gerant', 'conditions_acceptees_le', 'heure_depart',
     ];
 
     protected function casts(): array
@@ -27,6 +28,7 @@ class Reservation extends Model
             'date_depart' => 'date',
             'expire_le' => 'datetime',
             'annulee_le' => 'datetime',
+            'conditions_acceptees_le' => 'datetime',
             'montant_total' => 'integer',
             'acompte' => 'integer',
             'solde' => 'integer',

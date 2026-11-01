@@ -7,6 +7,7 @@ use App\Noyau\Models\Utilisateur;
 use App\Sejours\Models\MembreResidence;
 use App\Sejours\Models\Reservation;
 use App\Sejours\Models\Unite;
+use App\Sejours\Services\PiecesVoyageur;
 
 class ReservationPolicy
 {
@@ -72,6 +73,12 @@ class ReservationPolicy
     {
         return $utilisateur->estActif()
             && ($this->estGerantDe($utilisateur, $reservation) || $this->membreAvecDroit($utilisateur, $reservation, 'peut_gerer_checkin_checkout'));
+    }
+
+    /** Pièce d'identité du voyageur : celles et ceux qui accueillent (pas l'administration), réservation confirmée, durée limitée. */
+    public function voirPieceVoyageur(Utilisateur $utilisateur, Reservation $reservation): bool
+    {
+        return $this->enregistrerArrivee($utilisateur, $reservation) && PiecesVoyageur::consultablePar($reservation);
     }
 
     private function estGerantDe(Utilisateur $utilisateur, Reservation $reservation): bool

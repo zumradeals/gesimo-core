@@ -4,9 +4,11 @@ namespace App\Sejours\Services;
 
 use App\Paiement\Services\MiseEnAvantService;
 use App\Sejours\Models\Unite;
+use Carbon\CarbonImmutable;
 use Carbon\CarbonInterface;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 
 /** Recherche : seulement les logements réellement libres, avec le prix total du séjour. */
 class Disponibilites
@@ -94,6 +96,38 @@ class Disponibilites
         return ! Unite::query()->whereKey($unite->getKey())
             ->whereExists(fn (Builder $q) => $this->occupation($q, $arrivee, $depart))
             ->exists();
+    }
+
+    /**
+     * Prochaines dates libres pour le même nombre de nuits, à partir de la date demandée (au plus $nombre propositions,
+     * qui ne se chevauchent pas). Une seule lecture des périodes occupées ; recherche limitée à 180 jours.
+     *
+     * @return list<array{arrivee: CarbonImmutable, depart: CarbonImmutable}>
+     */
+    public function prochainesDatesLibres(Unite $unite, CarbonInterface $apartirDe, int $nuits, int $nombre = 3): array
+    {
+        $debut = CarbonImmutable::parse($apartirDe)->startOfDay();
+        $debut = $debut->lt(CarbonImmutable::today()) ? CarbonImmutable::today() : $debut;
+        $fin = $debut->addDays(180);
+
+        $occupees = collect(DB::select(
+            'SELECT lower(periode) AS debut, upper(periode) AS fin FROM occupation_unite WHERE unite_id = ? AND upper(periode) > ? AND lower(periode) < ? ORDER BY lower(periode)',
+            [$unite->id, $debut->toDateString(), $fin->addDays($nuits)->toDateString()],
+        ))->map(fn ($p) => [CarbonImmutable::parse($p->debut), CarbonImmutable::parse($p->fin)]);
+
+        $propositions = [];
+        for ($jour = $debut; $jour->lt($fin) && count($propositions) < $nombre; $jour = $jour->addDay()) {
+            $sortie = $jour->addDays($nuits);
+            $gene = $occupees->first(fn (array $p) => $p[0]->lt($sortie) && $p[1]->gt($jour));
+            if ($gene === null) {
+                $propositions[] = ['arrivee' => $jour, 'depart' => $sortie];
+                $jour = $sortie->subDay(); // la proposition suivante commence après celle-ci
+            } else {
+                $jour = $gene[1]->subDay(); // on saute directement à la fin de la période occupée
+            }
+        }
+
+        return $propositions;
     }
 
     private function occupation(Builder $q, CarbonInterface $arrivee, CarbonInterface $depart): Builder

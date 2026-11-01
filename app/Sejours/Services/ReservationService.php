@@ -7,6 +7,8 @@ use App\Noyau\Services\Audit;
 use App\Paiement\Services\PlancherAcompte;
 use App\Paiement\Services\ReglagesPaiement;
 use App\Parametres\Services\Reglages;
+use App\Sejours\Enums\HeureArriveePrevue;
+use App\Sejours\Enums\MotifSejour;
 use App\Sejours\Enums\StatutReservation;
 use App\Sejours\Exceptions\ReservationImpossible;
 use App\Sejours\Models\Reservation;
@@ -32,11 +34,18 @@ class ReservationService
         return Reglages::entier('reservation.duree_blocage_minutes');
     }
 
-    /** Réservation provisoire : les dates sont gardées pour le client jusqu'à l'expiration. */
-    public function garderDates(Utilisateur $client, Unite $unite, CarbonInterface $arrivee, CarbonInterface $depart, int $personnes): Reservation
+    /**
+     * Réservation provisoire : les dates sont gardées pour le client jusqu'à l'expiration.
+     *
+     * @param  array{nom?: string, telephone?: string, motif?: string, motif_precision?: ?string, heure_arrivee?: ?string, message?: ?string, accord_le?: ?CarbonInterface}|null  $voyageur
+     *                                                                                                                                                                                       Informations demandées à l'étape « Vos informations » (page de réservation) ; null pour les appels internes sans formulaire.
+     */
+    public function garderDates(Utilisateur $client, Unite $unite, CarbonInterface $arrivee, CarbonInterface $depart, int $personnes, ?array $voyageur = null): Reservation
     {
         Gate::forUser($client)->authorize('create', Reservation::class);
         $this->verifierDates($arrivee, $depart);
+        $this->verifierDuree($arrivee, $depart);
+        $infos = $voyageur === null ? [] : $this->informationsVoyageur($voyageur);
 
         $unite->loadMissing('residence', 'tarifs');
         if (! $unite->active || ! $unite->residence->estPubliee()) {
@@ -54,11 +63,11 @@ class ReservationService
 
         // Un double appui sur « Réserver » (ou un rechargement) ne crée pas une seconde réservation : on reprend la première.
         if (($deja = $this->reservationIdentiqueEnAttente($client, $unite, $arrivee, $depart)) !== null) {
-            return $deja;
+            return $this->completerInformations($deja, $infos);
         }
 
         try {
-            $reservation = $this->enregistrer(fn () => Reservation::create([
+            $reservation = $this->enregistrer(fn () => Reservation::create($infos + [
                 'unite_id' => $unite->id,
                 'client_id' => $client->id,
                 'date_arrivee' => $arrivee->toDateString(),
@@ -75,16 +84,64 @@ class ReservationService
                 'commission_pourcentage' => ReglagesPaiement::commissionPourcentage(),
                 'annulation_delai_heures' => ReglagesPaiement::delaiAnnulationGratuiteHeures(),
                 'annulation_heure_arrivee' => ReglagesPaiement::heureArrivee(),
+                'heure_depart' => ReglesSejour::heureDepart(),
             ]), $unite, $arrivee, $depart);
         } catch (ReservationImpossible $e) {
             // Deux envois en même temps : la base a refusé le second ; s'il vient de la même personne, on lui rend la première.
             if (($deja = $this->reservationIdentiqueEnAttente($client, $unite, $arrivee, $depart)) !== null) {
-                return $deja;
+                return $this->completerInformations($deja, $infos);
             }
             throw $e;
         }
 
         return $reservation;
+    }
+
+    /** Un second envoi du formulaire met à jour les informations de la même réservation (jamais les montants). */
+    private function completerInformations(Reservation $reservation, array $infos): Reservation
+    {
+        if ($infos !== []) {
+            $reservation->update($infos);
+        }
+
+        return $reservation;
+    }
+
+    /**
+     * Informations du voyageur contrôlées et prêtes à être enregistrées.
+     *
+     * @return array<string, mixed>
+     */
+    private function informationsVoyageur(array $voyageur): array
+    {
+        $nom = trim((string) ($voyageur['nom'] ?? ''));
+        $motif = MotifSejour::tryFrom((string) ($voyageur['motif'] ?? ''));
+        $precision = trim((string) ($voyageur['motif_precision'] ?? ''));
+        $heure = HeureArriveePrevue::tryFrom((string) ($voyageur['heure_arrivee'] ?? ''));
+        $message = trim((string) ($voyageur['message'] ?? ''));
+
+        if ($nom === '') {
+            throw new ReservationImpossible('Indiquez votre nom comme sur votre pièce d\'identité.');
+        }
+        if ($motif === null) {
+            throw new ReservationImpossible('Choisissez le motif de votre séjour.');
+        }
+        if ($motif === MotifSejour::Autre && $precision === '') {
+            throw new ReservationImpossible('Précisez en quelques mots le motif de votre séjour.');
+        }
+        if (($voyageur['accord_le'] ?? null) === null) {
+            throw new ReservationImpossible('Vous devez accepter le règlement de la résidence et les conditions générales.');
+        }
+
+        return [
+            'nom_client' => mb_substr($nom, 0, 255),
+            'telephone_client' => ($t = trim((string) ($voyageur['telephone'] ?? ''))) === '' ? null : mb_substr($t, 0, 30),
+            'motif_sejour' => $motif->value,
+            'motif_precision' => $motif === MotifSejour::Autre ? mb_substr($precision, 0, 120) : null,
+            'heure_arrivee_prevue' => $heure?->value,
+            'message_gerant' => $message === '' ? null : mb_substr($message, 0, 500),
+            'conditions_acceptees_le' => $voyageur['accord_le'],
+        ];
     }
 
     private function reservationIdentiqueEnAttente(Utilisateur $client, Unite $unite, CarbonInterface $arrivee, CarbonInterface $depart): ?Reservation
@@ -169,6 +226,20 @@ class ReservationService
         }
         if ($arrivee->copy()->startOfDay()->lt(now()->startOfDay())) {
             throw new ReservationImpossible('La date d\'arrivée ne peut pas être dans le passé.');
+        }
+    }
+
+    /** Durée de la réservation en ligne : entre le séjour minimum et le séjour maximum réglés dans les Paramètres. */
+    private function verifierDuree(CarbonInterface $arrivee, CarbonInterface $depart): void
+    {
+        $nuits = (int) $arrivee->copy()->startOfDay()->diffInDays($depart->copy()->startOfDay());
+        if ($nuits < ReglesSejour::nuitsMin()) {
+            $min = ReglesSejour::nuitsMin();
+            throw new ReservationImpossible("Le séjour minimum est de {$min} nuit".($min > 1 ? 's' : '').'.');
+        }
+        if ($nuits > ReglesSejour::nuitsMax()) {
+            $max = ReglesSejour::nuitsMax();
+            throw new ReservationImpossible("Au-delà de {$max} nuits, la réservation en ligne n'est pas possible : contactez-nous pour organiser un long séjour.");
         }
     }
 

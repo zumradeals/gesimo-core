@@ -39,6 +39,12 @@ class ModelesMessages
                 'sujet' => 'Votre arrivée demain : {logement}',
                 'corps' => "Bonjour {nom},\n\nNous vous attendons demain, {dates}, à {logement} ({residence}).\n\nBon voyage !",
             ],
+            'rappel_piece' => [
+                'titre' => 'Rappel de la pièce d\'identité (2 jours avant)',
+                'destinataire' => 'client',
+                'sujet' => 'Pensez à ajouter votre pièce d\'identité : {logement}',
+                'corps' => "Bonjour {nom},\n\nVous arrivez dans 2 jours ({dates}) à {logement} ({residence}).\n\nLe gérant a besoin de votre pièce d'identité pour vous accueillir. Ajoutez-la en 2 minutes dans « Mon profil » : vous ne le ferez qu'une fois.\n\nÀ bientôt !",
+            ],
             'annulation' => [
                 'titre' => 'Annulation',
                 'destinataire' => 'client et gérant',

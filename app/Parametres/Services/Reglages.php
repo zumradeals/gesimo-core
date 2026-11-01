@@ -65,6 +65,10 @@ class Reglages
         $ajouter('annulation.politique_defaut', 'reservation', 'Politique d\'annulation par défaut', 'choix', ['defaut' => 'flexible', 'choix' => ['flexible' => 'Flexible (remboursement intégral jusqu\'au délai ci-dessous)'], 'aide' => 'D\'autres politiques seront ajoutées plus tard.']);
         $ajouter('annulation.delai_gratuit_heures', 'reservation', 'Délai d\'annulation gratuite (heures avant l\'arrivée)', 'entier', ['defaut' => '24', 'min' => 0, 'max' => 720, 'aide' => 'Les réservations déjà faites gardent leur délai.']);
         $ajouter('annulation.heure_arrivee', 'reservation', 'Heure d\'arrivée supposée', 'heure', ['defaut' => '14:00', 'aide' => 'Sert à calculer le délai ci-dessus.']);
+        $ajouter('reservation.sejour_min_nuits', 'reservation', 'Séjour minimum (nuits)', 'entier', ['defaut' => '1', 'min' => 1, 'max' => 30, 'aide' => 'Nombre de nuits minimum pour réserver en ligne. Défaut 1.']);
+        $ajouter('reservation.sejour_max_nuits', 'reservation', 'Séjour maximum (nuits)', 'entier', ['defaut' => '30', 'min' => 1, 'max' => 365, 'aide' => 'Au-delà, la réservation en ligne est fermée et le voyageur est invité à contacter Avelis. Défaut 30.']);
+        $ajouter('reservation.heure_depart', 'reservation', 'Heure de départ', 'heure', ['defaut' => '11:00', 'aide' => 'Affichée sur la fiche du logement et retenue pour les nouvelles réservations.']);
+        $ajouter('reservation.piece_acces_jours', 'reservation', 'Accès du gérant à la pièce d\'identité du voyageur (jours après le départ)', 'entier', ['defaut' => '7', 'min' => 0, 'max' => 90, 'aide' => 'Passé ce délai, le gérant ne peut plus ouvrir la pièce. Défaut 7.']);
 
         // Paiement (sensible)
         $ajouter('geniuspay.mode', 'paiement', 'Mode', 'choix', ['defaut' => 'sandbox', 'sensible' => true, 'choix' => ['sandbox' => 'Test (aucun vrai argent)', 'live' => 'Réel'], 'aide' => 'Le passage en « Réel » demande que votre compte GeniusPay soit vérifié et les clés réelles saisies.']);
@@ -312,6 +316,14 @@ class Reglages
                         break;
                     }
                 }
+            }
+        }
+
+        if ($rubrique === 'reservation' && (array_key_exists('reservation.sejour_min_nuits', $changes) || array_key_exists('reservation.sejour_max_nuits', $changes))) {
+            $min = (int) ($val('reservation.sejour_min_nuits') ?: 1);
+            $max = (int) ($val('reservation.sejour_max_nuits') ?: 30);
+            if ($min > $max) {
+                $erreurs['reservation.sejour_min_nuits'] = "Le séjour minimum ({$min} nuits) ne peut pas dépasser le séjour maximum ({$max} nuits).";
             }
         }
 

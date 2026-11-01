@@ -3,6 +3,7 @@
 namespace App\Noyau\Models;
 
 use App\Noyau\Enums\Role;
+use App\Sejours\Models\PieceVoyageur;
 use App\Sejours\Models\ProfilGerant;
 use App\Sejours\Models\Reservation;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -43,6 +44,11 @@ class Utilisateur extends Authenticatable
     public function profilGerant(): HasOne
     {
         return $this->hasOne(ProfilGerant::class);
+    }
+
+    public function pieceVoyageur(): HasOne
+    {
+        return $this->hasOne(PieceVoyageur::class);
     }
 
     public function reservations(): HasMany

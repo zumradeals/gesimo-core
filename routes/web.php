@@ -31,6 +31,7 @@ use App\Paiement\Livewire\SommesDues;
 use App\Parametres\Livewire\EspaceParametres;
 use App\Sejours\Http\TelechargerDocument;
 use App\Sejours\Http\TelechargerDocumentGerant;
+use App\Sejours\Http\VoirPieceVoyageur;
 use App\Sejours\Livewire\Accueil;
 use App\Sejours\Livewire\Admin\ListeVerifications;
 use App\Sejours\Livewire\Admin\LitigesAdmin;
@@ -114,6 +115,7 @@ Route::middleware(['auth', 'role:client'])->group(function () {
 Route::middleware(['auth', 'role:gerant,personnel'])->group(function () {
     Route::livewire('/gerant/calendrier', CalendrierGerant::class)->name('gerant.calendrier');
     Route::livewire('/gerant/arrivees', ArriveesDuJour::class)->name('gerant.arrivees');
+    Route::get('/gerant/reservations/{reservation}/piece-identite', VoirPieceVoyageur::class)->whereNumber('reservation')->name('gerant.piece-voyageur');
 });
 Route::middleware(['auth', 'role:gerant'])->prefix('gerant')->group(function () {
     Route::livewire('/profil', ProfilGerant::class)->name('gerant.profil');
