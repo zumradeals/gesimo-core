@@ -23,24 +23,38 @@ try {
     await page.waitForFunction(() => !!document.querySelector('[x-data="carrouselCommunes"]')._x_dataStack);
     await page.locator('img').evaluateAll(imgs => Promise.all(imgs.map(img => { img.loading = 'eager'; return img.decode(); })));
     await page.screenshot({ path: output + '/accueil-ordinateur.png', fullPage: true });
-    for (const width of [320, 390, 768, 1024, 1440, 1920, 2560]) {
+    for (const width of [320, 390, 768, 1024, 1366, 1440, 1920, 2560]) {
         await page.setViewportSize({ width, height: 844 });
         assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false, `Débordement à ${width} px`);
         assert.equal(await page.locator('.mobile-tabs').isVisible(), width < 1024);
         if (width >= 1024) {
-            const destination = await page.locator('.av-commune-carte').first().boundingBox();
-            assert(destination.width <= 422, 'Une commune reste une carte compacte sur ordinateur.');
-            assert(await page.locator('.av-commune-photo img').first().isVisible(), 'La commune présente un aperçu réel.');
+            const destination = await page.locator('.ah-commune-carte').first().boundingBox();
+            assert(destination.width <= 500, 'Une commune reste une carte compacte sur ordinateur.');
+            assert(await page.locator('.ah-commune-photo img').first().isVisible(), 'La commune présente un aperçu réel.');
             const contenu = await page.locator('#engagements > .cont').boundingBox();
             assert(contenu.width <= Math.min(width, 1920) + 1, `Le contenu doit occuper l’écran à ${width} px`);
-            const cartes = await page.locator('.av-offres-reelles').first().boundingBox();
-            const carte = await page.locator('.av-offres-reelles .av-offre').first().boundingBox();
+            const cartes = await page.locator('.ah-offres-reelles').first().boundingBox();
+            const carte = await page.locator('.ah-offres-reelles .av-offre').first().boundingBox();
             assert(carte.width < cartes.width / 2, 'Les annonces restent des cartes compactes.');
             const visibles = await page.locator('#carrousel-communes').evaluate(el => [...el.children].filter(c => { const r=c.getBoundingClientRect(), p=el.getBoundingClientRect(); return r.left >= p.left - 1 && r.right <= p.right + 1; }).length);
-            assert.equal(visibles, width >= 1440 ? 5 : 4, 'Quatre à cinq communes visibles sur une seule ligne.');
-            assert(await page.locator('.av-confiance-texte p').first().evaluate(el => parseFloat(getComputedStyle(el).fontSize)) >= 18, 'Les explications restent lisibles sur ordinateur.');
+            assert.equal(visibles, 3, 'Trois communes visibles sur une seule ligne.');
+            assert(await page.locator('.ah-confiance-texte p').first().evaluate(el => parseFloat(getComputedStyle(el).fontSize)) >= 15, 'Les explications restent lisibles sur ordinateur.');
         }
     }
+    for (const [width, height] of [[1024, 768], [1366, 768], [1440, 900]]) {
+        await page.setViewportSize({ width, height });
+        await page.evaluate(() => scrollTo(0, 0));
+        const form = await page.locator('.ah-recherche').boundingBox();
+        const header = await page.locator('.site-h').boundingBox();
+        assert(form.y >= header.y + header.height, 'La recherche ne chevauche pas le menu.');
+        assert(form.y + form.height <= height, `Formulaire entier visible sans défilement à ${width} × ${height}.`);
+        for (const id of ['accueil-commune', 'accueil-arrivee', 'accueil-depart', 'accueil-personnes']) {
+            const field = await page.locator('#' + id).boundingBox();
+            assert(field.width > 50 && field.y + field.height <= height, `${id} reste utilisable.`);
+        }
+        if (width === 1366) await page.screenshot({ path: output + '/accueil-premier-ecran-1366.png' });
+    }
+    assert.equal(await page.locator('body').evaluate(el => getComputedStyle(el).getPropertyValue('--avelis-orange').trim()), '#ff6a00');
     await page.setViewportSize({ width: 1440, height: 1000 });
     const piste = page.locator('#carrousel-communes');
     const suivant = page.getByRole('button', { name: 'Communes suivantes', exact: true });
@@ -54,7 +68,9 @@ try {
     await piste.evaluate(el => { el.scrollLeft = el.scrollWidth; });
     await page.waitForFunction(() => document.querySelector('[aria-label="Communes suivantes"]').disabled);
     await page.setViewportSize({ width: 390, height: 844 });
+    await page.evaluate(() => scrollTo(0, 0));
     const bouton = await page.getByRole('button', { name: 'Rechercher un logement', exact: true }).boundingBox();
+    assert(bouton.y >= 0, 'Le bouton doit être dans le premier écran.');
     const menu = await page.locator('.mobile-tabs').boundingBox();
     assert(bouton.y + bouton.height <= menu.y, 'Le bouton de recherche initial ne doit pas être sous les onglets à 390 × 844.');
     await page.screenshot({ path: output + '/accueil-telephone.png', fullPage: true });

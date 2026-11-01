@@ -1,5 +1,7 @@
 # Accueil et navigation — contrat visuel v2
 
+> Depuis le 1er novembre 2026, les dispositions visuelles de l’accueil sont remplacées par `accueil-reference-v3.md`. Les règles métier et la navigation des autres pages restent applicables.
+
 ## Vision
 
 Donner envie de séjourner, expliquer les contrôles réels et rendre la recherche immédiatement accessible. Préserver la charte Avelis (vert profond, turquoise, sable et accents dorés), la pile existante et les règles métier.
