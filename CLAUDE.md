@@ -37,6 +37,10 @@ Maquette et menu approuvés en conversation, intégration autorisée. Référenc
 
 Maquette approuvée et intégration autorisée : `docs/contrats/logements-v2.md`. Sans dates, afficher uniquement les annonces publiables avec le tarif standard de référence ; après recherche datée valide, afficher la disponibilité et le total réels. Aucun inventaire de démonstration ajouté en production.
 
+## Parcours de réservation (1er novembre 2026)
+
+Maquette `docs/maquettes/reservation-v3.html` validée, intégration autorisée : `docs/contrats/reservation-v3.md`. Date d'arrivée + nombre de nuits (plus de plage de calendrier) ; séjour minimum 1 et maximum 30 nuits, heure de départ 11 h, accès du gérant à la pièce d'identité 7 jours après le départ : tous réglables dans Paramètres. Motif du séjour obligatoire ; pièce d'identité du voyageur déposée une fois dans son profil (après le paiement), chiffrée, visible seulement du gérant de la réservation confirmée, ouvertures journalisées. Les pages Mes réservations et Détail d'une réservation ne sont pas encore refondues.
+
 ## Règles absolues
 1. Ne jamais inventer une règle de gestion. Cahier muet ou contradictoire : s'arrêter et poser la question avec une recommandation.
 2. Travailler uniquement dans le périmètre du lot demandé.

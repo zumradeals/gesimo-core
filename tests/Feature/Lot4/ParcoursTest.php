@@ -41,7 +41,7 @@ it('parcours client complet : recherche, réservation, paiement, confirmation, c
 
     // 2. Réservation : dates gardées, on est envoyé vers le paiement.
     Livewire::actingAs($client)->test(Recapitulatif::class, ['unite' => $unite])
-        ->set('arrivee', $aujourdhui->toDateString())->set('depart', $depart->toDateString())->set('personnes', 2)->call('garder')->assertRedirect();
+        ->set('arrivee', $aujourdhui->toDateString())->set('depart', $depart->toDateString())->set('personnes', 2)->set(informationsVoyageurValides())->call('garder')->assertRedirect();
     $reservation = $client->reservations()->firstOrFail();
     expect($reservation->statut)->toBe(StatutReservation::EnAttente);
 

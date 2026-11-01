@@ -157,6 +157,12 @@ function creerLogement(int $prix = 15000, ?int $prixWeekEnd = 20000, array $resi
     return $unite->fresh();
 }
 
+/** Champs de l'étape « Vos informations » de la réservation, tels que le voyageur les remplit. */
+function informationsVoyageurValides(array $surcharges = []): array
+{
+    return $surcharges + ['nom' => 'Aminata Koné', 'telephone' => '07 01 02 03 04', 'motif' => 'vacances', 'accord' => true];
+}
+
 /** Prochain vendredi (au moins dans 10 jours) : sert de date d'arrivée stable dans les tests. */
 function prochainVendredi(): CarbonImmutable
 {

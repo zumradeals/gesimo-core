@@ -32,7 +32,7 @@ it('un client affiche et annule sa réservation depuis « Mes réservations »',
     $vendredi = prochainVendredi();
 
     Livewire::actingAs($client)->withQueryParams(['arrivee' => $vendredi->toDateString(), 'depart' => $vendredi->addDays(3)->toDateString(), 'personnes' => 2])
-        ->test(Recapitulatif::class, ['unite' => $unite])->call('garder')->assertRedirect(route('mes-reservations'));
+        ->test(Recapitulatif::class, ['unite' => $unite])->set(informationsVoyageurValides())->call('garder')->assertRedirect(route('mes-reservations'));
 
     $reservation = Reservation::firstOrFail();
     expect($reservation->client_id)->toBe($client->id);
@@ -51,7 +51,8 @@ it('le récapitulatif affiche une erreur claire si quelqu\'un a pris les dates e
 
     insererReservationSql($unite, $vendredi->addDay()->toDateString(), $vendredi->addDays(2)->toDateString()); // un autre client réserve entre-temps
 
-    $composant->call('garder')->assertSee('Ce logement n\'est pas libre du');
+    // L'écran propose alors de nouvelles dates libres au lieu de laisser le voyageur payer pour rien.
+    $composant->set(informationsVoyageurValides())->call('garder')->assertSee('Ces dates viennent d\'être prises', false)->assertSee('Voici les dates libres les plus proches');
     expect(Reservation::where('client_id', $client->id)->count())->toBe(0);
 });
 
@@ -173,7 +174,7 @@ it('toutes les pages s\'affichent sans erreur pour la bonne personne', function 
     foreach (['mes-reservations', 'compte'] as $route) {
         $this->actingAs($client)->get(route($route))->assertOk();
     }
-    $this->actingAs($client)->get(route('reserver', ['unite' => $unite->id] + $q))->assertOk()->assertSee('Garder ces dates');
+    $this->actingAs($client)->get(route('reserver', ['unite' => $unite->id] + $q))->assertOk()->assertSee('Continuer vers le paiement')->assertSee('Quelques informations avant de payer');
     foreach (['gerant.residences', 'gerant.residence.nouvelle', 'gerant.calendrier', 'gerant.telephone', 'gerant.personnel'] as $route) {
         $this->actingAs($gerant)->get(route($route))->assertOk();
     }
