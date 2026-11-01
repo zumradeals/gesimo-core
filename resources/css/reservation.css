@@ -27,10 +27,10 @@
 .rv-message { margin: 0; background: var(--avelis-ivoire); border: 1px solid var(--avelis-peche); border-radius: 10px; padding: 9px 12px; font-size: 14px; }
 
 /* ---------- Pages du parcours : en-tête et pied du site public, contenu aéré ---------- */
-:is(.site-reservation, .espace-client) .page-courante > .cont { max-width: 1280px; }
-:is(.site-reservation, .espace-client) .rv-page { display: grid; gap: 14px; }
-:is(.site-reservation, .espace-client) .fil a { color: var(--avelis-orange-texte); }
-:is(.site-reservation, .espace-client) :is(h1, h2, h3) { color: var(--avelis-nuit); letter-spacing: -.03em; }
+.charte .rv-page { display: grid; gap: 14px; }
+.charte .fil a { color: var(--avelis-orange-texte); }
+.charte :is(h1, h2, h3) { letter-spacing: -.03em; }
+:is(.site-reservation, .espace-client) :is(h1, h2, h3) { color: var(--avelis-nuit); }
 .rv-titre { font-size: clamp(25px, 3vw, 34px); margin: 0; line-height: 1.15; }
 
 /* Fil des 3 étapes */
@@ -45,20 +45,20 @@
 @media (max-width: 440px) { .rv-etapes li:not(.on):not(.trait) span { display: none; } }
 
 /* Cartes et champs */
-:is(.site-reservation, .espace-client) :is(.carte-p, .rv-carte, .resa) { background: #fff; border: 1px solid var(--avelis-trait); border-radius: 14px; box-shadow: none; padding: 18px; display: grid; gap: 14px; align-content: start; }
-:is(.site-reservation, .espace-client) .carte-p h2, .rv-carte h2 { margin: 0; font-size: 19px; }
-:is(.site-reservation, .espace-client) .btn-sec { background: #fff; color: var(--avelis-nuit); border: 2px solid var(--avelis-nuit); border-radius: 10px; }
-:is(.site-reservation, .espace-client) .btn-sec:hover { background: var(--avelis-ivoire); }
-:is(.site-reservation, .espace-client) .btn-pl:disabled, :is(.site-reservation, .espace-client) .btn-pl[disabled] { background: var(--avelis-trait); color: var(--avelis-gris); cursor: not-allowed; }
-:is(.site-reservation, .espace-client) .saisie { border: 1.5px solid var(--avelis-saisie); border-radius: 11px; color: var(--avelis-nuit); }
-:is(.site-reservation, .espace-client) .saisie:focus { border-color: var(--avelis-nuit); box-shadow: 0 0 0 3px var(--avelis-peche); outline: none; }
-:is(.site-reservation, .espace-client) .timer { background: var(--avelis-peche); color: var(--avelis-nuit); }
-:is(.site-reservation, .espace-client) .gros { color: var(--avelis-nuit); }
-:is(.site-reservation, .espace-client) .pastilles span { background: var(--avelis-ivoire); color: var(--avelis-nuit); border: 1px solid var(--avelis-peche); }
-:is(.site-reservation, .espace-client) .pastilles.clairs span { background: var(--avelis-ivoire); }
-:is(.site-reservation, .espace-client) .gros-ok { background: var(--avelis-ok-fond); color: var(--avelis-ok); }
-:is(.site-reservation, .espace-client) .equip span { background: #f3f5f8; }
-:is(.site-reservation, .espace-client) .ligne.total, .rv-page .ligne.total { font-weight: 800; font-size: 17px; border-top: 1px solid var(--avelis-trait); border-bottom: 0; padding-top: 12px; }
+.charte :is(.carte-p, .rv-carte, .resa) { background: #fff; border: 1px solid var(--avelis-trait); border-radius: 14px; box-shadow: none; padding: 18px; display: grid; gap: 14px; align-content: start; }
+.charte .carte-p h2, .rv-carte h2 { margin: 0; font-size: 19px; }
+.charte .btn-sec { background: #fff; color: var(--avelis-nuit); border: 2px solid var(--avelis-nuit); border-radius: 10px; }
+.charte .btn-sec:hover { background: var(--avelis-ivoire); }
+.charte .btn-pl:disabled, .charte .btn-pl[disabled] { background: var(--avelis-trait); color: var(--avelis-gris); cursor: not-allowed; }
+.charte .saisie { border: 1.5px solid var(--avelis-saisie); border-radius: 11px; color: var(--avelis-nuit); }
+.charte .saisie:focus { border-color: var(--avelis-nuit); box-shadow: 0 0 0 3px var(--avelis-peche); outline: none; }
+.charte .timer { background: var(--avelis-peche); color: var(--avelis-nuit); }
+.charte .gros { color: var(--avelis-nuit); }
+.charte .pastilles span { background: var(--avelis-ivoire); color: var(--avelis-nuit); border: 1px solid var(--avelis-peche); }
+.charte .pastilles.clairs span { background: var(--avelis-ivoire); }
+.charte .gros-ok { background: var(--avelis-ok-fond); color: var(--avelis-ok); }
+.charte .equip span { background: #f3f5f8; }
+.charte .ligne.total, .rv-page .ligne.total { font-weight: 800; font-size: 17px; border-top: 1px solid var(--avelis-trait); border-bottom: 0; padding-top: 12px; }
 .rv-a-faire { border: 2px solid var(--avelis-orange) !important; }
 .rv-a-faire .surtitre { font-size: 12px; letter-spacing: .11em; text-transform: uppercase; font-weight: 800; color: var(--avelis-orange-texte); }
 
@@ -84,7 +84,7 @@
 .rv-suggestions :is(a, button) { display: flex; justify-content: space-between; align-items: center; gap: 10px; min-height: 54px; border: 1.5px solid var(--avelis-saisie); background: #fff; border-radius: 12px; padding: 12px 14px; font-weight: 700; color: var(--avelis-nuit); text-align: left; text-decoration: none; cursor: pointer; }
 .rv-suggestions :is(a, button):hover { border-color: var(--avelis-orange); background: var(--avelis-ivoire); }
 .rv-suggestions .petit { color: var(--avelis-orange-texte); font-weight: 800; }
-@media (min-width: 1024px) { :is(.site-reservation, .espace-client) .rv-encadre { position: sticky; top: 90px; } }
+@media (min-width: 1024px) { .charte .rv-encadre { position: sticky; top: 90px; } }
 
 /* ---------- Étape « Vos informations » ---------- */
 .rv-cols { display: grid; gap: 16px; }
@@ -109,6 +109,6 @@
 @media (min-width: 1024px) {
     .rv-cols { grid-template-columns: minmax(0, 1fr) 400px; gap: 28px; align-items: start; }
     .rv-resume { position: sticky; top: 90px; }
-    :is(.site-reservation, .espace-client) .cols { grid-template-columns: minmax(0, 1fr) 400px; gap: 28px; }
+    .charte .cols { grid-template-columns: minmax(0, 1fr) 400px; gap: 28px; }
 }
 @media (prefers-reduced-motion: reduce) { .rv-page * { transition: none !important; } }

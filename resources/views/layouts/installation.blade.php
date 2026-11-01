@@ -4,13 +4,13 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="robots" content="noindex">
-    <meta name="theme-color" content="#0f766e">
+    <meta name="theme-color" content="#FF6A00">
     <title>{{ isset($title) ? $title.' — ' : '' }}Installation</title>
     @livewireStyles
     @livewireScriptConfig
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="min-h-screen">
+<body class="charte min-h-screen">
     <header class="flex h-14 items-center bg-gradient-to-r from-marque-600 to-marque-500 px-4 text-white lg:px-10">
         <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-white/20 font-extrabold">G</span>
         <span class="ml-2 text-lg font-extrabold">Installation</span>

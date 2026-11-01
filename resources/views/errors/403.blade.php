@@ -9,7 +9,7 @@
 <head>
 @include('layouts.partiels.tete')
 </head>
-<body class="site min-h-screen">
+<body class="charte site min-h-screen">
     <main class="page-courante">
         <section class="auth"><div class="cont" style="max-width:640px">
             <div class="carte-p" style="text-align:center;justify-items:center;padding:30px 22px">

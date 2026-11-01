@@ -12,7 +12,7 @@
     $libelleBas = $coque['libelles'];
     $roleEtiquette = ['admin' => 'Admin', 'gerant' => 'Gérant', 'client' => null][$habillage];
 @endphp
-<body class="min-h-screen{{ $habillage === 'client' ? ' espace-client' : '' }}">
+<body class="charte min-h-screen{{ $habillage === 'client' ? ' espace-client' : '' }}">
     <div class="adm-cadre">
         <aside class="adm-side" aria-label="Menu de l'espace">
             <x-ui.logo :clair="true" />

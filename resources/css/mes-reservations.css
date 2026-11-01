@@ -3,16 +3,16 @@
  */
 
 /* ---------- Espace client : menu latéral et fond aux couleurs de la charte ---------- */
-.espace-client .adm-cadre { background: #f6f7f9; }
+.charte .adm-cadre { background: #f6f7f9; }
 .espace-client :is(.adm-side, .adm-haut) { background: var(--avelis-nuit); }
-.espace-client .adm-side nav a.on { background: #ffffff1f; box-shadow: inset 3px 0 var(--avelis-orange); }
-.espace-client .adm-moi small { color: #b9c3d6; }
-.espace-client .avatar { background: var(--avelis-orange); color: var(--avelis-nuit); }
-.espace-client .adm-moi :is(a, button) { color: #e6ebf4; }
-.espace-client .logo-g { background: var(--avelis-orange); color: var(--avelis-nuit); }
+.charte .adm-side nav a.on { background: #ffffff1f; box-shadow: inset 3px 0 var(--avelis-orange); }
+.charte .adm-moi small { color: #b9c3d6; }
+.charte .avatar { background: var(--avelis-orange); color: var(--avelis-nuit); }
+.charte .adm-moi :is(a, button) { color: #e6ebf4; }
+.charte .logo-g { background: var(--avelis-orange); color: var(--avelis-nuit); }
 
 /* ---------- Pages ---------- */
-.mr-page { display: grid; gap: 16px; align-content: start; min-width: 0; max-width: 1100px; }
+.mr-page { display: grid; gap: 16px; align-content: start; min-width: 0; }
 .mr-entete { display: grid; gap: 12px; }
 .mr-entete h1 { font-size: clamp(26px, 3vw, 32px); margin: 0; }
 .mr-entete .btn-pl { justify-self: start; }
@@ -65,6 +65,13 @@
 .mr-suivi li::before { content: ""; position: absolute; left: 3px; top: 5px; width: 14px; height: 14px; border-radius: 50%; border: 2px solid var(--avelis-saisie); background: #fff; }
 .mr-suivi li.fait { color: var(--avelis-nuit); }
 .mr-suivi li.fait::before { background: var(--avelis-ok); border-color: var(--avelis-ok); }
+
+/* Grand écran : le détail se répartit sur trois colonnes pour remplir la largeur. */
+@media (min-width: 1500px) {
+    .mr-cols { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 400px; }
+    .mr-cols > .mr-col:first-child { grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; }
+    .mr-cols > .mr-col:first-child > :is(.mr-etape, #piece-identite) { grid-column: 1 / -1; }
+}
 
 @media (min-width: 900px) {
     .mr-entete { grid-template-columns: 1fr auto; align-items: center; }
