@@ -1,0 +1,632 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Maquette — Réservation · Avelis Séjours</title>
+<style>
+:root{
+  --orange:#ff6a00;--orange-texte:#b94700;--orange-survol:#e75e00;--nuit:#17243b;--ivoire:#fff8f0;--peche:#ffeadb;
+  --blanc:#fff;--gris:#526077;--trait:#e4e7ed;--ok:#1d7a46;--okfond:#e8f5ed;--erreur:#b42318;--erreurfond:#fdecea;--rayon:14px
+}
+*{box-sizing:border-box}
+body{margin:0;font:16px/1.55 system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--nuit);background:#eef0f4}
+h1,h2,h3,p{margin:0}h1,h2,h3{letter-spacing:-.03em;line-height:1.2}
+a{color:var(--orange-texte)}
+button,input,select,textarea{font:inherit;color:inherit}
+
+/* ---------- Barre de présentation (hors maquette) ---------- */
+.outil{position:sticky;top:0;z-index:20;background:var(--nuit);color:#fff;padding:10px 16px;display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center}
+.outil b{font-size:14px}
+.outil nav{display:flex;flex-wrap:wrap;gap:6px}
+.outil button{border:1px solid #ffffff55;background:transparent;color:#fff;border-radius:999px;padding:6px 12px;font-size:13px;cursor:pointer}
+.outil button.on{background:var(--orange);border-color:var(--orange);color:var(--nuit);font-weight:700}
+.outil .sep{margin-left:auto;display:flex;gap:6px;align-items:center;font-size:13px}
+.avertis{max-width:1240px;margin:14px auto 0;padding:0 16px;font-size:13px;color:var(--gris)}
+
+/* ---------- Scène (la maquette) ---------- */
+.scene{margin:14px auto 0;background:#fff;border:1px solid var(--trait);border-radius:18px;overflow:hidden;container-type:inline-size;container-name:scene;width:min(100%,1240px);box-shadow:0 10px 40px #17243b14}
+body.mobile .scene{width:390px}
+.ecran{display:none}.ecran.on{display:block}
+
+/* En-tête / pied */
+.entete{display:flex;align-items:center;gap:16px;padding:12px 18px;border-bottom:1px solid var(--trait);background:#fff}
+.logo{display:flex;align-items:center;gap:9px;font-weight:800;font-size:19px;white-space:nowrap}
+.logo i{display:grid;place-items:center;width:36px;height:36px;border-radius:12px;background:var(--orange);color:var(--nuit);font-style:normal;font-size:24px}
+.entete .menu{margin-left:auto;display:none;gap:22px;font-size:14px;font-weight:600}
+.entete .menu .on{color:var(--orange-texte);box-shadow:0 2px var(--orange)}
+.entete .cpt{margin-left:auto;font-size:14px;font-weight:700;background:var(--orange);color:var(--nuit);padding:9px 14px;border-radius:10px}
+.entete .perso{margin-left:auto;display:flex;align-items:center;gap:8px;font-size:14px;font-weight:600}
+.entete .perso i{display:grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--peche);color:var(--orange-texte);font-style:normal;font-weight:800}
+.pied{background:var(--nuit);color:#d9dfeb;padding:20px 18px;font-size:13px;display:flex;flex-wrap:wrap;gap:8px 24px;justify-content:space-between}
+.corps{padding:18px;background:#fff}
+
+/* Éléments communs */
+.fil{font-size:13px;color:var(--gris);margin-bottom:12px}
+.surtitre{font-size:12px;letter-spacing:.11em;text-transform:uppercase;font-weight:800;color:var(--orange-texte)}
+.etapes{display:flex;align-items:center;gap:8px;margin:0 0 18px;font-size:13px;font-weight:700}
+.etape{display:flex;align-items:center;gap:7px;color:var(--gris)}
+.etape i{display:grid;place-items:center;width:28px;height:28px;border-radius:50%;border:2px solid var(--trait);background:#fff;font-style:normal;font-size:13px}
+.etape.on{color:var(--nuit)}.etape.on i{background:var(--orange);border-color:var(--orange);color:var(--nuit)}
+.etape.fait i{background:var(--nuit);border-color:var(--nuit);color:#fff}.etape.fait{color:var(--nuit)}
+.trait{flex:1;height:2px;background:var(--trait);min-width:10px}
+.carte{background:#fff;border:1px solid var(--trait);border-radius:var(--rayon);padding:18px;display:grid;gap:14px}
+.carte.ivoire{background:var(--ivoire);border-color:var(--peche)}
+.carte h2{font-size:19px}.carte h3{font-size:16px}
+.petit{font-size:13px;color:var(--gris)}
+.ligne{display:flex;justify-content:space-between;gap:12px;font-size:15px}
+.ligne.total{font-weight:800;font-size:17px;border-top:1px solid var(--trait);padding-top:12px}
+.gros{font-size:30px;font-weight:800;letter-spacing:-.03em}
+.btn{display:flex;align-items:center;justify-content:center;gap:10px;min-height:54px;padding:12px 20px;border:0;border-radius:12px;background:var(--orange);color:var(--nuit);font-weight:800;font-size:17px;cursor:pointer;width:100%;text-decoration:none}
+.btn:hover{background:var(--orange-survol)}
+.btn.sec{background:#fff;border:2px solid var(--nuit)}.btn.sec:hover{background:var(--ivoire)}
+.btn[disabled]{background:#e7e9ee;color:#8a93a3;cursor:not-allowed}
+.lien{background:none;border:0;color:var(--orange-texte);font-weight:700;text-decoration:underline;cursor:pointer;padding:6px 0;text-align:center}
+:focus-visible{outline:3px solid var(--nuit);outline-offset:3px}
+label.champ{display:grid;gap:6px;font-weight:700;font-size:15px}
+label.champ small{font-weight:400;color:var(--gris);font-size:13px}
+input[type=text],input[type=tel],input[type=date],select,textarea{width:100%;min-height:50px;border:1.5px solid #c7cdd8;border-radius:11px;padding:10px 13px;background:#fff;font-weight:500}
+textarea{min-height:84px;resize:vertical}
+.alerte{display:flex;gap:10px;border-radius:12px;padding:13px 14px;font-size:14.5px;border:1px solid}
+.alerte.err{background:var(--erreurfond);border-color:#f2b8b2;color:#7a1a12}
+.alerte.ok{background:var(--okfond);border-color:#b8dfc7;color:#14532d}
+.alerte.info{background:var(--ivoire);border-color:var(--peche);color:var(--nuit)}
+.alerte b{font-weight:800}
+.pastilles{display:flex;flex-wrap:wrap;gap:8px}
+.pastilles span{background:var(--ivoire);border:1px solid var(--peche);border-radius:999px;padding:6px 13px;font-size:14px;font-weight:700}
+.badge{display:inline-block;border-radius:999px;padding:3px 11px;font-size:12.5px;font-weight:800}
+.badge.ok{background:var(--okfond);color:var(--ok)}.badge.att{background:var(--peche);color:var(--orange-texte)}.badge.nu{background:#e9ecf2;color:var(--gris)}
+.photo{border-radius:12px;background:linear-gradient(135deg,#d7c3ab,#a98c6c 55%,#e9d9c4);color:#ffffffcc;display:grid;place-items:end start;padding:8px 10px;font-size:12px;min-height:86px}
+.photo.p2{background:linear-gradient(135deg,#b9c8d6,#7e97ad 55%,#dbe6ef)}
+.mini{display:flex;gap:12px;align-items:center}.mini .photo{width:92px;flex:none;min-height:74px}
+.mini b{display:block;font-size:16px}
+.coches{display:grid;gap:8px;font-size:14.5px;list-style:none;margin:0;padding:0}
+.coches li{display:flex;gap:9px}.coches li:before{content:"✓";color:var(--ok);font-weight:900}
+
+/* Disposition deux colonnes */
+.cols{display:grid;gap:16px}
+.col-g,.col-d{display:grid;gap:16px;align-content:start}
+@container scene (min-width:900px){
+  .entete{padding:14px 40px}.entete .menu{display:flex}.entete .cpt,.entete .perso{margin-left:0}
+  .corps{padding:28px 40px 44px}
+  .cols{grid-template-columns:minmax(0,1fr) 400px;gap:28px;align-items:start}
+  .col-d.colle{position:sticky;top:76px}
+  .pied{padding:24px 40px}
+  .carte{padding:22px}
+  .etape{font-size:14px}
+  .deux{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+}
+.deux{display:grid;gap:14px}
+
+/* Fiche logement */
+.galerie{display:grid;gap:8px;grid-template-columns:2fr 1fr;margin-bottom:16px}
+.galerie .photo{min-height:150px;border-radius:14px}.galerie .g1{grid-row:span 2;min-height:240px}
+@container scene (min-width:900px){.galerie .g1{min-height:340px}}
+.titre-fiche h1{font-size:clamp(26px,5cqw,38px)}
+.equip{display:flex;flex-wrap:wrap;gap:8px}.equip span{background:#f3f5f8;border-radius:10px;padding:7px 12px;font-size:14px}
+.bloc-fiche{display:grid;gap:8px;margin-top:20px}.bloc-fiche h3{font-size:19px}
+
+/* Choix du séjour : arrivée + nombre de nuits */
+.stepper-n{display:grid;grid-template-columns:56px 1fr 56px;gap:10px;align-items:center}
+.stepper-n button{height:56px;border-radius:12px;border:2px solid var(--nuit);background:#fff;font-size:28px;font-weight:700;cursor:pointer;line-height:1}
+.stepper-n button:hover{background:var(--ivoire)}
+.stepper-n output{display:grid;text-align:center;font-weight:800;font-size:26px;line-height:1.1}
+.stepper-n output small{font-size:13px;font-weight:600;color:var(--gris)}
+.puces{display:flex;flex-wrap:wrap;gap:8px}
+.puces button,.radios label{border:1.5px solid #c7cdd8;background:#fff;border-radius:999px;padding:8px 14px;font-size:14.5px;font-weight:700;cursor:pointer}
+.puces button.on{background:var(--nuit);color:#fff;border-color:var(--nuit)}
+.depart{background:var(--ivoire);border:1px solid var(--peche);border-radius:12px;padding:11px 14px;font-size:15px;display:flex;justify-content:space-between;gap:10px}
+.depart b{font-weight:800}
+
+/* Motif */
+.radios{display:grid;gap:8px}
+.radios label{display:flex;align-items:center;gap:10px;border-radius:12px;padding:13px 14px;font-weight:600;min-height:52px}
+.radios input{width:20px;height:20px;accent-color:var(--orange)}
+.radios label:has(input:checked){border-color:var(--orange);background:var(--ivoire);box-shadow:0 0 0 1px var(--orange)}
+@container scene (min-width:900px){.radios{grid-template-columns:1fr 1fr}}
+.case{display:flex;gap:12px;align-items:flex-start;font-size:15px}.case input{width:24px;height:24px;margin-top:2px;accent-color:var(--orange);flex:none}
+
+/* Barre collante mobile */
+.barre-mob{display:none}
+body.mobile .barre-mob.visible{display:flex;position:sticky;bottom:0;background:#fff;border-top:1px solid var(--trait);padding:10px 16px;gap:12px;align-items:center;box-shadow:0 -6px 18px #17243b14}
+.barre-mob .t{display:grid;line-height:1.2}.barre-mob .t b{font-size:19px}.barre-mob .t span{font-size:12px;color:var(--gris)}
+.barre-mob .btn{width:auto;flex:1;min-height:50px}
+
+/* Documentation d'écran */
+.note{max-width:1240px;margin:12px auto 0;padding:0 16px}
+.note details{background:#fff;border:1px solid var(--trait);border-radius:12px;padding:12px 16px}
+.note summary{cursor:pointer;font-weight:800}
+.note dl{display:grid;gap:10px;margin:12px 0 0;font-size:14.5px}.note dt{font-weight:800}.note dd{margin:0;color:var(--gris)}
+.points{max-width:1240px;margin:22px auto 60px;padding:0 16px}
+.points .carte{background:#fff}
+.points ol{margin:0;padding-left:20px;display:grid;gap:8px}
+.tableau{width:100%;border-collapse:collapse;font-size:14px}
+.tableau td,.tableau th{border-bottom:1px solid var(--trait);padding:8px 6px;text-align:left;vertical-align:top}
+.sep-ecran{height:1px;background:var(--trait);margin:4px 0}
+.minuteur{display:flex;gap:10px;align-items:center;background:var(--peche);border-radius:12px;padding:12px 14px;font-size:14.5px}
+.minuteur b{font-size:17px}
+.drop{border:2px dashed #c7cdd8;border-radius:14px;padding:18px;display:grid;gap:10px;text-align:center;background:#fafbfc}
+.cap{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.cap .btn{min-height:50px;font-size:15px}
+.onglets{display:flex;border-bottom:2px solid var(--trait);gap:4px}
+.onglets button{flex:1;border:0;background:none;padding:12px 6px;font-weight:800;cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px;color:var(--gris)}
+.onglets button.on{color:var(--nuit);border-color:var(--orange)}
+.vue{display:none}.vue.on{display:grid;gap:14px}
+.suggest{display:grid;gap:8px}
+.suggest button{display:flex;justify-content:space-between;align-items:center;gap:10px;border:1.5px solid #c7cdd8;background:#fff;border-radius:12px;padding:13px 14px;font-weight:700;cursor:pointer;text-align:left;min-height:54px}
+.suggest button:hover{border-color:var(--orange);background:var(--ivoire)}
+table.gerant{width:100%;border-collapse:collapse;font-size:14px}
+table.gerant td,table.gerant th{padding:10px 6px;border-bottom:1px solid var(--trait);text-align:left}
+</style>
+</head>
+<body class="">
+
+<div class="outil">
+  <b>Maquette Réservation — Avelis Séjours</b>
+  <nav id="nav-ecrans" aria-label="Écrans">
+    <button data-e="fiche" class="on">1 · Fiche logement</button>
+    <button data-e="infos">2 · Vos informations</button>
+    <button data-e="paiement">3 · Paiement</button>
+    <button data-e="confirm">4 · Confirmation</button>
+    <button data-e="profil">5 · Espace membre</button>
+    <button data-e="cas">6 · Cas particuliers</button>
+    <button data-e="gerant">7 · Vue du gérant</button>
+  </nav>
+  <span class="sep">Affichage :
+    <button id="b-mob" class="on">Téléphone</button>
+    <button id="b-ord">Ordinateur</button>
+  </span>
+</div>
+<p class="avertis">Maquette de travail, non validée : textes, montants et photos sont des exemples. Les dates, le nombre de nuits et le nombre de personnes de l'écran 1 sont utilisables pour essayer.</p>
+
+<!-- ======================= 1. FICHE LOGEMENT ======================= -->
+<div class="scene">
+
+<section class="ecran on" id="e-fiche">
+  <header class="entete"><div class="logo"><i>A</i>Avelis Séjours</div>
+    <nav class="menu"><span>Accueil</span><span class="on">Logements</span><span>À propos</span><span>Devenir partenaire</span><span>Aide</span><span>Contact</span></nav>
+    <span class="cpt">Se connecter</span></header>
+  <div class="corps">
+    <p class="fil"><a href="#">Accueil</a> › <a href="#">Logements</a> › Cocody › Appartement</p>
+    <div class="titre-fiche"><h1>Appartement</h1><p class="petit" style="margin:6px 0 4px">Résidence Papaye · Cocody · jusqu'à 2 personnes</p>
+      <p class="petit">Proposé par <b>Confort Immobilier</b> · <a href="#">Voir ses autres offres</a></p></div>
+    <div class="galerie" style="margin-top:14px"><div class="photo g1">Photo principale (réelle)</div><div class="photo p2">Photo 2</div><div class="photo">Photo 3</div></div>
+
+    <div class="cols">
+      <div class="col-g">
+        <div class="bloc-fiche" style="margin-top:0"><h3>Équipements</h3><div class="equip"><span>Climatisation</span><span>Groupe électrogène</span><span>Eau chaude</span><span>Wi-Fi</span><span>Parking</span></div></div>
+        <div class="bloc-fiche" style="margin-top:0"><h3>Règlement</h3><p class="petit">Aucun règlement particulier.</p></div>
+        <div class="bloc-fiche" style="margin-top:0"><h3>Annulation</h3><p class="petit">Remboursement intégral jusqu'à 24 h avant l'arrivée. Moins de 24 h avant : une nuit retenue, le reste remboursé. Absence sans annulation : aucun remboursement.</p></div>
+        <div class="bloc-fiche" style="margin-top:0"><h3>Où ?</h3><p class="petit">Cocody. L'adresse exacte et le contact du gérant vous sont donnés après la confirmation de votre réservation.</p></div>
+      </div>
+
+      <aside class="col-d colle">
+        <section class="carte" id="encadre">
+          <div><span class="gros">10 000 FCFA</span> <span class="petit">par nuit</span></div>
+
+          <label class="champ">Date d'arrivée
+            <input type="date" id="arr" value="2026-11-20">
+            <small id="arr-heure">Arrivée à partir de 14 h</small></label>
+
+          <div class="champ" style="display:grid;gap:8px"><b style="font-size:15px">Combien de nuits ?</b>
+            <div class="stepper-n"><button type="button" id="n-moins" aria-label="Une nuit de moins">−</button>
+              <output id="n-val" aria-live="polite">8<small>nuits</small></output>
+              <button type="button" id="n-plus" aria-label="Une nuit de plus">+</button></div>
+            <div class="puces" id="puces"><button type="button" data-n="1">1 nuit</button><button type="button" data-n="2">Week-end · 2</button><button type="button" data-n="7">1 semaine</button><button type="button" data-n="14">2 semaines</button><button type="button" data-n="30">1 mois</button></div>
+          </div>
+
+          <div class="depart"><span>Départ</span><b id="dep-txt">sam. 28 nov. 2026</b></div>
+
+          <div class="champ" style="display:grid;gap:8px"><b style="font-size:15px">Voyageurs <span class="petit" style="font-weight:400">(2 au maximum)</span></b>
+            <div class="stepper-n"><button type="button" id="p-moins" aria-label="Un voyageur de moins">−</button>
+              <output id="p-val">2<small>personnes</small></output>
+              <button type="button" id="p-plus" aria-label="Un voyageur de plus">+</button></div></div>
+
+          <div class="sep-ecran"></div>
+          <div class="ligne"><span id="calc">10 000 FCFA × 8 nuits</span><span id="sous">80 000 FCFA</span></div>
+          <div class="ligne total"><span>Total, sans frais cachés</span><span id="tot">80 000 FCFA</span></div>
+          <p class="petit">Vous ne payez rien à cette étape. Vous gardez vos dates à l'étape suivante.</p>
+          <button class="btn" data-va="infos">Réserver</button>
+          <ul class="coches"><li>Résidence vérifiée</li><li>Paiement sécurisé (Wave, Orange Money, MTN Money, carte)</li><li id="annul">Annulation gratuite jusqu'au 19 nov. à 14 h</li></ul>
+        </section>
+      </aside>
+    </div>
+  </div>
+  <div class="barre-mob visible"><div class="t"><b id="m-fiche">80 000 FCFA</b><span>Total, sans frais cachés</span></div><button class="btn" data-va="infos">Réserver</button></div>
+  <footer class="pied"><span>© 2026 Avelis Séjours</span><span>Aide · Contact · Conditions générales</span></footer>
+</section>
+
+<!-- ======================= 2. VOS INFORMATIONS ======================= -->
+<section class="ecran" id="e-infos">
+  <header class="entete"><div class="logo"><i>A</i>Avelis Séjours</div>
+    <nav class="menu"><span>Accueil</span><span class="on">Logements</span><span>À propos</span><span>Aide</span></nav>
+    <span class="perso"><i>A</i>Aminata</span></header>
+  <div class="corps">
+    <p class="fil"><a href="#" data-va="fiche">← Modifier mon séjour</a></p>
+    <div class="etapes"><div class="etape on"><i>1</i>Vos informations</div><span class="trait"></span><div class="etape"><i>2</i>Paiement</div><span class="trait"></span><div class="etape"><i>3</i>Confirmation</div></div>
+    <h1 style="font-size:clamp(25px,5cqw,34px);margin-bottom:16px">Quelques informations avant de payer</h1>
+
+    <div class="cols">
+      <div class="col-g">
+        <section class="carte"><h2>Qui voyage ?</h2>
+          <label class="champ">Nom complet <small>Écrivez-le comme sur votre pièce d'identité.</small><input type="text" value="Aminata Koné" autocomplete="name"></label>
+          <label class="champ">Téléphone <small>Le gérant vous appelle seulement en cas de besoin.</small><input type="tel" value="+225 07 00 00 00 00" autocomplete="tel"></label>
+        </section>
+
+        <section class="carte"><h2>Pourquoi venez-vous ?</h2><p class="petit" style="margin-top:-6px">Choisissez une réponse. Seul le gérant la voit, elle ne change jamais le prix.</p>
+          <div class="radios" id="motifs">
+            <label><input type="radio" name="motif" checked> Vacances, tourisme</label>
+            <label><input type="radio" name="motif"> Voyage d'affaires, travail</label>
+            <label><input type="radio" name="motif"> Visite à la famille ou aux proches</label>
+            <label><input type="radio" name="motif" value="evt"> Événement (mariage, fête, cérémonie)</label>
+            <label><input type="radio" name="motif"> Études ou formation</label>
+            <label><input type="radio" name="motif"> Soins médicaux</label>
+            <label><input type="radio" name="motif" value="autre"> Autre</label>
+          </div>
+          <label class="champ" id="motif-autre" style="display:none">Précisez en quelques mots<input type="text" placeholder="Ex. : entretien d'embauche"></label>
+          <div class="alerte info" id="motif-evt" style="display:none"><span><b>Événement :</b> certaines résidences ont des règles pour les fêtes et le bruit. Lisez le règlement de la résidence avant de continuer.</span></div>
+        </section>
+
+        <section class="carte"><h2>Votre arrivée <span class="petit" style="font-weight:400">(facultatif)</span></h2>
+          <label class="champ">Heure d'arrivée prévue
+            <select><option>Je ne sais pas encore</option><option>Avant 14 h</option><option>Entre 14 h et 18 h</option><option>Entre 18 h et 22 h</option><option>Après 22 h</option></select></label>
+          <label class="champ">Un mot pour le gérant <textarea placeholder="Ex. : j'arrive en avion à 20 h, pouvez-vous m'attendre ?"></textarea></label>
+        </section>
+
+        <section class="carte ivoire"><h2>Votre pièce d'identité</h2>
+          <p style="font-size:15px">Vous n'avez rien à envoyer maintenant. Après le paiement, on vous proposera de l'ajouter en 2 minutes, <b>une seule fois pour toutes vos réservations</b>. Elle doit être fournie avant votre arrivée.</p>
+        </section>
+
+        <section class="carte">
+          <label class="case"><input type="checkbox" id="accord"><span>J'ai lu le règlement de la résidence et j'accepte les <a href="#">conditions générales</a> d'Avelis Séjours.</span></label>
+        </section>
+      </div>
+
+      <aside class="col-d colle">
+        <section class="carte">
+          <div class="mini"><div class="photo">Photo</div><div><b>Appartement</b><span class="petit">Résidence Papaye, Cocody</span></div></div>
+          <div class="ligne"><span>Arrivée</span><b data-r="arr">ven. 20 nov. 2026</b></div>
+          <div class="ligne"><span>Départ</span><b data-r="dep">sam. 28 nov. 2026</b></div>
+          <div class="ligne"><span>Durée</span><b data-r="nuits">8 nuits · 2 personnes</b></div>
+          <div class="ligne total"><span>Total</span><span data-r="tot">80 000 FCFA</span></div>
+          <p class="petit">Aucun autre frais. <b data-r="annul">Annulation gratuite jusqu'au 19 nov. à 14 h.</b></p>
+          <div class="minuteur"><span>⏱</span><span>En continuant, vos dates sont <b>gardées 30 minutes</b> pour vous.</span></div>
+          <button class="btn" id="vers-paiement" data-va="paiement" disabled>Continuer vers le paiement</button>
+          <p class="petit" id="aide-case">Cochez la case d'accord pour continuer.</p>
+        </section>
+      </aside>
+    </div>
+  </div>
+  <div class="barre-mob visible" id="barre-infos"><div class="t"><b data-r="tot">80 000 FCFA</b><span>Total du séjour</span></div><button class="btn" data-va="paiement" disabled id="vers-paiement-m">Continuer</button></div>
+  <footer class="pied"><span>© 2026 Avelis Séjours</span><span>Aide · Contact · Conditions générales</span></footer>
+</section>
+
+<!-- ======================= 3. PAIEMENT ======================= -->
+<section class="ecran" id="e-paiement">
+  <header class="entete"><div class="logo"><i>A</i>Avelis Séjours</div><span class="perso"><i>A</i>Aminata</span></header>
+  <div class="corps">
+    <div class="etapes"><div class="etape fait"><i>✓</i>Vos informations</div><span class="trait"></span><div class="etape on"><i>2</i>Paiement</div><span class="trait"></span><div class="etape"><i>3</i>Confirmation</div></div>
+    <h1 style="font-size:clamp(25px,5cqw,34px);margin-bottom:6px">Payez pour confirmer</h1>
+    <div class="puces" style="margin:10px 0 16px"><button type="button" class="on" id="mode-total">Cas : paiement du total</button><button type="button" id="mode-acompte">Cas : acompte</button></div>
+    <div class="cols">
+      <div class="col-g">
+        <div class="minuteur"><span>⏱</span><span>Vos dates sont gardées pour vous encore <b>29 min</b>. Ensuite, elles sont libérées.</span></div>
+        <section class="carte"><h2>Comment payer ?</h2>
+          <div class="pastilles"><span>Wave</span><span>Orange Money</span><span>MTN Money</span><span>Carte bancaire</span></div>
+          <p class="petit">Vous choisissez sur la page sécurisée de GeniusPay, puis vous revenez ici. Nous ne voyons jamais votre numéro de carte ni votre code secret.</p>
+        </section>
+        <section class="carte"><h2>Votre séjour</h2>
+          <div class="mini"><div class="photo">Photo</div><div><b>Appartement</b><span class="petit">Résidence Papaye, Cocody</span></div></div>
+          <div class="ligne"><span>Du</span><b data-r="arr">ven. 20 nov. 2026</b></div>
+          <div class="ligne"><span>Au</span><b data-r="dep">sam. 28 nov. 2026</b></div>
+          <div class="ligne"><span>Voyageurs</span><b>Aminata Koné · motif : vacances</b></div>
+        </section>
+      </div>
+      <aside class="col-d colle">
+        <section class="carte">
+          <div class="ligne"><span>Total du séjour</span><b data-r="tot">80 000 FCFA</b></div>
+          <div class="ligne" id="ligne-solde" style="display:none"><span>À régler au gérant à l'arrivée</span><b>48 000 FCFA</b></div>
+          <div class="sep-ecran"></div>
+          <h2 id="titre-pay">À payer maintenant</h2>
+          <div class="gros" id="montant-pay" data-r="tot">80 000 FCFA</div>
+          <p class="petit" id="txt-pay">Paiement du total du séjour. Rien d'autre à payer.</p>
+          <button class="btn" data-va="confirm" id="btn-pay">Payer 80 000 FCFA</button>
+          <ul class="coches"><li>Paiement sécurisé</li><li data-r="annul">Annulation gratuite jusqu'au 19 nov. à 14 h</li></ul>
+        </section>
+      </aside>
+    </div>
+  </div>
+  <div class="barre-mob visible"><div class="t"><b id="m-pay">80 000 FCFA</b><span>À payer maintenant</span></div><button class="btn" data-va="confirm">Payer</button></div>
+  <footer class="pied"><span>© 2026 Avelis Séjours</span><span>Aide · Contact · Conditions générales</span></footer>
+</section>
+
+<!-- ======================= 4. CONFIRMATION ======================= -->
+<section class="ecran" id="e-confirm">
+  <header class="entete"><div class="logo"><i>A</i>Avelis Séjours</div><span class="perso"><i>A</i>Aminata</span></header>
+  <div class="corps">
+    <div class="etapes"><div class="etape fait"><i>✓</i>Vos informations</div><span class="trait"></span><div class="etape fait"><i>✓</i>Paiement</div><span class="trait"></span><div class="etape on"><i>3</i>Confirmation</div></div>
+    <div class="alerte ok" style="font-size:17px"><span>✓ <b>Réservation confirmée.</b> Un reçu vous a été envoyé. Référence : <b>AVS-2026-00123</b></span></div>
+    <div class="cols" style="margin-top:16px">
+      <div class="col-g">
+        <section class="carte" style="border:2px solid var(--orange)"><span class="surtitre">À faire avant votre arrivée</span>
+          <h2>Ajoutez votre pièce d'identité</h2>
+          <p style="font-size:15px">Le gérant en a besoin pour vous accueillir. C'est rapide, et vous ne le ferez qu'une fois : elle sera gardée dans votre espace membre pour vos prochains séjours.</p>
+          <label class="champ">Type de pièce
+            <select><option>Carte nationale d'identité</option><option>Passeport</option><option>Titre de séjour</option><option>Autre pièce officielle</option></select></label>
+          <div class="drop"><b>Photo de la pièce (recto)</b><p class="petit">Posez la pièce sur une table, bien éclairée, tous les coins visibles.</p>
+            <div class="cap"><button class="btn sec" type="button">📷 Prendre une photo</button><button class="btn sec" type="button">Choisir un fichier</button></div></div>
+          <div class="alerte info"><span>🔒 Votre pièce est chiffrée. Seul le gérant de cette réservation peut la voir, jusqu'à quelques jours après votre départ. Chaque consultation est enregistrée.</span></div>
+          <button class="btn">Envoyer ma pièce</button>
+          <button class="lien" type="button">Je le ferai plus tard (rappel avant l'arrivée)</button>
+        </section>
+        <section class="carte"><h2>Prochaines étapes</h2>
+          <ul class="coches"><li>Pièce d'identité ajoutée <span class="badge att">À faire</span></li><li>Vous recevez un rappel 48 h avant l'arrivée</li><li>Le jour J : présentez-vous avec la même pièce, en original</li></ul></section>
+      </div>
+      <aside class="col-d colle">
+        <section class="carte"><h2>Votre séjour</h2>
+          <div class="mini"><div class="photo">Photo</div><div><b>Appartement</b><span class="petit">Résidence Papaye, Cocody</span></div></div>
+          <div class="ligne"><span>Arrivée</span><b data-r="arr">ven. 20 nov. 2026</b></div>
+          <div class="ligne"><span>Départ</span><b data-r="dep">sam. 28 nov. 2026</b></div>
+          <div class="ligne"><span>Payé</span><b data-r="tot">80 000 FCFA</b></div>
+        </section>
+        <section class="carte ivoire"><h2>Contact du gérant</h2>
+          <p style="font-size:15px">Confort Immobilier<br>+225 01 00 00 00 00<br>Adresse exacte : (donnée seulement après confirmation)</p>
+          <a class="btn sec" href="#" style="min-height:48px;font-size:15px">Appeler le gérant</a>
+        </section>
+        <a class="btn sec" href="#">Télécharger le reçu</a>
+      </aside>
+    </div>
+  </div>
+  <footer class="pied"><span>© 2026 Avelis Séjours</span><span>Aide · Contact · Conditions générales</span></footer>
+</section>
+
+<!-- ======================= 5. ESPACE MEMBRE ======================= -->
+<section class="ecran" id="e-profil">
+  <header class="entete"><div class="logo"><i>A</i>Avelis Séjours</div><span class="perso"><i>A</i>Aminata</span></header>
+  <div class="corps">
+    <p class="fil"><a href="#">Mon compte</a> › Mon profil voyageur</p>
+    <h1 style="font-size:clamp(25px,5cqw,34px);margin-bottom:16px">Mon profil voyageur</h1>
+    <div class="cols">
+      <div class="col-g">
+        <section class="carte"><h2>Mes informations</h2>
+          <label class="champ">Nom complet<input type="text" value="Aminata Koné"></label>
+          <label class="champ">Téléphone<input type="tel" value="+225 07 00 00 00 00"></label>
+          <button class="btn" style="max-width:260px">Enregistrer</button></section>
+        <section class="carte"><h2>Ma pièce d'identité</h2>
+          <div class="ligne"><span>État</span><span class="badge ok">Fournie</span></div>
+          <div class="ligne"><span>Type</span><b>Carte nationale d'identité</b></div>
+          <div class="ligne"><span>Valable jusqu'au</span><b>14 mars 2029</b></div>
+          <div class="cap"><button class="btn sec" type="button">Remplacer</button><button class="btn sec" type="button">Supprimer</button></div>
+          <p class="petit">Si votre pièce arrive à expiration avant un séjour, nous vous demandons une nouvelle pièce.</p></section>
+      </div>
+      <aside class="col-d">
+        <section class="carte ivoire"><h2>Qui peut voir ma pièce ?</h2>
+          <ul class="coches"><li>Le gérant de la réservation, une fois celle-ci confirmée</li><li>Pendant le séjour et quelques jours après le départ seulement</li><li>Chaque consultation est enregistrée</li><li>Jamais le public, jamais les autres gérants</li></ul>
+          <p class="petit">Vous pouvez supprimer votre pièce quand vous n'avez aucune réservation en cours.</p></section>
+      </aside>
+    </div>
+  </div>
+  <footer class="pied"><span>© 2026 Avelis Séjours</span><span>Aide · Contact · Conditions générales</span></footer>
+</section>
+
+<!-- ======================= 6. CAS PARTICULIERS ======================= -->
+<section class="ecran" id="e-cas">
+  <header class="entete"><div class="logo"><i>A</i>Avelis Séjours</div><span class="cpt">Se connecter</span></header>
+  <div class="corps">
+    <h1 style="font-size:clamp(25px,5cqw,34px);margin-bottom:12px">Cas particuliers</h1>
+    <div class="onglets" id="onglets-cas"><button class="on" data-v="v1">Non connecté</button><button data-v="v2">Dates prises</button><button data-v="v3">Délai terminé</button><button data-v="v4">Paiement refusé</button></div>
+    <div style="margin-top:16px">
+      <div class="vue on" id="v1">
+        <div class="alerte info"><span><b>Vos dates sont conservées.</b> Connectez-vous ou créez un compte en 1 minute, puis vous reprenez là où vous étiez.</span></div>
+        <div class="cols"><div class="col-g">
+          <section class="carte"><div class="onglets"><button class="on">Créer un compte</button><button>J'ai déjà un compte</button></div>
+            <label class="champ">Nom complet<input type="text" placeholder="Ex. : Aminata Koné"></label>
+            <label class="champ">Téléphone ou e-mail<input type="text" placeholder="Pour recevoir votre confirmation"></label>
+            <label class="champ">Mot de passe <small>8 caractères minimum</small><input type="text" placeholder="••••••••"></label>
+            <button class="btn">Créer mon compte et continuer</button></section></div>
+          <aside class="col-d"><section class="carte"><div class="ligne"><span>Appartement · 8 nuits</span><b>80 000 FCFA</b></div><p class="petit">Rien n'est payé tant que vous n'avez pas confirmé.</p></section></aside></div>
+      </div>
+      <div class="vue" id="v2">
+        <div class="alerte err"><span><b>Ces dates viennent d'être prises.</b> Un autre voyageur a réservé avant vous. Voici les dates libres les plus proches pour 8 nuits.</span></div>
+        <div class="suggest"><button>Du 23 au 31 nov. 2026 <span class="petit">80 000 FCFA</span></button><button>Du 2 au 10 déc. 2026 <span class="petit">80 000 FCFA</span></button><button>Du 14 au 22 déc. 2026 <span class="petit">80 000 FCFA</span></button></div>
+        <a class="btn sec" href="#">Voir d'autres logements à Cocody</a>
+      </div>
+      <div class="vue" id="v3">
+        <div class="alerte err"><span><b>Le délai est terminé.</b> Vos dates ne sont plus gardées pour vous. Aucun argent n'a été pris.</span></div>
+        <button class="btn">Refaire ma réservation (mêmes dates si elles sont libres)</button>
+      </div>
+      <div class="vue" id="v4">
+        <div class="alerte err"><span><b>Le paiement n'a pas abouti.</b> Aucun argent n'a été pris. Vos dates restent gardées encore <b>18 min</b>.</span></div>
+        <button class="btn">Réessayer le paiement</button>
+        <button class="lien" type="button">Choisir un autre moyen de paiement</button>
+        <p class="petit">Besoin d'aide ? <a href="#">Contactez-nous</a>.</p>
+      </div>
+    </div>
+  </div>
+  <footer class="pied"><span>© 2026 Avelis Séjours</span><span>Aide · Contact · Conditions générales</span></footer>
+</section>
+
+<!-- ======================= 7. VUE DU GÉRANT ======================= -->
+<section class="ecran" id="e-gerant">
+  <header class="entete"><div class="logo"><i>A</i>Avelis Séjours</div><span class="perso"><i>C</i>Confort Immobilier</span></header>
+  <div class="corps">
+    <p class="fil">Espace gérant › Réservations</p>
+    <h1 style="font-size:clamp(25px,5cqw,34px);margin-bottom:16px">Réservation AVS-2026-00123</h1>
+    <div class="cols">
+      <div class="col-g">
+        <section class="carte"><h2>Le voyageur</h2>
+          <div class="ligne"><span>Nom</span><b>Aminata Koné</b></div>
+          <div class="ligne"><span>Téléphone</span><b>+225 07 00 00 00 00</b></div>
+          <div class="ligne"><span>Motif du séjour</span><b>Vacances, tourisme</b></div>
+          <div class="ligne"><span>Arrivée prévue</span><b>Entre 18 h et 22 h</b></div>
+          <div class="alerte info"><span><b>Message :</b> « J'arrive en avion à 20 h, pouvez-vous m'attendre ? »</span></div></section>
+        <section class="carte"><h2>Pièce d'identité</h2>
+          <div class="ligne"><span>État</span><span class="badge att" id="etat-id">À fournir</span></div>
+          <div class="puces"><button type="button" data-id="À fournir" class="on">À fournir</button><button type="button" data-id="Fournie">Fournie</button><button type="button" data-id="Vérifiée à l'arrivée">Vérifiée à l'arrivée</button></div>
+          <p class="petit">Les trois états possibles. Quand elle est fournie, le gérant peut l'ouvrir ; l'ouverture est enregistrée. Si la pièce manque, le gérant est averti, mais l'arrivée n'est pas bloquée : il décide à l'accueil.</p>
+          <button class="btn sec" style="max-width:300px" type="button">Voir la pièce (consultation enregistrée)</button></section>
+      </div>
+      <aside class="col-d"><section class="carte"><h2>Séjour</h2><div class="ligne"><span>Arrivée</span><b>ven. 20 nov.</b></div><div class="ligne"><span>Départ</span><b>sam. 28 nov.</b></div><div class="ligne"><span>Payé en ligne</span><b>80 000 FCFA</b></div>
+        <button class="btn">Enregistrer l'arrivée (check-in)</button></section></aside>
+    </div>
+  </div>
+  <footer class="pied"><span>© 2026 Avelis Séjours</span><span>Espace gérant</span></footer>
+</section>
+
+</div>
+
+<!-- ======================= Documentation par écran ======================= -->
+<div class="note" id="notes">
+<details open><summary id="note-titre">Fiche écran</summary><dl id="note-corps"></dl></details>
+</div>
+
+<div class="points">
+  <section class="carte">
+    <h2>Points à faire valider ou à trancher avant l'intégration</h2>
+    <ol>
+      <li><b>Séjour minimum et maximum.</b> Je n'ai trouvé aucun réglage existant. Recommandation : minimum 1 nuit, maximum 30 nuits au-delà desquelles on contacte le gérant (à régler dans Paramètres). À confirmer.</li>
+      <li><b>Heure de départ.</b> Aucun réglage trouvé ; la maquette affiche seulement la date de départ. Recommandation : un réglage « heure de départ » (ex. 11 h) affiché sur la fiche.</li>
+      <li><b>Durée de garde des dates.</b> La maquette montre 30 minutes à titre d'exemple. La vraie valeur reste celle du réglage actuel.</li>
+      <li><b>Types de pièces acceptés</b> (carte d'identité, passeport, titre de séjour, autre) et <b>durée de conservation</b> après le départ. Recommandation : accès du gérant jusqu'à 7 jours après le départ, puis fermé ; pièce conservée dans le profil tant que le voyageur ne la supprime pas. À valider (ARTCI).</li>
+      <li><b>Paiement du total ou acompte.</b> Les deux cas existent selon la résidence ; la maquette les montre tous les deux.</li>
+      <li><b>Motifs du séjour.</b> Liste validée ; texte exact des libellés à confirmer.</li>
+    </ol>
+  </section>
+</div>
+
+<script>
+const FR = new Intl.NumberFormat('fr-FR');
+const fcfa = n => FR.format(n).replace(/ | /g, ' ') + ' FCFA';
+const fmt = (d, o) => d.toLocaleDateString('fr-FR', o);
+const PRIX = 10000, MAXP = 2, MAXN = 30;
+const etat = { arr: '2026-11-20', n: 8, p: 2 };
+
+const NOTES = {
+ fiche: ['Écran 1 · Fiche logement (encadré de réservation)', {
+  'But': 'Choisir son séjour sans jamais saisir de date de départ ni lire un calendrier.',
+  'Ce que voit l\'utilisateur': 'Un champ « Date d\'arrivée », un compteur « Combien de nuits ? » avec gros boutons − et +, des raccourcis (1 nuit, week-end, 1 semaine, 2 semaines, 1 mois), la date de départ calculée, les voyageurs avec − et +, le détail du prix en une ligne (10 000 FCFA × 8 nuits) et le total sans frais cachés, la règle d\'annulation avec la vraie date.',
+  'Actions': 'Choisir l\'arrivée, régler les nuits et les voyageurs, toucher « Réserver ». Sur téléphone, le prix et le bouton restent visibles en bas de l\'écran.',
+  'Messages d\'erreur': 'Arrivée dans le passé : « Choisissez une date à partir d\'aujourd\'hui. » · Voyageurs au-dessus du maximum : le bouton + est désactivé et un texte indique « 2 personnes au maximum ». · Dates non libres : voir écran 6.'}],
+ infos: ['Écran 2 · Vos informations (étape 1 sur 3)', {
+  'But': 'Recueillir le strict nécessaire pour le gérant, en moins de 2 minutes, sans pièce à téléverser.',
+  'Ce que voit l\'utilisateur': 'Fil d\'étapes, nom complet et téléphone (préremplis si connu), motif du séjour en choix unique, heure d\'arrivée et message facultatifs, rappel de la pièce d\'identité (à fournir après le paiement), case d\'accord unique, résumé fixe du séjour et du total.',
+  'Actions': 'Remplir, cocher l\'accord, toucher « Continuer vers le paiement » : les dates sont alors gardées pour la durée réglée.',
+  'Messages d\'erreur': 'Nom vide : « Indiquez votre nom comme sur votre pièce d\'identité. » · Téléphone invalide : « Ce numéro semble incomplet. » · Motif non choisi : « Choisissez le motif de votre séjour. » · Case non cochée : le bouton reste grisé avec la phrase « Cochez la case d\'accord pour continuer. » · Dates devenues indisponibles : écran 6.'}],
+ paiement: ['Écran 3 · Paiement (étape 2 sur 3)', {
+  'But': 'Payer en confiance, avec le temps restant bien visible.',
+  'Ce que voit l\'utilisateur': 'Minuteur des dates gardées, moyens de paiement, résumé, montant à payer. Deux cas selon la résidence : paiement du total, ou acompte avec le reste à régler au gérant à l\'arrivée (boutons de démonstration en haut de l\'écran).',
+  'Actions': 'Toucher « Payer … », payer sur la page sécurisée, revenir sur Avelis.',
+  'Messages d\'erreur': 'Paiement indisponible : « Le paiement en ligne est momentanément indisponible. Vos dates restent gardées : réessayez plus tard. » · Refusé ou annulé, délai terminé : écran 6.'}],
+ confirm: ['Écran 4 · Confirmation (étape 3 sur 3)', {
+  'But': 'Rassurer, puis obtenir la pièce d\'identité au meilleur moment (client rassuré, réservation payée).',
+  'Ce que voit l\'utilisateur': 'Confirmation et référence, bloc « Ajoutez votre pièce d\'identité » (photo ou fichier, explication de protection), possibilité de le faire plus tard, prochaines étapes, contact du gérant et adresse (donnés seulement maintenant), reçu.',
+  'Actions': 'Envoyer la pièce, ou « Je le ferai plus tard » (rappel 48 h avant l\'arrivée), appeler le gérant, télécharger le reçu.',
+  'Messages d\'erreur': 'Fichier trop lourd ou illisible : « Cette photo n\'est pas lisible. Reprenez-la avec plus de lumière. » · Format non accepté : « Envoyez une photo (JPG, PNG) ou un PDF. »'}],
+ profil: ['Écran 5 · Espace membre : Mon profil voyageur', {
+  'But': 'Garder une seule fois ses informations et sa pièce, réutilisées à chaque réservation.',
+  'Ce que voit l\'utilisateur': 'Nom, téléphone, état de la pièce (fournie, type, validité), explication claire de qui peut la voir.',
+  'Actions': 'Modifier, remplacer ou supprimer la pièce (suppression refusée si une réservation est en cours).',
+  'Messages d\'erreur': 'Suppression impossible : « Vous avez une réservation en cours : gardez votre pièce jusqu\'à la fin du séjour. »'}],
+ cas: ['Écran 6 · Cas particuliers', {
+  'But': 'Que personne ne reste bloqué : chaque problème donne une solution immédiate.',
+  'Ce que voit l\'utilisateur': 'Non connecté : création de compte au milieu du parcours, dates conservées. Dates prises : trois propositions de dates libres proches. Délai terminé : bouton pour recommencer. Paiement refusé : réessayer ou changer de moyen.',
+  'Actions': 'Une seule action principale par situation.',
+  'Messages d\'erreur': 'Ce sont eux-mêmes les messages affichés sur cet écran.'}],
+ gerant: ['Écran 7 · Vue du gérant', {
+  'But': 'Donner au gérant ce qu\'il lui faut pour accueillir, sans exposer plus de données que nécessaire.',
+  'Ce que voit l\'utilisateur': 'Nom, téléphone, motif, heure d\'arrivée, message, état de la pièce : À fournir, Fournie, Vérifiée à l\'arrivée. Le gérant n\'accède à la pièce qu\'après confirmation de la réservation, et chaque ouverture est enregistrée.',
+  'Actions': 'Voir la pièce, enregistrer l\'arrivée (check-in).',
+  'Messages d\'erreur': 'Pièce manquante : avertissement jaune « Pièce d\'identité non fournie : demandez-la à l\'arrivée ». Aucun blocage automatique.'}]
+};
+
+/* Navigation entre écrans */
+function aller(id){
+  document.querySelectorAll('.ecran').forEach(e => e.classList.toggle('on', e.id === 'e-' + id));
+  document.querySelectorAll('#nav-ecrans button').forEach(b => b.classList.toggle('on', b.dataset.e === id));
+  const [t, d] = NOTES[id];
+  document.getElementById('note-titre').textContent = t;
+  document.getElementById('note-corps').innerHTML = Object.entries(d).map(([k, v]) => `<div><dt>${k}</dt><dd>${v}</dd></div>`).join('');
+  document.querySelector('.scene').scrollIntoView({behavior:'instant', block:'start'});
+  window.scrollBy(0, -60);
+}
+document.getElementById('nav-ecrans').addEventListener('click', e => { const b = e.target.closest('button'); if (b) aller(b.dataset.e); });
+document.addEventListener('click', e => { const b = e.target.closest('[data-va]'); if (b && !b.disabled) { e.preventDefault(); aller(b.dataset.va); } });
+
+/* Mobile / ordinateur */
+const setVue = m => { document.body.classList.toggle('mobile', m); document.getElementById('b-mob').classList.toggle('on', m); document.getElementById('b-ord').classList.toggle('on', !m); };
+document.getElementById('b-mob').onclick = () => setVue(true);
+document.getElementById('b-ord').onclick = () => setVue(false);
+setVue(window.innerWidth < 700);
+
+/* Calcul du séjour */
+function maj(){
+  const a = new Date(etat.arr + 'T12:00:00'); const d = new Date(a); d.setDate(d.getDate() + etat.n);
+  const o = {weekday:'short', day:'numeric', month:'short', year:'numeric'};
+  const aff = {arr: fmt(a,o), dep: fmt(d,o), tot: fcfa(PRIX * etat.n),
+    nuits: `${etat.n} nuit${etat.n > 1 ? 's' : ''} · ${etat.p} personne${etat.p > 1 ? 's' : ''}`};
+  const l = new Date(a); l.setDate(l.getDate() - 1);
+  aff.annul = 'Annulation gratuite jusqu\'au ' + fmt(l, {day:'numeric', month:'short'}) + ' à 14 h';
+  document.querySelectorAll('[data-r]').forEach(e => { const k = e.dataset.r; e.textContent = k === 'annul' && e.tagName === 'B' ? aff[k] + '.' : aff[k]; });
+  document.getElementById('n-val').innerHTML = `${etat.n}<small>nuit${etat.n > 1 ? 's' : ''}</small>`;
+  document.getElementById('p-val').innerHTML = `${etat.p}<small>personne${etat.p > 1 ? 's' : ''}</small>`;
+  document.getElementById('dep-txt').textContent = aff.dep;
+  document.getElementById('calc').textContent = `${FR.format(PRIX).replace(/ | /g,' ')} FCFA × ${etat.n} nuit${etat.n > 1 ? 's' : ''}`;
+  document.getElementById('sous').textContent = aff.tot; document.getElementById('tot').textContent = aff.tot;
+  document.getElementById('annul').textContent = aff.annul;
+  document.getElementById('m-fiche').textContent = aff.tot;
+  document.getElementById('n-moins').disabled = etat.n <= 1; document.getElementById('n-plus').disabled = etat.n >= MAXN;
+  document.getElementById('p-moins').disabled = etat.p <= 1; document.getElementById('p-plus').disabled = etat.p >= MAXP;
+  document.querySelectorAll('#puces button').forEach(b => b.classList.toggle('on', +b.dataset.n === etat.n));
+  majPaiement();
+}
+document.getElementById('arr').addEventListener('change', e => { if (e.target.value) { etat.arr = e.target.value; maj(); } });
+document.getElementById('n-moins').onclick = () => { etat.n = Math.max(1, etat.n - 1); maj(); };
+document.getElementById('n-plus').onclick = () => { etat.n = Math.min(MAXN, etat.n + 1); maj(); };
+document.getElementById('p-moins').onclick = () => { etat.p = Math.max(1, etat.p - 1); maj(); };
+document.getElementById('p-plus').onclick = () => { etat.p = Math.min(MAXP, etat.p + 1); maj(); };
+document.getElementById('puces').addEventListener('click', e => { const b = e.target.closest('button'); if (b) { etat.n = +b.dataset.n; maj(); } });
+
+/* Paiement : total ou acompte */
+let acompte = false;
+function majPaiement(){
+  const tot = PRIX * etat.n, ac = Math.round(tot * 0.4 / 100) * 100, reste = tot - ac;
+  const montant = acompte ? ac : tot;
+  document.getElementById('ligne-solde').style.display = acompte ? 'flex' : 'none';
+  document.querySelector('#ligne-solde b').textContent = fcfa(reste);
+  document.getElementById('titre-pay').textContent = acompte ? 'À payer maintenant (acompte)' : 'À payer maintenant';
+  const mp = document.getElementById('montant-pay'); mp.removeAttribute('data-r'); mp.textContent = fcfa(montant);
+  document.getElementById('txt-pay').textContent = acompte ? `Acompte. Il restera ${fcfa(reste)} à régler au gérant à votre arrivée.` : 'Paiement du total du séjour. Rien d\'autre à payer.';
+  document.getElementById('btn-pay').textContent = 'Payer ' + fcfa(montant);
+  document.getElementById('m-pay').textContent = fcfa(montant);
+}
+document.getElementById('mode-total').onclick = () => { acompte = false; document.getElementById('mode-total').classList.add('on'); document.getElementById('mode-acompte').classList.remove('on'); majPaiement(); };
+document.getElementById('mode-acompte').onclick = () => { acompte = true; document.getElementById('mode-acompte').classList.add('on'); document.getElementById('mode-total').classList.remove('on'); majPaiement(); };
+
+/* Motif */
+document.getElementById('motifs').addEventListener('change', e => {
+  const v = e.target.value;
+  document.getElementById('motif-autre').style.display = v === 'autre' ? 'grid' : 'none';
+  document.getElementById('motif-evt').style.display = v === 'evt' ? 'flex' : 'none';
+});
+/* Case d'accord */
+document.getElementById('accord').addEventListener('change', e => {
+  ['vers-paiement','vers-paiement-m'].forEach(id => document.getElementById(id).disabled = !e.target.checked);
+  document.getElementById('aide-case').style.visibility = e.target.checked ? 'hidden' : 'visible';
+});
+/* Onglets cas particuliers */
+document.getElementById('onglets-cas').addEventListener('click', e => {
+  const b = e.target.closest('button'); if (!b) return;
+  document.querySelectorAll('#onglets-cas button').forEach(x => x.classList.toggle('on', x === b));
+  document.querySelectorAll('.vue').forEach(v => v.classList.toggle('on', v.id === b.dataset.v));
+});
+/* États d'identité côté gérant */
+document.querySelectorAll('[data-id]').forEach(b => b.addEventListener('click', () => {
+  document.querySelectorAll('[data-id]').forEach(x => x.classList.toggle('on', x === b));
+  const s = document.getElementById('etat-id'); s.textContent = b.dataset.id;
+  s.className = 'badge ' + (b.dataset.id === 'À fournir' ? 'att' : 'ok');
+}));
+
+aller('fiche'); maj();
+</script>
+</body>
+</html>
