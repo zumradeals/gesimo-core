@@ -1,0 +1,338 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Maquette — Mes réservations · Avelis Séjours</title>
+<style>
+:root{--orange:#ff6a00;--orange-texte:#b94700;--orange-survol:#e75e00;--nuit:#17243b;--ivoire:#fff8f0;--peche:#ffeadb;--gris:#526077;--trait:#e4e7ed;--saisie:#c7cdd8;--ok:#1d7a46;--okfond:#e8f5ed;--erreur:#b42318;--erreurfond:#fdecea}
+*{box-sizing:border-box}
+body{margin:0;font:16px/1.55 system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--nuit);background:#eef0f4}
+h1,h2,h3,p{margin:0}h1,h2,h3{letter-spacing:-.03em;line-height:1.2}a{color:var(--orange-texte)}button{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--nuit);outline-offset:3px}
+.outil{position:sticky;top:0;z-index:30;background:var(--nuit);color:#fff;padding:10px 16px;display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center}
+.outil nav{display:flex;flex-wrap:wrap;gap:6px}.outil button{border:1px solid #ffffff55;background:transparent;color:#fff;border-radius:999px;padding:6px 12px;font-size:13px;cursor:pointer}
+.outil button.on{background:var(--orange);border-color:var(--orange);color:var(--nuit);font-weight:700}.outil .sep{margin-left:auto;display:flex;gap:6px;align-items:center;font-size:13px}
+.avertis{max-width:1240px;margin:14px auto 0;padding:0 16px;font-size:13px;color:var(--gris)}
+.scene{margin:14px auto 0;background:#f6f7f9;border:1px solid var(--trait);border-radius:18px;overflow:hidden;container-type:inline-size;width:min(100%,1240px);box-shadow:0 10px 40px #17243b14}
+body.mobile .scene{width:390px}
+.ecran{display:none}.ecran.on{display:block}
+/* coque client */
+.coque{display:grid}
+.lateral{display:none;background:var(--nuit);color:#e6ebf4;padding:18px 14px;gap:6px;align-content:start}
+.lateral .logo{display:flex;align-items:center;gap:9px;font-weight:800;font-size:18px;margin:0 6px 16px;color:#fff}
+.lateral .logo i,.logo-m i{display:grid;place-items:center;width:34px;height:34px;border-radius:11px;background:var(--orange);color:var(--nuit);font-style:normal;font-size:22px}
+.lateral a{display:flex;gap:10px;align-items:center;padding:11px 12px;border-radius:10px;color:#e6ebf4;text-decoration:none;font-weight:600;font-size:15px}
+.lateral a.on{background:#ffffff1f;box-shadow:inset 3px 0 var(--orange)}
+.lateral .moi{margin-top:auto;border-top:1px solid #ffffff26;padding:14px 8px 0;font-size:14px}
+.haut-m{display:flex;align-items:center;gap:10px;padding:12px 16px;background:#fff;border-bottom:1px solid var(--trait)}
+.logo-m{display:flex;align-items:center;gap:9px;font-weight:800;font-size:18px}
+.contenu{padding:16px;display:grid;gap:16px;align-content:start;min-width:0;padding-bottom:84px}
+.bas-m{position:sticky;bottom:0;display:grid;grid-template-columns:repeat(4,1fr);background:#fff;border-top:1px solid var(--trait);box-shadow:0 -6px 18px #17243b10}
+.bas-m a{display:grid;place-items:center;gap:1px;padding:8px 2px;font-size:11.5px;font-weight:700;color:var(--gris);text-decoration:none;min-height:60px}
+.bas-m a.on{color:var(--orange-texte);box-shadow:inset 0 3px var(--orange)}
+@container (min-width:900px){
+  .coque{grid-template-columns:250px minmax(0,1fr);min-height:900px}.lateral{display:grid}.haut-m,.bas-m{display:none}
+  .contenu{padding:28px 36px 40px;max-width:1100px}
+}
+/* éléments */
+.entete-page{display:grid;gap:12px}
+.entete-page h1{font-size:clamp(26px,5cqw,32px)}.entete-page p{color:var(--gris);font-size:14px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:50px;padding:10px 18px;border:0;border-radius:10px;background:var(--orange);color:var(--nuit);font-weight:800;font-size:16px;cursor:pointer;text-decoration:none;text-align:center}
+.btn:hover{background:var(--orange-survol)}
+.btn.sec{background:#fff;border:2px solid var(--nuit)}.btn.sec:hover{background:var(--ivoire)}
+.btn.danger{background:#fff;border:2px solid var(--erreur);color:var(--erreur)}
+.btn.pleine{width:100%}
+.lien{background:none;border:0;padding:6px 0;font-weight:700;color:var(--orange-texte);text-decoration:underline;cursor:pointer}
+.onglets{display:grid;grid-template-columns:1fr 1fr;background:#e9ecf1;border-radius:12px;padding:4px;max-width:520px}
+.onglets button{border:0;background:transparent;border-radius:9px;min-height:46px;font-weight:800;cursor:pointer;color:var(--gris)}
+.onglets button.on{background:#fff;color:var(--nuit);box-shadow:0 1px 3px #17243b1f}
+.carte{background:#fff;border:1px solid var(--trait);border-radius:14px;padding:18px;display:grid;gap:12px;align-content:start}
+.carte h2{font-size:19px}.petit{font-size:13px;color:var(--gris)}
+.ligne{display:flex;justify-content:space-between;gap:12px;font-size:15px;padding:6px 0;border-bottom:1px dashed var(--trait)}.ligne:last-child{border-bottom:0}
+.ligne.total{font-weight:800;font-size:17px;border-top:1px solid var(--trait);border-bottom:0;padding-top:12px}
+.badge{display:inline-block;border-radius:999px;padding:3px 11px;font-size:12.5px;font-weight:800;white-space:nowrap}
+.b-ok{background:var(--okfond);color:var(--ok)}.b-att{background:var(--peche);color:var(--orange-texte)}.b-nu{background:#e9ecf2;color:var(--gris)}.b-nuit{background:var(--nuit);color:#fff}
+.photo{border-radius:12px;background:linear-gradient(135deg,#d7c3ab,#a98c6c 55%,#e9d9c4);display:grid;place-items:end start;padding:6px 8px;color:#ffffffcc;font-size:11px;min-height:92px}
+.photo.p2{background:linear-gradient(135deg,#b9c8d6,#7e97ad 55%,#dbe6ef)}
+/* bandeau « prochaine étape » */
+.etape{display:grid;gap:10px;background:var(--ivoire);border:2px solid var(--orange);border-radius:14px;padding:16px}
+.etape .surtitre,.surtitre{font-size:12px;letter-spacing:.11em;text-transform:uppercase;font-weight:800;color:var(--orange-texte)}
+.etape h2{font-size:20px}
+/* carte réservation */
+.res{display:grid;gap:12px;grid-template-columns:96px minmax(0,1fr)}
+.res .photo{min-height:96px;height:100%}
+.res .corps{display:grid;gap:4px;min-width:0}
+.res .haut{display:flex;justify-content:space-between;gap:8px;align-items:flex-start;flex-wrap:wrap}
+.res h3{font-size:18px}
+.res .actions{grid-column:1/-1;display:grid;gap:8px}
+.compte{display:inline-flex;gap:6px;align-items:center;font-weight:700;font-size:14px;color:var(--orange-texte)}
+.rappel{display:flex;gap:8px;align-items:center;font-size:14px;background:var(--peche);border-radius:10px;padding:8px 12px;font-weight:600}
+.rappel.ok{background:var(--okfond);color:var(--ok)}
+@container (min-width:900px){
+  .res{grid-template-columns:150px minmax(0,1fr) 230px;align-items:center}.res .photo{min-height:120px}
+  .res .actions{grid-column:auto}
+}
+/* détail */
+.cols{display:grid;gap:16px}.col{display:grid;gap:16px;align-content:start;min-width:0}
+@container (min-width:900px){.cols{grid-template-columns:minmax(0,1fr) 380px;gap:24px;align-items:start}.cols .col.coll{position:sticky;top:20px}}
+.dates{display:grid;grid-template-columns:1fr 1fr;gap:12px}.dates div{display:grid;background:var(--ivoire);border:1px solid var(--peche);border-radius:12px;padding:12px}.dates b{font-size:17px}
+.liste-faire{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.liste-faire li{display:flex;gap:12px;align-items:flex-start;font-size:15px}
+.liste-faire i{flex:none;display:grid;place-items:center;width:26px;height:26px;border-radius:50%;font-style:normal;font-weight:900;font-size:14px;border:2px solid var(--saisie);color:transparent}
+.liste-faire li.fait i{background:var(--ok);border-color:var(--ok);color:#fff}
+.liste-faire li.afaire i{border-color:var(--orange);color:var(--orange)}
+.liste-faire li div{display:grid;gap:4px}
+.suivi{list-style:none;margin:0;padding:0;display:grid;gap:12px}
+.suivi li{padding-left:28px;position:relative;color:var(--gris)}.suivi li::before{content:"";position:absolute;left:3px;top:5px;width:14px;height:14px;border-radius:50%;border:2px solid var(--saisie);background:#fff}
+.suivi li.fait{color:var(--nuit)}.suivi li.fait::before{background:var(--ok);border-color:var(--ok)}
+.alerte{display:flex;gap:10px;border-radius:12px;padding:12px 14px;font-size:14.5px;border:1px solid}
+.alerte.info{background:var(--ivoire);border-color:var(--peche)}.alerte.err{background:var(--erreurfond);border-color:#f2b8b2;color:#7a1a12}
+.gros{font-size:28px;font-weight:800;letter-spacing:-.03em}
+.etoiles{color:var(--orange);letter-spacing:2px}
+/* annotations */
+.note{max-width:1240px;margin:12px auto 0;padding:0 16px}
+.note details{background:#fff;border:1px solid var(--trait);border-radius:12px;padding:12px 16px}.note summary{cursor:pointer;font-weight:800}
+.note dl{display:grid;gap:10px;margin:12px 0 0;font-size:14.5px}.note dt{font-weight:800}.note dd{margin:0;color:var(--gris)}
+.points{max-width:1240px;margin:22px auto 60px;padding:0 16px}.points .carte{background:#fff}.points ol{margin:0;padding-left:20px;display:grid;gap:8px}
+.cache{display:none}
+</style>
+</head>
+<body>
+<div class="outil">
+  <b>Maquette Mes réservations — Avelis Séjours</b>
+  <nav id="nav" aria-label="Écrans">
+    <button data-e="liste" class="on">1 · Mes réservations (à venir)</button>
+    <button data-e="passees">2 · Passées</button>
+    <button data-e="detail">3 · Détail (confirmée)</button>
+    <button data-e="attente">4 · Détail (en attente)</button>
+    <button data-e="vide">5 · Aucune réservation</button>
+  </nav>
+  <span class="sep">Affichage :<button id="b-mob" class="on">Téléphone</button><button id="b-ord">Ordinateur</button></span>
+</div>
+<p class="avertis">Maquette de travail, non validée : noms, dates, montants et photos sont des exemples. Les données affichées existent déjà dans la plateforme ; les ajouts sont signalés dans les points à valider en bas de page.</p>
+
+<div class="scene">
+
+<!-- ======================= 1. LISTE À VENIR ======================= -->
+<section class="ecran on" id="e-liste"><div class="coque">
+  <aside class="lateral"><div class="logo"><i>A</i>Avelis Séjours</div>
+    <a href="#">⌂ Mon espace</a><a class="on" href="#">☰ Mes réservations</a><a href="#">⌕ Chercher un logement</a><a href="#">☺ Mon profil</a><a href="#">? Aide</a>
+    <div class="moi"><b>Awa Koné</b><br><span class="petit" style="color:#b9c3d6">Client</span><br><a href="#" style="padding:4px 0;color:#fff;text-decoration:underline">Se déconnecter</a></div></aside>
+  <div><header class="haut-m"><span class="logo-m"><i>A</i>Avelis Séjours</span></header>
+  <main class="contenu">
+    <div class="entete-page"><div><h1>Mes réservations</h1><p>Retrouvez vos séjours à venir et passés</p></div><a class="btn" href="#" style="justify-self:start">Chercher un séjour</a></div>
+    <div class="onglets"><button class="on">À venir (3)</button><button data-va="passees">Passées (2)</button></div>
+
+    <section class="etape" aria-label="À faire en premier">
+      <span class="surtitre">À faire en premier</span>
+      <h2>Payez pour garder vos dates</h2>
+      <p>Studio lumineux, Marcory : vos dates sont gardées encore <b>1 h 42</b>. Passé ce délai, elles sont libérées.</p>
+      <a class="btn" href="#">Payer 18 000 FCFA</a>
+    </section>
+
+    <!-- En attente de paiement -->
+    <article class="carte res">
+      <div class="photo p2">Photo</div>
+      <div class="corps">
+        <div class="haut"><h3>Studio lumineux</h3><span class="badge b-att">En attente de paiement</span></div>
+        <span class="petit">Résidence Les Palmiers · Marcory · n° 41</span>
+        <span>20 déc. → 23 déc. 2026 · 3 nuits</span><b>54 000 FCFA</b>
+        <span class="compte">⏱ Dates gardées encore 1 h 42</span>
+      </div>
+      <div class="actions"><a class="btn" href="#">Payer 18 000 FCFA</a><button class="lien">Annuler cette réservation</button></div>
+    </article>
+
+    <!-- Confirmée, arrivée proche, pièce à fournir -->
+    <article class="carte res">
+      <div class="photo">Photo</div>
+      <div class="corps">
+        <div class="haut"><h3>Appartement</h3><span class="badge b-ok">Confirmée</span></div>
+        <span class="petit">Résidence Papaye · Cocody · n° 38</span>
+        <span>4 déc. → 10 déc. 2026 · 6 nuits</span><b>60 000 FCFA</b>
+        <span class="compte">📅 Arrivée dans 3 jours</span>
+        <div class="rappel">🪪 Pièce d'identité à ajouter avant votre arrivée</div>
+      </div>
+      <div class="actions"><a class="btn" href="#" data-va="detail">Ajouter ma pièce d'identité</a><a class="btn sec" href="#" data-va="detail">Voir le détail</a></div>
+    </article>
+
+    <!-- Confirmée, tout est prêt -->
+    <article class="carte res">
+      <div class="photo p2">Photo</div>
+      <div class="corps">
+        <div class="haut"><h3>Résidence familiale</h3><span class="badge b-ok">Confirmée</span></div>
+        <span class="petit">Résidence Riviera · Riviera · n° 33</span>
+        <span>18 janv. → 21 janv. 2027 · 3 nuits</span><b>75 000 FCFA</b>
+        <span class="compte">📅 Arrivée dans 48 jours</span>
+        <div class="rappel ok">✓ Pièce d'identité fournie</div>
+      </div>
+      <div class="actions"><a class="btn sec" href="#" data-va="detail">Voir le détail</a></div>
+    </article>
+  </main></div>
+  <nav class="bas-m" aria-label="Navigation"><a href="#">⌂<span>Accueil</span></a><a class="on" href="#">☰<span>Réservations</span></a><a href="#">⌕<span>Chercher</span></a><a href="#">☺<span>Profil</span></a></nav>
+</div></section>
+
+<!-- ======================= 2. PASSÉES ======================= -->
+<section class="ecran" id="e-passees"><div class="coque">
+  <aside class="lateral"><div class="logo"><i>A</i>Avelis Séjours</div>
+    <a href="#">⌂ Mon espace</a><a class="on" href="#">☰ Mes réservations</a><a href="#">⌕ Chercher un logement</a><a href="#">☺ Mon profil</a><a href="#">? Aide</a>
+    <div class="moi"><b>Awa Koné</b><br><span class="petit" style="color:#b9c3d6">Client</span></div></aside>
+  <div><header class="haut-m"><span class="logo-m"><i>A</i>Avelis Séjours</span></header>
+  <main class="contenu">
+    <div class="entete-page"><div><h1>Mes réservations</h1><p>Retrouvez vos séjours à venir et passés</p></div></div>
+    <div class="onglets"><button data-va="liste">À venir (3)</button><button class="on">Passées (2)</button></div>
+    <section class="etape"><span class="surtitre">Votre avis compte</span><h2>Comment s'est passé votre séjour à Cocody ?</h2><p>Votre avis aide les prochains voyageurs à choisir en confiance.</p><a class="btn" href="#">Donner mon avis</a></section>
+    <article class="carte res">
+      <div class="photo">Photo</div>
+      <div class="corps">
+        <div class="haut"><h3>Appartement</h3><span class="badge b-nu">Terminée</span></div>
+        <span class="petit">Résidence Papaye · Cocody · n° 21</span><span>1 nov. → 4 nov. 2026 · 3 nuits</span><b>30 000 FCFA</b>
+      </div>
+      <div class="actions"><a class="btn" href="#">Donner mon avis</a><a class="btn sec" href="#">Réserver à nouveau</a><a class="lien" href="#" style="text-align:center">Voir le détail</a></div>
+    </article>
+    <article class="carte res">
+      <div class="photo p2">Photo</div>
+      <div class="corps">
+        <div class="haut"><h3>Studio lumineux</h3><span class="badge b-nu">Terminée</span></div>
+        <span class="petit">Résidence Les Palmiers · Marcory · n° 9</span><span>2 oct. → 5 oct. 2026 · 3 nuits</span><b>54 000 FCFA</b>
+        <span class="petit">Votre avis : <span class="etoiles">★★★★★</span></span>
+      </div>
+      <div class="actions"><a class="btn sec" href="#">Réserver à nouveau</a><a class="lien" href="#" style="text-align:center">Voir le détail</a></div>
+    </article>
+    <article class="carte res" style="opacity:.85">
+      <div class="photo">Photo</div>
+      <div class="corps">
+        <div class="haut"><h3>Villa Riviera</h3><span class="badge b-nu">Annulée</span></div>
+        <span class="petit">Résidence Riviera · n° 7</span><span>12 sept. → 15 sept. 2026</span><span class="petit">Remboursé : 90 000 FCFA</span>
+      </div>
+      <div class="actions"><a class="lien" href="#" style="text-align:center">Voir le détail</a></div>
+    </article>
+  </main></div>
+  <nav class="bas-m" aria-label="Navigation"><a href="#">⌂<span>Accueil</span></a><a class="on" href="#">☰<span>Réservations</span></a><a href="#">⌕<span>Chercher</span></a><a href="#">☺<span>Profil</span></a></nav>
+</div></section>
+
+<!-- ======================= 3. DÉTAIL CONFIRMÉE ======================= -->
+<section class="ecran" id="e-detail"><div class="coque">
+  <aside class="lateral"><div class="logo"><i>A</i>Avelis Séjours</div>
+    <a href="#">⌂ Mon espace</a><a class="on" href="#">☰ Mes réservations</a><a href="#">⌕ Chercher un logement</a><a href="#">☺ Mon profil</a><a href="#">? Aide</a>
+    <div class="moi"><b>Awa Koné</b><br><span class="petit" style="color:#b9c3d6">Client</span></div></aside>
+  <div><header class="haut-m"><span class="logo-m"><i>A</i>Avelis Séjours</span></header>
+  <main class="contenu">
+    <p class="petit"><a href="#" data-va="liste">← Mes réservations</a> › Réservation n° 38</p>
+    <div class="entete-page"><div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap"><h1>Appartement</h1><span class="badge b-ok">Confirmée</span></div><p>Résidence Papaye · Cocody · Arrivée dans 3 jours</p></div>
+    <div class="cols">
+      <div class="col">
+        <section class="carte" style="border:2px solid var(--orange)"><span class="surtitre">Avant votre arrivée</span><h2>3 choses à vérifier</h2>
+          <ul class="liste-faire">
+            <li class="fait"><i>✓</i><div><b>Réservation confirmée et payée</b><span class="petit">60 000 FCFA payés en ligne</span></div></li>
+            <li class="afaire"><i>!</i><div><b>Ajoutez votre pièce d'identité</b><span class="petit">Le gérant en a besoin pour vous accueillir. Une seule fois pour toutes vos réservations.</span><a class="btn" href="#" style="justify-self:start;min-height:46px">Ajouter ma pièce</a></div></li>
+            <li class="fait"><i>✓</i><div><b>Contact du gérant</b><span class="petit">Confort Immobilier · 07 07 05 55 08</span></div></li>
+          </ul></section>
+
+        <section class="carte"><h2>Votre séjour</h2>
+          <div class="dates"><div><span class="petit">Arrivée</span><b>ven. 4 déc. 2026</b><span class="petit">à partir de 14 h</span></div><div><span class="petit">Départ</span><b>jeu. 10 déc. 2026</b><span class="petit">avant 11 h</span></div></div>
+          <div class="ligne"><span>Durée</span><b>6 nuits · 2 personnes</b></div>
+          <div class="ligne"><span>Voyageur</span><b>Awa Koné</b></div>
+          <div class="ligne"><span>Motif</span><b>Vacances, tourisme</b></div>
+          <div class="ligne"><span>Heure d'arrivée prévue</span><b>Entre 18 h et 22 h</b></div>
+          <div class="ligne"><span>Votre message au gérant</span><b>« J'arrive en avion à 20 h »</b></div>
+        </section>
+
+        <section class="carte"><h2>Le gérant et le lieu</h2>
+          <div class="ligne"><span>Gérant</span><b>Confort Immobilier</b></div>
+          <div class="ligne"><span>Téléphone</span><b>07 07 05 55 08</b></div>
+          <div style="display:grid;gap:8px;grid-template-columns:1fr 1fr"><a class="btn sec" href="#">📞 Appeler</a><a class="btn sec" href="#">📍 Voir sur la carte</a></div>
+          <p class="petit">Cocody, Djibi. Le règlement de la résidence : « Pas de fête après 22 h ».</p>
+        </section>
+
+        <section class="carte"><h2>Suivi</h2><ol class="suivi"><li class="fait">Réservation créée · 31 oct.</li><li class="fait">Paiement reçu</li><li class="fait">Confirmée</li><li>Arrivée · 4 déc.</li><li>Séjour terminé</li></ol></section>
+      </div>
+      <div class="col coll">
+        <section class="carte"><h2>Paiement</h2>
+          <div class="ligne"><span>Total du séjour</span><b>60 000 FCFA</b></div><div class="ligne"><span>Payé en ligne</span><b>60 000 FCFA</b></div>
+          <div class="ligne total"><span>Reste à payer au gérant</span><span>0 FCFA</span></div>
+          <a class="btn sec pleine" href="#">Télécharger le reçu</a></section>
+        <section class="carte"><h2>Annulation</h2>
+          <p style="font-size:15px">Annulation gratuite jusqu'au <b>3 déc. à 14 h</b>.</p>
+          <p class="petit">Si vous annulez maintenant, vous êtes remboursé de <b>60 000 FCFA</b>.</p>
+          <a class="btn danger pleine" href="#">Annuler ma réservation</a></section>
+        <a href="#" class="lien" style="text-align:left">⚠ Signaler un problème</a>
+      </div>
+    </div>
+  </main></div>
+  <nav class="bas-m" aria-label="Navigation"><a href="#">⌂<span>Accueil</span></a><a class="on" href="#">☰<span>Réservations</span></a><a href="#">⌕<span>Chercher</span></a><a href="#">☺<span>Profil</span></a></nav>
+</div></section>
+
+<!-- ======================= 4. DÉTAIL EN ATTENTE ======================= -->
+<section class="ecran" id="e-attente"><div class="coque">
+  <aside class="lateral"><div class="logo"><i>A</i>Avelis Séjours</div>
+    <a href="#">⌂ Mon espace</a><a class="on" href="#">☰ Mes réservations</a><a href="#">⌕ Chercher un logement</a><a href="#">☺ Mon profil</a><a href="#">? Aide</a>
+    <div class="moi"><b>Awa Koné</b><br><span class="petit" style="color:#b9c3d6">Client</span></div></aside>
+  <div><header class="haut-m"><span class="logo-m"><i>A</i>Avelis Séjours</span></header>
+  <main class="contenu">
+    <p class="petit"><a href="#" data-va="liste">← Mes réservations</a> › Réservation n° 41</p>
+    <div class="entete-page"><div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap"><h1>Studio lumineux</h1><span class="badge b-att">En attente de paiement</span></div><p>Résidence Les Palmiers · Marcory</p></div>
+    <div class="cols">
+      <div class="col">
+        <section class="etape"><span class="surtitre">Dates gardées pour vous</span><h2>Plus que 1 h 42 pour payer</h2><p>Sans paiement dans ce délai, les dates sont libérées et rien n'est débité.</p><a class="btn" href="#">Payer 18 000 FCFA</a></section>
+        <section class="carte"><h2>Votre séjour</h2>
+          <div class="dates"><div><span class="petit">Arrivée</span><b>dim. 20 déc. 2026</b></div><div><span class="petit">Départ</span><b>mer. 23 déc. 2026</b><span class="petit">avant 11 h</span></div></div>
+          <div class="ligne"><span>Durée</span><b>3 nuits · 2 personnes</b></div></section>
+        <section class="carte"><h2>Le gérant</h2><p class="petit">Les coordonnées du gérant et la position du logement vous sont données dès que votre réservation est confirmée.</p></section>
+      </div>
+      <div class="col coll">
+        <section class="carte"><h2>Paiement</h2>
+          <div class="ligne"><span>Total du séjour</span><b>54 000 FCFA</b></div><div class="ligne"><span>À payer en ligne (acompte)</span><b>18 000 FCFA</b></div><div class="ligne"><span>À régler au gérant à l'arrivée</span><b>36 000 FCFA</b></div>
+          <a class="btn pleine" href="#">Payer 18 000 FCFA</a><button class="lien">Annuler cette réservation</button></section>
+      </div>
+    </div>
+  </main></div>
+  <nav class="bas-m" aria-label="Navigation"><a href="#">⌂<span>Accueil</span></a><a class="on" href="#">☰<span>Réservations</span></a><a href="#">⌕<span>Chercher</span></a><a href="#">☺<span>Profil</span></a></nav>
+</div></section>
+
+<!-- ======================= 5. VIDE ======================= -->
+<section class="ecran" id="e-vide"><div class="coque">
+  <aside class="lateral"><div class="logo"><i>A</i>Avelis Séjours</div>
+    <a href="#">⌂ Mon espace</a><a class="on" href="#">☰ Mes réservations</a><a href="#">⌕ Chercher un logement</a><a href="#">☺ Mon profil</a><a href="#">? Aide</a>
+    <div class="moi"><b>Awa Koné</b><br><span class="petit" style="color:#b9c3d6">Client</span></div></aside>
+  <div><header class="haut-m"><span class="logo-m"><i>A</i>Avelis Séjours</span></header>
+  <main class="contenu">
+    <div class="entete-page"><div><h1>Mes réservations</h1><p>Retrouvez vos séjours à venir et passés</p></div></div>
+    <div class="onglets"><button class="on">À venir (0)</button><button>Passées (0)</button></div>
+    <section class="carte" style="text-align:center;justify-items:center;padding:40px 18px"><div style="font-size:40px">🏠</div><h2>Aucune réservation à venir</h2><p class="petit" style="max-width:360px">Trouvez un logement meublé avec le prix total affiché avant de payer.</p><a class="btn" href="#">Chercher un séjour</a></section>
+  </main></div>
+  <nav class="bas-m" aria-label="Navigation"><a href="#">⌂<span>Accueil</span></a><a class="on" href="#">☰<span>Réservations</span></a><a href="#">⌕<span>Chercher</span></a><a href="#">☺<span>Profil</span></a></nav>
+</div></section>
+
+</div>
+
+<div class="note"><details open><summary id="nt">Fiche écran</summary><dl id="nc"></dl></details></div>
+
+<div class="points"><section class="carte"><h2>Points à faire valider avant l'intégration</h2>
+<ol>
+<li><b>Habillage.</b> Je garde l'espace client avec son menu latéral (menu du bas sur téléphone), repeint aux couleurs de l'accueil (bleu nuit, orange, ivoire). Le parcours de réservation, lui, garde le site public autour. Autre choix possible : mettre le site public autour de ces pages aussi.</li>
+<li><b>Un seul bouton principal par carte.</b> Aujourd'hui : Détail, Reçu et Annuler côte à côte. Proposition : un bouton principal selon la situation (Payer, Ajouter ma pièce, Donner mon avis) et « Voir le détail ». Reçu et Annuler passent dans le détail, pour éviter une annulation par mégarde.</li>
+<li><b>Bandeau « À faire en premier »</b> : paiement à finir, pièce d'identité à ajouter, avis à donner. Il n'affiche que ce qui existe déjà dans la plateforme.</li>
+<li><b>Annulation : montant du remboursement affiché avant de cliquer.</b> Le calcul existe déjà (aperçu d'annulation) ; la maquette l'affiche dans le détail.</li>
+<li><b>Pièce d'identité</b> : état visible dans la liste et le détail, avec accès direct au dépôt (déjà prévu au contrat réservation v3).</li>
+<li><b>« Réserver à nouveau »</b> sur les séjours passés : renvoie vers la fiche du même logement. C'est un ajout de ma part.</li>
+<li><b>Modifier l'heure d'arrivée ou le message après réservation.</b> Non prévu aujourd'hui, donc absent de la maquette. Je recommande de l'autoriser jusqu'à la veille de l'arrivée : à décider.</li>
+<li><b>Adresse écrite du logement.</b> Aujourd'hui seule la carte est donnée après confirmation. À décider si une adresse écrite doit s'ajouter.</li>
+</ol></section></div>
+
+<script>
+const NOTES={
+liste:['Écran 1 · Mes réservations, à venir',{'But':'Voir d\'un coup d\'œil ce qui est à faire et l\'état de chaque séjour.','Ce que voit l\'utilisateur':'Un bandeau « À faire en premier », puis une carte par séjour : photo, nom, résidence, dates, nombre de nuits, montant, état, compte à rebours (dates gardées, arrivée dans X jours), état de la pièce d\'identité.','Actions':'Un bouton principal selon la situation (Payer, Ajouter ma pièce, Voir le détail). Annuler une réservation encore non payée reste possible depuis sa carte.','Messages d\'erreur':'Dates libérées : « Le délai de garde est passé : les dates ont été libérées. » · Annulation impossible : le message du service est affiché en haut de la liste.'}],
+passees:['Écran 2 · Mes réservations, passées',{'But':'Retrouver ses anciens séjours, donner un avis, réserver à nouveau.','Ce que voit l\'utilisateur':'Séjours terminés, annulés ou expirés ; l\'avis donné ou le bouton pour le donner ; le montant remboursé pour une annulation.','Actions':'Donner mon avis, Réserver à nouveau, Voir le détail.','Messages d\'erreur':'Aucun cas particulier.'}],
+detail:['Écran 3 · Détail d\'une réservation confirmée',{'But':'Tout savoir sur le séjour et savoir quoi faire avant l\'arrivée.','Ce que voit l\'utilisateur':'« Avant votre arrivée » (paiement, pièce d\'identité, contact), dates avec heures, informations données à la réservation, gérant avec appel et carte, paiement, règle d\'annulation avec la date limite et le remboursement qui s\'appliquerait, suivi.','Actions':'Ajouter ma pièce, Appeler, Voir sur la carte, Télécharger le reçu, Annuler, Signaler un problème.','Messages d\'erreur':'Annulation refusée : message du service d\'annulation. Reçu indisponible tant qu\'aucun paiement n\'est réussi.'}],
+attente:['Écran 4 · Détail d\'une réservation en attente de paiement',{'But':'Finir le paiement avant la fin du délai.','Ce que voit l\'utilisateur':'Temps restant, dates, répartition du paiement (acompte et reste à régler au gérant quand la résidence le prévoit). Les coordonnées du gérant ne sont pas encore données.','Actions':'Payer, Annuler cette réservation.','Messages d\'erreur':'Délai terminé : « Le délai de garde est terminé : ces dates ne sont plus réservées pour vous. »'}],
+vide:['Écran 5 · Aucune réservation',{'But':'Ne jamais laisser une page vide sans action.','Ce que voit l\'utilisateur':'Un message simple et un bouton « Chercher un séjour ».','Actions':'Chercher un séjour.','Messages d\'erreur':'Aucun.'}]};
+function aller(id){document.querySelectorAll('.ecran').forEach(e=>e.classList.toggle('on',e.id==='e-'+id));document.querySelectorAll('#nav button').forEach(b=>b.classList.toggle('on',b.dataset.e===id));const[t,d]=NOTES[id];document.getElementById('nt').textContent=t;document.getElementById('nc').innerHTML=Object.entries(d).map(([k,v])=>`<div><dt>${k}</dt><dd>${v}</dd></div>`).join('');}
+document.getElementById('nav').addEventListener('click',e=>{const b=e.target.closest('button');if(b)aller(b.dataset.e)});
+document.addEventListener('click',e=>{const b=e.target.closest('[data-va]');if(b){e.preventDefault();aller(b.dataset.va)}else if(e.target.closest('a[href="#"]'))e.preventDefault()});
+const setVue=m=>{document.body.classList.toggle('mobile',m);document.getElementById('b-mob').classList.toggle('on',m);document.getElementById('b-ord').classList.toggle('on',!m)};
+document.getElementById('b-mob').onclick=()=>setVue(true);document.getElementById('b-ord').onclick=()=>setVue(false);
+setVue(window.innerWidth<700);aller('liste');
+</script>
+</body>
+</html>
