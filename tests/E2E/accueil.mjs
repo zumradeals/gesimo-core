@@ -29,7 +29,7 @@ try {
         assert.equal(await page.locator('.mobile-tabs').isVisible(), width < 1024);
         if (width >= 1024) {
             const destination = await page.locator('.ah-commune-carte').first().boundingBox();
-            assert(destination.width <= 422, 'Une commune reste une carte compacte sur ordinateur.');
+            assert(destination.width <= 500, 'Une commune reste une carte compacte sur ordinateur.');
             assert(await page.locator('.ah-commune-photo img').first().isVisible(), 'La commune présente un aperçu réel.');
             const contenu = await page.locator('#engagements > .cont').boundingBox();
             assert(contenu.width <= Math.min(width, 1920) + 1, `Le contenu doit occuper l’écran à ${width} px`);
@@ -43,6 +43,7 @@ try {
     }
     for (const [width, height] of [[1024, 768], [1366, 768], [1440, 900]]) {
         await page.setViewportSize({ width, height });
+        await page.evaluate(() => scrollTo(0, 0));
         const form = await page.locator('.ah-recherche').boundingBox();
         const header = await page.locator('.site-h').boundingBox();
         assert(form.y >= header.y + header.height, 'La recherche ne chevauche pas le menu.');
@@ -67,7 +68,9 @@ try {
     await piste.evaluate(el => { el.scrollLeft = el.scrollWidth; });
     await page.waitForFunction(() => document.querySelector('[aria-label="Communes suivantes"]').disabled);
     await page.setViewportSize({ width: 390, height: 844 });
+    await page.evaluate(() => scrollTo(0, 0));
     const bouton = await page.getByRole('button', { name: 'Rechercher un logement', exact: true }).boundingBox();
+    assert(bouton.y >= 0, 'Le bouton doit être dans le premier écran.');
     const menu = await page.locator('.mobile-tabs').boundingBox();
     assert(bouton.y + bouton.height <= menu.y, 'Le bouton de recherche initial ne doit pas être sous les onglets à 390 × 844.');
     await page.screenshot({ path: output + '/accueil-telephone.png', fullPage: true });

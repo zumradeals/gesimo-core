@@ -141,7 +141,7 @@
 .ah-etapes > div { display: flex; align-items: start; gap: 16px; min-width: 0; }
 .ah-etapes h3 { font-size: 16px; }
 .ah-etapes p { margin: 0; color: var(--avelis-gris); font-size: 14px; }
-.ah-partenaires { padding: 0; }
+.ah-section.ah-partenaires { padding: 0; }
 .ah-partenaires > .cont { max-width: 1600px; padding-inline: 0; }
 .ah-partenaire { display: grid; gap: 20px; background: var(--avelis-nuit); color: #fff; padding: 28px 20px; border-radius: 12px 12px 0 0; }
 .ah-partenaire > img { width: 100%; height: 180px; object-fit: cover; border-radius: 12px; order: 2; }
@@ -164,7 +164,7 @@
     .ah-hero { grid-template-columns: 1fr 1.4fr; gap: 30px; padding-top: 0; padding-bottom: 0; min-height: 330px; }
     .ah-hero-visuel { display: block; }
     .ah-hero-texte { padding-block: 24px 48px; }
-    .ah-hero h1 { font-size: clamp(36px, 3.4vw, 50px); }
+    .ah-hero h1 { font-size: clamp(30px, 3vw, 46px); }
     .ah-hero p { font-size: 18px; }
     .ah-recherche-cont { margin-top: -28px; }
     .ah-recherche { padding: 12px; }
@@ -202,10 +202,12 @@
     .ah-recherche label > .ic { width: 20px; height: 20px; }
     .ah-recherche button { font-size: 12px; }
 }
-@media (max-width: 359px) {
-    .site-accueil .site-h .logo { font-size: 18px; }
+@media (max-width: 639px) {
     .ah-recherche label:not(.ah-commune):not(.ah-voyageurs) { grid-template-columns: minmax(0, 1fr); }
     .ah-recherche label:not(.ah-commune):not(.ah-voyageurs) > .ic { display: none; }
+}
+@media (max-width: 359px) {
+    .site-accueil .site-h .logo { font-size: 18px; }
 }
 @media (prefers-reduced-motion: reduce) {
     .accueil-v3 .av-offre-photo img { transition: none; }
