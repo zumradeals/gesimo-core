@@ -1,0 +1,56 @@
+/* Avelis Séjours — entrée du visiteur et pages d'erreur (contrat docs/contrats/entree-visiteur-v3.md).
+ * Jetons --avelis-* définis dans accueil-reference.css ; couleurs de statut dans reservation.css.
+ */
+
+/* ---------- Connexion et inscription : deux moitiés qui remplissent l'écran ---------- */
+.en-entree { display: grid; min-height: 560px; }
+.en-panneau { position: relative; isolation: isolate; overflow: hidden; background: var(--avelis-nuit); color: #fff; padding: 26px 22px; display: grid; gap: 18px; align-content: center; }
+.en-panneau::before { content: ""; position: absolute; z-index: -1; inset: auto -60px -60px auto; width: 260px; height: 260px; border-radius: 80px 20px 24px 80px; background: var(--avelis-orange); }
+.en-panneau h2 { font-size: clamp(26px, 3vw, 40px); max-width: 460px; margin: 0; color: #fff; }
+.en-panneau p { color: #d9dfeb; max-width: 460px; margin: 0; }
+.en-points { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
+.en-points li { display: flex; gap: 12px; align-items: flex-start; font-weight: 600; }
+.en-points i { flex: none; display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: var(--avelis-orange); color: var(--avelis-nuit); font-style: normal; font-weight: 900; }
+.en-photo { display: none; width: 100%; max-width: 520px; height: 200px; object-fit: cover; border-radius: 14px; }
+.en-formu { order: -1; background: #fff; padding: 24px 18px 30px; display: grid; align-content: center; }  /* téléphone : le formulaire passe en premier */
+.en-formu form { display: grid; gap: 14px; width: 100%; max-width: 520px; margin-inline: auto; }
+.en-formu h1 { font-size: clamp(26px, 2.4vw, 34px); margin: 0; }
+.en-onglets { display: grid; grid-template-columns: 1fr 1fr; background: #e9ecf1; border-radius: 12px; padding: 4px; }
+.en-onglets :is(a, span) { display: grid; place-items: center; min-height: 46px; border-radius: 9px; font-weight: 800; text-decoration: none; color: var(--avelis-gris); }
+.en-onglets span { background: #fff; color: var(--avelis-nuit); box-shadow: 0 1px 3px #17243b1f; }
+.en-ou { display: flex; align-items: center; gap: 10px; color: var(--avelis-gris); font-size: 13px; }
+.en-ou::before, .en-ou::after { content: ""; flex: 1; height: 1px; background: var(--avelis-trait); }
+.en-mdp { position: relative; }
+.en-mdp .saisie { padding-right: 104px; }
+.en-mdp .en-voir { position: absolute; right: 6px; bottom: 4px; min-height: 42px; padding: 0 12px; border: 0; background: none; font-weight: 800; color: var(--avelis-orange-texte); cursor: pointer; }
+.en-aide { font-size: 13px; color: var(--avelis-gris); font-weight: 400; }
+.en-sms { background: var(--avelis-ivoire); border: 1px solid var(--avelis-peche); border-radius: 12px; padding: 12px; display: grid; gap: 8px; }
+.en-choix { display: grid; gap: 10px; }
+.en-choix label { display: flex; gap: 12px; align-items: flex-start; border: 1.5px solid var(--avelis-saisie); border-radius: 14px; padding: 14px; cursor: pointer; background: #fff; }
+.en-choix input { width: 22px; height: 22px; accent-color: var(--avelis-orange); margin-top: 2px; flex: none; }
+.en-choix label:has(input:checked) { border-color: var(--avelis-orange); background: var(--avelis-ivoire); box-shadow: 0 0 0 1px var(--avelis-orange); }
+.en-choix b { display: block; font-size: 16px; }
+.en-choix span { font-size: 13.5px; color: var(--avelis-gris); }
+
+/* ---------- Lien de connexion, invitation, erreurs : carte centrée ---------- */
+.en-centre { min-height: 520px; padding: 28px 18px; display: grid; place-items: center; background: var(--avelis-ivoire); }
+.en-carte { background: #fff; border: 1px solid var(--avelis-trait); border-radius: 16px; padding: 26px 22px; display: grid; gap: 14px; width: 100%; max-width: 560px; justify-items: center; text-align: center; }
+.en-carte h1 { font-size: clamp(24px, 2.2vw, 30px); margin: 0; }
+.en-carte p { margin: 0; }
+.en-carte.gauche { justify-items: stretch; text-align: left; }
+.en-rond { display: grid; place-items: center; width: 64px; height: 64px; border-radius: 50%; font-size: 30px; }
+.en-rond.o { background: var(--avelis-peche); color: var(--avelis-orange-texte); }
+.en-rond.v { background: var(--avelis-ok-fond); color: var(--avelis-ok); }
+.en-rond.r { background: #fdecea; color: #b42318; }
+.en-code { font-size: 13px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; color: var(--avelis-orange-texte); }
+.en-actions { display: grid; gap: 10px; width: 100%; }
+.en-actions :is(.btn, .btn-pl, .btn-sec, button, a) { width: 100%; }
+
+@media (min-width: 900px) {
+    .en-entree { grid-template-columns: 1fr 1fr; min-height: 640px; }
+    .en-panneau { padding: 48px 56px; }
+    .en-panneau::before { width: 380px; height: 380px; inset: auto -90px -90px auto; }
+    .en-photo { display: block; }
+    .en-formu { order: 0; padding: 48px 56px; }
+    .en-choix { grid-template-columns: 1fr 1fr; }
+}

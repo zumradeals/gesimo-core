@@ -27,7 +27,10 @@ class Connexion extends Component
     public function seConnecter(ServiceConnexion $connexion)
     {
         $this->reinitialiser();
-        $this->validate(['telephone' => 'required', 'motDePasse' => 'required'], [], ['telephone' => 'Le téléphone', 'motDePasse' => 'Le mot de passe']);
+        $this->validate(['telephone' => 'required', 'motDePasse' => 'required'], [
+            'telephone.required' => 'Indiquez votre numéro de téléphone.',
+            'motDePasse.required' => 'Indiquez votre mot de passe.',
+        ]);
 
         try {
             $utilisateur = $connexion->parMotDePasse($this->telephone, $this->motDePasse, request()->ip());
@@ -44,7 +47,7 @@ class Connexion extends Component
     public function envoyerLien(ServiceConnexion $connexion): void
     {
         $this->reinitialiser();
-        $this->validate(['telephone' => 'required'], [], ['telephone' => 'Le téléphone']);
+        $this->validate(['telephone' => 'required'], ['telephone.required' => 'Indiquez votre numéro de téléphone.']);
 
         try {
             $connexion->envoyerLienEmail($this->telephone, request()->ip());
@@ -60,7 +63,7 @@ class Connexion extends Component
     public function envoyerCode(ServiceConnexion $connexion): void
     {
         $this->reinitialiser();
-        $this->validate(['telephone' => 'required'], [], ['telephone' => 'Le téléphone']);
+        $this->validate(['telephone' => 'required'], ['telephone.required' => 'Indiquez votre numéro de téléphone.']);
 
         try {
             $connexion->envoyerCodeSms($this->telephone, request()->ip());
