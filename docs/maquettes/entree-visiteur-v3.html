@@ -1,0 +1,265 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Maquette — Entrée du visiteur · Avelis Séjours</title>
+<style>
+:root{--orange:#ff6a00;--orange-texte:#b94700;--orange-survol:#e75e00;--nuit:#17243b;--ivoire:#fff8f0;--peche:#ffeadb;--gris:#526077;--trait:#e4e7ed;--saisie:#c7cdd8;--ok:#1d7a46;--okfond:#e8f5ed;--erreur:#b42318;--erreurfond:#fdecea;--infofond:#eaf2ff;--info:#175cd3}
+*{box-sizing:border-box}
+body{margin:0;font:16px/1.55 system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--nuit);background:#eef0f4}
+h1,h2,h3,p{margin:0}h1,h2,h3{letter-spacing:-.03em;line-height:1.15}a{color:var(--orange-texte)}button,input{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--nuit);outline-offset:3px}
+.outil{position:sticky;top:0;z-index:40;background:var(--nuit);color:#fff;padding:10px 16px;display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center}
+.outil nav{display:flex;flex-wrap:wrap;gap:6px}.outil button{border:1px solid #ffffff55;background:transparent;color:#fff;border-radius:999px;padding:6px 12px;font-size:13px;cursor:pointer}
+.outil button.on{background:var(--orange);border-color:var(--orange);color:var(--nuit);font-weight:700}.outil .sep{margin-left:auto;display:flex;gap:6px;align-items:center;font-size:13px}
+.avertis{max-width:1240px;margin:14px auto 0;padding:0 16px;font-size:13px;color:var(--gris)}
+.etats{max-width:1240px;margin:10px auto 0;padding:0 16px;display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:13px}
+.etats span{color:var(--gris);font-weight:700}.etats button{border:1.5px solid var(--saisie);background:#fff;border-radius:999px;padding:5px 12px;font-size:13px;font-weight:700;cursor:pointer}
+.etats button.on{background:var(--nuit);color:#fff;border-color:var(--nuit)}
+.scene{margin:12px auto 0;background:#fff;border:1px solid var(--trait);border-radius:18px;overflow:hidden;container-type:inline-size;width:min(100%,1240px);box-shadow:0 10px 40px #17243b14}
+body.mobile .scene{width:390px}
+.ecran{display:none}.ecran.on{display:block}
+/* chrome du site */
+.entete{display:flex;align-items:center;gap:16px;padding:12px 18px;border-bottom:1px solid var(--trait);background:#fff}
+.logo{display:flex;align-items:center;gap:9px;font-weight:800;font-size:19px;white-space:nowrap}
+.logo i{display:grid;place-items:center;width:36px;height:36px;border-radius:12px;background:var(--orange);color:var(--nuit);font-style:normal;font-size:24px}
+.entete .menu{margin-left:auto;display:none;gap:22px;font-size:14px;font-weight:600}.entete .droite{margin-left:auto;display:flex;gap:10px;align-items:center;font-size:14px;font-weight:700}
+.entete .menu~.droite{margin-left:0}
+.pastille-btn{background:var(--orange);color:var(--nuit);padding:9px 14px;border-radius:10px;white-space:nowrap}
+@container (max-width:500px){.entete .droite span:not(.pastille-btn){display:none}}
+.pied{background:var(--nuit);color:#d9dfeb;padding:18px;font-size:13px;display:flex;flex-wrap:wrap;gap:8px 24px;justify-content:space-between}
+/* boutons et champs */
+.btn{display:flex;align-items:center;justify-content:center;gap:10px;min-height:54px;padding:12px 20px;border:0;border-radius:12px;background:var(--orange);color:var(--nuit);font-weight:800;font-size:17px;cursor:pointer;width:100%;text-decoration:none;text-align:center}
+.btn:hover{background:var(--orange-survol)}.btn.sec{background:#fff;border:2px solid var(--nuit)}.btn.sec:hover{background:var(--ivoire)}
+.lien{background:none;border:0;padding:6px 0;font-weight:700;color:var(--orange-texte);text-decoration:underline;cursor:pointer}
+label.champ{display:grid;gap:6px;font-weight:700;font-size:15px}label.champ small,.petit{font-weight:400;color:var(--gris);font-size:13px}
+.champ-mdp{position:relative}.champ-mdp .voir{position:absolute;right:6px;bottom:6px;min-height:42px;padding:0 12px;border:0;background:none;font-weight:800;color:var(--orange-texte);cursor:pointer}
+input[type=text],input[type=tel],input[type=email],input[type=password]{width:100%;min-height:52px;border:1.5px solid var(--saisie);border-radius:11px;padding:10px 13px;background:#fff;font-weight:500}
+input.err{border-color:var(--erreur);box-shadow:0 0 0 3px var(--erreurfond)}
+.msg-err{color:var(--erreur);font-size:14px;font-weight:600}
+.alerte{display:flex;gap:10px;border-radius:12px;padding:12px 14px;font-size:14.5px;border:1px solid}
+.alerte.info{background:var(--ivoire);border-color:var(--peche)}.alerte.err{background:var(--erreurfond);border-color:#f2b8b2;color:#7a1a12}.alerte.ok{background:var(--okfond);border-color:#b8dfc7;color:#14532d}
+.onglets{display:grid;grid-template-columns:1fr 1fr;background:#e9ecf1;border-radius:12px;padding:4px}
+.onglets a,.onglets span{display:grid;place-items:center;min-height:46px;border-radius:9px;font-weight:800;text-decoration:none;color:var(--gris)}
+.onglets span{background:#fff;color:var(--nuit);box-shadow:0 1px 3px #17243b1f}
+.sep-ou{display:flex;align-items:center;gap:10px;color:var(--gris);font-size:13px}.sep-ou::before,.sep-ou::after{content:"";flex:1;height:1px;background:var(--trait)}
+/* mise en page entrée : deux moitiés qui remplissent l'écran */
+.entree{display:grid;min-height:560px}
+.panneau{background:var(--nuit);color:#fff;padding:26px 22px;display:grid;gap:18px;align-content:center;position:relative;overflow:hidden;isolation:isolate}
+.panneau::before{content:"";position:absolute;z-index:-1;inset:auto -60px -60px auto;width:260px;height:260px;border-radius:80px 20px 24px 80px;background:var(--orange);opacity:.95}
+.panneau h2{font-size:clamp(26px,5cqw,40px);max-width:460px}.panneau p{color:#d9dfeb;max-width:460px}
+.points{list-style:none;margin:0;padding:0;display:grid;gap:12px}.points li{display:flex;gap:12px;align-items:flex-start;font-weight:600}
+.points i{flex:none;display:grid;place-items:center;width:28px;height:28px;border-radius:50%;background:var(--orange);color:var(--nuit);font-style:normal;font-weight:900}
+.photo{border-radius:14px;min-height:150px;background:linear-gradient(135deg,#d7c3ab,#a98c6c 55%,#e9d9c4);display:none;place-items:end start;padding:8px 12px;color:#ffffffcc;font-size:12px}
+.formu{padding:24px 18px 30px;display:grid;gap:14px;align-content:center;background:#fff}
+.formu h1{font-size:clamp(26px,5cqw,34px)}
+.formu form{display:grid;gap:14px;width:100%;max-width:520px;margin-inline:auto}
+.centre{padding:28px 18px;display:grid;gap:14px;justify-items:center;text-align:center;align-content:center;min-height:520px;background:var(--ivoire)}
+.carte-centre{background:#fff;border:1px solid var(--trait);border-radius:16px;padding:26px 22px;display:grid;gap:14px;width:100%;max-width:560px;justify-items:center;text-align:center}
+.carte-centre h1{font-size:clamp(24px,4.5cqw,30px)}
+.rond{display:grid;place-items:center;width:64px;height:64px;border-radius:50%;font-size:30px}
+.rond.o{background:var(--peche);color:var(--orange-texte)}.rond.v{background:var(--okfond);color:var(--ok)}.rond.r{background:var(--erreurfond);color:var(--erreur)}
+.code-erreur{font-size:13px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--orange-texte)}
+.actions-col{display:grid;gap:10px;width:100%}
+/* choix du profil */
+.choix{display:grid;gap:10px}
+.choix label{display:flex;gap:12px;align-items:flex-start;border:1.5px solid var(--saisie);border-radius:14px;padding:14px;cursor:pointer;background:#fff}
+.choix input{width:22px;height:22px;accent-color:var(--orange);margin-top:2px;flex:none}
+.choix label:has(input:checked){border-color:var(--orange);background:var(--ivoire);box-shadow:0 0 0 1px var(--orange)}
+.choix b{display:block;font-size:16px}.choix span{font-size:13.5px;color:var(--gris)}
+.case{display:flex;gap:12px;align-items:flex-start;font-size:14px;color:var(--gris)}
+@container (min-width:900px){
+  .entete{padding:14px 40px}.entete .menu{display:flex}
+  .entree{grid-template-columns:1fr 1fr;min-height:640px}.panneau{padding:48px 56px}.panneau::before{width:380px;height:380px;inset:auto -90px -90px auto}.photo{display:grid;min-height:200px}
+  .formu{padding:48px 56px}.pied{padding:22px 40px}
+  .choix{grid-template-columns:1fr 1fr}
+}
+/* hors connexion : écran de téléphone */
+.tel-seul{display:none}body.mobile #e-hors .scene-tel{display:block}
+.hors{background:var(--ivoire);min-height:640px;display:grid;grid-template-rows:auto 1fr}
+.hors header{background:var(--nuit);color:#fff;padding:14px 16px;font-weight:800;font-size:18px}
+.hors main{padding:34px 22px;display:grid;gap:14px;justify-items:center;text-align:center;align-content:start}
+.note{max-width:1240px;margin:12px auto 0;padding:0 16px}
+.note details{background:#fff;border:1px solid var(--trait);border-radius:12px;padding:12px 16px}.note summary{cursor:pointer;font-weight:800}
+.note dl{display:grid;gap:10px;margin:12px 0 0;font-size:14.5px}.note dt{font-weight:800}.note dd{margin:0;color:var(--gris)}
+.points-v{max-width:1240px;margin:22px auto 60px;padding:0 16px}.points-v .carte{background:#fff;border:1px solid var(--trait);border-radius:14px;padding:18px;display:grid;gap:12px}
+.points-v ol{margin:0;padding-left:20px;display:grid;gap:8px}
+</style>
+</head>
+<body>
+<div class="outil">
+  <b>Maquette Entrée du visiteur — Avelis Séjours</b>
+  <nav id="nav" aria-label="Écrans">
+    <button data-e="connexion" class="on">1 · Connexion</button>
+    <button data-e="inscription">2 · Inscription</button>
+    <button data-e="lien">3 · Lien de connexion</button>
+    <button data-e="invitation">4 · Invitation</button>
+    <button data-e="erreurs">5 · Pages d'erreur</button>
+    <button data-e="hors">6 · Hors connexion</button>
+  </nav>
+  <span class="sep">Affichage :<button id="b-mob" class="on">Téléphone</button><button id="b-ord">Ordinateur</button></span>
+</div>
+<p class="avertis">Maquette de travail, non validée. Les boutons « État » sous la barre montrent chaque situation d'un écran. Les textes sont ceux de la plateforme, sauf ceux signalés dans les points à valider.</p>
+<div class="etats" id="etats" aria-label="États de l'écran"></div>
+
+<div class="scene">
+
+<!-- ================= 1. CONNEXION ================= -->
+<section class="ecran on" id="e-connexion">
+  <header class="entete"><div class="logo"><i>A</i>Avelis Séjours</div><nav class="menu"><span>Accueil</span><span>Logements</span><span>À propos</span><span>Devenir partenaire</span><span>Aide</span><span>Contact</span></nav><div class="droite"><span>Se connecter</span><span class="pastille-btn">Créer un compte</span></div></header>
+  <div class="entree">
+    <aside class="panneau"><h2>Content de vous revoir</h2><p>Retrouvez vos séjours, vos reçus et vos réservations en un instant.</p>
+      <ul class="points"><li><i>✓</i>Retrouvez vos réservations et vos reçus</li><li><i>✓</i>Réservez en quelques minutes</li><li><i>✓</i>Paiement sécurisé par Mobile Money ou carte</li></ul><div class="photo">Photo d'ambiance (réelle)</div></aside>
+    <div class="formu"><form onsubmit="return false">
+      <div class="onglets"><span>Se connecter</span><a href="#" data-va="inscription">Créer un compte</a></div>
+      <h1>Se connecter</h1>
+      <div class="alerte info" data-s="c-dates"><span><b>Vos dates sont conservées.</b> Connectez-vous ou créez un compte (1 minute) : vous reprenez ensuite exactement là où vous en étiez.</span></div>
+      <div class="alerte err" data-s="c-erreur"><span>Téléphone ou mot de passe incorrect.</span></div>
+      <div class="alerte err" data-s="c-pause"><span>Trop de tentatives. Patientez 5 minutes avant de réessayer, ou recevez un lien par e-mail.</span></div>
+      <div class="alerte ok" data-s="c-lien"><span>Si ce numéro a un compte, un lien vient d'être envoyé à l'e-mail du compte. Il est valable 15 minutes.</span></div>
+      <label class="champ">Téléphone<small>10 chiffres, sans espace ni indicatif.</small><input type="tel" inputmode="tel" placeholder="07 01 02 03 04" id="c-tel"></label>
+      <label class="champ champ-mdp">Mot de passe<input type="password" id="c-mdp" value="motdepasse"><button type="button" class="voir" data-voir="c-mdp">Afficher</button></label>
+      <p class="msg-err" data-s="c-vide">Indiquez votre numéro de téléphone.</p>
+      <button class="btn">Me connecter</button>
+      <div class="sep-ou">ou</div>
+      <button class="btn sec" type="button">Mot de passe oublié ? Recevoir un lien par e-mail</button>
+      <p class="petit">Le lien arrive dans votre boîte e-mail. Il ne marche qu'une fois, pendant 15 minutes.</p>
+      <p class="petit" style="text-align:center">Pas encore de compte ? <a href="#" data-va="inscription">Créer un compte</a></p>
+    </form></div>
+  </div>
+  <footer class="pied"><span>© 2026 Avelis Séjours</span><span>Aide · Contact · Conditions générales</span></footer>
+</section>
+
+<!-- ================= 2. INSCRIPTION ================= -->
+<section class="ecran" id="e-inscription">
+  <header class="entete"><div class="logo"><i>A</i>Avelis Séjours</div><nav class="menu"><span>Accueil</span><span>Logements</span><span>À propos</span><span>Devenir partenaire</span><span>Aide</span><span>Contact</span></nav><div class="droite"><span>Se connecter</span><span class="pastille-btn">Créer un compte</span></div></header>
+  <div class="entree">
+    <aside class="panneau"><h2>Rejoignez Avelis Séjours</h2><p>Un compte gratuit, en moins de deux minutes.</p>
+      <ul class="points"><li><i>✓</i>Voyageur : réservez un séjour en toute confiance</li><li><i>✓</i>Gérant : recevez plus de réservations</li><li><i>✓</i>Gratuit, en moins de deux minutes</li></ul><div class="photo">Photo d'ambiance (réelle)</div></aside>
+    <div class="formu"><form onsubmit="return false">
+      <div class="onglets"><a href="#" data-va="connexion">Se connecter</a><span>Créer un compte</span></div>
+      <h1>Créer un compte</h1>
+      <div class="alerte info" data-s="i-dates"><span><b>Vos dates sont conservées.</b> Créez votre compte (1 minute) : vous reprenez ensuite exactement là où vous en étiez.</span></div>
+      <div class="choix" role="radiogroup" aria-label="Je veux">
+        <label><input type="radio" name="profil" checked><div><b>Réserver un séjour</b><span>Je cherche un logement meublé en Côte d'Ivoire.</span></div></label>
+        <label><input type="radio" name="profil" id="p-gerant"><div><b>Proposer ma résidence</b><span>Je suis gérant : je présente mes logements et je reçois des réservations.</span></div></label>
+      </div>
+      <div class="alerte info" data-s="i-gerant"><span><b>Gérant :</b> votre pièce d'identité est demandée et contrôlée avant la publication de votre première annonce. Vous la déposerez depuis votre profil.</span></div>
+      <label class="champ">Votre nom<input type="text" placeholder="Ex. Awa Koné" autocomplete="name"></label>
+      <label class="champ">Téléphone<small>10 chiffres, sans espace ni indicatif.</small><input type="tel" placeholder="Ex. 07 01 02 03 04" class="" id="i-tel"></label>
+      <p class="msg-err" data-s="i-erreurs">Ce numéro de téléphone a déjà un compte. <a href="#" data-va="connexion">Connectez-vous</a>.</p>
+      <label class="champ">E-mail<small>Nécessaire pour vous envoyer vos confirmations et votre lien de connexion.</small><input type="email" placeholder="Ex. awa@exemple.com" autocomplete="email"></label>
+      <p class="msg-err" data-s="i-erreurs">Cette adresse e-mail a déjà un compte. Connectez-vous.</p>
+      <label class="champ champ-mdp">Mot de passe<small>8 caractères minimum.</small><input type="password" id="i-mdp" value="abc"><button type="button" class="voir" data-voir="i-mdp">Afficher</button></label>
+      <p class="msg-err" data-s="i-erreurs">Le mot de passe doit contenir au moins 8 caractères.</p>
+      <p class="petit">En créant un compte, vous acceptez les <a href="#">conditions</a> et la <a href="#">politique de confidentialité</a>.</p>
+      <button class="btn">Créer mon compte</button>
+    </form></div>
+  </div>
+  <footer class="pied"><span>© 2026 Avelis Séjours</span><span>Aide · Contact · Conditions générales</span></footer>
+</section>
+
+<!-- ================= 3. LIEN DE CONNEXION ================= -->
+<section class="ecran" id="e-lien">
+  <header class="entete"><div class="logo"><i>A</i>Avelis Séjours</div><div class="droite"><span>Se connecter</span><span class="pastille-btn">Créer un compte</span></div></header>
+  <div class="centre">
+    <div class="carte-centre" data-s="l-valide"><div class="rond o">👋</div><h1>Bienvenue</h1><p>Touchez le bouton pour entrer dans votre compte.</p><button class="btn">Me connecter</button><p class="petit">Ce lien ne marche qu'une fois.</p></div>
+    <div class="carte-centre" data-s="l-expire"><div class="rond r">⏱</div><h1>Lien expiré</h1><div class="alerte err" style="text-align:left"><span>Ce lien n'est plus valable. Demandez-en un nouveau.</span></div><a class="btn" href="#" data-va="connexion">Revenir à la connexion</a></div>
+  </div>
+  <footer class="pied"><span>© 2026 Avelis Séjours</span><span>Aide · Contact · Conditions générales</span></footer>
+</section>
+
+<!-- ================= 4. INVITATION ================= -->
+<section class="ecran" id="e-invitation">
+  <header class="entete"><div class="logo"><i>A</i>Avelis Séjours</div><div class="droite"><span>Se connecter</span></div></header>
+  <div class="centre">
+    <div class="carte-centre" data-s="v-nouveau" style="text-align:left;justify-items:stretch"><span class="code-erreur">Invitation</span><h1>Rejoindre Résidence Papaye</h1><p>Confort Immobilier vous invite comme <b>calendrier et arrivées et départs</b>.</p>
+      <p class="petit">Compte : Koffi Yao · koffi@exemple.com</p>
+      <label class="champ champ-mdp">Choisissez un mot de passe<small>8 caractères minimum.</small><input type="password" id="v-mdp" value=""><button type="button" class="voir" data-voir="v-mdp">Afficher</button></label>
+      <button class="btn">Créer mon accès</button></div>
+    <div class="carte-centre" data-s="v-compte" style="text-align:left;justify-items:stretch"><span class="code-erreur">Invitation</span><h1>Rejoindre Résidence Papaye</h1><p>Confort Immobilier vous invite comme <b>calendrier</b>.</p>
+      <div class="alerte info"><span>Un compte existe déjà avec koffi@exemple.com. Connectez-vous, puis rouvrez ce lien.</span></div><a class="btn" href="#" data-va="connexion">Se connecter</a></div>
+    <div class="carte-centre" data-s="v-connecte" style="text-align:left;justify-items:stretch"><span class="code-erreur">Invitation</span><h1>Rejoindre Résidence Papaye</h1><p>Confort Immobilier vous invite comme <b>arrivées et départs</b>.</p><button class="btn">Accepter l'invitation</button></div>
+    <div class="carte-centre" data-s="v-expire"><div class="rond r">⏱</div><h1>Invitation expirée</h1><div class="alerte err" style="text-align:left"><span>Cette invitation n'est plus valable. Demandez-en une nouvelle au gérant.</span></div><a class="btn sec" href="#">Aller à l'accueil</a></div>
+  </div>
+  <footer class="pied"><span>© 2026 Avelis Séjours</span><span>Aide · Contact · Conditions générales</span></footer>
+</section>
+
+<!-- ================= 5. ERREURS ================= -->
+<section class="ecran" id="e-erreurs">
+  <header class="entete"><div class="logo"><i>A</i>Avelis Séjours</div><nav class="menu"><span>Accueil</span><span>Logements</span><span>À propos</span><span>Devenir partenaire</span><span>Aide</span><span>Contact</span></nav><div class="droite"><span>Se connecter</span><span class="pastille-btn">Créer un compte</span></div></header>
+  <div class="centre">
+    <div class="carte-centre" data-s="e-403"><div class="rond o">🔒</div><span class="code-erreur">Erreur 403</span><h1>Cette page n'est pas accessible avec ce compte</h1><p>Vous n'avez pas le droit d'accéder à cette page.</p><p class="petit">Vous êtes connecté comme <b>Awa Koné</b> (Client).</p>
+      <div class="actions-col"><a class="btn" href="#">Retour à mon espace</a><a class="btn sec" href="#">Voir les logements</a></div></div>
+    <div class="carte-centre" data-s="e-404"><div class="rond o">🧭</div><span class="code-erreur">Erreur 404</span><h1>Cette page n'existe pas</h1><p>Le lien est peut-être ancien ou mal écrit. Pas de souci : vous pouvez repartir d'ici.</p>
+      <div class="actions-col"><a class="btn" href="#">Aller à l'accueil</a><a class="btn sec" href="#">Voir les logements</a></div></div>
+    <div class="carte-centre" data-s="e-419"><div class="rond o">⏱</div><span class="code-erreur">Session expirée</span><h1>Votre session a expiré</h1><p>Pour votre sécurité, la page est restée ouverte trop longtemps. Rechargez-la pour continuer : vos réservations ne sont pas perdues.</p>
+      <div class="actions-col"><button class="btn">Recharger la page</button><a class="btn sec" href="#" data-va="connexion">Me reconnecter</a></div></div>
+    <div class="carte-centre" data-s="e-500"><div class="rond r">⚠</div><span class="code-erreur">Erreur 500</span><h1>Un problème de notre côté</h1><p>Nous n'avons pas pu afficher cette page. Réessayez dans un instant. Si cela continue, écrivez-nous.</p>
+      <div class="actions-col"><button class="btn">Réessayer</button><a class="btn sec" href="#">Nous contacter</a></div></div>
+    <div class="carte-centre" data-s="e-503"><div class="rond o">🛠</div><span class="code-erreur">Maintenance</span><h1>Nous revenons très vite</h1><p>Avelis Séjours est en cours de mise à jour. Vos réservations sont conservées. Réessayez dans quelques minutes.</p>
+      <div class="actions-col"><button class="btn">Réessayer</button></div></div>
+  </div>
+  <footer class="pied"><span>© 2026 Avelis Séjours</span><span>Aide · Contact · Conditions générales</span></footer>
+</section>
+
+<!-- ================= 6. HORS CONNEXION ================= -->
+<section class="ecran" id="e-hors">
+  <div class="hors"><header>Avelis Séjours</header>
+    <main><div class="rond o" aria-hidden="true">📡</div><h1>Vous êtes hors connexion</h1>
+      <p>Cette page n'a pas encore été enregistrée sur votre téléphone. Dès que le réseau revient, elle s'ouvrira.</p>
+      <button class="btn" style="max-width:420px">Réessayer</button>
+      <a class="btn sec" href="#" style="max-width:420px" data-s="h-resa">Voir mes réservations enregistrées</a>
+      <p class="petit">Vos données ne sont pas perdues. Rien n'a été envoyé.</p></main></div>
+</section>
+
+</div>
+
+<div class="note"><details open><summary id="nt">Fiche écran</summary><dl id="nc"></dl></details></div>
+
+<div class="points-v"><section class="carte"><h2>Points à faire valider avant l'intégration</h2>
+<ol>
+<li><b>Deux moitiés qui remplissent l'écran</b> sur ordinateur : à gauche un panneau bleu nuit avec les trois garanties et une photo d'ambiance réelle (réglage existant de la plateforme), à droite le formulaire. Sur téléphone, le formulaire passe en premier.</li>
+<li><b>Mot de passe : bouton « Afficher »</b> pour vérifier ce qu'on tape (utile sur téléphone). Ajout de ma part, sans nouvelle règle.</li>
+<li><b>Numéro de téléphone</b> : l'aide « 10 chiffres, sans espace ni indicatif » est visible sous le champ. Les règles de validation ne changent pas.</li>
+<li><b>Connexion : libellé « Mot de passe oublié ? Recevoir un lien par e-mail »</b> à la place de « Recevoir un lien par e-mail » seul. Le fonctionnement ne change pas (lien valable 15 minutes, une seule fois).</li>
+<li><b>Inscription : « Je veux… »</b> devient deux grandes cartes avec une phrase d'explication au lieu de deux petites pastilles. Pour un gérant, un rappel dit que la pièce d'identité est contrôlée avant la première publication (règle déjà validée).</li>
+<li><b>Pages d'erreur</b> : aujourd'hui seule la page « 403 » est dessinée aux couleurs du site. Je propose les mêmes pour <b>404</b> (page inexistante), <b>419</b> (session expirée), <b>500</b> (problème de notre côté) et <b>503</b> (maintenance). Les textes sont ma proposition : à valider ou corriger.</li>
+<li><b>Connexion par code SMS</b> : reste masquée tant qu'aucun fournisseur SMS n'est branché (réglage existant). Aucun écran n'est prévu ici.</li>
+<li><b>Ce que je n'ajoute pas</b> : « se souvenir de moi », connexion par réseau social, double authentification. Aucune de ces fonctions n'existe aujourd'hui.</li>
+</ol></section></div>
+
+<script>
+const ETATS={
+ connexion:[['c-normal','Normal'],['c-dates','Dates conservées'],['c-erreur','Identifiants incorrects'],['c-pause','Trop de tentatives'],['c-lien','Lien envoyé'],['c-vide','Champ vide']],
+ inscription:[['i-normal','Normal'],['i-dates','Dates conservées'],['i-gerant','Gérant choisi'],['i-erreurs','Erreurs de saisie']],
+ lien:[['l-valide','Lien valable'],['l-expire','Lien expiré']],
+ invitation:[['v-nouveau','Nouveau compte'],['v-compte','Compte existant'],['v-connecte','Déjà connecté'],['v-expire','Expirée']],
+ erreurs:[['e-403','403 Accès refusé'],['e-404','404 Introuvable'],['e-419','419 Session expirée'],['e-500','500 Problème'],['e-503','503 Maintenance']],
+ hors:[['h-sans','Sans copie'],['h-resa','Avec réservations enregistrées']]};
+const NOTES={
+ connexion:['Écran 1 · Connexion',{'But':'Entrer dans son compte en moins de 20 secondes, y compris sur un téléphone d\'entrée de gamme.','Ce que voit l\'utilisateur':'Panneau de réassurance, onglets Se connecter / Créer un compte, téléphone et mot de passe, bouton principal, lien par e-mail pour mot de passe oublié. Si la personne vient d\'une réservation, un message indique que ses dates sont conservées.','Actions':'Me connecter ; Mot de passe oublié (envoi d\'un lien valable 15 minutes, une seule fois) ; Créer un compte.','Messages d\'erreur':'« Téléphone ou mot de passe incorrect. » · « Trop de tentatives. Patientez 5 minutes… » (durée réglable dans Paramètres) · champ vide : « Indiquez votre numéro de téléphone. » · lien envoyé : « Si ce numéro a un compte, un lien vient d\'être envoyé… » (même message qu\'il existe ou non, pour ne pas révéler les comptes).'}],
+ inscription:['Écran 2 · Inscription',{'But':'Créer un compte voyageur ou gérant en moins de deux minutes.','Ce que voit l\'utilisateur':'Choix « Réserver un séjour » ou « Proposer ma résidence », nom, téléphone, e-mail, mot de passe, acceptation des conditions par le bouton, message « dates conservées » si besoin.','Actions':'Créer mon compte : un voyageur reprend sa réservation, un gérant arrive sur la création de sa résidence.','Messages d\'erreur':'« Ce numéro de téléphone a déjà un compte. Connectez-vous. » · « Cette adresse e-mail a déjà un compte. Connectez-vous. » · « Le numéro doit avoir 10 chiffres. » · mot de passe de moins de 8 caractères.'}],
+ lien:['Écran 3 · Connexion par lien',{'But':'Se connecter sans mot de passe depuis l\'e-mail reçu.','Ce que voit l\'utilisateur':'Un bouton « Me connecter » (le lien n\'entre pas tout seul : un robot de messagerie ne peut pas le consommer) ou un message de lien expiré.','Actions':'Me connecter ; Revenir à la connexion.','Messages d\'erreur':'« Ce lien n\'est plus valable. Demandez-en un nouveau. »'}],
+ invitation:['Écran 4 · Invitation du personnel',{'But':'Permettre à un membre du personnel invité par un gérant de créer ou d\'utiliser son accès.','Ce que voit l\'utilisateur':'Le nom de la résidence, qui invite et pour quels droits (calendrier, arrivées et départs). Selon le cas : choix d\'un mot de passe, connexion à un compte existant, ou acceptation directe.','Actions':'Créer mon accès ; Se connecter ; Accepter l\'invitation.','Messages d\'erreur':'« Cette invitation n\'est plus valable. Demandez-en une nouvelle au gérant. » · « Connectez-vous avec le compte de… pour accepter. » · « Ce numéro de téléphone a déjà un compte. »'}],
+ erreurs:['Écran 5 · Pages d\'erreur',{'But':'Ne jamais laisser la personne bloquée devant une page technique : dire simplement ce qui se passe et proposer une action.','Ce que voit l\'utilisateur':'En-tête et pied du site, une carte centrée avec une icône, un titre clair, une phrase, et au plus deux boutons. La page 500 ne dépend d\'aucune donnée (elle s\'affiche même si la base est en panne).','Actions':'Retour à l\'espace, accueil, logements, recharger, réessayer, contacter.','Messages d\'erreur':'Ce sont les pages elles-mêmes. 403 : message précis du refus et compte utilisé ; 419 : session expirée.'}],
+ hors:['Écran 6 · Hors connexion (téléphone)',{'But':'Rassurer quand le réseau manque.','Ce que voit l\'utilisateur':'Message simple, bouton Réessayer, et si une copie existe, un lien vers ses réservations déjà enregistrées. La page se recharge toute seule au retour du réseau.','Actions':'Réessayer ; Voir mes réservations enregistrées.','Messages d\'erreur':'Aucun : l\'état « hors connexion » est l\'écran.'}]};
+let ecran='connexion', etat={};
+function majEtat(){document.querySelectorAll('.scene [data-s]').forEach(e=>{const liste=e.dataset.s.split(' ');e.style.display=liste.includes(etat[ecran])?'':'none';});
+ if(ecran==='inscription'){document.getElementById('p-gerant').checked=etat[ecran]==='i-gerant';document.getElementById('i-tel').classList.toggle('err',etat[ecran]==='i-erreurs');}
+ if(ecran==='connexion'){document.getElementById('c-tel').classList.toggle('err',etat[ecran]==='c-vide');}
+ document.querySelectorAll('#etats button').forEach(b=>b.classList.toggle('on',b.dataset.s===etat[ecran]));}
+function aller(id){ecran=id;etat[id]??=ETATS[id][0][0];document.querySelectorAll('.ecran').forEach(e=>e.classList.toggle('on',e.id==='e-'+id));document.querySelectorAll('#nav button').forEach(b=>b.classList.toggle('on',b.dataset.e===id));
+ document.getElementById('etats').innerHTML='<span>État :</span>'+ETATS[id].map(([k,l])=>`<button data-s="${k}" type="button">${l}</button>`).join('');
+ const[t,d]=NOTES[id];document.getElementById('nt').textContent=t;document.getElementById('nc').innerHTML=Object.entries(d).map(([k,v])=>`<div><dt>${k}</dt><dd>${v}</dd></div>`).join('');majEtat();}
+document.getElementById('nav').addEventListener('click',e=>{const b=e.target.closest('button');if(b)aller(b.dataset.e)});
+document.getElementById('etats').addEventListener('click',e=>{const b=e.target.closest('button');if(b){etat[ecran]=b.dataset.s;majEtat();}});
+document.addEventListener('click',e=>{const v=e.target.closest('[data-voir]');if(v){const i=document.getElementById(v.dataset.voir);i.type=i.type==='password'?'text':'password';v.textContent=i.type==='password'?'Afficher':'Masquer';return}
+ const b=e.target.closest('[data-va]');if(b){e.preventDefault();aller(b.dataset.va)}else if(e.target.closest('a[href="#"]'))e.preventDefault();});
+const setVue=m=>{document.body.classList.toggle('mobile',m);document.getElementById('b-mob').classList.toggle('on',m);document.getElementById('b-ord').classList.toggle('on',!m)};
+document.getElementById('b-mob').onclick=()=>setVue(true);document.getElementById('b-ord').onclick=()=>setVue(false);
+setVue(window.innerWidth<700);aller('connexion');
+</script>
+</body>
+</html>
