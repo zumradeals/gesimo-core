@@ -9,7 +9,8 @@ use Illuminate\Mail\Mailables\Envelope;
 /** E-mail générique : le sujet et le texte viennent des modèles de messages (Paramètres). */
 class MessageGesimo extends Mailable
 {
-    public function __construct(public string $sujet, public string $texte) {}
+    /** @param array{texte: string, lien: string}|null $bouton */
+    public function __construct(public string $sujet, public string $texte, public ?array $bouton = null) {}
 
     public function envelope(): Envelope
     {
