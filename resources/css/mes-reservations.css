@@ -80,3 +80,45 @@
     .mr-cols { grid-template-columns: minmax(0, 1fr) 380px; gap: 24px; align-items: start; }
     .mr-colle { position: sticky; top: 20px; }
 }
+
+/* ---------- Fin du parcours voyageur (contrat docs/contrats/espace-voyageur-v3.md) ---------- */
+.ev-role { background: #e9ecf1; color: var(--avelis-gris); }
+.ev-cols { display: grid; gap: 16px; align-items: start; }
+.ev-sejour { display: grid; gap: 12px; grid-template-columns: 96px minmax(0, 1fr); }
+.ev-ligne { display: flex; justify-content: space-between; gap: 12px; padding: 6px 0; border-bottom: 1px dashed var(--avelis-trait); }
+.ev-kpi { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.ev-kpi > div { background: #fff; border: 1px solid var(--avelis-trait); border-radius: 14px; padding: 14px; display: grid; }
+.ev-kpi b { font-size: 28px; }
+.ev-raccourcis > :is(a, form) { border-bottom: 1px dashed var(--avelis-trait); }
+.ev-raccourcis a, .ev-raccourcis button { display: flex; gap: 10px; align-items: center; min-height: 48px; width: 100%; border: 0; background: none; font: inherit; font-weight: 700; color: var(--avelis-nuit); text-decoration: none; text-align: left; cursor: pointer; }
+.ev-raccourcis button.rouge { color: #b42318; }
+.ev-grille { display: grid; gap: 16px; align-items: start; }
+.ev-mdp { position: relative; }
+.ev-mdp input { padding-right: 104px; }
+.ev-mdp button { position: absolute; right: 6px; top: 4px; min-height: 42px; padding: 0 12px; border: 0; background: none; font-weight: 800; color: var(--avelis-orange-texte); cursor: pointer; }
+.ev-rembourse { background: var(--avelis-ivoire); border: 2px solid var(--avelis-peche); border-radius: 14px; padding: 16px; display: grid; gap: 6px; }
+.ev-rembourse .gros { font-size: 30px; font-weight: 800; letter-spacing: -.03em; }
+.ev-centre { display: grid; gap: 16px; width: 100%; }
+.ev-centre h1 { font-size: 26px; margin: 0; }
+.ev-succes { text-align: center; justify-items: center; padding: 32px 18px; }
+.ev-gros-ico { font-size: 44px; }
+.ev-etoiles { display: flex; gap: 4px; }
+.ev-etoiles button { min-width: 56px; min-height: 56px; border: 0; background: none; font-size: 40px; line-height: 1; color: var(--avelis-trait); cursor: pointer; }
+.ev-etoiles button.on { color: var(--avelis-orange); }
+.ev-note-lib { font-weight: 800; font-size: 18px; margin: 6px 0 0; }
+.ev-suite { background: var(--avelis-ivoire); border: 1px solid var(--avelis-peche); border-radius: 14px; padding: 14px 16px; display: grid; gap: 6px; }
+.ev-suite ol { margin: 0; padding-left: 20px; display: grid; gap: 6px; font-size: 15px; }
+@media (min-width: 900px) {
+    .ev-cols { grid-template-columns: minmax(0, 1fr) 380px; gap: 24px; }
+    .ev-cols.ev-deux { grid-template-columns: minmax(0, 1fr) 420px; }
+    .ev-grille { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
+    .ev-centre { justify-self: center; width: min(100%, 760px); }
+}
+@media (min-width: 1300px) {
+    .ev-cols:not(.ev-deux) { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 380px; }
+    .ev-grille { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .ev-grille > form:first-child { grid-row: span 2; }
+    .ev-grille > #piece-identite { grid-column: 3; grid-row: 1 / span 2; }
+}
+.charte .ev-page .rouge-b { background: #fff !important; box-shadow: none !important; border: 2px solid #b42318; color: #b42318; }
+.charte .ev-page .rouge-b:hover { background: #fdecea !important; }
