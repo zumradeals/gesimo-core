@@ -1,0 +1,249 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Maquette — Administration : argent et réglages · Avelis Séjours</title>
+<style>
+:root{--orange:#ff6a00;--orange-texte:#b94700;--orange-survol:#e75e00;--nuit:#17243b;--ivoire:#fff8f0;--peche:#ffeadb;--gris:#526077;--trait:#e4e7ed;--saisie:#c7cdd8;--ok:#1d7a46;--okfond:#e8f5ed;--erreur:#b42318;--erreurfond:#fdecea}
+*{box-sizing:border-box}
+body{margin:0;font:16px/1.55 system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--nuit);background:#eef0f4}
+h1,h2,h3,p{margin:0}h1,h2,h3{letter-spacing:-.03em;line-height:1.2}a{color:var(--orange-texte)}button,input,textarea,select{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--nuit);outline-offset:3px}
+.outil{position:sticky;top:0;z-index:50;background:var(--nuit);color:#fff;padding:10px 16px;display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center}
+.outil nav{display:flex;flex-wrap:wrap;gap:6px}.outil button{border:1px solid #ffffff55;background:transparent;color:#fff;border-radius:999px;padding:6px 12px;font-size:13px;cursor:pointer}
+.outil button.on{background:var(--orange);border-color:var(--orange);color:var(--nuit);font-weight:700}.outil .nouveau{border-color:#ffd9bd}.outil .sep{margin-left:auto;display:flex;gap:6px;align-items:center;font-size:13px}
+.avertis{max-width:1500px;margin:14px auto 0;padding:0 16px;font-size:13px;color:var(--gris)}
+.etats{max-width:1500px;margin:10px auto 0;padding:0 16px;display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:13px}
+.etats span{color:var(--gris);font-weight:700}.etats button{border:1.5px solid var(--saisie);background:#fff;border-radius:999px;padding:5px 12px;font-size:13px;font-weight:700;cursor:pointer}.etats button.on{background:var(--nuit);color:#fff;border-color:var(--nuit)}
+.scene{margin:12px auto 0;background:#f6f7f9;border:1px solid var(--trait);border-radius:18px;overflow:hidden;container-type:inline-size;width:min(100%,1500px);box-shadow:0 10px 40px #17243b14}
+body.mobile .scene{width:390px}
+.ecran{display:none}.ecran.on{display:grid}
+.coque{display:grid}
+.lateral{display:none;background:var(--nuit);color:#e6ebf4;padding:18px 14px;gap:4px;align-content:start}
+.logo{display:flex;align-items:center;gap:9px;font-weight:800;font-size:18px}.lateral .logo{margin:0 6px 14px;color:#fff}
+.logo i{display:grid;place-items:center;width:34px;height:34px;border-radius:11px;background:var(--orange);color:var(--nuit);font-style:normal;font-size:22px}
+.lateral a{display:flex;gap:10px;align-items:center;padding:10px 12px;border-radius:10px;color:#e6ebf4;text-decoration:none;font-weight:600;font-size:15px}
+.lateral a.on{background:#ffffff1f;box-shadow:inset 3px 0 var(--orange)}
+.lateral .moi{margin-top:auto;border-top:1px solid #ffffff26;padding:14px 8px 0;font-size:14px}
+.haut-m{display:flex;align-items:center;gap:10px;padding:12px 16px;background:var(--nuit);color:#fff}
+.contenu{padding:16px;display:grid;gap:16px;align-content:start;min-width:0;padding-bottom:30px}
+.bas-m{position:sticky;bottom:0;display:grid;grid-template-columns:repeat(4,1fr);background:#fff;border-top:1px solid var(--trait)}
+.bas-m a{display:grid;place-items:center;gap:1px;padding:8px 2px;font-size:11.5px;font-weight:700;color:var(--gris);text-decoration:none;min-height:60px}
+.bas-m a.on{color:var(--orange-texte);box-shadow:inset 0 3px var(--orange)}
+@container (min-width:900px){.coque{grid-template-columns:250px minmax(0,1fr);min-height:900px}.lateral{display:grid}.haut-m,.bas-m{display:none}.contenu{padding:28px 36px 40px}}
+.entete{display:grid;gap:10px}.entete h1{font-size:clamp(26px,5cqw,32px)}.petit{font-size:13px;color:var(--gris)}
+@container (min-width:900px){.entete{grid-template-columns:1fr auto;align-items:center}}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:50px;padding:10px 18px;border:0;border-radius:10px;background:var(--orange);color:var(--nuit);font-weight:800;font-size:16px;cursor:pointer;text-decoration:none;text-align:center}
+.btn:hover{background:var(--orange-survol)}.btn.sec{background:#fff;border:2px solid var(--nuit)}.btn.danger{background:#fff;border:2px solid var(--erreur);color:var(--erreur)}.btn.pleine{width:100%}.btn.pet{min-height:44px;padding:6px 14px;font-size:15px}
+.lien{background:none;border:0;padding:6px 0;font-weight:700;color:var(--orange-texte);text-decoration:underline;cursor:pointer}
+.carte{background:#fff;border:1px solid var(--trait);border-radius:14px;padding:18px;display:grid;gap:12px;align-content:start;min-width:0}.carte h2{font-size:19px}.carte h3{font-size:17px}
+.ligne{display:flex;justify-content:space-between;gap:12px;font-size:15px;padding:6px 0;border-bottom:1px dashed var(--trait)}.ligne:last-child{border-bottom:0}
+.badge{display:inline-block;border-radius:999px;padding:3px 11px;font-size:12.5px;font-weight:800;white-space:nowrap}.b-ok{background:var(--okfond);color:var(--ok)}.b-att{background:var(--peche);color:var(--orange-texte)}.b-nu{background:#e9ecf2;color:var(--gris)}.b-err{background:var(--erreurfond);color:var(--erreur)}
+.etape{display:grid;gap:10px;background:var(--ivoire);border:2px solid var(--orange);border-radius:14px;padding:16px}.surtitre{font-size:12px;letter-spacing:.11em;text-transform:uppercase;font-weight:800;color:var(--orange-texte)}.etape h2{font-size:20px}
+.alerte{display:flex;gap:10px;border-radius:12px;padding:12px 14px;font-size:14.5px;border:1px solid}.alerte.info{background:var(--ivoire);border-color:var(--peche)}.alerte.err{background:var(--erreurfond);border-color:#f2b8b2;color:#7a1a12}.alerte.ok{background:var(--okfond);border-color:#b8dfc7;color:#14532d}.alerte.att{background:#fff4e5;border-color:#f6d9a8;color:#7a4a00}
+label.champ{display:grid;gap:6px;font-weight:700;font-size:15px}label.champ small{font-weight:400;color:var(--gris);font-size:13px}
+input[type=text],input[type=tel],input[type=date],textarea,select{width:100%;min-height:50px;border:1.5px solid var(--saisie);border-radius:11px;padding:10px 13px;background:#fff;font-weight:500}textarea{min-height:96px;resize:vertical}
+input.err,textarea.err{border-color:var(--erreur);box-shadow:0 0 0 3px var(--erreurfond)}.msg-err{color:var(--erreur);font-size:14px;font-weight:600}
+.deux{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.cols{display:grid;gap:16px;align-items:start}.col{display:grid;gap:16px;align-content:start;min-width:0}
+.cartes{display:grid;gap:14px}
+.kpi{display:grid;grid-template-columns:1fr 1fr;gap:12px}.kpi div{background:#fff;border:1px solid var(--trait);border-radius:14px;padding:14px;display:grid}.kpi b{font-size:28px}
+@container (min-width:700px){.kpi{grid-template-columns:repeat(4,1fr)}.cartes{grid-template-columns:repeat(2,1fr)}}
+@container (min-width:900px){.cols{grid-template-columns:minmax(0,1fr) 400px;gap:24px}.centre{justify-self:center;width:min(100%,760px)}}
+@container (min-width:1300px){.cartes{grid-template-columns:repeat(3,1fr)}}
+.res-sel{display:grid;gap:10px}@container (min-width:700px){.res-sel{grid-template-columns:1fr 1fr;max-width:720px}}
+.onglets{display:grid;grid-template-columns:1fr 1fr;background:#e9ecf1;border-radius:12px;padding:4px;max-width:520px}.onglets button{border:0;background:transparent;border-radius:9px;min-height:46px;font-weight:800;cursor:pointer;color:var(--gris)}.onglets button.on{background:#fff;color:var(--nuit);box-shadow:0 1px 3px #17243b1f}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;text-align:center;font-size:13px}.cal b.j{color:var(--gris);font-size:12px}
+.cal .d{min-height:50px;border:1px solid var(--trait);border-radius:9px;display:grid;place-items:center;align-content:center;background:#fff;font-weight:700}.cal .d small{font-size:10px;font-weight:600;line-height:1.1}
+.cal .conf{background:#dff3e6;border-color:#9fd3b2}.cal .att{background:#fff0d6;border-color:#f0cb85}.cal .tel{background:#dbeafe;border-color:#9fc2ef}.cal .blo{background:#e2e5ec;border-color:#b9bfcc}
+@container (min-width:900px){.cal .d{min-height:66px}}
+.legende{display:flex;flex-wrap:wrap;gap:12px;font-size:13px}.legende i{display:inline-block;width:12px;height:12px;border-radius:4px;margin-right:5px;vertical-align:-1px}
+.photo{border-radius:12px;background:linear-gradient(135deg,#d7c3ab,#a98c6c 55%,#e9d9c4);color:#ffffffcc;font-size:11px;display:grid;place-items:end start;padding:6px 8px;min-height:92px}
+.liste{list-style:none;margin:0;padding:0;display:grid;gap:8px;font-size:15px}.liste li{display:flex;gap:9px}.liste li::before{content:"✓";color:var(--ok);font-weight:900}
+.pieces{display:grid;gap:12px}.piece{display:grid;gap:8px;border:1.5px solid var(--trait);border-radius:14px;padding:16px;background:#fff}.piece.ok{border-color:#b8dfc7;background:#f6fbf8}.piece.att{border-color:var(--peche)}.piece.err{border-color:#f2b8b2;background:#fffafa}
+.piece .tete{display:flex;gap:10px;justify-content:space-between;align-items:flex-start;flex-wrap:wrap}.piece h3{font-size:17px}
+.fichier{border:2px dashed var(--saisie);border-radius:12px;padding:14px;display:grid;gap:8px;justify-items:start;background:#fafbfc}
+.carte-map{border-radius:14px;min-height:150px;background:repeating-linear-gradient(45deg,#eaf0e4,#eaf0e4 14px,#dfe8d6 14px,#dfe8d6 28px);display:grid;place-items:center;position:relative;border:1px solid var(--trait)}
+.carte-map span{background:var(--orange);color:var(--nuit);border-radius:50% 50% 50% 0;width:34px;height:34px;display:grid;place-items:center;transform:rotate(-45deg);font-weight:900}.carte-map span b{transform:rotate(45deg)}
+.apps{display:grid;gap:8px}.apps a{display:flex;gap:10px;align-items:center;min-height:50px;padding:8px 14px;border:1.5px solid var(--trait);border-radius:12px;background:#fff;font-weight:700;text-decoration:none;color:var(--nuit)}
+.note{max-width:1500px;margin:12px auto 0;padding:0 16px}
+.note details{background:#fff;border:1px solid var(--trait);border-radius:12px;padding:12px 16px}.note summary{cursor:pointer;font-weight:800}
+.note dl{display:grid;gap:10px;margin:12px 0 0;font-size:14.5px}.note dt{font-weight:800}.note dd{margin:0;color:var(--gris)}
+.points-v{max-width:1500px;margin:22px auto 60px;padding:0 16px}.points-v .carte{background:#fff}.points-v ol{margin:0;padding-left:20px;display:grid;gap:8px}
+.tag-n{background:var(--orange);color:var(--nuit);border-radius:6px;padding:1px 7px;font-size:11px;font-weight:800;margin-left:6px;vertical-align:2px}
+
+.stepper{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}.stepper button{border:2px solid var(--trait);background:#fff;border-radius:12px;min-height:50px;font-weight:800;font-size:14px;cursor:pointer;padding:6px}.stepper button.on{border-color:var(--orange);background:var(--ivoire);color:var(--orange-texte)}.stepper button.fait{border-color:#b8dfc7;background:var(--okfond);color:var(--ok)}
+.log{display:grid;grid-template-columns:78px minmax(0,1fr);gap:12px;align-items:center;border:1px solid var(--trait);border-radius:12px;padding:10px;background:#fff}.log .photo{min-height:64px}
+.radio{display:grid;gap:8px}.radio label{display:flex;gap:10px;align-items:flex-start;border:1.5px solid var(--saisie);border-radius:12px;padding:12px;font-weight:700;cursor:pointer}.radio label small{display:block;font-weight:400;color:var(--gris)}
+.offres{display:grid;gap:10px}.offre{border:2px solid var(--saisie);border-radius:14px;padding:14px;background:#fff;display:grid;gap:2px;cursor:pointer;text-align:left}.offre.on{border-color:var(--orange);background:var(--ivoire)}.offre b{font-size:22px}
+.tableau{display:grid;gap:8px}.tableau .l{display:grid;gap:4px;border:1px solid var(--trait);border-radius:12px;padding:12px;background:#fff}.tableau .l .m{display:flex;justify-content:space-between;gap:10px;font-size:14.5px}
+.case{display:flex;gap:10px;align-items:flex-start;font-weight:600}.case input{width:22px;height:22px;margin-top:2px}
+@container (min-width:700px){.offres{grid-template-columns:repeat(3,1fr)}.tableau .l{grid-template-columns:1.4fr repeat(3,1fr) 1fr;align-items:center}.tableau .l .m{display:block}.tableau .l .m small{display:block;color:var(--gris);font-size:12px}.tableau .tete{display:grid}}
+.tableau .tete{display:none;grid-template-columns:1.4fr repeat(3,1fr) 1fr;gap:4px;padding:0 12px;font-size:12.5px;font-weight:800;color:var(--gris)}
+.rub{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px}.rub button{flex:none;border:1.5px solid var(--saisie);background:#fff;border-radius:999px;padding:8px 14px;font-weight:700;cursor:pointer}.rub button.on{background:var(--nuit);color:#fff;border-color:var(--nuit)}
+@container (min-width:700px){.tableau .l.t6{grid-template-columns:1.1fr 1.3fr .8fr 1.1fr .9fr .9fr!important}.tableau .tete.t6{grid-template-columns:1.1fr 1.3fr .8fr 1.1fr .9fr .9fr!important;display:grid}.tableau .l.t4{grid-template-columns:1fr 1fr 1.4fr 1fr!important}.tableau .tete.t4{grid-template-columns:1fr 1fr 1.4fr 1fr!important;display:grid}.tableau .l .m small{display:none}}
+</style></head>
+<body>
+<div class="outil">
+  <b>Maquette Administration : argent et réglages — Avelis Séjours</b>
+  <nav id="nav" aria-label="Écrans"><button data-e="paiements" class="on">1 · Paiements</button><button data-e="reversements">2 · Reversements</button><button data-e="controle">3 · Contrôle</button><button data-e="mises">4 · Mises en avant</button><button data-e="journal">5 · Journal d'audit</button><button data-e="mails">6 · Modèles d'e-mails</button><button data-e="reglages">7 · Réglages</button><button data-e="install">8 · Installation</button></nav>
+  <span class="sep">Affichage :<button id="b-mob" class="on">Téléphone</button><button id="b-ord">Ordinateur</button></span>
+</div>
+<p class="avertis">Maquette de travail, non validée : noms, montants et références sont des exemples. Les boutons « État » montrent chaque situation. Aucune règle d'argent ne change ; les montants restent en FCFA entiers et les écritures ne sont jamais modifiées.</p>
+<div class="etats" id="etats"></div>
+
+<div class="scene" id="scene"><div class="coque">
+<aside class="lateral" id="lateral"><div class="logo"><i>A</i>Avelis Séjours</div><span class="petit" style="color:#b9c3d6;margin:-8px 6px 8px">Administration</span>
+  <a href="#" data-n="x">⌂ Tableau de bord</a><a href="#" data-n="x">▣ Résidences à valider</a><a href="#" data-n="x">☰ Réservations</a><a href="#" data-n="x">⚠ Litiges</a><a href="#" data-n="paiements">▭ Paiements</a><a href="#" data-n="reversements">₣ Reversements</a><a href="#" data-n="controle">⚖ Contrôle <span class="badge b-att" style="margin-left:auto">2</span></a><a href="#" data-n="mises">★ Mises en avant</a><a href="#" data-n="journal">☰ Journal d'audit</a><a href="#" data-n="mails">✉ Modèles d'e-mails</a><a href="#" data-n="reglages">⚙ Réglages</a>
+  <div class="moi"><b>Équipe Avelis</b><br><span class="petit" style="color:#b9c3d6">Super-administrateur</span></div></aside>
+<div>
+<header class="haut-m"><span class="logo"><i>A</i>Avelis Séjours</span></header>
+<main class="contenu">
+
+<!-- 1 PAIEMENTS -->
+<section class="ecran on" id="e-paiements">
+  <div class="entete"><div><h1>Paiements</h1><p class="petit">Ce qui a été encaissé, et les écritures qui en découlent</p></div></div>
+  <div class="deux" style="max-width:520px"><label class="champ">État<select><option>Tous</option><option>Réussi</option><option>En attente</option><option>Échoué</option></select></label><label class="champ">Type d'écriture<select><option>Tous</option><option>Encaissement</option><option>Remboursement</option></select></label></div>
+  <div class="carte" data-s="pa-liste"><h2>Paiements</h2><div class="tableau"><div class="tete t6"><span>Date</span><span>Référence GeniusPay</span><span>Réservation</span><span>Montant</span><span>État</span><span>Mode</span></div>
+    <div class="l t6"><div class="m"><small>Date</small>3 nov. 14 h 32</div><div class="m"><small>Référence</small>GP-8F3A21C9</div><div class="m"><small>Réservation</small>#38</div><div class="m"><small>Montant · frais</small><b>9 000</b> · 180</div><div><span class="badge b-ok">Réussi</span></div><div class="m"><small>Mode</small>Wave</div></div>
+    <div class="l t6"><div class="m"><small>Date</small>3 nov. 11 h 05</div><div class="m"><small>Référence</small>GP-41B7C0AA</div><div class="m"><small>Réservation</small>#41</div><div class="m"><small>Montant · frais</small><b>9 000</b></div><div><span class="badge b-att">En attente</span></div><div class="m"><small>Mode</small>Orange Money</div></div>
+    <div class="l t6"><div class="m"><small>Date</small>2 nov. 18 h 40</div><div class="m"><small>Référence</small>GP-77D1E2F0</div><div class="m"><small>Réservation</small>#40</div><div class="m"><small>Montant · frais</small><b>18 000</b></div><div><span class="badge b-err">Échoué</span></div><div class="m"><small>Mode</small>Carte</div></div></div></div>
+  <div class="carte" data-s="pa-liste"><h2>Écritures</h2><p class="petit">Une correction est toujours une nouvelle écriture : rien n'est supprimé ni modifié.</p><div class="ligne"><span>3 nov. · Encaissement · #38</span><span><b>9 000</b> · par le système</span></div><div class="ligne"><span>2 nov. · Remboursement · #36</span><span><b>−10 000</b> · par Awa (équipe)</span></div></div>
+  <div class="carte" data-s="pa-vide" style="text-align:center"><p style="font-weight:800">Aucun paiement pour le moment.</p></div>
+</section>
+
+<!-- 2 REVERSEMENTS -->
+<section class="ecran" id="e-reversements">
+  <div class="entete"><div><h1>Reversements</h1><p class="petit">Les parts à envoyer aux gérants par Mobile Money</p></div></div>
+  <div class="alerte ok" data-s="rv-fait"><span>Reversement enregistré : 16 200 FCFA à Confort Immobilier.</span></div>
+  <div class="cols"><div class="col" data-s="rv-liste rv-fait rv-erreur"><div class="carte"><h2>À reverser (2 gérants)</h2><div class="ligne"><span><b>Confort Immobilier</b><br><span class="petit">2 séjours après arrivée</span></span><b>24 300 FCFA</b></div><div class="ligne"><span><b>Mme Diallo</b><br><span class="petit">1 séjour après arrivée</span></span><b>8 100 FCFA</b></div></div>
+    <div class="carte"><h2>Historique des reversements</h2><div class="ligne"><span>16 nov. · Confort Immobilier · Wave 8821</span><b>16 200</b></div><div class="ligne"><span>2 nov. · Mme Diallo · Orange 4410</span><b>8 100</b></div></div></div>
+    <div class="carte" data-s="rv-vide"><p style="font-weight:800">Rien à reverser pour le moment.</p><p class="petit">Les parts apparaissent ici après l'arrivée des clients.</p></div>
+    <form class="carte" onsubmit="return false" data-s="rv-liste rv-erreur rv-fait"><h2>Reverser à Confort Immobilier</h2><div class="ligne"><span>Awa K. · 4 déc.</span><b>8 100</b></div><div class="ligne"><span>M. Traoré · 12 nov.</span><b>16 200</b></div><div class="ligne"><span><b>Total</b></span><b>24 300 FCFA</b></div>
+      <label class="champ">Référence de l'envoi Mobile Money<input type="text" id="rv-ref"></label><p class="msg-err" data-s="rv-erreur">Indiquez la référence de l'envoi Mobile Money.</p><label class="champ">Date de l'envoi<input type="date" value="2026-11-03"></label>
+      <button class="btn pleine">J'ai envoyé 24 300 FCFA : enregistrer</button><p class="petit">Une confirmation vous est demandée avant l'enregistrement.</p></form></div>
+</section>
+
+<!-- 3 CONTRÔLE -->
+<section class="ecran" id="e-controle">
+  <div class="entete"><div><h1>Contrôle</h1><p class="petit">Les paiements et les écritures doivent concorder au franc près</p></div></div>
+  <div class="carte" data-s="c-ok" style="background:var(--okfond);border-color:#b8dfc7"><b style="color:var(--ok)">✔ Tout concorde</b><span class="petit">paiements et écritures sont d'accord, au franc près.</span></div>
+  <div class="carte" data-s="c-diff c-alertes" style="background:#fff4e5;border-color:#f6d9a8"><b style="color:#7a4a00">⚠ 2 différences à examiner</b></div>
+  <div class="kpi"><div><b>480 000</b><span class="petit">Encaissé (paiements réussis)</span></div><div><b>10 000</b><span class="petit">Remboursé</span></div><div><b>47 000</b><span class="petit">Commissions</span></div><div><b>32 400</b><span class="petit">À reverser</span></div></div>
+  <div class="cols"><div class="col"><div class="carte" data-s="c-diff"><h2>Différences</h2><div class="ligne"><span>Paiement GP-41B7C0AA · #41</span><span class="badge b-att">Sans encaissement</span></div><button class="btn sec pet" style="justify-self:start">Écrire l'encaissement</button></div>
+    <div class="carte" data-s="c-alertes c-diff"><h2>À traiter (2)</h2><div class="ligne"><span><b>Remboursement à refaire</b><br><span class="petit">#36 · le fournisseur de paiement n'a pas répondu</span></span></div><button class="btn pleine">Réessayer le remboursement</button><button class="btn sec pleine">Je l'ai fait à la main : enregistrer</button><button class="btn sec pleine">Marquer comme traité</button></div></div>
+    <aside class="col"><div class="carte"><h2>Calcul</h2><p class="petit">Encaissé − remboursé − commissions = ce qui est dû aux gérants ou déjà reversé. Les écarts éventuels apparaissent à gauche.</p></div></aside></div>
+</section>
+
+<!-- 4 MISES EN AVANT -->
+<section class="ecran" id="e-mises">
+  <div class="entete"><div><h1>Mises en avant</h1></div></div>
+  <div class="alerte ok" data-s="m-suspendue"><span>Mise en avant suspendue. Le gérant en est informé.</span></div>
+  <div class="cartes" data-s="m-liste m-suspendue"><article class="carte"><div style="display:flex;justify-content:space-between;gap:8px"><b>Résidence Papaye</b><span class="badge b-ok">En cours</span></div><p class="petit">Confort Immobilier · 1 déc. → 8 déc. 2026 · 5 000 FCFA</p><button class="btn sec pet" style="justify-self:start">Suspendre</button></article>
+    <article class="carte"><div style="display:flex;justify-content:space-between;gap:8px"><b>Villa Marcory</b><span class="badge b-att">Suspendue par Avelis</span></div><p class="petit">Mme Diallo · 28 nov. → 5 déc. 2026 · 5 000 FCFA</p><button class="btn sec pet" style="justify-self:start">Reprendre</button></article></div>
+  <form class="carte" onsubmit="return false" data-s="m-suspension"><h2>Suspendre la mise en avant n° 12</h2><label class="champ">Motif (gardé dans le journal)<textarea id="m-motif"></textarea></label><p class="msg-err" data-s="m-suspension" style="display:none">Indiquez le motif.</p><button class="btn danger pleine">Suspendre</button><a class="btn sec pleine" href="#">Annuler</a></form>
+</section>
+
+<!-- 5 JOURNAL -->
+<section class="ecran" id="e-journal">
+  <div class="entete"><div><h1>Journal d'audit</h1><p class="petit">Qui a fait quoi, et quand. Le journal ne se modifie jamais.</p></div></div>
+  <div class="carte"><div class="tableau"><div class="tete t4"><span>Quand</span><span>Qui</span><span>Action</span><span>Sur</span></div>
+    <div class="l t4"><div class="m"><small>Quand</small>3 nov. 14 h 40</div><div class="m"><small>Qui</small>Awa (équipe)</div><div class="m"><small>Action</small><b>residence.validee</b></div><div class="m"><small>Sur</small>Résidence #1</div></div>
+    <div class="l t4"><div class="m"><small>Quand</small>3 nov. 11 h 12</div><div class="m"><small>Qui</small>Confort Immobilier</div><div class="m"><small>Action</small><b>gerant.document_depose</b></div><div class="m"><small>Sur</small>Dossier #4</div></div>
+    <div class="l t4"><div class="m"><small>Quand</small>2 nov. 18 h 02</div><div class="m"><small>Qui</small>Système</div><div class="m"><small>Action</small><b>paiement.reussi</b></div><div class="m"><small>Sur</small>Paiement #77</div></div></div>
+    <div style="display:flex;justify-content:space-between"><button class="btn sec pet">‹ Précédent</button><button class="btn sec pet">Suivant ›</button></div></div>
+</section>
+
+<!-- 6 MODÈLES D'E-MAILS -->
+<section class="ecran" id="e-mails">
+  <div class="entete"><div><h1>Modèles d'e-mails</h1><p class="petit">Les textes envoyés par la plateforme. Les mots entre accolades sont remplacés à l'envoi.</p></div></div>
+  <div class="alerte ok" data-s="e-ok"><span>Modèle enregistré.</span></div><div class="alerte ok" data-s="e-essai"><span>Un essai vient de vous être envoyé.</span></div>
+  <div class="cols"><div class="col"><div class="carte"><h2>Messages</h2><div class="ligne"><span><b>Confirmation de réservation</b><br><span class="petit">au voyageur</span></span><a href="#">Modifier</a></div><div class="ligne"><span><b>Rappel d'arrivée (la veille)</b><br><span class="petit">au voyageur</span></span><a href="#">Modifier</a></div><div class="ligne"><span><b>Rappel de la pièce d'identité</b><br><span class="petit">au voyageur</span></span><a href="#">Modifier</a></div><div class="ligne"><span><b>Annulation</b><br><span class="petit">voyageur et gérant</span></span><a href="#">Modifier</a></div><div class="ligne"><span><b>Reversement effectué</b><br><span class="petit">au gérant</span></span><a href="#">Modifier</a></div><div class="ligne"><span><b>Litige ouvert · Litige clos</b><br><span class="petit">les deux parties</span></span><a href="#">Modifier</a></div></div></div>
+    <form class="carte" onsubmit="return false"><h2>Confirmation de réservation</h2><label class="champ">Sujet<input type="text" value="Réservation confirmée : {logement}"></label><label class="champ">Message<textarea style="min-height:200px">Bonjour {nom},
+
+Votre réservation n° {numero} est confirmée.
+Logement : {logement} ({residence})
+Dates : {dates}
+Montant payé : {montant}</textarea></label><p class="msg-err" data-s="e-erreur">« {prenom} » n'existe pas. Mots possibles : {nom}, {logement}, {residence}, {dates}, {montant}, {numero}, {motif}, {decision}.</p>
+      <p class="petit">Mots possibles : {nom} le prénom ou nom · {logement} · {residence} · {dates} · {montant} · {numero} · {motif} · {decision}</p><button class="btn pleine">Enregistrer</button><button class="btn sec pleine" type="button">M'envoyer un essai</button></form></div>
+</section>
+
+<!-- 7 RÉGLAGES -->
+<section class="ecran" id="e-reglages">
+  <div class="entete"><div><h1>Réglages de la plateforme</h1><p class="petit">Tout se règle ici, sans toucher à aucun fichier technique. Chaque changement est tracé.</p></div></div>
+  <div class="rub" data-s="rg-accueil rg-rubrique rg-secret rg-tests rg-historique"><button class="on">Accueil</button><button>Général</button><button>Réservation</button><button>Paiement</button><button>Notifications</button><button>Mise en avant</button><button>Sécurité</button><button>Tests</button><button>Historique</button></div>
+  <div class="alerte ok" data-s="rg-ok"><span>Réglage enregistré.</span></div>
+  <div class="cartes" data-s="rg-accueil"><article class="carte"><h2>Général</h2><p class="petit">Nom, contact, logo, textes légaux</p><span class="badge b-ok">Configuré</span></article><article class="carte"><h2>Réservation</h2><p class="petit">Nuits min. et max., heure de départ, durée de garde</p><span class="badge b-ok">Configuré</span></article><article class="carte"><h2>Paiement</h2><p class="petit">GeniusPay, commission, acompte minimum</p><span class="badge b-att">À compléter</span></article><article class="carte"><h2>Notifications</h2><p class="petit">E-mails envoyés par la plateforme</p><span class="badge b-att">À compléter</span></article><article class="carte"><h2>Mise en avant</h2><p class="petit">Offres et prix</p><span class="badge b-ok">Configuré</span></article><article class="carte"><h2>Sécurité</h2><p class="petit">Tentatives de connexion, durées</p><span class="badge b-ok">Configuré</span></article></div>
+  <form class="carte" onsubmit="return false" data-s="rg-rubrique rg-ok rg-secret"><h2>Réservation</h2><h3>Séjour</h3><div class="deux"><label class="champ">Nuits minimum<input type="text" value="1"></label><label class="champ">Nuits maximum<input type="text" value="30"></label></div><div class="deux"><label class="champ">Heure de départ<input type="text" value="11:00"></label><label class="champ">Heure d'arrivée<input type="text" value="14:00"></label></div><label class="champ">Durée de garde des dates (minutes)<input type="text" value="120"></label>
+    <div data-s="rg-secret"><h3>Paiement (GeniusPay)</h3><label class="champ">Clé secrète<div style="display:flex;gap:8px"><input type="text" value="••••••••••••" disabled><button class="btn sec pet" type="button">Remplacer</button></div><small class="petit">Chiffrée en base. Jamais affichée.</small></label></div>
+    <button class="btn pleine">Enregistrer</button></form>
+  <div class="cartes" data-s="rg-tests"><article class="carte"><h2>✉ E-mail</h2><p class="petit">Envoie un message d'essai à votre adresse.</p><button class="btn pleine">Lancer le test e-mail</button><div class="alerte ok"><span>E-mail envoyé à awa@exemple.ci.</span></div></article><article class="carte"><h2>💳 Paiement (GeniusPay)</h2><p class="petit">Vérifie que les clés sont acceptées, sans débiter personne.</p><button class="btn pleine">Lancer le test paiement</button></article></div>
+  <div class="carte" data-s="rg-historique"><h2>Historique des modifications</h2><div class="ligne"><span>3 nov. · Réservation · Nuits maximum 30</span><span class="petit">Awa</span></div><div class="ligne"><span>2 nov. · Paiement · Clé secrète remplacée</span><span class="petit">Awa</span></div></div>
+</section>
+
+<!-- 8 INSTALLATION -->
+<section class="ecran" id="e-install">
+  <div class="centre" style="display:grid;gap:16px"><div class="entete"><div><h1>Bienvenue sur Avelis Séjours</h1><p class="petit">Quelques minutes pour préparer votre plateforme.</p></div></div>
+  <div class="stepper"><button class="on">1 Vous</button><button>2 Général</button><button>3 E-mails</button></div>
+  <form class="carte" onsubmit="return false"><h2>Vos informations (super-administrateur)</h2><label class="champ">Code d'installation<input type="text"></label><label class="champ">Nom complet<input type="text"></label><label class="champ">Téléphone<input type="tel"></label><label class="champ">E-mail<input type="text"></label><label class="champ">Mot de passe<input type="password"><small class="petit">8 caractères minimum.</small></label><label class="champ">Retapez le mot de passe<input type="password"></label><button class="btn pleine">Continuer</button><button class="btn sec pleine" type="button">Passer pour l'instant</button></form></div>
+</section>
+
+</main>
+<nav class="bas-m" id="bas"><a href="#" data-n="x">⌂<span>Tableau</span></a><a href="#" data-n="x">▣<span>Résidences</span></a><a href="#" data-n="x">☰<span>Réservations</span></a><a href="#" data-n="x">⚠<span>Litiges</span></a></nav>
+</div></div></div>
+
+<div class="note"><details open><summary id="nt">Fiche écran</summary><dl id="nc"></dl></details></div>
+
+<div class="points-v"><section class="carte"><h2>Points à faire valider avant l'intégration</h2>
+<ol>
+<li><b>Aucune règle d'argent ne change</b> : mêmes montants (FCFA entiers), mêmes écritures (jamais modifiées ni supprimées : une correction est une nouvelle écriture), mêmes décisions, même journal d'audit, mêmes droits. Seule la présentation passe à la charte orange.</li>
+<li><b>Tableaux</b> : sur ordinateur, les listes (paiements, écritures, journal) restent des tableaux, plus lisibles ; sur téléphone, chaque ligne devient une carte avec ses intitulés (rien ne se lit en défilant sur le côté).</li>
+<li><b>Reversements</b> : un gérant à la fois, formulaire clair (référence Mobile Money obligatoire, date), confirmation avant l'enregistrement, historique en dessous.</li>
+<li><b>Contrôle</b> : un grand message « Tout concorde » ou « n différences à examiner », quatre compteurs, puis les différences et les alertes à traiter avec les trois actions existantes (réessayer, fait à la main, marquer comme traité).</li>
+<li><b>Réglages</b> : rubriques en pastilles (Général, Réservation, Paiement, Notifications, Mise en avant, Sécurité, Tests, Historique) ; les secrets restent masqués (« •••• » et bouton « Remplacer »), chiffrés en base, jamais affichés.</li>
+<li><b>Installation</b> : assistant en trois étapes ; « Bonjour 👋 » devient « Bienvenue sur Avelis Séjours » (sans émoji). Cette page n'est utilisée qu'une fois ; elle garde son fonctionnement et ses protections.</li>
+<li><b>Modèles d'e-mails</b> : la liste des messages à gauche, l'édition à droite ; mêmes mots remplaçables, même essai envoyé à soi-même.</li>
+<li><b>Hors de ce lot</b> : le nettoyage des anciennes feuilles de style vertes (lot 9).</li>
+</ol></section></div>
+
+<script>
+const ETATS={
+ paiements:[['pa-liste','Avec paiements'],['pa-vide','Aucun paiement']],
+ reversements:[['rv-liste','À reverser'],['rv-erreur','Référence manquante'],['rv-fait','Reversement fait'],['rv-vide','Rien à reverser']],
+ controle:[['c-ok','Tout concorde'],['c-diff','Différences'],['c-alertes','Alertes à traiter']],
+ mises:[['m-liste','Liste'],['m-suspension','Suspendre'],['m-suspendue','Suspendue']],
+ journal:[['j','Journal']],
+ mails:[['e-liste','Liste et édition'],['e-ok','Enregistré'],['e-essai','Essai envoyé'],['e-erreur','Mot inconnu']],
+ reglages:[['rg-accueil','Accueil'],['rg-rubrique','Une rubrique'],['rg-ok','Enregistré'],['rg-secret','Secret masqué'],['rg-tests','Tests'],['rg-historique','Historique']],
+ install:[['i','Étape 1']]};
+const NOTES={
+ paiements:['Écran 1 · Paiements',{'But':'Retrouver un paiement et ses écritures.','Ce que voit l\'utilisateur':'Filtres, liste des paiements (date, référence, réservation, montant, frais, état, mode), écritures (type, montant, auteur).','Actions':'Filtrer.','Messages d\'erreur':'Aucun ; liste vide : message simple.'}],
+ reversements:['Écran 2 · Reversements',{'But':'Reverser aux gérants leur part après l\'arrivée du client.','Ce que voit l\'utilisateur':'Gérants à reverser, séjours concernés, formulaire (référence Mobile Money, date), historique.','Actions':'Enregistrer un reversement (confirmation demandée).','Messages d\'erreur':'Référence manquante ; montant déjà reversé : messages existants.'}],
+ controle:['Écran 3 · Contrôle',{'But':'S\'assurer que paiements et écritures concordent.','Ce que voit l\'utilisateur':'Bilan, compteurs, différences, alertes argent.','Actions':'Écrire un encaissement ou un remboursement manquant, réessayer, enregistrer « fait à la main », marquer comme traité.','Messages d\'erreur':'Messages existants du service de remboursement.'}],
+ mises:['Écran 4 · Mises en avant',{'But':'Suivre et suspendre les mises en avant.','Ce que voit l\'utilisateur':'Liste (résidence, gérant, période, prix, statut).','Actions':'Suspendre (motif obligatoire, gardé dans le journal), reprendre.','Messages d\'erreur':'« Indiquez le motif. »'}],
+ journal:['Écran 5 · Journal d\'audit',{'But':'Retrouver qui a fait quoi.','Ce que voit l\'utilisateur':'Quand, qui, action, sur quoi ; pages.','Actions':'Page précédente / suivante.','Messages d\'erreur':'Aucun. Le journal est en lecture seule.'}],
+ mails:['Écran 6 · Modèles d\'e-mails',{'But':'Adapter les textes envoyés.','Ce que voit l\'utilisateur':'Liste des messages, sujet, texte, mots remplaçables.','Actions':'Enregistrer, m\'envoyer un essai.','Messages d\'erreur':'« {mot} n\'existe pas. Mots possibles : … »'}],
+ reglages:['Écran 7 · Réglages',{'But':'Régler la plateforme sans toucher aux fichiers techniques.','Ce que voit l\'utilisateur':'Rubriques avec leur état, champs, secrets masqués, tests de connexion, historique des modifications.','Actions':'Enregistrer, remplacer un secret, lancer un test.','Messages d\'erreur':'Messages existants de chaque réglage (valeur invalide, secret manquant).'}],
+ install:['Écran 8 · Installation',{'But':'Première mise en route de la plateforme.','Ce que voit l\'utilisateur':'Assistant en trois étapes : super-administrateur, général, e-mails.','Actions':'Continuer, passer pour l\'instant.','Messages d\'erreur':'Code d\'installation invalide, mot de passe trop court : messages existants.'}]};
+let ecran='paiements',etat={};
+function majEtat(){document.querySelectorAll('.scene .ecran [data-s]').forEach(e=>{e.style.display=e.dataset.s.split(' ').includes(etat[ecran])?'':'none';});
+ const e=etat[ecran];
+ if(ecran==='reversements')document.getElementById('rv-ref').classList.toggle('err',e==='rv-erreur');
+ if(ecran==='mails'){}
+ document.querySelectorAll('#etats button').forEach(b=>b.classList.toggle('on',b.dataset.s===etat[ecran]));
+ const nav={paiements:'paiements',reversements:'reversements',controle:'controle',mises:'mises',journal:'journal',mails:'mails',reglages:'reglages',install:'reglages'}[ecran];
+ document.querySelectorAll('#lateral a').forEach(a=>a.classList.toggle('on',a.dataset.n===nav));}
+function aller(id){ecran=id;etat[id]??=ETATS[id][0][0];document.querySelectorAll('.ecran').forEach(e=>e.classList.toggle('on',e.id==='e-'+id));document.querySelectorAll('#nav button').forEach(b=>b.classList.toggle('on',b.dataset.e===id));
+ document.getElementById('etats').innerHTML=ETATS[id].length>1?'<span>État :</span>'+ETATS[id].map(([k,l])=>`<button data-s="${k}" type="button">${l}</button>`).join(''):'';
+ const[t,d]=NOTES[id];document.getElementById('nt').textContent=t;document.getElementById('nc').innerHTML=Object.entries(d).map(([k,v])=>`<div><dt>${k}</dt><dd>${v}</dd></div>`).join('');majEtat();}
+document.getElementById('nav').addEventListener('click',e=>{const b=e.target.closest('button');if(b)aller(b.dataset.e)});
+document.getElementById('etats').addEventListener('click',e=>{const b=e.target.closest('button');if(b){etat[ecran]=b.dataset.s;majEtat();}});
+document.addEventListener('click',e=>{const n=e.target.closest('[data-n]');if(n){e.preventDefault();const m={paiements:1,reversements:1,controle:1,mises:1,journal:1,mails:1,reglages:1}[n.dataset.n];if(m)aller(n.dataset.n);return}
+ if(e.target.closest('a[href="#"]'))e.preventDefault();});
+const setVue=m=>{document.body.classList.toggle('mobile',m);document.getElementById('b-mob').classList.toggle('on',m);document.getElementById('b-ord').classList.toggle('on',!m)};
+document.getElementById('b-mob').onclick=()=>setVue(true);document.getElementById('b-ord').onclick=()=>setVue(false);
+setVue(window.innerWidth<700);aller('paiements');
+</script>
+</body>
+</html>
