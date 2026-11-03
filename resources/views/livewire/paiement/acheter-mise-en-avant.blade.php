@@ -1,5 +1,5 @@
 @php $fr = fn (int $m) => \App\Noyau\Services\Format::fcfa($m); @endphp
-<div class="mx-auto grid max-w-3xl gap-4">
+<div class="mr-page ev-page"><div class="ev-centre" style="max-width:860px">
     <a href="{{ route('gerant.mises-en-avant') }}" class="text-[15px] font-semibold text-marque-600">← Mes mises en avant</a>
     <div class="rounded-2xl bg-gradient-to-br from-marque-600 to-marque-500 p-5 text-white"><div class="adm-top"><div><h1>Faites passer votre résidence en tête ⭐</h1></div></div><p class="opacity-95">Votre annonce apparaît en premier dans les recherches, avec la mention « Sponsorisé ».</p></div>
     @if($erreur)<x-ui.alerte type="erreur">{{ $erreur }}</x-ui.alerte>@endif
@@ -24,4 +24,5 @@
     <button wire:click="payer" wire:loading.attr="disabled" @disabled(! $disponible) class="btn-pl">Payer {{ $fr($offres[$offre]['prix'] ?? 0) }}</button>
     <p class="aide">Vous quittez Avelis pour la page de paiement sécurisée de GeniusPay, puis vous revenez ici.</p>
     @endif
+</div>
 </div>

@@ -1,11 +1,9 @@
-<div class="grid gap-5">
-    <div class="flex flex-wrap items-center justify-between gap-3"><div class="adm-top"><div><h1>Mon profil gérant</h1><p>Vos informations et vos documents, une seule fois pour toutes vos résidences.</p></div></div><a class="btn-sec" href="{{ route('gerant.profil.apercu') }}">Voir mon profil public ↗</a></div>
+<div class="mr-page ev-page">
+    <div class="mr-entete"><div><h1>Mon profil gérant</h1><p class="petit">Vos informations et votre présentation publique.</p></div><a class="btn-sec" href="{{ route('gerant.profil.apercu') }}">Voir mon profil public ↗</a></div>
     @if($message)<x-ui.alerte type="succes">{{ $message }}</x-ui.alerte>@endif
-    <div class="pg-shell">
-        <div>
-            <div class="pg-tabs" role="tablist" aria-label="Mon profil"><button type="button" wire:click="$set('onglet', 'informations')" role="tab" aria-selected="{{ $onglet === 'informations' ? 'true' : 'false' }}">Mes informations</button><button type="button" wire:click="$set('onglet', 'documents')" role="tab" aria-selected="{{ $onglet !== 'informations' ? 'true' : 'false' }}">Mes documents</button></div>
-            @if($onglet === 'informations')
-            <form wire:submit="enregistrer" class="carte-p">
+    <x-ui.alerte type="info">Votre pièce d’identité et vos contrats de bail se déposent dans <a class="font-semibold underline" href="{{ route('gerant.verification') }}">Ma vérification</a> : une page, deux documents.</x-ui.alerte>
+    <div class="ev-cols">
+            <form wire:submit="enregistrer" class="mr-carte">
                 <h2>Vos informations</h2><p class="aide">Votre identité reste privée. Choisissez séparément ce qui apparaît sur votre profil public.</p>
                 <div class="grid gap-4 sm:grid-cols-2">
                     <div class="champ"><label class="etiquette" for="nomComplet">Nom complet *</label><input id="nomComplet" wire:model="nomComplet" required class="saisie" autocomplete="name" @readonly($profil->identiteValidee())>@error('nomComplet')<p class="erreur-champ">{{ $message }}</p>@enderror @if($profil->identiteValidee())<p class="aide">Nom de l’identité validée. Contactez Avelis pour le corriger.</p>@endif</div>
@@ -24,30 +22,13 @@
                 <p class="aide">Votre adresse personnelle, vos coordonnées de compte et vos documents ne deviennent pas publics.</p>
                 <button class="btn-pl" wire:loading.attr="disabled">Enregistrer mon profil</button>
             </form>
-            @else
-            <form wire:submit="envoyerDocuments" class="grid gap-4" x-data="{ transferts: 0, erreurTransfert: false }" x-on:livewire-upload-start="transferts++; erreurTransfert = false" x-on:livewire-upload-finish="transferts = Math.max(0, transferts - 1)" x-on:livewire-upload-error="transferts = Math.max(0, transferts - 1); erreurTransfert = true" x-on:livewire-upload-cancel="transferts = Math.max(0, transferts - 1)">
-                @if($profil->reprise_a_revoir)<x-ui.alerte type="attention">Plusieurs pièces différentes proviennent de vos anciennes résidences. Avelis doit contrôler leur reprise ; les fichiers déjà fournis sont conservés.</x-ui.alerte>@endif
-                @foreach(['identite' => 'Pièce d’identité'] as $type => $titre)
-                    @php $dernier = $documents->firstWhere('type', $type); $valide = $profil->documentValide($type); @endphp
-                    <div class="carte-p" wire:key="doc-{{ $type }}">
-                        <h2>{{ $titre }}</h2>
-                        <div class="flex flex-wrap gap-2"><span class="pg-badge {{ $type === 'identite' ? 'neutre' : 'or' }}">Obligatoire pour publier</span>@if($valide)<span class="pg-badge">✓ Validé par Avelis</span>@endif</div>
-                        <p class="aide">{{ $type === 'identite' ? 'Votre pièce identifie la personne responsable des résidences. Elle est contrôlée une seule fois pour votre dossier gérant.' : 'Ajoutez le certificat de résidence délivré par un commissariat en Côte d’Ivoire. Après validation avec votre pièce d’identité, vous obtenez la mention « Gérant certifié ».' }}</p>
-                        @if($dernier)<div class="pg-doc"><b>Document enregistré</b><p class="aide">{{ ['en_attente' => 'En cours de contrôle', 'accepte' => 'Validé par Avelis', 'refuse' => 'Refusé'][$dernier->statut] }}</p>@if($dernier->motif_refus)<p class="erreur-champ">{{ $dernier->motif_refus }}</p>@endif @if($valide && $dernier->id !== $valide->id)<p class="aide">Votre précédent document validé reste valable pendant l’examen de son remplacement.</p>@endif</div>@endif
-                        <div class="champ"><label class="etiquette" for="{{ $type }}">{{ $dernier ? 'Fournir un nouveau document' : 'Choisir mon document' }}</label><input id="{{ $type }}" wire:key="fichier-{{ $type }}-{{ $versionFichiers }}" type="file" wire:model="{{ $type }}" accept="application/pdf,image/jpeg,image/png" class="saisie py-3"><span class="aide">PDF, JPEG ou PNG · 5 Mo maximum.</span>@error($type)<p class="erreur-champ">{{ $message }}</p>@enderror</div>
-                    </div>
-                @endforeach
-                @error('documents')<p class="erreur-champ" role="alert">{{ $message }}</p>@enderror
-                <div wire:loading wire:target="identite" role="status" class="aide">Transfert en cours… Attendez la fin avant d’envoyer.</div>
-                <p x-cloak x-show="erreurTransfert" class="erreur-champ" role="alert">Le transfert a échoué. Sélectionnez à nouveau le document et attendez la fin du transfert.</p>
-                <button class="btn-pl" wire:loading.attr="disabled" x-bind:disabled="transferts > 0 || erreurTransfert">Envoyer les documents pour contrôle</button>
-                <x-ui.alerte type="info"><b>Vos documents restent privés.</b> Seule l’équipe Avelis autorisée peut les consulter. Aucun document ni votre adresse personnelle n’apparaît sur votre profil public.</x-ui.alerte>
-            </form>
-            @endif
-        </div>
-        <aside class="grid gap-4">
-            <div class="pg-situation"><p class="aide">VOTRE SITUATION</p><h2>{{ $profil->identiteValidee() ? 'Prêt à publier' : 'Identité à valider' }}</h2><p>{{ $profil->identiteValidee() ? 'Votre pièce d’identité est validée. Ajoutez le contrat de bail de chaque résidence dans « Ma vérification » avant de la soumettre.' : 'Vos brouillons restent disponibles. Faites valider votre pièce d’identité avant l’envoi d’une annonce.' }}</p>@if($profil->estCertifie())<span class="pg-badge or">✓ Gérant certifié</span>@else<p>Certification complémentaire facultative.</p>@endif<a href="{{ route('gerant.residences') }}" class="btn-sec">Gérer mes résidences →</a></div>
-            <div class="carte-p"><h2>Gérant vérifié</h2><p class="aide">Votre pièce d’identité et le contrat de bail de votre résidence ont été contrôlés par Avelis. Ajoutez-les dans <a class="font-semibold text-marque-600" href="{{ route('gerant.verification') }}">Ma vérification</a>.</p><a class="font-semibold text-marque-600" href="{{ route('gerant.profil.apercu') }}">Voir mon profil public ↗</a></div>
+        <aside class="mr-col">
+            <section class="mr-carte rv-ivoire"><h2>Votre situation</h2>
+                @if($profil->estVerifie())<p style="margin:0"><b>✓ Gérant vérifié</b></p><p class="petit" style="margin:0">Votre pièce d’identité et le contrat de bail de votre résidence sont validés.</p>
+                @elseif($profil->identiteValidee())<p style="margin:0"><b>Pièce d’identité validée</b></p><p class="petit" style="margin:0">Ajoutez le contrat de bail de chaque résidence dans <a class="underline" href="{{ route('gerant.verification') }}">Ma vérification</a> pour obtenir le badge « Gérant vérifié ».</p>
+                @else<p style="margin:0"><b>Identité à valider</b></p><p class="petit" style="margin:0">Vos brouillons restent disponibles. Faites valider votre pièce d’identité dans <a class="underline" href="{{ route('gerant.verification') }}">Ma vérification</a> avant l’envoi d’une annonce.</p>@endif
+            </section>
+            <section class="mr-carte"><h3>Ce que voit le public</h3><p class="petit" style="margin:0">Nom affiché, commune, présentation, photo ou logo, offres publiées. Jamais votre adresse personnelle, vos documents, votre téléphone ni votre e-mail.</p><a class="font-semibold text-marque-600" href="{{ route('gerant.profil.apercu') }}">Voir mon profil public ↗</a></section>
         </aside>
     </div>
 </div>

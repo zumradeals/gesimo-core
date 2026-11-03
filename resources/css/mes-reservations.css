@@ -154,3 +154,12 @@
 /* Menu latéral du gérant : même fond bleu nuit que l'espace client */
 .espace-gerant :is(.adm-side, .adm-haut) { background: var(--avelis-nuit); }
 .espace-gerant .adm-cadre { background: #f6f7f9; }
+
+/* ---------- Gérant : gestion (contrat docs/contrats/gerant-gestion-v3.md) ---------- */
+.gq-editeur { display: grid; gap: 16px; align-items: start; grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr)); }
+.gq-editeur > .stepper { grid-column: 1 / -1; }
+.gq-aide { max-width: 860px; }
+.charte .stepper { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin: 0; }
+.charte .stepper .st { min-height: 50px; border: 2px solid var(--avelis-trait); border-radius: 12px; background: #fff; font-weight: 800; font-size: 14px; color: var(--avelis-gris); display: grid; place-items: center; }
+.charte .stepper .st.on { border-color: var(--avelis-orange); background: var(--avelis-ivoire); color: var(--avelis-orange-texte); }
+.charte .stepper .st.fait { border-color: #b8dfc7; background: var(--avelis-ok-fond); color: var(--avelis-ok); }

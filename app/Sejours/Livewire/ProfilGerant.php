@@ -22,7 +22,7 @@ class ProfilGerant extends Component
 {
     use WithFileUploads;
 
-    public string $onglet = 'documents';
+    public string $onglet = 'informations';
 
     public string $nomComplet = '';
 
