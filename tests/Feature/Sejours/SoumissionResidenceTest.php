@@ -95,12 +95,15 @@ it('enregistrer sans nouvelle pièce conserve la validation et le badge', functi
     expect($residence->fresh())->statut_verification->toBe('verifiee')->badge_verifie->toBeTrue();
 });
 
-it('la soumission sans justificatif de gestion est autorisée', function () {
+it('la soumission sans contrat de bail est refusée avec un message clair, puis acceptée une fois le bail joint', function () {
     $gerant = creerUtilisateur(Role::Gerant);
     $residence = dossierGerantComplet($gerant);
     Livewire::actingAs($gerant)->test(EditerResidence::class, ['residence' => $residence])
-        ->call('soumettre')->assertRedirect(route('gerant.residences'));
-    expect($residence->fresh()->soumise_le)->not->toBeNull()->and($residence->documents()->count())->toBe(0);
+        ->call('soumettre')->assertNoRedirect()->assertSee('Ajoutez le contrat de bail');
+    expect($residence->fresh()->soumise_le)->toBeNull();
+    Livewire::actingAs($gerant)->test(EditerResidence::class, ['residence' => $residence])
+        ->set('justificatif', UploadedFile::fake()->image('bail.jpg'))->call('soumettre')->assertRedirect(route('gerant.residences'));
+    expect($residence->fresh()->soumise_le)->not->toBeNull();
 });
 
 it('refuse un mauvais format et un justificatif trop lourd sans succès ni enregistrement partiel', function () {
@@ -108,7 +111,7 @@ it('refuse un mauvais format et un justificatif trop lourd sans succès ni enreg
     $residence = dossierGerantComplet($gerant);
     Livewire::actingAs($gerant)->test(EditerResidence::class, ['residence' => $residence])
         ->set('justificatif', UploadedFile::fake()->create('virus.txt', 20, 'text/plain'))
-        ->call('envoyerPieces')->assertHasErrors(['justificatif'])->assertDontSee('Justificatif enregistré pour contrôle');
+        ->call('envoyerPieces')->assertHasErrors(['justificatif'])->assertDontSee('Contrat de bail enregistré pour contrôle');
     expect($residence->documents()->count())->toBe(0);
     Livewire::actingAs($gerant)->test(EditerResidence::class, ['residence' => $residence])
         ->set('justificatif', UploadedFile::fake()->create('mandat.pdf', 5121, 'application/pdf'))
@@ -145,7 +148,7 @@ it('une erreur de base conserve les anciens documents et retire les nouveaux fic
     }
 });
 
-it('un justificatif refusé ou indisponible ne bloque pas une soumission', function (string $raison) {
+it('un bail refusé bloque la soumission jusqu\'à son remplacement ; un fichier indisponible ne la bloque pas', function (string $raison) {
     $gerant = creerUtilisateur(Role::Gerant);
     $residence = dossierGerantComplet($gerant);
     $this->actingAs($gerant);
@@ -156,8 +159,14 @@ it('un justificatif refusé ou indisponible ne bloque pas une soumission', funct
     } else {
         Storage::disk('local')->delete($document->chemin);
     }
-    Livewire::actingAs($gerant)->test(EditerResidence::class, ['residence' => $residence])
-        ->call('soumettre')->assertRedirect(route('gerant.residences'));
+    $page = Livewire::actingAs($gerant)->test(EditerResidence::class, ['residence' => $residence])->call('soumettre');
+    if ($raison === 'refuse') {
+        $page->assertNoRedirect()->assertSee('Ajoutez le contrat de bail');
+        expect($residence->fresh()->soumise_le)->toBeNull();
+
+        return;
+    }
+    $page->assertRedirect(route('gerant.residences'));
     expect($residence->fresh()->soumise_le)->not->toBeNull();
 })->with(['refuse', 'absent']);
 
@@ -177,7 +186,7 @@ it('un justificatif de gestion ajouté ne dépublie pas une résidence', functio
     $gerant = creerUtilisateur(Role::Gerant);
     $residence = dossierGerantComplet($gerant, ['statut_verification' => 'verifiee', 'badge_verifie' => true]);
     Livewire::actingAs($gerant)->test(EditerResidence::class, ['residence' => $residence])
-        ->set('justificatif', UploadedFile::fake()->image('mandat.jpg'))->call('envoyerPieces')->assertHasNoErrors()->assertSee('Justificatif enregistré');
+        ->set('justificatif', UploadedFile::fake()->image('mandat.jpg'))->call('envoyerPieces')->assertHasNoErrors()->assertSee('Contrat de bail enregistré');
     expect($residence->fresh())->statut_verification->toBe('verifiee');
 });
 

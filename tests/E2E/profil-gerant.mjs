@@ -89,7 +89,7 @@ try {
     await owner.getByRole('button', { name: /3 Vérification et envoi/ }).click();
     await owner.locator('#justif').setInputFiles(output + '/document-fictif.png');
     await owner.getByRole('button', { name: 'Enregistrer le justificatif seul', exact: true }).click();
-    await visible(owner, 'Justificatif enregistré pour contrôle.');
+    await visible(owner, 'Contrat de bail enregistré pour contrôle par Avelis.');
     await visitor.reload();
     await visible(visitor, 'Studio Papaye — ESSAI');
     await admin.goto(base + '/admin/residences/' + data.residenceId);

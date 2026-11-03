@@ -317,8 +317,8 @@ it('le menu public validé expose ses six pages et indique la page active', func
 it('la page partenaire présente les étapes, justificatifs et liens utiles sans inventer de résultat', function () {
     $this->get('/devenir-partenaire')->assertOk()
         ->assertSee('Votre résidence mérite')->assertSee('Présentez votre résidence')
-        ->assertSee('Obligatoire pour publier')->assertSee('Badge gérant facultatif')->assertSee('Badge résidence facultatif')
-        ->assertSee('certificat de résidence')->assertSee('sans commission')
+        ->assertSee('Obligatoire pour publier')->assertSee('Contrat de bail validé')->assertSee('Gérant vérifié')
+        ->assertSee('Le certificat de résidence n’est plus demandé')->assertSee('sans commission')
         ->assertSee(route('inscription', ['profil' => 'gerant']), false)->assertSee(route('contact'), false)
         ->assertDontSee('en 2 minutes');
 });
