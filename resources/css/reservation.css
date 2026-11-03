@@ -30,7 +30,7 @@
 .charte .rv-page { display: grid; gap: 14px; }
 .charte .fil a { color: var(--avelis-orange-texte); }
 .charte :is(h1, h2, h3) { letter-spacing: -.03em; }
-:is(.site-reservation, .espace-client) :is(h1, h2, h3) { color: var(--avelis-nuit); }
+:is(.site-reservation, .espace-client, .espace-gerant) :is(h1, h2, h3) { color: var(--avelis-nuit); }
 .rv-titre { font-size: clamp(25px, 3vw, 34px); margin: 0; line-height: 1.15; }
 
 /* Fil des 3 étapes */

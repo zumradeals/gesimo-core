@@ -1,19 +1,22 @@
 @php $fr = fn (int $m) => \App\Noyau\Services\Format::fcfa($m); @endphp
-<div class="grid gap-4">
-    <div class="adm-top"><div><h1>Aujourd'hui</h1>@if($residence)<p class="petit">Résidence {{ $residence->nom }} · {{ $jourDate->translatedFormat('l j F') }}</p>@endif</div></div>
+<div class="mr-page ev-page">
+    <div class="mr-entete"><div><h1>Aujourd'hui</h1>@if($residence)<p class="petit">Résidence {{ $residence->nom }} · {{ $jourDate->translatedFormat('l j F') }}</p>@endif</div></div>
+    @if($aFaire ?? null)
+        <section class="mr-etape" aria-label="À faire en premier"><span class="mr-surtitre">À faire en premier</span><h2>{{ $aFaire['titre'] }}</h2><p>{{ $aFaire['texte'] }}</p><a href="{{ route('gerant.verification') }}" class="btn-pl grand">{{ $aFaire['bouton'] }}</a></section>
+    @endif
     @if($message)<x-ui.alerte type="succes">{{ $message }}</x-ui.alerte>@endif
     @if($erreur)<x-ui.alerte type="erreur">{{ $erreur }}</x-ui.alerte>@endif
 
     @if($residence === null)
         <x-ui.alerte type="attention">Aucune résidence à afficher : vous n'avez pas encore le droit « arrivées et départs ».</x-ui.alerte>
     @else
-    <div class="filtres-h" style="max-width:640px;grid-template-columns:1fr 1fr">
+    <div class="filtres-h gq-choix">
         <div class="champ"><label class="etiquette" for="residence">Résidence</label>
             <select id="residence" wire:model.live="residenceId" class="saisie">@foreach($residences as $r)<option value="{{ $r->id }}">{{ $r->nom }} ({{ $r->commune }})</option>@endforeach</select></div>
         <div class="champ"><label class="etiquette" for="jour">Jour</label><input id="jour" type="date" wire:model.live="jour" class="saisie"></div>
     </div>
 
-    <div class="kpi">
+    <div class="kpi gq-kpi">
         <div class="k"><span class="k-i b"><x-ui.icone nom="porte" classe="ic" /></span><b>{{ $attendues->count() }}</b><span>Arrivées du jour</span></div>
         <div class="k"><span class="k-i g"><x-ui.icone nom="batiment" classe="ic" /></span><b>{{ $presents->count() }}</b><span>Dans la résidence</span></div>
         <div class="k"><span class="k-i o"><x-ui.icone nom="calendrier" classe="ic" /></span><b>{{ $nbAVenir }}</b><span>À venir (7 jours)</span></div>
@@ -22,7 +25,7 @@
     @if($litiges > 0)<x-ui.alerte type="attention">{{ $litiges }} problème(s) signalé(s) en cours de traitement par l'équipe Avelis. <a class="font-bold underline" href="{{ route('gerant.reservations') }}">Voir mes réservations</a></x-ui.alerte>@endif
 
     <h2 class="h2-s">Arrivées ({{ $attendues->count() }})</h2>
-    <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+    <div class="gq-cartes">
         @forelse($attendues as $a)
             <article class="carte-p">
                 <div><x-ui.badge-statut :statut="$a->statut" /></div>
@@ -49,7 +52,7 @@
     </div>
 
     <h2 class="h2-s">Dans la résidence ({{ $presents->count() }})</h2>
-    <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+    <div class="gq-cartes">
         @forelse($presents as $p)
             <article class="carte-p">
                 <div><x-ui.badge-statut :statut="$p->statut" /></div>

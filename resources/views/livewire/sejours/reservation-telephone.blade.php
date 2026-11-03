@@ -1,6 +1,6 @@
-<div class="mx-auto grid max-w-2xl gap-4">
-    <a href="{{ route('gerant.calendrier') }}" class="inline-flex items-center gap-1 font-semibold text-marque-600"><x-ui.icone nom="fleche-gauche" classe="h-5 w-5" /> Calendrier</a>
-    <div class="adm-top"><div><h1>Réservation par téléphone</h1></div></div>
+<div class="mr-page ev-page"><div class="ev-centre">
+    <p class="fil"><a href="{{ route('gerant.calendrier') }}">‹ Calendrier</a></p>
+    <h1>Réservation par téléphone</h1>
     <x-ui.alerte type="info">Cette réservation est <b>gratuite</b>, sans paiement en ligne et <b>sans commission</b>. Elle sert seulement à bloquer le calendrier.</x-ui.alerte>
 
     @if($unites->isEmpty())
@@ -20,4 +20,5 @@
         <button class="btn-pl pleine" wire:loading.attr="disabled">Enregistrer</button>
     </form>
     @endif
+</div>
 </div>

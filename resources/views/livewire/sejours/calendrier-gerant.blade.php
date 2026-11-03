@@ -1,5 +1,5 @@
-<div class="grid gap-4">
-    <div class="adm-top"><div><h1>Calendrier</h1></div></div>
+<div class="mr-page ev-page">
+    <div class="mr-entete"><div><h1>Calendrier</h1></div></div>
 
     @if($residences->isEmpty())
         <div class="carte-p">

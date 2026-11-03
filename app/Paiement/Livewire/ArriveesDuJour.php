@@ -10,8 +10,10 @@ use App\Sejours\Enums\StatutReservation;
 use App\Sejours\Exceptions\ReservationImpossible;
 use App\Sejours\Models\Litige;
 use App\Sejours\Models\MembreResidence;
+use App\Sejours\Models\ProfilGerant;
 use App\Sejours\Models\Reservation;
 use App\Sejours\Models\Residence;
+use App\Sejours\Services\EtatDocument;
 use Carbon\CarbonImmutable;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Support\Collection;
@@ -93,6 +95,7 @@ class ArriveesDuJour extends Component
         return view('livewire.paiement.arrivees-du-jour', [
             'residences' => $residences,
             'residence' => $residence,
+            'aFaire' => $estGerant ? $this->verificationAFaire() : null,
             'jourDate' => $jour,
             'nbAVenir' => (clone $tous)->where('statut', StatutReservation::Confirmee->value)->where('date_arrivee', '>', $jour->toDateString())->where('date_arrivee', '<=', $jour->addDays(7)->toDateString())->count(),
             'sommeDue' => $estGerant ? (int) Reversement::where('gerant_id', auth()->id())->where('statut', 'a_payer')->sum('montant') : null,
@@ -102,6 +105,31 @@ class ArriveesDuJour extends Component
                 ->where(fn ($q) => $q->where('statut', StatutReservation::Confirmee->value)->orWhere('date_arrivee', $jour->toDateString()))->get(),
             'presents' => (clone $base)->where('statut', StatutReservation::ArriveeEnregistree->value)->get(),
         ]);
+    }
+
+    /**
+     * Première chose à faire pour le gérant : sa vérification (pièce d'identité, puis contrat de bail d'une résidence).
+     *
+     * @return array{titre: string, texte: string, bouton: string}|null
+     */
+    private function verificationAFaire(): ?array
+    {
+        $profil = ProfilGerant::pour(auth()->user());
+        $identite = EtatDocument::de($profil->dernierDocument('identite'), $profil->identiteValidee());
+        if ($identite !== EtatDocument::VALIDE) {
+            return $identite === EtatDocument::CONTROLE ? null : ['titre' => 'Ajoutez votre pièce d’identité', 'texte' => 'Elle est demandée une seule fois, pour toutes vos résidences. Sans elle, vos annonces ne peuvent pas être publiées.', 'bouton' => 'Ajouter ma pièce d’identité'];
+        }
+        foreach (Residence::where('gerant_id', auth()->id())->with('documents')->orderBy('nom')->get() as $r) {
+            $dernier = $r->documents->where('type', 'justificatif_droit_gestion')->whereNull('remplace_le')->sortByDesc('id')->first();
+            $etat = EtatDocument::de($dernier, $r->aBadgeGestion());
+            if (in_array($etat, [EtatDocument::A_FOURNIR, EtatDocument::REFUSE], true)) {
+                $publiee = $r->statut_verification === 'verifiee';
+
+                return ['titre' => 'Complétez votre vérification', 'texte' => 'Il manque le contrat de bail de la résidence '.$r->nom.'. '.($publiee ? 'Vos annonces déjà publiées restent en ligne ; il permet d’obtenir le badge « Gérant vérifié ».' : 'Sans lui, la résidence ne peut pas être publiée.'), 'bouton' => 'Ajouter mon contrat de bail'];
+            }
+        }
+
+        return null;
     }
 
     /** @param callable(Reservation): mixed $action */
