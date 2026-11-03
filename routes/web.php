@@ -32,6 +32,7 @@ use App\Parametres\Livewire\EspaceParametres;
 use App\Sejours\Http\TelechargerDocument;
 use App\Sejours\Http\TelechargerDocumentGerant;
 use App\Sejours\Http\VoirPieceVoyageur;
+use App\Sejours\Livewire\AccesResidence;
 use App\Sejours\Livewire\Accueil;
 use App\Sejours\Livewire\Admin\ListeVerifications;
 use App\Sejours\Livewire\Admin\LitigesAdmin;
@@ -40,6 +41,7 @@ use App\Sejours\Livewire\Admin\ToutesLesReservations;
 use App\Sejours\Livewire\Admin\ValiderResidence;
 use App\Sejours\Livewire\Admin\VerifierGerant;
 use App\Sejours\Livewire\CalendrierGerant;
+use App\Sejours\Livewire\CommentVenir;
 use App\Sejours\Livewire\DetailReservation;
 use App\Sejours\Livewire\DonnerAvis;
 use App\Sejours\Livewire\EditerResidence;
@@ -54,6 +56,7 @@ use App\Sejours\Livewire\Recapitulatif;
 use App\Sejours\Livewire\Recherche;
 use App\Sejours\Livewire\ReservationsGerant;
 use App\Sejours\Livewire\ReservationTelephone;
+use App\Sejours\Livewire\VerificationGerant;
 use Illuminate\Support\Facades\Route;
 
 // --- Public --------------------------------------------------------------------------------
@@ -107,6 +110,7 @@ Route::middleware(['auth', 'role:client'])->group(function () {
     Route::livewire('/reservation/{reservation}/annuler', AnnulerReservation::class)->name('reservation.annuler');
     Route::livewire('/reservation/{reservation}', DetailReservation::class)->whereNumber('reservation')->name('reservation.detail');
     Route::livewire('/reservation/{reservation}/avis', DonnerAvis::class)->name('reservation.avis');
+    Route::livewire('/reservation/{reservation}/venir', CommentVenir::class)->name('reservation.venir');
     Route::livewire('/reservation/{reservation}/probleme', OuvrirLitige::class)->name('reservation.probleme');
     Route::get('/reservation/{reservation}/recu', RecuReservation::class)->name('reservation.recu');
 });
@@ -119,6 +123,8 @@ Route::middleware(['auth', 'role:gerant,personnel'])->group(function () {
 });
 Route::middleware(['auth', 'role:gerant'])->prefix('gerant')->group(function () {
     Route::livewire('/profil', ProfilGerant::class)->name('gerant.profil');
+    Route::livewire('/verification', VerificationGerant::class)->name('gerant.verification');
+    Route::livewire('/residences/{residence}/acces', AccesResidence::class)->whereNumber('residence')->name('gerant.residence.acces');
     Route::livewire('/profil/apercu', ProfilPublicGerant::class)->name('gerant.profil.apercu');
     Route::livewire('/residences', MesResidences::class)->name('gerant.residences');
     Route::livewire('/residences/nouvelle', EditerResidence::class)->name('gerant.residence.nouvelle');

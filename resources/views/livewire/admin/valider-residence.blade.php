@@ -28,8 +28,8 @@
         </div>
 
         <div class="carte-p">
-            <h2>Décision sur l’annonce</h2><p class="aide">La pièce d’identité du profil doit être validée. Le certificat de résidence et le justificatif de gestion sont facultatifs.</p>
-            <label class="puce {{ $badge ? 'puce-active' : '' }}"><input type="checkbox" class="sr-only" wire:model.live="badge">J’ai contrôlé le justificatif de gestion : accorder le badge à cette résidence</label>
+            <h2>Décision sur l’annonce</h2><p class="aide">Deux documents sont obligatoires pour mettre en ligne : la pièce d’identité du profil et le contrat de bail (justificatif de gestion) de cette résidence.</p>
+            <label class="puce {{ $badge ? 'puce-active' : '' }}"><input type="checkbox" class="sr-only" wire:model.live="badge">J’ai contrôlé le contrat de bail : le valider (badge « Gérant vérifié »)</label>
             <button wire:click="valider" wire:confirm="Valider et mettre cette résidence en ligne ?" class="btn-pl pleine" wire:loading.attr="disabled">Valider et mettre en ligne</button>
             <div class="champ"><label class="etiquette" for="motif">Motif du refus</label><textarea id="motif" rows="2" wire:model="motifRefus" class="saisie py-2" placeholder="Ex. Photos du logement à compléter"></textarea>@error('motifRefus')<p class="erreur-champ">{{ $message }}</p>@enderror</div>
             <button wire:click="refuser" class="btn-sec rouge-b2 pleine">Refuser</button>

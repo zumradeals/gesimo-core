@@ -1,11 +1,11 @@
 @php $fr = fn (int $m) => \App\Noyau\Services\Format::fcfa($m); $S = \App\Sejours\Enums\StatutReservation::class; @endphp
-<div style="display:grid;gap:16px">
-    <div class="adm-top"><div><h1>Réservations</h1><p class="petit">Toutes les réservations de vos résidences</p></div><div class="adm-act"><a href="{{ route('gerant.arrivees') }}" class="btn-sec">Arrivées et départs du jour</a></div></div>
+<div class="mr-page ev-page">
+    <div class="mr-entete"><div><h1>Réservations</h1><p class="petit">Toutes les réservations de vos résidences</p></div><a href="{{ route('gerant.arrivees') }}" class="btn-sec">Arrivées et départs du jour</a></div>
     <div class="onglets-a deux" style="max-width:520px">
         <button wire:click="$set('onglet', 'avenir')" class="{{ $onglet === 'avenir' ? 'on' : '' }}" style="border:0;background:{{ $onglet === 'avenir' ? '#fff' : 'transparent' }};padding:10px;border-radius:9px;font-weight:700;cursor:pointer;min-height:44px">À venir ({{ $nbAVenir }})</button>
         <button wire:click="$set('onglet', 'passees')" class="{{ $onglet === 'passees' ? 'on' : '' }}" style="border:0;background:{{ $onglet === 'passees' ? '#fff' : 'transparent' }};padding:10px;border-radius:9px;font-weight:700;cursor:pointer;min-height:44px">Passées ({{ $nbPassees }})</button>
     </div>
-    <div class="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+    <div class="gq-cartes">
         @forelse($reservations as $r)
             <article class="carte-p">
                 <div class="flex items-center justify-between gap-2"><x-ui.badge-statut :statut="$r->statut" /><span class="aide">#{{ $r->id }}</span></div>

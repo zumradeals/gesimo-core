@@ -47,6 +47,16 @@ class ProfilGerant extends Model
         return ! $this->reprise_a_revoir && $this->documentValide('identite') !== null;
     }
 
+    /**
+     * « Gérant vérifié » (lot 5) : pièce d'identité acceptée ET au moins une résidence dont le justificatif de gestion
+     * (contrat de bail) est accepté. Remplace « Gérant certifié » et le badge de résidence séparé.
+     */
+    public function estVerifie(): bool
+    {
+        return $this->identiteValidee() && Residence::where('gerant_id', $this->utilisateur_id)->where('badge_verifie', true)->whereNotNull('gestion_verifiee_le')
+            ->whereHas('documents', fn ($d) => $d->where('type', 'justificatif_droit_gestion')->where('statut', 'accepte')->whereNull('remplace_le'))->exists();
+    }
+
     public function estCertifie(): bool
     {
         return $this->identiteValidee() && $this->documentValide('certificat_residence') !== null;

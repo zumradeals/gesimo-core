@@ -83,6 +83,7 @@
                     <div class="ligne"><span>Téléphone</span><b>{{ \App\Noyau\Services\Telephone::afficher($gerant->telephone) }}</b></div>
                     @if($res->adresse)<div class="ligne"><span>Adresse</span><b style="text-align:right">{{ $res->adresse }}<br><span class="petit" style="font-weight:400">{{ $res->quartier ? $res->quartier.', ' : '' }}{{ $res->commune }}</span></b></div>
                     @else<p class="petit" style="margin:0">{{ $res->commune }}@if($res->quartier), {{ $res->quartier }}@endif. Le gérant vous précisera l'adresse exacte si besoin.</p>@endif
+                    <a class="btn-pl" href="{{ route('reservation.venir', $r) }}">📍 Comment venir</a>
                     <div class="mr-deux">
                         <a class="btn-sec" href="tel:{{ $gerant->telephone }}">📞 Appeler</a>
                         @if($res->latitude !== null)<a class="btn-sec" href="https://www.google.com/maps?q={{ $res->latitude }},{{ $res->longitude }}" target="_blank" rel="noopener">📍 Voir sur la carte</a>@endif

@@ -122,3 +122,35 @@
 }
 .charte .ev-page .rouge-b { background: #fff !important; box-shadow: none !important; border: 2px solid #b42318; color: #b42318; }
 .charte .ev-page .rouge-b:hover { background: #fdecea !important; }
+
+/* ---------- Gérant au quotidien, vérification, accès à la résidence, comment venir (contrat docs/contrats/gerant-quotidien-v3.md) ---------- */
+.gq-choix { display: grid; gap: 10px; max-width: 720px; }
+.gq-kpi { grid-template-columns: 1fr 1fr; }
+.gq-kpi .k { background: #fff; border: 1px solid var(--avelis-trait); border-radius: 14px; }
+.gq-cartes { display: grid; gap: 14px; align-items: start; }
+.gq-pieces { display: grid; gap: 12px; align-content: start; }
+.gq-piece { display: grid; gap: 8px; border: 1.5px solid var(--avelis-trait); border-radius: 14px; padding: 16px; background: #fff; }
+.gq-piece.ok { border-color: #b8dfc7; background: #f6fbf8; }
+.gq-piece.att { border-color: var(--avelis-peche); }
+.gq-piece.err { border-color: #f2b8b2; background: #fffafa; }
+.gq-tete { display: flex; gap: 10px; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; }
+.gq-tete h2 { font-size: 17px; margin: 0; }
+.gq-b-ok { background: var(--avelis-ok-fond); color: var(--avelis-ok); }
+.gq-b-att { background: var(--avelis-peche); color: var(--avelis-orange-texte); }
+.gq-b-err { background: #fdecea; color: #b42318; }
+.gq-verifie { background: var(--avelis-ok-fond); color: var(--avelis-ok); font-size: 14px; padding: 6px 14px; }
+.gq-motif { margin: 0; color: #7a1a12; font-weight: 600; }
+.gq-depot { display: grid; gap: 8px; border: 2px dashed var(--avelis-saisie); border-radius: 12px; padding: 14px; background: #fafbfc; }
+.gq-carte { border-radius: 14px; min-height: 150px; background: repeating-linear-gradient(45deg, #eaf0e4, #eaf0e4 14px, #dfe8d6 14px, #dfe8d6 28px); display: grid; place-items: center; border: 1px solid var(--avelis-trait); }
+.gq-carte span { background: var(--avelis-orange); color: var(--avelis-nuit); border-radius: 50% 50% 50% 0; width: 34px; height: 34px; display: grid; place-items: center; transform: rotate(-45deg); font-weight: 900; }
+.gq-carte span b { transform: rotate(45deg); }
+.gq-apps { display: grid; gap: 8px; }
+.gq-apps a { display: flex; align-items: center; min-height: 50px; padding: 8px 14px; border: 1.5px solid var(--avelis-trait); border-radius: 12px; background: #fff; font-weight: 700; text-decoration: none; color: var(--avelis-nuit); }
+.gq-attente { justify-items: center; text-align: center; padding: 28px 18px; }
+@media (min-width: 700px) { .gq-kpi { grid-template-columns: repeat(4, 1fr); } .gq-cartes { grid-template-columns: repeat(2, minmax(0, 1fr)); } .gq-choix { grid-template-columns: 1fr 1fr; } }
+@media (min-width: 1300px) { .gq-cartes { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (min-width: 1700px) { .gq-cartes { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+
+/* Menu latéral du gérant : même fond bleu nuit que l'espace client */
+.espace-gerant :is(.adm-side, .adm-haut) { background: var(--avelis-nuit); }
+.espace-gerant .adm-cadre { background: #f6f7f9; }

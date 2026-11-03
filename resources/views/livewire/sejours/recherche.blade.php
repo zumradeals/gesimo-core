@@ -98,7 +98,7 @@
                         <div class="lo-card-body"><h3><a href="{{ $lien }}">{{ $u->nom }}</a></h3>
                             <p class="lo-location"><x-ui.icone nom="pin" classe="ic" /> {{ $r->commune }}@if($r->quartier) · {{ $r->quartier }}@endif</p>
                             <p class="lo-meta">{{ $u->capacite }} voyageurs · {{ ucfirst($u->type) }}</p>
-                            @if($r->aBadgeGestion())<span class="lo-tag">✓ Gestion vérifiée</span>@endif
+                            @if($r->aBadgeGestion())<span class="lo-tag">✓ Gérant vérifié</span>@endif
                             <div class="lo-price"><small>{{ $nuitsRecherche === null ? 'Tarif de référence' : 'Montant du séjour' }}</small><b>{{ $fr($nuitsRecherche === null ? $ligne['prix_reference'] : $ligne['total']) }}</b> <span>{{ $nuitsRecherche === null ? '/ nuit' : 'pour '.$nuitsRecherche.' nuit'.($nuitsRecherche > 1 ? 's' : '') }}</span>
                                 @if($nuitsRecherche !== null)<em>soit {{ $fr((int) round($ligne['total'] / $nuitsRecherche)) }} / nuit en moyenne</em>@endif</div>
                             <a class="lo-details" href="{{ $lien }}" aria-label="Voir le logement : {{ $u->nom }}">Voir le logement <span aria-hidden="true">→</span></a>

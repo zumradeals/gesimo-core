@@ -205,23 +205,25 @@ it('l’admin ne peut publier sans identité acceptée ni attribuer un badge san
     expect($r->fresh()->statut_verification)->toBe('en_attente');
 });
 
-it('la certification du gérant et le badge sont indépendants et facultatifs pour publier', function (bool $certificat, bool $gestion) {
+it('publier exige l\'identité et un contrat de bail contrôlé ; « Gérant vérifié » apparaît quand les deux sont validés', function () {
     $gerant = creerUtilisateur(Role::Gerant);
     $p = $gerant->profilGerant;
-    if ($certificat) {
-        $p->documents()->create(['type' => 'certificat_residence', 'chemin' => 'certificat.pdf', 'statut' => 'accepte']);
-    }
     $r = dossierGerantComplet($gerant);
-    $autreResidence = dossierGerantComplet($gerant, ['nom' => 'Autre résidence']);
-    if ($gestion) {
-        $this->actingAs($gerant);
-        PiecesVerification::enregistrer($r, ['justificatif_droit_gestion' => UploadedFile::fake()->image('mandat.jpg')]);
-    }
-    Livewire::actingAs(creerUtilisateur(Role::Admin))->test(ValiderResidence::class, ['residence' => $r])
-        ->set('badge', $gestion)->call('valider')->assertHasNoErrors();
-    expect($r->fresh()->estPubliee())->toBeTrue()->and($r->fresh()->aBadgeGestion())->toBe($gestion)
-        ->and($p->estCertifie())->toBe($certificat)->and($autreResidence->fresh()->aBadgeGestion())->toBeFalse();
-})->with([[false, false], [true, false], [false, true], [true, true]]);
+    $admin = creerUtilisateur(Role::Admin);
+
+    // Sans bail : pas de mise en ligne.
+    Livewire::actingAs($admin)->test(ValiderResidence::class, ['residence' => $r])->call('valider')->assertHasErrors(['decision']);
+    expect($r->fresh()->estPubliee())->toBeFalse()->and($p->estVerifie())->toBeFalse();
+
+    // Avec un bail déposé et contrôlé (case cochée) : en ligne, badge, gérant vérifié.
+    $this->actingAs($gerant);
+    PiecesVerification::enregistrer($r, ['justificatif_droit_gestion' => UploadedFile::fake()->image('bail.jpg')]);
+    Livewire::actingAs($admin)->test(ValiderResidence::class, ['residence' => $r])->set('badge', true)->call('valider')->assertHasNoErrors();
+    expect($r->fresh()->estPubliee())->toBeTrue()->and($r->fresh()->aBadgeGestion())->toBeTrue()->and($p->fresh()->estVerifie())->toBeTrue();
+    // Le certificat de résidence n'est plus nécessaire : une autre résidence sans bail n'est pas vérifiée.
+    $autre = dossierGerantComplet($gerant, ['nom' => 'Autre résidence']);
+    expect($autre->fresh()->aBadgeGestion())->toBeFalse();
+});
 
 it('le refus du justificatif de gestion ne dépublie pas la résidence', function () {
     $gerant = creerUtilisateur(Role::Gerant);
@@ -271,7 +273,7 @@ it('le gérant voit son aperçu privé même sans offre publiée mais un visiteu
 it('le suivi après soumission remplace le formulaire par une confirmation dans la liste', function () {
     $gerant = creerUtilisateur(Role::Gerant);
     $r = dossierGerantComplet($gerant);
-    Livewire::actingAs($gerant)->test(EditerResidence::class, ['residence' => $r])->call('soumettre')->assertRedirect(route('gerant.residences'));
+    Livewire::actingAs($gerant)->test(EditerResidence::class, ['residence' => $r])->set('justificatif', UploadedFile::fake()->image('bail.jpg'))->call('soumettre')->assertRedirect(route('gerant.residences'));
     $this->actingAs($gerant)->get(route('gerant.residences'))->assertOk()->assertSee('Votre résidence')->assertSee('Suivre mon dossier')->assertDontSee('Envoyer pour validation →');
 });
 

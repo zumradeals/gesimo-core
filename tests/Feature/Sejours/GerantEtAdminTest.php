@@ -175,12 +175,12 @@ it('l\'admin voit les résidences soumises, valide avec le badge, et la résiden
     expect(DB::table('journal_audit')->where('action', 'residence.validee')->where('utilisateur_id', $admin->id)->exists())->toBeTrue();
 });
 
-it('l\'admin peut valider sans accorder le badge (le badge est un plus)', function () {
+it('l\'admin ne peut pas mettre en ligne une résidence sans contrat de bail contrôlé', function () {
     $residence = residenceSoumise(creerUtilisateur(Role::Gerant));
 
-    Livewire::actingAs(creerUtilisateur(Role::Admin))->test(ValiderResidence::class, ['residence' => $residence])->call('valider');
+    Livewire::actingAs(creerUtilisateur(Role::Admin))->test(ValiderResidence::class, ['residence' => $residence])->call('valider')->assertHasErrors(['decision']);
 
-    expect($residence->fresh())->statut_verification->toBe('verifiee')->badge_verifie->toBeFalse();
+    expect($residence->fresh())->statut_verification->toBe('en_attente');
 });
 
 it('le refus exige un motif, que le gérant voit ; il peut corriger et renvoyer', function () {

@@ -48,7 +48,7 @@ class ProfilPublicGerant extends Component
         return view('livewire.sejours.profil-public-gerant', [
             'nomPublic' => $p->nom_public, 'communePublique' => $p->commune_publique,
             'presentationPublique' => $p->presentation, 'logoChemin' => $p->logo_chemin,
-            'certifie' => $p->estCertifie(), 'unites' => $unites,
+            'certifie' => $p->estVerifie(), 'unites' => $unites,
         ]);
     }
 }

@@ -28,10 +28,7 @@
                 <div class="champ"><label class="etiquette" for="quartier">Quartier</label><input id="quartier" wire:model="quartier" class="saisie" placeholder="Ex. Riviera">@error('quartier')<p class="erreur-champ">{{ $message }}</p>@enderror</div>
             </div>
             <div class="champ"><label class="etiquette" for="adresse">Adresse précise (facultatif)</label><input id="adresse" wire:model="adresse" maxlength="255" class="saisie" placeholder="Ex. Rue des Jardins, immeuble Les Palmiers, 2e étage, porte 4">@error('adresse')<p class="erreur-champ">{{ $message }}</p>@enderror<span class="aide">Donnée au voyageur seulement après la confirmation de sa réservation, jamais affichée publiquement.</span></div>
-            <div class="grid grid-cols-2 gap-3">
-                <div class="champ"><label class="etiquette" for="latitude">Latitude (facultatif)</label><input id="latitude" inputmode="decimal" wire:model="latitude" class="saisie" placeholder="5.3600">@error('latitude')<p class="erreur-champ">{{ $message }}</p>@enderror</div>
-                <div class="champ"><label class="etiquette" for="longitude">Longitude (facultatif)</label><input id="longitude" inputmode="decimal" wire:model="longitude" class="saisie" placeholder="-4.0083">@error('longitude')<p class="erreur-champ">{{ $message }}</p>@enderror</div>
-            </div>
+            @if($residence)<a href="{{ route('gerant.residence.acces', $residence) }}" class="btn-sec">📍 Accès à la résidence : position et repères pour vos voyageurs</a>@else<p class="aide">Après l’enregistrement, vous pourrez indiquer la position de la résidence et des repères pour vos voyageurs.</p>@endif
             <div class="champ"><label class="etiquette" for="reglement">Règlement de la maison</label><textarea id="reglement" rows="3" wire:model="reglement" class="saisie py-2"></textarea>@error('reglement')<p class="erreur-champ">{{ $message }}</p>@enderror</div>
 
             <div class="champ">
@@ -153,13 +150,13 @@
                 <h2>3. Vérifier avant d’envoyer</h2>
                 <div class="pg-recap"><div><b>{{ $residence->nom }}</b><p class="aide">{{ $residence->commune }} · {{ $residence->unites->where('active', true)->count() }} logement(s) actif(s)</p></div><button type="button" wire:click="allerEtape(1)" class="btn-sec">Modifier</button></div>
                 <div class="pg-doc">
-                    <div class="flex flex-wrap items-center justify-between gap-2"><h3>Justificatif du droit de gestion</h3><span class="pg-badge or">Facultatif</span></div>
-                    <p class="aide">Un titre de propriété ou un mandat de gestion peut permettre l’attribution du badge de cette résidence, après contrôle par Avelis. Vous pouvez publier sans ce document.</p>
+                    <div class="flex flex-wrap items-center justify-between gap-2"><h3>Contrat de bail ou justificatif de gestion</h3><span class="pg-badge or">Obligatoire pour publier</span></div>
+                    <p class="aide">Le contrat de bail, ou un titre de propriété ou un mandat de gestion, prouve que vous gérez cette résidence. Avelis le contrôle avant la mise en ligne ; une fois validé, le badge « Gérant vérifié » apparaît.</p>
                     @if($justificatifActuel)
                         <p class="aide"><b>Document déjà enregistré</b> · {{ ['en_attente' => 'En cours de contrôle', 'accepte' => 'Validé', 'refuse' => 'Refusé'][$justificatifActuel->statut] }}</p>
                         @if($justificatifActuel->motif_refus)<p class="erreur-champ">{{ $justificatifActuel->motif_refus }}</p>@endif
                     @endif
-                    <div class="champ"><label for="justif" class="etiquette">{{ $justificatifActuel ? 'Remplacer le justificatif (facultatif)' : 'Ajouter un justificatif (facultatif)' }}</label><input id="justif" wire:key="justif-{{ $versionPieces }}" type="file" accept="application/pdf,image/jpeg,image/png" wire:model="justificatif" class="saisie py-3"><p class="aide">PDF, JPEG ou PNG · 5 Mo maximum.</p>@error('justificatif')<p class="erreur-champ">{{ $message }}</p>@enderror</div>
+                    <div class="champ"><label for="justif" class="etiquette">{{ $justificatifActuel ? 'Remplacer le document' : 'Ajouter le contrat de bail' }}</label><input id="justif" wire:key="justif-{{ $versionPieces }}" type="file" accept="application/pdf,image/jpeg,image/png" wire:model="justificatif" class="saisie py-3"><p class="aide">PDF, JPEG ou PNG · 5 Mo maximum.</p>@error('justificatif')<p class="erreur-champ">{{ $message }}</p>@enderror</div>
                     @error('pieces')<p class="erreur-champ" role="alert">{{ $message }}</p>@enderror
                     <button type="button" wire:click="envoyerPieces" class="btn-sec" wire:loading.attr="disabled" x-bind:disabled="transferts > 0">Enregistrer le justificatif seul</button>
                 </div>
@@ -168,7 +165,7 @@
                 <p class="aide">Les informations et logements enregistrés sont conservés. La résidence deviendra visible après validation de son annonce par Avelis.</p>
             </div>
         </div>
-        <aside class="carte-p"><h2>Après votre envoi</h2><p class="aide">Vous revenez à « Mes résidences » avec une confirmation et le statut <b>En attente de validation</b>.</p><p class="aide">La certification du gérant et le badge de la résidence sont facultatifs. Ils ne remplacent pas la validation de l’annonce.</p></aside>
+        <aside class="carte-p"><h2>Après votre envoi</h2><p class="aide">Vous revenez à « Mes résidences » avec une confirmation et le statut <b>En attente de validation</b>.</p><p class="aide">Avelis contrôle votre pièce d’identité, le contrat de bail et l’annonce. Quand tout est validé, la résidence est mise en ligne avec le badge « Gérant vérifié ».</p></aside>
     </div>
     @endif
 </div>

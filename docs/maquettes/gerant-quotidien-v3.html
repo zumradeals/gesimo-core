@@ -1,0 +1,263 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Maquette — Gérant au quotidien, vérification et itinéraire · Avelis Séjours</title>
+<style>
+:root{--orange:#ff6a00;--orange-texte:#b94700;--orange-survol:#e75e00;--nuit:#17243b;--ivoire:#fff8f0;--peche:#ffeadb;--gris:#526077;--trait:#e4e7ed;--saisie:#c7cdd8;--ok:#1d7a46;--okfond:#e8f5ed;--erreur:#b42318;--erreurfond:#fdecea}
+*{box-sizing:border-box}
+body{margin:0;font:16px/1.55 system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--nuit);background:#eef0f4}
+h1,h2,h3,p{margin:0}h1,h2,h3{letter-spacing:-.03em;line-height:1.2}a{color:var(--orange-texte)}button,input,textarea,select{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--nuit);outline-offset:3px}
+.outil{position:sticky;top:0;z-index:50;background:var(--nuit);color:#fff;padding:10px 16px;display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center}
+.outil nav{display:flex;flex-wrap:wrap;gap:6px}.outil button{border:1px solid #ffffff55;background:transparent;color:#fff;border-radius:999px;padding:6px 12px;font-size:13px;cursor:pointer}
+.outil button.on{background:var(--orange);border-color:var(--orange);color:var(--nuit);font-weight:700}.outil .nouveau{border-color:#ffd9bd}.outil .sep{margin-left:auto;display:flex;gap:6px;align-items:center;font-size:13px}
+.avertis{max-width:1500px;margin:14px auto 0;padding:0 16px;font-size:13px;color:var(--gris)}
+.etats{max-width:1500px;margin:10px auto 0;padding:0 16px;display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:13px}
+.etats span{color:var(--gris);font-weight:700}.etats button{border:1.5px solid var(--saisie);background:#fff;border-radius:999px;padding:5px 12px;font-size:13px;font-weight:700;cursor:pointer}.etats button.on{background:var(--nuit);color:#fff;border-color:var(--nuit)}
+.scene{margin:12px auto 0;background:#f6f7f9;border:1px solid var(--trait);border-radius:18px;overflow:hidden;container-type:inline-size;width:min(100%,1500px);box-shadow:0 10px 40px #17243b14}
+body.mobile .scene{width:390px}
+.ecran{display:none}.ecran.on{display:grid}
+.coque{display:grid}
+.lateral{display:none;background:var(--nuit);color:#e6ebf4;padding:18px 14px;gap:4px;align-content:start}
+.logo{display:flex;align-items:center;gap:9px;font-weight:800;font-size:18px}.lateral .logo{margin:0 6px 14px;color:#fff}
+.logo i{display:grid;place-items:center;width:34px;height:34px;border-radius:11px;background:var(--orange);color:var(--nuit);font-style:normal;font-size:22px}
+.lateral a{display:flex;gap:10px;align-items:center;padding:10px 12px;border-radius:10px;color:#e6ebf4;text-decoration:none;font-weight:600;font-size:15px}
+.lateral a.on{background:#ffffff1f;box-shadow:inset 3px 0 var(--orange)}
+.lateral .moi{margin-top:auto;border-top:1px solid #ffffff26;padding:14px 8px 0;font-size:14px}
+.haut-m{display:flex;align-items:center;gap:10px;padding:12px 16px;background:var(--nuit);color:#fff}
+.contenu{padding:16px;display:grid;gap:16px;align-content:start;min-width:0;padding-bottom:30px}
+.bas-m{position:sticky;bottom:0;display:grid;grid-template-columns:repeat(4,1fr);background:#fff;border-top:1px solid var(--trait)}
+.bas-m a{display:grid;place-items:center;gap:1px;padding:8px 2px;font-size:11.5px;font-weight:700;color:var(--gris);text-decoration:none;min-height:60px}
+.bas-m a.on{color:var(--orange-texte);box-shadow:inset 0 3px var(--orange)}
+@container (min-width:900px){.coque{grid-template-columns:250px minmax(0,1fr);min-height:900px}.lateral{display:grid}.haut-m,.bas-m{display:none}.contenu{padding:28px 36px 40px}}
+.entete{display:grid;gap:10px}.entete h1{font-size:clamp(26px,5cqw,32px)}.petit{font-size:13px;color:var(--gris)}
+@container (min-width:900px){.entete{grid-template-columns:1fr auto;align-items:center}}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:50px;padding:10px 18px;border:0;border-radius:10px;background:var(--orange);color:var(--nuit);font-weight:800;font-size:16px;cursor:pointer;text-decoration:none;text-align:center}
+.btn:hover{background:var(--orange-survol)}.btn.sec{background:#fff;border:2px solid var(--nuit)}.btn.danger{background:#fff;border:2px solid var(--erreur);color:var(--erreur)}.btn.pleine{width:100%}.btn.pet{min-height:44px;padding:6px 14px;font-size:15px}
+.lien{background:none;border:0;padding:6px 0;font-weight:700;color:var(--orange-texte);text-decoration:underline;cursor:pointer}
+.carte{background:#fff;border:1px solid var(--trait);border-radius:14px;padding:18px;display:grid;gap:12px;align-content:start;min-width:0}.carte h2{font-size:19px}.carte h3{font-size:17px}
+.ligne{display:flex;justify-content:space-between;gap:12px;font-size:15px;padding:6px 0;border-bottom:1px dashed var(--trait)}.ligne:last-child{border-bottom:0}
+.badge{display:inline-block;border-radius:999px;padding:3px 11px;font-size:12.5px;font-weight:800;white-space:nowrap}.b-ok{background:var(--okfond);color:var(--ok)}.b-att{background:var(--peche);color:var(--orange-texte)}.b-nu{background:#e9ecf2;color:var(--gris)}.b-err{background:var(--erreurfond);color:var(--erreur)}
+.etape{display:grid;gap:10px;background:var(--ivoire);border:2px solid var(--orange);border-radius:14px;padding:16px}.surtitre{font-size:12px;letter-spacing:.11em;text-transform:uppercase;font-weight:800;color:var(--orange-texte)}.etape h2{font-size:20px}
+.alerte{display:flex;gap:10px;border-radius:12px;padding:12px 14px;font-size:14.5px;border:1px solid}.alerte.info{background:var(--ivoire);border-color:var(--peche)}.alerte.err{background:var(--erreurfond);border-color:#f2b8b2;color:#7a1a12}.alerte.ok{background:var(--okfond);border-color:#b8dfc7;color:#14532d}.alerte.att{background:#fff4e5;border-color:#f6d9a8;color:#7a4a00}
+label.champ{display:grid;gap:6px;font-weight:700;font-size:15px}label.champ small{font-weight:400;color:var(--gris);font-size:13px}
+input[type=text],input[type=tel],input[type=date],textarea,select{width:100%;min-height:50px;border:1.5px solid var(--saisie);border-radius:11px;padding:10px 13px;background:#fff;font-weight:500}textarea{min-height:96px;resize:vertical}
+input.err,textarea.err{border-color:var(--erreur);box-shadow:0 0 0 3px var(--erreurfond)}.msg-err{color:var(--erreur);font-size:14px;font-weight:600}
+.deux{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.cols{display:grid;gap:16px;align-items:start}.col{display:grid;gap:16px;align-content:start;min-width:0}
+.cartes{display:grid;gap:14px}
+.kpi{display:grid;grid-template-columns:1fr 1fr;gap:12px}.kpi div{background:#fff;border:1px solid var(--trait);border-radius:14px;padding:14px;display:grid}.kpi b{font-size:28px}
+@container (min-width:700px){.kpi{grid-template-columns:repeat(4,1fr)}.cartes{grid-template-columns:repeat(2,1fr)}}
+@container (min-width:900px){.cols{grid-template-columns:minmax(0,1fr) 400px;gap:24px}.centre{justify-self:center;width:min(100%,760px)}}
+@container (min-width:1300px){.cartes{grid-template-columns:repeat(3,1fr)}}
+.res-sel{display:grid;gap:10px}@container (min-width:700px){.res-sel{grid-template-columns:1fr 1fr;max-width:720px}}
+.onglets{display:grid;grid-template-columns:1fr 1fr;background:#e9ecf1;border-radius:12px;padding:4px;max-width:520px}.onglets button{border:0;background:transparent;border-radius:9px;min-height:46px;font-weight:800;cursor:pointer;color:var(--gris)}.onglets button.on{background:#fff;color:var(--nuit);box-shadow:0 1px 3px #17243b1f}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;text-align:center;font-size:13px}.cal b.j{color:var(--gris);font-size:12px}
+.cal .d{min-height:50px;border:1px solid var(--trait);border-radius:9px;display:grid;place-items:center;align-content:center;background:#fff;font-weight:700}.cal .d small{font-size:10px;font-weight:600;line-height:1.1}
+.cal .conf{background:#dff3e6;border-color:#9fd3b2}.cal .att{background:#fff0d6;border-color:#f0cb85}.cal .tel{background:#dbeafe;border-color:#9fc2ef}.cal .blo{background:#e2e5ec;border-color:#b9bfcc}
+@container (min-width:900px){.cal .d{min-height:66px}}
+.legende{display:flex;flex-wrap:wrap;gap:12px;font-size:13px}.legende i{display:inline-block;width:12px;height:12px;border-radius:4px;margin-right:5px;vertical-align:-1px}
+.photo{border-radius:12px;background:linear-gradient(135deg,#d7c3ab,#a98c6c 55%,#e9d9c4);color:#ffffffcc;font-size:11px;display:grid;place-items:end start;padding:6px 8px;min-height:92px}
+.liste{list-style:none;margin:0;padding:0;display:grid;gap:8px;font-size:15px}.liste li{display:flex;gap:9px}.liste li::before{content:"✓";color:var(--ok);font-weight:900}
+.pieces{display:grid;gap:12px}.piece{display:grid;gap:8px;border:1.5px solid var(--trait);border-radius:14px;padding:16px;background:#fff}.piece.ok{border-color:#b8dfc7;background:#f6fbf8}.piece.att{border-color:var(--peche)}.piece.err{border-color:#f2b8b2;background:#fffafa}
+.piece .tete{display:flex;gap:10px;justify-content:space-between;align-items:flex-start;flex-wrap:wrap}.piece h3{font-size:17px}
+.fichier{border:2px dashed var(--saisie);border-radius:12px;padding:14px;display:grid;gap:8px;justify-items:start;background:#fafbfc}
+.carte-map{border-radius:14px;min-height:150px;background:repeating-linear-gradient(45deg,#eaf0e4,#eaf0e4 14px,#dfe8d6 14px,#dfe8d6 28px);display:grid;place-items:center;position:relative;border:1px solid var(--trait)}
+.carte-map span{background:var(--orange);color:var(--nuit);border-radius:50% 50% 50% 0;width:34px;height:34px;display:grid;place-items:center;transform:rotate(-45deg);font-weight:900}.carte-map span b{transform:rotate(45deg)}
+.apps{display:grid;gap:8px}.apps a{display:flex;gap:10px;align-items:center;min-height:50px;padding:8px 14px;border:1.5px solid var(--trait);border-radius:12px;background:#fff;font-weight:700;text-decoration:none;color:var(--nuit)}
+.note{max-width:1500px;margin:12px auto 0;padding:0 16px}
+.note details{background:#fff;border:1px solid var(--trait);border-radius:12px;padding:12px 16px}.note summary{cursor:pointer;font-weight:800}
+.note dl{display:grid;gap:10px;margin:12px 0 0;font-size:14.5px}.note dt{font-weight:800}.note dd{margin:0;color:var(--gris)}
+.points-v{max-width:1500px;margin:22px auto 60px;padding:0 16px}.points-v .carte{background:#fff}.points-v ol{margin:0;padding-left:20px;display:grid;gap:8px}
+.tag-n{background:var(--orange);color:var(--nuit);border-radius:6px;padding:1px 7px;font-size:11px;font-weight:800;margin-left:6px;vertical-align:2px}
+</style>
+</head>
+<body>
+<div class="outil">
+  <b>Maquette Gérant au quotidien — Avelis Séjours</b>
+  <nav id="nav" aria-label="Écrans"><button data-e="aujourdhui" class="on">1 · Aujourd'hui</button><button data-e="reservations">2 · Réservations</button><button data-e="calendrier">3 · Calendrier</button><button data-e="telephone">4 · Réservation par téléphone</button><button data-e="verif" class="nouveau">5 · Vérification du gérant (nouveau)</button><button data-e="acces" class="nouveau">6 · Accès à la résidence (nouveau)</button><button data-e="venir" class="nouveau">7 · Comment venir (voyageur, nouveau)</button></nav>
+  <span class="sep">Affichage :<button id="b-mob" class="on">Téléphone</button><button id="b-ord">Ordinateur</button></span>
+</div>
+<p class="avertis">Maquette de travail, non validée : noms, dates, montants et photos sont des exemples. Les boutons « État » montrent chaque situation d'un écran. Les écrans 5 à 7 répondent à vos demandes sur la vérification du gérant et l'itinéraire du voyageur.</p>
+<div class="etats" id="etats"></div>
+
+<div class="scene" id="scene"><div class="coque">
+<aside class="lateral" id="lateral"><div class="logo"><i>A</i>Avelis Séjours</div>
+  <a href="#" data-n="aujourdhui">◉ Aujourd'hui</a><a href="#" data-n="calendrier">▦ Calendrier</a><a href="#" data-n="reservations">☰ Réservations</a><a href="#" data-n="argent">₣ Argent</a><a href="#" data-n="residences">⌂ Mes résidences</a><a href="#" data-n="verif">☺ Mon profil gérant</a><a href="#" data-n="x">★ Mises en avant</a><a href="#" data-n="x">👥 Mon personnel</a><a href="#" data-n="x">? Aide du gérant</a>
+  <div class="moi"><b>Confort Immobilier</b><br><span class="petit" style="color:#b9c3d6">Gérant</span></div></aside>
+<div>
+<header class="haut-m"><span class="logo"><i>A</i>Avelis Séjours</span></header>
+<main class="contenu">
+
+<!-- 1 AUJOURD'HUI -->
+<section class="ecran on" id="e-aujourdhui" style="gap:16px">
+  <div class="entete"><div><h1>Aujourd'hui</h1><p class="petit">Résidence Papaye · lundi 4 décembre</p></div></div>
+  <div class="etape" data-s="a-dossier"><span class="surtitre">À faire en premier</span><h2>Complétez votre vérification</h2><p>Il manque le contrat de bail de la résidence Papaye. Sans lui, vos prochaines annonces ne pourront pas être publiées. Vos annonces déjà publiées restent en ligne.</p><a class="btn" href="#">Ajouter mon contrat de bail</a></div>
+  <div class="res-sel"><label class="champ">Résidence<select><option>Résidence Papaye (Cocody)</option></select></label><label class="champ">Jour<input type="date" value="2026-12-04"></label></div>
+  <div class="kpi" data-s="a-arrivees a-dossier a-nonconf"><div><b>2</b><span class="petit">Arrivées du jour</span></div><div><b>1</b><span class="petit">Dans la résidence</span></div><div><b>5</b><span class="petit">À venir (7 jours)</span></div><div><b>45 000</b><span class="petit">FCFA dus par Avelis</span></div></div>
+  <div class="alerte att" data-s="a-arrivees a-dossier"><span>1 problème signalé en cours de traitement par l'équipe Avelis. <a href="#">Voir mes réservations</a></span></div>
+  <h2 data-s="a-arrivees a-dossier a-nonconf a-rien" style="font-size:20px">Arrivées (<span id="n-arr">2</span>)</h2>
+  <div class="cartes" data-s="a-arrivees a-dossier"><article class="carte"><span class="badge b-ok" style="justify-self:start">Confirmée</span><h3>Awa Koné · Appartement</h3><p class="petit">2 pers. · 4 déc. → 10 déc. · 07 01 02 03 04</p>
+      <div class="ligne"><span>Pièce d'identité</span><span class="badge b-ok">Fournie</span></div><div class="ligne"><span>À encaisser vous-même à l'arrivée</span><b>21 000 FCFA</b></div>
+      <div class="deux"><label class="champ">Type de pièce<select><option>Carte nationale</option></select></label><label class="champ">Numéro<input type="text"></label></div>
+      <button class="btn pleine">Enregistrer l'arrivée</button><button class="btn danger pleine">Client absent</button></article>
+    <article class="carte"><span class="badge b-ok" style="justify-self:start">Confirmée</span><h3>Moussa Traoré · Studio</h3><p class="petit">1 pers. · 4 déc. → 6 déc. · 05 11 22 33 44</p><div class="ligne"><span>Pièce d'identité</span><span class="badge b-att">À fournir</span></div><p class="petit">Pièce d'identité non fournie : demandez-la à l'arrivée. L'arrivée n'est pas bloquée, vous décidez à l'accueil.</p><button class="btn pleine">Enregistrer l'arrivée</button><button class="btn danger pleine">Client absent</button></article></div>
+  <div class="cartes" data-s="a-nonconf"><article class="carte"><span class="badge b-att" style="justify-self:start">En attente de paiement</span><h3>Fatou Diallo · Appartement</h3><div class="alerte err"><span>Acompte non payé : cette réservation n'est pas confirmée. Ne faites pas entrer le client avant la confirmation.</span></div></article></div>
+  <div class="carte" data-s="a-rien" style="text-align:center;justify-items:center"><div style="font-size:38px">☀</div><h2>Rien à faire aujourd'hui. Profitez-en !</h2><a class="lien" href="#">Voir les arrivées des 7 prochains jours</a></div>
+  <h2 data-s="a-arrivees a-dossier" style="font-size:20px">Dans la résidence (1)</h2>
+  <div class="cartes" data-s="a-arrivees a-dossier"><article class="carte"><span class="badge b-ok" style="justify-self:start">Arrivée enregistrée</span><h3>Koffi Yao · Chambre</h3><p class="petit">Départ prévu le mar. 5 déc. (demain)</p><button class="btn pleine">Enregistrer le départ</button></article></div>
+  <div class="alerte info"><span><b>Ce que ça déclenche :</b> l'arrivée enregistrée rend votre part « à reverser » par Avelis (voir « Argent »). Le départ termine le séjour. « Client absent » : le client n'est pas remboursé.</span></div>
+</section>
+
+<!-- 2 RÉSERVATIONS -->
+<section class="ecran" id="e-reservations">
+  <div class="entete"><div><h1>Réservations</h1><p class="petit">Toutes les réservations de vos résidences</p></div><a class="btn sec" href="#">Arrivées et départs du jour</a></div>
+  <div class="onglets"><button class="on">À venir (3)</button><button>Passées (12)</button></div>
+  <div class="cartes" data-s="r-liste r-detail"><article class="carte"><div style="display:flex;justify-content:space-between"><span class="badge b-ok">Confirmée</span><span class="petit">#38</span></div><h3>Awa Koné · Appartement</h3><p class="petit">Résidence Papaye · 4 déc. → 10 déc. 2026</p><button class="lien" style="justify-self:start" id="b-det">Voir le détail</button>
+      <div id="det" style="display:none;gap:10px"><div class="carte" style="background:var(--ivoire);border-color:var(--peche)"><div class="ligne"><span>Contact</span><span>07 01 02 03 04</span></div><div class="ligne"><span>Total du séjour</span><b>60 000 FCFA</b></div><div class="ligne"><span>Payé en ligne</span><b>9 000 FCFA</b></div><div class="ligne"><span>À encaisser à l'arrivée</span><b>51 000 FCFA</b></div></div><div class="ligne"><span>Motif du séjour</span><b>Vacances</b></div><div class="ligne"><span>Pièce d'identité</span><span class="badge b-ok">Fournie</span></div><a class="btn sec pleine" href="#">Signaler un problème</a></div></article>
+    <article class="carte"><div style="display:flex;justify-content:space-between"><span class="badge b-att">En attente de paiement</span><span class="petit">#41</span></div><h3>Fatou Diallo · Studio</h3><p class="petit">Résidence Papaye · 12 déc. → 14 déc. 2026</p><button class="lien" style="justify-self:start">Voir le détail</button></article>
+    <article class="carte"><div style="display:flex;justify-content:space-between"><span class="badge b-nu">Prise par téléphone</span><span class="petit">#42</span></div><h3>M. Traoré · Chambre</h3><p class="petit">Résidence Papaye · 20 déc. → 22 déc. 2026</p><button class="lien" style="justify-self:start">Voir le détail</button></article></div>
+  <div class="carte" data-s="r-vide" style="text-align:center;justify-items:center;padding:36px 18px"><p style="font-weight:800">Aucune réservation à venir pour le moment.</p><p class="petit">Les réservations confirmées apparaissent ici.</p><a class="btn" href="#">Voir mon calendrier</a></div>
+</section>
+
+<!-- 3 CALENDRIER -->
+<section class="ecran" id="e-calendrier">
+  <div class="entete"><div><h1>Calendrier</h1></div></div>
+  <div class="carte" data-s="c-sans" style="text-align:center;justify-items:center"><div style="font-size:38px">▦</div><p style="font-weight:800;font-size:18px">Aucune résidence à afficher.</p><a class="btn" href="#">Ajouter ma résidence</a></div>
+  <div class="alerte att" data-s="c-nolog"><span>Cette résidence n'a pas encore de logement actif.</span></div><a class="btn sec" data-s="c-nolog" href="#" style="justify-self:start">Gérer les logements de cette résidence</a>
+  <div data-s="c-mois"><div class="res-sel" style="margin-bottom:16px"><label class="champ">Résidence<select><option>Résidence Papaye (Cocody)</option></select></label><label class="champ">Logement<select><option>Appartement</option></select></label></div>
+  <div class="cols"><div class="carte"><div style="display:flex;justify-content:space-between;align-items:center"><button class="lien" aria-label="Mois précédent">‹</button><b style="font-size:18px">Décembre 2026</b><button class="lien" aria-label="Mois suivant">›</button></div>
+    <div class="cal"><b class="j">Lun</b><b class="j">Mar</b><b class="j">Mer</b><b class="j">Jeu</b><b class="j">Ven</b><b class="j">Sam</b><b class="j">Dim</b>
+      <i></i><div class="d">1</div><div class="d">2</div><div class="d">3</div><div class="d conf">4<small>Awa K.</small></div><div class="d conf">5<small>Awa K.</small></div><div class="d conf">6<small>Awa K.</small></div>
+      <div class="d conf">7<small>Awa K.</small></div><div class="d conf">8<small>Awa K.</small></div><div class="d conf">9<small>Awa K.</small></div><div class="d">10</div><div class="d">11</div><div class="d att">12<small>Fatou D.</small></div><div class="d att">13<small>Fatou D.</small></div>
+      <div class="d">14</div><div class="d">15</div><div class="d">16</div><div class="d">17</div><div class="d">18</div><div class="d">19</div><div class="d tel">20<small>Tél.</small></div>
+      <div class="d tel">21<small>Tél.</small></div><div class="d">22</div><div class="d">23</div><div class="d blo">24<small>Bloqué</small></div><div class="d blo">25<small>Bloqué</small></div><div class="d">26</div><div class="d">27</div></div>
+    <div class="legende"><span><i style="background:#dff3e6"></i>Confirmée</span><span><i style="background:#fff0d6"></i>En attente</span><span><i style="background:#dbeafe"></i>Prise par téléphone</span><span><i style="background:#e2e5ec"></i>Bloqué</span></div></div>
+    <div class="col"><div class="alerte ok" data-s="c-ok"><span>Dates bloquées.</span></div><a class="btn pleine" href="#">Ajouter une réservation par téléphone</a>
+      <form class="carte" onsubmit="return false"><h2>Bloquer des dates</h2><div class="deux"><label class="champ">Du<input type="date" value="2026-12-24"></label><label class="champ">Au<input type="date" value="2026-12-25"></label></div><label class="champ">Motif (facultatif)<input type="text" placeholder="Travaux, usage personnel…"></label><button class="btn sec pleine">Bloquer ces dates</button></form></div></div></div>
+</section>
+
+<!-- 4 TÉLÉPHONE -->
+<section class="ecran" id="e-telephone">
+  <p class="petit"><a href="#">‹ Calendrier</a></p>
+  <div class="centre" style="display:grid;gap:16px"><h1 style="font-size:28px">Réservation par téléphone</h1>
+  <div class="alerte info"><span>Cette réservation est <b>gratuite</b>, sans paiement en ligne et <b>sans commission</b>. Elle sert seulement à bloquer le calendrier.</span></div>
+  <div class="alerte ok" data-s="t-ok"><span>Réservation enregistrée : les dates sont bloquées dans votre calendrier.</span></div>
+  <form class="carte" onsubmit="return false"><label class="champ">Logement<select><option>Appartement — Résidence Papaye</option></select></label>
+    <div class="deux"><label class="champ">Arrivée<input type="date" value="2026-12-20"></label><label class="champ">Départ<input type="date" id="t-dep" value="2026-12-22"></label></div><p class="msg-err" data-s="t-erreur">Ces dates ne sont pas libres : une réservation existe déjà du 20 au 22 décembre.</p>
+    <label class="champ">Nom du client<input type="text" placeholder="Ex. M. Traoré" id="t-nom"></label><p class="msg-err" data-s="t-erreur">Indiquez le nom du client.</p>
+    <label class="champ">Téléphone du client (facultatif)<input type="tel" placeholder="05 11 22 33 44"></label><button class="btn pleine">Enregistrer</button></form></div>
+</section>
+
+<!-- 5 VÉRIFICATION -->
+<section class="ecran" id="e-verif">
+  <div class="entete"><div><h1>Ma vérification <span class="tag-n">nouveau</span></h1><p class="petit">Deux documents suffisent pour publier vos résidences.</p></div><span class="badge b-ok" data-s="v-ok v-publiee" style="font-size:14px;padding:6px 14px">✓ Gérant vérifié</span></div>
+  <div class="alerte info" data-s="v-aucun v-controle v-refuse"><span><b>Pour publier :</b> votre pièce d'identité et le contrat de bail (ou justificatif de gestion) de votre résidence. L'équipe Avelis les contrôle sous quelques jours. Rien d'autre n'est demandé.</span></div>
+  <div class="alerte ok" data-s="v-ok"><span>Votre dossier est validé : vous pouvez publier vos résidences. Le badge « Gérant vérifié » apparaît sur votre profil public.</span></div>
+  <div class="alerte att" data-s="v-publiee"><span>Votre résidence est déjà publiée et le reste. Pour garder le badge « Gérant vérifié » et publier de nouvelles annonces, ajoutez le contrat de bail.</span></div>
+  <div class="cols"><div class="pieces">
+    <div class="piece" id="p1"><div class="tete"><h3>1 · Ma pièce d'identité <small class="petit">(une seule fois pour toutes mes résidences)</small></h3><span class="badge" id="p1b"></span></div><p class="petit" id="p1t"></p><div class="fichier" id="p1f"><b>Photo ou PDF · 5 Mo au maximum</b><div class="deux" style="width:100%"><button class="btn sec pet">📷 Prendre une photo</button><button class="btn sec pet">Choisir un fichier</button></div></div></div>
+    <div class="piece" id="p2"><div class="tete"><h3>2 · Contrat de bail de Résidence Papaye</h3><span class="badge" id="p2b"></span></div><p class="petit" id="p2t"></p><div class="fichier" id="p2f"><b>Photo ou PDF · 5 Mo au maximum</b><p class="petit">Le contrat de bail, ou tout document qui prouve que vous gérez cette résidence (titre de propriété, mandat de gestion).</p><div class="deux" style="width:100%"><button class="btn sec pet">📷 Prendre une photo</button><button class="btn sec pet">Choisir un fichier</button></div></div></div>
+    <p class="petit">Si vous gérez plusieurs résidences : l'identité se dépose une fois ; le bail se dépose pour chaque résidence.</p></div>
+    <aside class="col"><div class="carte" style="background:var(--ivoire);border-color:var(--peche)"><h2>Et ensuite ?</h2><ul class="liste"><li>Vous déposez les deux documents</li><li>L'équipe Avelis les contrôle (sous quelques jours)</li><li>Vous êtes prévenu par e-mail</li><li>Vous publiez, et le badge « Gérant vérifié » apparaît</li></ul></div>
+    <div class="carte"><h3>Qui voit mes documents ?</h3><p class="petit">Seule l'équipe Avelis autorisée. Jamais le public ni les voyageurs. Chaque consultation est enregistrée.</p></div></aside></div>
+</section>
+
+<!-- 6 ACCÈS RÉSIDENCE -->
+<section class="ecran" id="e-acces">
+  <p class="petit"><a href="#">‹ Résidence Papaye</a></p>
+  <div class="entete"><div><h1>Accès à la résidence <span class="tag-n">nouveau</span></h1><p class="petit">Aidez vos voyageurs à vous trouver, sans appel.</p></div></div>
+  <div class="cols"><form class="carte" onsubmit="return false"><h2>Où se trouve la résidence ?</h2>
+    <div class="alerte ok" data-s="i-defini"><span>Position enregistrée.</span></div>
+    <div class="alerte err" data-s="i-refus"><span>Nous n'avons pas pu lire votre position. Autorisez la localisation dans votre navigateur, ou collez un lien Google Maps ci-dessous.</span></div>
+    <div class="carte" style="background:var(--ivoire);border-color:var(--peche)"><b>Le plus simple : placez-vous devant la résidence</b><button class="btn pleine">📍 Utiliser ma position actuelle</button><p class="petit">Votre téléphone indique sa position. Elle n'est donnée au voyageur qu'après la confirmation de sa réservation.</p></div>
+    <label class="champ">Ou collez un lien Google Maps<small>Ouvrez la résidence dans Google Maps, touchez « Partager », copiez le lien complet.</small><input type="text" id="i-lien" placeholder="https://www.google.com/maps/…"></label><p class="msg-err" data-s="i-lien">Ce lien ne contient pas de position. Ouvrez-le, puis copiez le lien complet de la page, ou utilisez « Ma position actuelle ».</p>
+    <div class="carte-map" data-s="i-defini"><span><b>⌂</b></span></div><p class="petit" data-s="i-defini">Position : 5,3599° N · 3,9870° O · <button class="lien" type="button">Retirer</button></p>
+    <label class="champ">Adresse écrite<small>Visible du voyageur seulement après confirmation.</small><input type="text" value="Rue des Jardins, Cocody Djibi, Abidjan"></label>
+    <label class="champ">Repères pour arriver<small>2 ou 3 phrases : ce que le voyageur verra en route. 300 caractères au maximum.</small><textarea id="i-rep" placeholder="Ex. À 200 m de la pharmacie Djibi, portail bleu, en face du maquis « Chez Tantie ». Sonnez à l'interphone.">À 200 m de la pharmacie Djibi, portail bleu, en face du maquis « Chez Tantie ». Sonnez à l'interphone.</textarea></label><p class="msg-err" data-s="i-long">Vos repères sont trop longs (300 caractères au maximum).</p>
+    <button class="btn pleine">Enregistrer</button></form>
+    <aside class="col"><div class="carte"><h2>Ce que verra le voyageur</h2><p class="petit">Après confirmation de sa réservation :</p><div class="carte-map"><span><b>⌂</b></span></div><div class="ligne"><span>Adresse</span><b style="text-align:right">Rue des Jardins, Cocody Djibi</b></div><p class="petit">« À 200 m de la pharmacie Djibi, portail bleu… »</p><button class="btn pleine" type="button">Me conduire à la résidence</button></div>
+    <div class="alerte info"><span>Avant la confirmation, le public voit seulement la commune (comme aujourd'hui).</span></div></aside></div>
+</section>
+
+<!-- 7 COMMENT VENIR -->
+<section class="ecran" id="e-venir">
+  <p class="petit"><a href="#">‹ Ma réservation n° 38</a></p>
+  <div class="entete"><div><h1>Comment venir <span class="tag-n">nouveau</span></h1><p class="petit">Appartement · Résidence Papaye · arrivée le 4 déc. à partir de 14 h</p></div></div>
+  <div class="cols"><div class="col">
+    <div class="carte" data-s="w-complet"><div class="carte-map"><span><b>⌂</b></span></div><button class="btn pleine" id="b-cond">📍 Me conduire à la résidence</button>
+      <div class="apps" id="apps" style="display:none"><a href="#">Google Maps</a><a href="#">Waze</a><a href="#">Plans (iPhone)</a></div>
+      <p class="petit">Le bouton ouvre l'application de cartes de votre téléphone avec la résidence comme destination.</p></div>
+    <div class="carte" data-s="w-sanspos"><div class="alerte att"><span>Le gérant n'a pas encore indiqué la position sur la carte. Suivez les repères ci-dessous ou appelez-le.</span></div></div>
+    <div class="carte" data-s="w-avant"><div style="font-size:34px">🔒</div><h2>Les indications vous seront données après la confirmation de votre réservation.</h2><p class="petit">Payez l'acompte pour garder vos dates : l'adresse, l'itinéraire et le numéro du gérant s'afficheront ici.</p><a class="btn" href="#">Payer 9 000 FCFA</a></div>
+    <div class="carte" data-s="w-complet w-sanspos"><h2>Les repères du gérant</h2><div class="ligne"><span>Adresse</span><b style="text-align:right">Rue des Jardins, Cocody Djibi, Abidjan</b></div><p>« À 200 m de la pharmacie Djibi, portail bleu, en face du maquis « Chez Tantie ». Sonnez à l'interphone. »</p></div></div>
+    <aside class="col" data-s="w-complet w-sanspos"><div class="carte"><h2>Besoin d'aide pour arriver ?</h2><a class="btn pleine" href="#">📞 Appeler le gérant · 07 07 05 55 08</a><a class="btn sec pleine" href="#" data-s="w-complet">💬 Envoyer l'adresse à mon chauffeur (WhatsApp)</a><p class="petit" data-s="w-complet">Un message prêt à envoyer : adresse, repères et lien de la carte.</p></div></aside></div>
+</section>
+
+</main>
+<nav class="bas-m" id="bas"><a href="#" data-n="aujourdhui">◉<span>Aujourd'hui</span></a><a href="#" data-n="calendrier">▦<span>Calendrier</span></a><a href="#" data-n="argent">₣<span>Argent</span></a><a href="#" data-n="residences">⌂<span>Résidences</span></a></nav>
+</div></div></div>
+
+<div class="note"><details open><summary id="nt">Fiche écran</summary><dl id="nc"></dl></details></div>
+
+<div class="points-v"><section class="carte"><h2>Points à faire valider avant l'intégration</h2>
+<ol>
+<li><b>Aujourd'hui</b> : mêmes informations qu'aujourd'hui, avec une carte par arrivée et de gros boutons. Nouveau : un bandeau « À faire en premier » quand la vérification du gérant est incomplète (voir 5).</li>
+<li><b>Réservations</b> et <b>Calendrier</b> : même contenu, charte orange, calendrier plus grand, une seule colonne sur téléphone, légende des couleurs. <b>Réservation par téléphone</b> : même formulaire, plein écran sur grand écran, messages d'erreur en phrases simples. Aucune règle ne change.</li>
+<li><b>Vérification du gérant</b> (suite à votre demande) : <u>pièce d'identité + contrat de bail (ou justificatif de gestion)</u> obligatoires pour publier ; un seul badge « Gérant vérifié » quand l'équipe a validé les deux ; le certificat de résidence n'est plus demandé. Quatre états par document : à fournir, en contrôle, validé, refusé (avec le motif et ce qu'il faut corriger). L'identité se dépose une fois ; le bail, une fois par résidence.</li>
+<li><b>Résidences déjà publiées</b> : <u>recommandation</u> : elles restent publiées ; le gérant voit un bandeau lui demandant d'ajouter le bail, et ne peut pas publier de nouvelles annonces tant que ce n'est pas fait. Si vous préférez les dépublier à une date donnée, dites-le-moi.</li>
+<li><b>Ce que cela remplace</b> : la décision du 21 octobre (« justificatif de gestion facultatif », badges « Gérant certifié » et « Gestion vérifiée » séparés). Les anciens badges disparaissent des pages publiques au profit de « Gérant vérifié » ; les documents déjà acceptés comptent (identité acceptée + justificatif de gestion accepté = vérifié).</li>
+<li><b>Accès à la résidence</b> : le gérant place la résidence en un geste (« Utiliser ma position actuelle » sur place) ou colle un lien Google Maps complet ; il écrit des repères (300 caractères). Les liens courts (maps.app.goo.gl) ne peuvent pas être lus sans appel à un service extérieur : on demande alors le lien complet ou la position.</li>
+<li><b>Comment venir</b> (voyageur) : après confirmation seulement. Gros bouton « Me conduire à la résidence » qui ouvre Google Maps, Waze ou Plans, adresse écrite, repères, « Appeler le gérant ». <u>Ajout proposé</u> : « Envoyer l'adresse à mon chauffeur (WhatsApp) » (message prêt à envoyer). Aucune carte intégrée : pas de bibliothèque ni de clé payante. Avant confirmation, le public ne voit que la commune.</li>
+<li><b>Technique à votre connaissance</b> : un champ « repères » est ajouté à la résidence (migration réversible) ; la position utilise les champs latitude et longitude qui existent déjà.</li>
+</ol></section></div>
+
+<script>
+const ETATS={
+ aujourdhui:[['a-arrivees','Arrivées du jour'],['a-dossier','Vérification incomplète'],['a-nonconf','Acompte non payé'],['a-rien','Rien aujourd\'hui']],
+ reservations:[['r-liste','Liste'],['r-detail','Détail ouvert'],['r-vide','Aucune réservation']],
+ calendrier:[['c-mois','Mois'],['c-ok','Dates bloquées'],['c-nolog','Sans logement'],['c-sans','Sans résidence']],
+ telephone:[['t-form','Formulaire'],['t-erreur','Erreurs'],['t-ok','Enregistré']],
+ verif:[['v-aucun','Rien fourni'],['v-controle','En contrôle'],['v-refuse','Bail refusé'],['v-ok','Tout validé'],['v-publiee','Déjà publiée, sans bail']],
+ acces:[['i-vide','Non renseigné'],['i-defini','Position enregistrée'],['i-refus','Localisation refusée'],['i-lien','Lien sans position'],['i-long','Repères trop longs']],
+ venir:[['w-complet','Avec position'],['w-sanspos','Sans position'],['w-avant','Avant confirmation']]};
+const NOTES={
+ aujourdhui:['Écran 1 · Aujourd\'hui',{'But':'Savoir qui arrive et part aujourd\'hui, et agir en un geste.','Ce que voit l\'utilisateur':'Choix de la résidence et du jour, quatre compteurs, problèmes en cours, une carte par arrivée (pièce d\'identité du voyageur, montant à encaisser), personnes présentes. Bandeau de vérification si le dossier est incomplet.','Actions':'Enregistrer l\'arrivée, Client absent, Enregistrer le départ, ajouter un document manquant.','Messages d\'erreur':'« Acompte non payé : cette réservation n\'est pas confirmée. Ne faites pas entrer le client avant la confirmation. » ; « Client absent est définitif » (confirmation avant action).'}],
+ reservations:['Écran 2 · Réservations',{'But':'Retrouver n\'importe quelle réservation et ses montants.','Ce que voit l\'utilisateur':'Onglets à venir / passées, une carte par réservation, détail (contact, total, payé en ligne, reste à encaisser, motif, pièce du voyageur).','Actions':'Voir le détail, Signaler un problème, Arrivées du jour.','Messages d\'erreur':'Aucun ; liste vide : « Aucune réservation à venir pour le moment. »'}],
+ calendrier:['Écran 3 · Calendrier',{'But':'Voir les dates prises et bloquer celles qu\'on ne veut pas louer.','Ce que voit l\'utilisateur':'Choix résidence et logement, mois avec couleurs (confirmée, en attente, téléphone, bloqué), légende, blocage de dates.','Actions':'Changer de mois, bloquer des dates, ajouter une réservation par téléphone.','Messages d\'erreur':'Messages existants du blocage (dates déjà prises, fin avant début) ; « Cette résidence n\'a pas encore de logement actif. »'}],
+ telephone:['Écran 4 · Réservation par téléphone',{'But':'Bloquer le calendrier pour un client qui a réservé par téléphone.','Ce que voit l\'utilisateur':'Rappel : gratuit, sans commission ; logement, dates, nom, téléphone facultatif.','Actions':'Enregistrer.','Messages d\'erreur':'Dates non libres, nom manquant, dates incohérentes : messages existants en phrases simples.'}],
+ verif:['Écran 5 · Ma vérification (nouveau)',{'But':'Dire clairement au gérant ce qu\'il doit fournir, où il en est, et ce qui lui manque.','Ce que voit l\'utilisateur':'Deux cartes : pièce d\'identité (une fois), contrat de bail ou justificatif de gestion (par résidence), chacune avec son état ; explication « Et ensuite ? » ; confidentialité ; badge « Gérant vérifié » quand tout est validé.','Actions':'Prendre une photo, choisir un fichier, remplacer un document refusé.','Messages d\'erreur':'« Choisissez un document PDF, JPEG ou PNG. » ; « Le document ne doit pas dépasser 5 Mo. » ; refus : motif écrit par l\'équipe.'}],
+ acces:['Écran 6 · Accès à la résidence (nouveau)',{'But':'Permettre au gérant de guider ses voyageurs sans y passer du temps.','Ce que voit l\'utilisateur':'Bouton « Utiliser ma position actuelle », ou lien Google Maps ; adresse écrite ; repères ; aperçu de ce que verra le voyageur.','Actions':'Utiliser ma position, coller un lien, retirer la position, enregistrer.','Messages d\'erreur':'Localisation refusée ; lien sans position ; repères trop longs (300 caractères).'}],
+ venir:['Écran 7 · Comment venir (voyageur, nouveau)',{'But':'Amener le voyageur jusqu\'à la porte, même sans connaître le quartier.','Ce que voit l\'utilisateur':'Carte, bouton « Me conduire à la résidence » (Google Maps, Waze, Plans), adresse, repères, appeler le gérant, envoyer l\'adresse à un chauffeur. Avant confirmation : message de patience, rien de précis.','Actions':'Me conduire, Appeler, Envoyer à mon chauffeur.','Messages d\'erreur':'Sans position : message qui renvoie aux repères et à l\'appel.'}]};
+let ecran='aujourdhui',etat={};
+const PIECES={'v-aucun':[['att','À fournir','Nécessaire pour publier.',true],['att','À fournir','Nécessaire pour publier.',true]],'v-controle':[['att','En contrôle','Reçue le 2 déc. Réponse sous quelques jours.',false],['att','En contrôle','Reçu le 2 déc. Réponse sous quelques jours.',false]],'v-refuse':[['ok','Validée','Validée le 3 déc.',false],['err','Refusée','Motif : le document est illisible. Reprenez-le en photo, à plat, bien éclairé.',true]],'v-ok':[['ok','Validée','Validée le 3 déc.',false],['ok','Validé','Validé le 3 déc.',false]],'v-publiee':[['ok','Validée','Validée le 3 déc.',false],['att','À fournir','Demandé pour garder le badge et publier de nouvelles annonces.',true]]};
+const LB={ok:'b-ok',att:'b-att',err:'b-err'};
+function pieces(){const p=PIECES[etat.verif]; if(!p)return;[1,2].forEach(i=>{const[c,l,t,f]=p[i-1];const el=document.getElementById('p'+i);el.className='piece '+c;const b=document.getElementById('p'+i+'b');b.className='badge '+LB[c];b.textContent=l;document.getElementById('p'+i+'t').textContent=t;document.getElementById('p'+i+'f').style.display=f?'grid':'none';});}
+function majEtat(){document.querySelectorAll('.scene .ecran [data-s]').forEach(e=>{const l=e.dataset.s.split(' ');const cible=etat[ecran];e.style.display=l.includes(cible)?'':'none';});
+ const e=etat[ecran];
+ if(ecran==='reservations'){document.getElementById('det').style.display=e==='r-detail'?'grid':'none';}
+ if(ecran==='calendrier'){document.querySelectorAll('#e-calendrier [data-s~="c-mois"]').forEach(x=>x.style.display=(e==='c-mois'||e==='c-ok')?'':'none');}
+ if(ecran==='telephone'){document.getElementById('t-nom').classList.toggle('err',e==='t-erreur');}
+ if(ecran==='verif')pieces();
+ if(ecran==='acces'){document.getElementById('i-lien').classList.toggle('err',e==='i-lien');document.getElementById('i-rep').classList.toggle('err',e==='i-long');
+   document.querySelectorAll('#e-acces [data-s~="i-defini"]').forEach(x=>{});}
+ document.querySelectorAll('#etats button').forEach(b=>b.classList.toggle('on',b.dataset.s===etat[ecran]));
+ const nav={aujourdhui:'aujourdhui',reservations:'reservations',calendrier:'calendrier',telephone:'calendrier',verif:'verif',acces:'residences',venir:'x'}[ecran];
+ document.querySelectorAll('#lateral a,#bas a').forEach(a=>a.classList.toggle('on',a.dataset.n===nav));}
+function aller(id){ecran=id;etat[id]??=ETATS[id][0][0];document.querySelectorAll('.ecran').forEach(e=>e.classList.toggle('on',e.id==='e-'+id));document.querySelectorAll('#nav button').forEach(b=>b.classList.toggle('on',b.dataset.e===id));
+ document.getElementById('etats').innerHTML='<span>État :</span>'+ETATS[id].map(([k,l])=>`<button data-s="${k}" type="button">${l}</button>`).join('');
+ const[t,d]=NOTES[id];document.getElementById('nt').textContent=t;document.getElementById('nc').innerHTML=Object.entries(d).map(([k,v])=>`<div><dt>${k}</dt><dd>${v}</dd></div>`).join('');majEtat();}
+document.getElementById('nav').addEventListener('click',e=>{const b=e.target.closest('button');if(b)aller(b.dataset.e)});
+document.getElementById('etats').addEventListener('click',e=>{const b=e.target.closest('button');if(b){etat[ecran]=b.dataset.s;majEtat();}});
+document.addEventListener('click',e=>{const n=e.target.closest('[data-n]');if(n){e.preventDefault();const m={aujourdhui:'aujourdhui',calendrier:'calendrier',reservations:'reservations',verif:'verif',residences:'acces'}[n.dataset.n];if(m)aller(m);return}
+ if(e.target.id==='b-det'){etat.reservations='r-detail';majEtat();return}
+ if(e.target.id==='b-cond'){const a=document.getElementById('apps');a.style.display=a.style.display==='none'?'grid':'none';return}
+ if(e.target.closest('a[href="#"]'))e.preventDefault();});
+const setVue=m=>{document.body.classList.toggle('mobile',m);document.getElementById('b-mob').classList.toggle('on',m);document.getElementById('b-ord').classList.toggle('on',!m)};
+document.getElementById('b-mob').onclick=()=>setVue(true);document.getElementById('b-ord').onclick=()=>setVue(false);
+setVue(window.innerWidth<700);aller('aujourdhui');
+</script>
+</body>
+</html>

@@ -126,21 +126,21 @@
 <section class="pa-confiance" id="engagements">
 <div class="pa-cont">
 <div class="pa-intro"><span class="pa-eyebrow">La confiance, avec des repères précis</span>
-<h2>Un contrôle pour publier.<br>Des badges pour aller plus loin.</h2>
-<p>Chaque reconnaissance correspond à un justificatif précis. Les badges complémentaires restent facultatifs.</p>
+<h2>Deux documents<br>pour publier en confiance.</h2>
+<p>Votre identité et le contrat de bail de votre résidence. Rien d’autre n’est demandé pour démarrer.</p>
 </div>
 <div class="pa-grille">
 <article class="pa-carte"><span class="pa-etiquette pa-obligatoire">Obligatoire pour publier</span>
 <h3>Identité validée</h3>
 <p>Votre pièce d’identité est contrôlée avant la publication de vos résidences.</p>
 </article>
-<article class="pa-carte"><span class="pa-etiquette">Badge gérant facultatif</span>
-<h3>Gérant certifié</h3>
-<p>En complément de votre identité, fournissez un certificat de résidence pour faire valider ce badge.</p>
+<article class="pa-carte"><span class="pa-etiquette pa-obligatoire">Obligatoire pour publier</span>
+<h3>Contrat de bail validé</h3>
+<p>Le contrat de bail (ou tout justificatif de gestion) de chaque résidence, contrôlé avant publication.</p>
 </article>
-<article class="pa-carte"><span class="pa-etiquette">Badge résidence facultatif</span>
-<h3>Gestion vérifiée</h3>
-<p>Un justificatif du droit de gestion contrôlé permet d’attribuer ce badge à la résidence concernée.</p>
+<article class="pa-carte"><span class="pa-etiquette">Badge</span>
+<h3>Gérant vérifié</h3>
+<p>Quand les deux documents sont validés, le badge « Gérant vérifié » apparaît sur votre profil et vos annonces.</p>
 </article>
 </div>
 </div>
@@ -187,11 +187,11 @@
 <div class="pa-faq">
 <details>
 <summary>Dois-je renvoyer mon identité pour chaque résidence ?</summary>
-<p>Vos pièces personnelles sont enregistrées dans votre profil gérant. Elles accompagnent vos résidences selon leur état de validation.</p>
+<p>Non. Votre pièce d’identité est enregistrée une fois dans votre profil gérant. Seul le contrat de bail se dépose pour chaque résidence.</p>
 </details>
 <details>
-<summary>Le certificat de résidence est-il obligatoire ?</summary>
-<p>Non. Il complète votre identité pour obtenir le badge Gérant certifié. Il n’est pas une condition de publication.</p>
+<summary>Quels documents faut-il fournir ?</summary>
+<p>Votre pièce d’identité, une seule fois, et le contrat de bail (ou justificatif de gestion) de chaque résidence. Le certificat de résidence n’est plus demandé.</p>
 </details>
 <details>
 <summary>Puis-je gérer plusieurs résidences ?</summary>
