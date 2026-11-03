@@ -4,7 +4,7 @@
     $onglets = ['accueil' => 'Accueil'] + $rubriques + ['tests' => 'Tests', 'historique' => 'Historique'];
     $aSensible = collect($defs)->contains(fn ($d) => $d['sensible']);
 @endphp
-<div class="grid gap-4">
+<div class="mr-page ev-page">
     <div class="flex gap-2 overflow-x-auto pb-1" role="tablist" aria-label="Rubriques des réglages">
         @foreach($onglets as $cle => $nom)
             <a href="{{ route('admin.reglages', $cle === 'accueil' ? [] : ['rubrique' => $cle]) }}" class="puce shrink-0 {{ $rubrique === $cle ? 'puce-active' : '' }}" @if($rubrique === $cle) x-data x-init="$el.scrollIntoView({ inline: 'center', block: 'nearest' })" @endif>{{ $nom }}</a>
@@ -15,10 +15,10 @@
 
     {{-- ====================================================== ACCUEIL --}}
     @if($rubrique === 'accueil')
-        <div class="carte-p"><h1 class="text-xl font-extrabold">Réglages de la plateforme</h1><p class="aide">Tout se règle ici, sans toucher à aucun fichier technique. Chaque changement est tracé.</p></div>
-        <div class="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+        <div class="mr-carte"><h1 class="text-xl font-extrabold">Réglages de la plateforme</h1><p class="aide">Tout se règle ici, sans toucher à aucun fichier technique. Chaque changement est tracé.</p></div>
+        <div class="gq-cartes">
             @foreach($rubriques as $cle => $nom)
-                <a href="{{ route('admin.reglages', ['rubrique' => $cle]) }}" class="carte grid gap-1 hover:border-marque-600">
+                <a href="{{ route('admin.reglages', ['rubrique' => $cle]) }}" class="mr-carte" style="text-decoration:none;color:inherit">
                     <h2 class="font-extrabold">{{ $nom }}</h2><p class="aide">{{ $etats[$cle]['texte'] }}</p>
                     <span class="w-fit rounded-full px-3 py-0.5 text-[13px] font-bold {{ $etats[$cle]['ton'] === 'b-conf' ? 'bg-green-100 text-green-800' : 'bg-amber-100 text-amber-800' }}">{{ $etats[$cle]['etat'] }}</span>
                 </a>
@@ -31,12 +31,12 @@
 
     {{-- ====================================================== TESTS --}}
     @elseif($rubrique === 'tests')
-        <div class="carte-p"><h1 class="text-xl font-extrabold">Tester les connexions</h1><p class="aide">Chaque test est sans danger : aucun vrai paiement, aucune donnée modifiée. Un résultat ne montre jamais de clé ni de mot de passe.</p></div>
+        <div class="mr-carte"><h1 class="text-xl font-extrabold">Tester les connexions</h1><p class="aide">Chaque test est sans danger : aucun vrai paiement, aucune donnée modifiée. Un résultat ne montre jamais de clé ni de mot de passe.</p></div>
         <div class="grid gap-4 lg:grid-cols-2">
-            <div class="carte-p"><h2 class="font-extrabold">✉ E-mail</h2><p class="aide">Envoie un message de test à votre adresse ({{ auth()->user()->email }}).</p>
+            <div class="mr-carte"><h2 class="font-extrabold">✉ E-mail</h2><p class="aide">Envoie un message de test à votre adresse ({{ auth()->user()->email }}).</p>
                 <button wire:click="testerEmail" wire:loading.attr="disabled" class="btn-pl pleine">Lancer le test e-mail</button>
                 @include('livewire.parametres.resultat', ['r' => $resultats['email'] ?? null])</div>
-            <div class="carte-p"><h2 class="font-extrabold">💳 Paiement (GeniusPay)</h2><p class="aide">Demande à GeniusPay le solde du compte pour vérifier que les clés sont acceptées (lecture seule).</p>
+            <div class="mr-carte"><h2 class="font-extrabold">💳 Paiement (GeniusPay)</h2><p class="aide">Demande à GeniusPay le solde du compte pour vérifier que les clés sont acceptées (lecture seule).</p>
                 <button wire:click="testerPaiement" wire:loading.attr="disabled" class="btn-pl pleine">Lancer le test paiement</button>
                 @include('livewire.parametres.resultat', ['r' => $resultats['paiement'] ?? null])
                 <x-ui.alerte type="attention">Le secret du webhook est vérifié seulement quand GeniusPay envoie un vrai message.</x-ui.alerte></div>
@@ -44,7 +44,7 @@
 
     {{-- ====================================================== HISTORIQUE --}}
     @elseif($rubrique === 'historique')
-        <div class="carte-p"><h1 class="text-xl font-extrabold">Historique des modifications</h1><p class="aide">Lecture seule : l'historique ne peut ni se modifier ni se supprimer (verrouillé dans la base de données). Pour un secret, seul le fait qu'il a changé est gardé.</p></div>
+        <div class="mr-carte"><h1 class="text-xl font-extrabold">Historique des modifications</h1><p class="aide">Lecture seule : l'historique ne peut ni se modifier ni se supprimer (verrouillé dans la base de données). Pour un secret, seul le fait qu'il a changé est gardé.</p></div>
         <div class="flex flex-wrap gap-2">@foreach(['' => 'Tout', 'paiement' => 'Paiement', 'securite' => 'Sécurité', 'reservation' => 'Réservation'] as $k => $n)<button wire:click="$set('filtreHistorique', '{{ $k }}')" class="puce {{ $filtreHistorique === $k ? 'puce-active' : '' }}">{{ $n }}</button>@endforeach</div>
         <div class="carte overflow-x-auto p-0 lg:p-0">
             <table class="w-full min-w-[640px] text-left text-[15px]">
@@ -63,7 +63,7 @@
 
     {{-- ====================================================== RUBRIQUES --}}
     @else
-        <form wire:submit="enregistrer" class="carte-p">
+        <form wire:submit="enregistrer" class="mr-carte">
             <h1 class="text-xl font-extrabold">{{ $rubriques[$rubrique] }}</h1>
             @if($rubrique === 'reservation')
                 <x-ui.alerte type="info">Un changement s'applique <b>aux nouvelles réservations seulement</b>. Les réservations existantes gardent les conditions du jour où elles ont été créées.</x-ui.alerte>

@@ -168,3 +168,22 @@
 .espace-admin :is(.adm-side, .adm-haut) { background: var(--avelis-nuit); }
 .espace-admin .adm-cadre { background: #f6f7f9; }
 .gq-recap { display: grid; gap: 2px; }
+
+/* ---------- Administration : argent et réglages (contrat docs/contrats/administration-argent-reglages-v3.md) ---------- */
+.gq-etapes { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
+.gq-etapes li { min-height: 46px; display: grid; place-items: center; border: 2px solid var(--avelis-trait); border-radius: 12px; background: #fff; font-weight: 800; font-size: 13px; color: var(--avelis-gris); text-align: center; padding: 4px; }
+.gq-etapes li.on { border-color: var(--avelis-orange); background: var(--avelis-ivoire); color: var(--avelis-orange-texte); }
+.gq-etapes li.fait { border-color: #b8dfc7; background: var(--avelis-ok-fond); color: var(--avelis-ok); }
+.gq-rev { display: grid; gap: 16px; align-items: start; }
+@media (min-width: 900px) { .gq-rev { grid-template-columns: 380px minmax(0, 1fr); gap: 24px; } }
+.charte .mr-page .carte { border-color: var(--avelis-trait); border-radius: 14px; }
+.charte .mr-page .puce { min-height: 44px; }
+/* Tableaux d'argent : une carte par ligne sur téléphone, tableau sur ordinateur */
+@media (max-width: 699px) {
+    .tab-r, .tab-r tbody { display: block; min-width: 0 !important; width: 100%; }
+    .tab-r thead { display: none; }
+    .tab-r tr { display: grid; gap: 4px; border: 1px solid var(--avelis-trait) !important; border-radius: 12px; padding: 10px 12px; margin-bottom: 10px; background: #fff; }
+    .tab-r td { display: flex; justify-content: space-between; gap: 12px; padding: 2px 0 !important; text-align: right !important; border: 0 !important; }
+    .tab-r td::before { content: attr(data-l); font-weight: 600; color: var(--avelis-gris); text-align: left; flex: none; }
+    .tab-r td[colspan] { display: block; text-align: center !important; }
+}

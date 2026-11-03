@@ -1,15 +1,15 @@
 @php
     $etapes = [1 => 'Compte', 2 => 'Général', 3 => 'E-mail', 4 => 'Paiement', 5 => 'Fin'];
 @endphp
-<div class="grid gap-4">
-    <ol class="flex flex-wrap gap-x-2 gap-y-1 text-[14px] text-gris-doux" aria-label="Étapes">
-        @foreach($etapes as $n => $nom)<li class="{{ $n === $etape ? 'font-extrabold text-marque-600' : '' }}">{{ $n }}. {{ $nom }}{{ $n < 5 ? ' ›' : '' }}</li>@endforeach
+<div class="mr-page ev-page"><div class="ev-centre" style="max-width:760px">
+    <ol class="gq-etapes" aria-label="Étapes">
+        @foreach($etapes as $n => $nom)<li class="{{ $n === $etape ? 'on' : ($n < $etape ? 'fait' : '') }}">{{ $n }} {{ $nom }}</li>@endforeach
     </ol>
 
     @if($etape === 1)
         <form wire:submit="creerCompte" class="grid gap-4">
-            <div class="carte grid gap-2">
-                <h1 class="text-xl font-extrabold">Bienvenue sur Avelis Séjours 👋</h1>
+            <div class="mr-carte">
+                <h1 class="text-xl font-extrabold">Bienvenue sur Avelis Séjours</h1>
                 <p class="aide">Cette installation ne se fait qu'une seule fois. Elle crée le compte du super-administrateur puis règle l'essentiel.</p>
                 @if(! $codeGenere)<x-ui.alerte type="attention">Aucun code d'installation n'a encore été généré. Sur le serveur, lancez : <b>php artisan gesimo:installation</b></x-ui.alerte>@endif
                 <div class="champ"><label class="etiquette" for="code">Code d'installation</label><input id="code" wire:model="code" class="saisie uppercase" placeholder="XXXX-XXXX-XXXX" autocomplete="off">
@@ -69,4 +69,5 @@
             <p class="aide">Après cela, l'assistant disparaît définitivement. Tout reste modifiable dans « Réglages ».</p>
         </div>
     @endif
+</div>
 </div>
