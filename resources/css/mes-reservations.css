@@ -163,3 +163,8 @@
 .charte .stepper .st { min-height: 50px; border: 2px solid var(--avelis-trait); border-radius: 12px; background: #fff; font-weight: 800; font-size: 14px; color: var(--avelis-gris); display: grid; place-items: center; }
 .charte .stepper .st.on { border-color: var(--avelis-orange); background: var(--avelis-ivoire); color: var(--avelis-orange-texte); }
 .charte .stepper .st.fait { border-color: #b8dfc7; background: var(--avelis-ok-fond); color: var(--avelis-ok); }
+
+/* ---------- Administration : validation et litiges (contrat docs/contrats/administration-validation-v3.md) ---------- */
+.espace-admin :is(.adm-side, .adm-haut) { background: var(--avelis-nuit); }
+.espace-admin .adm-cadre { background: #f6f7f9; }
+.gq-recap { display: grid; gap: 2px; }
