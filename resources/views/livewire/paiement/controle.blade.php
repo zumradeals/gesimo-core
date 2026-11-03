@@ -1,21 +1,21 @@
 @php $fr = fn (int $m) => \App\Noyau\Services\Format::fcfa($m); $t = $bilan['totaux']; @endphp
-<div class="grid gap-4">
-    <div class="adm-top"><div><h1>Contrôle</h1></div></div>
+<div class="mr-page ev-page">
+    <div class="mr-entete"><div><h1>Contrôle</h1><p class="petit">Les paiements et les écritures doivent concorder au franc près</p></div></div>
     @if($message)<x-ui.alerte type="succes">{{ $message }}</x-ui.alerte>@endif
     @if($erreur)<x-ui.alerte type="erreur">{{ $erreur }}</x-ui.alerte>@endif
 
     @if($bilan['anomalies']->isEmpty())
-        <div class="carte-p"><b>✔ Tout concorde</b> <span class="aide">— paiements et écritures sont d'accord, au franc près.</span></div>
+        <div class="mr-carte"><b>✔ Tout concorde</b> <span class="aide">— paiements et écritures sont d'accord, au franc près.</span></div>
     @else
-        <div class="carte-p"><b class="text-red-800">⚠ {{ $bilan['anomalies']->count() }} différence{{ $bilan['anomalies']->count() > 1 ? 's' : '' }} à examiner</b></div>
+        <div class="mr-carte"><b class="text-red-800">⚠ {{ $bilan['anomalies']->count() }} différence{{ $bilan['anomalies']->count() > 1 ? 's' : '' }} à examiner</b></div>
     @endif
 
-    <div class="kpi">
+    <div class="kpi gq-kpi">
         <div class="k"><b>{{ $fr($t['encaisse']) }}</b><span>Encaissé (paiements réussis)</span></div>
         <div class="k"><b>{{ $fr($t['rembourse']) }}</b><span>Remboursé</span></div>
         <div class="k"><b>{{ $fr($t['commissions']) }}</b><span>Commissions</span></div>
         <div class="k"><b>{{ $fr($t['parts']) }}</b><span>Parts des gérants</span></div></div>
-    <div class="carte-p">
+    <div class="mr-carte">
         <h2 class="font-extrabold">Calcul</h2>
         <div class="flex justify-between border-b border-dashed border-trait py-1.5"><span>Encaissé</span><span>{{ $fr($t['encaisse']) }}</span></div>
         <div class="flex justify-between border-b border-dashed border-trait py-1.5"><span>− Remboursé − Commissions − Parts des gérants</span><span>− {{ $fr($t['rembourse'] + $t['commissions'] + $t['parts']) }}</span></div>
@@ -36,9 +36,9 @@
     @endif
 
     <h2>À traiter ({{ $alertes->count() }})</h2>
-    <div class="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+    <div class="gq-cartes">
         @forelse($alertes as $al)
-            <article class="carte-p">
+            <article class="mr-carte">
                 <div><span class="rounded-full bg-amber-100 px-3 py-0.5 text-[13px] font-bold text-amber-800">{{ \App\Paiement\Models\AlerteAdmin::libelleType($al->type) }}</span></div>
                 <p class="text-[15px]">{{ $al->message }}</p>
                 @if($al->type === 'remboursement_en_echec' && $al->remboursement_id && $enEchec->has($al->remboursement_id))
