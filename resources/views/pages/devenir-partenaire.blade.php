@@ -163,7 +163,9 @@
 <div><b>Reversement après l’arrivée</b>
 <p>Suivez les montants et leur état dans votre espace.</p>
 </div>
-@if($commission !== null)
+@if($commission === null)
+<div class="pa-exemple"><p>Le taux de commission sera communiqué à l’inscription.</p></div>
+@else
 <div class="pa-exemple" aria-label="Exemple chiffré"><b>Exemple sur une réservation de {{ $fr($exemple) }}</b>
 <div><span>Commission</span><b>{{ $fr($commission) }}</b>
 </div>
@@ -214,4 +216,5 @@
 </div>
 </div>
 </section>
+<div class="pa-barre"><a class="pa-btn pa-or" href="{{ $inscription }}">Devenir gérant partenaire <span>→</span></a></div>
 </div>

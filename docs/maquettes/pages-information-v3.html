@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Maquette — Pages d'information · Avelis Séjours</title>
+<style>
+:root{--orange:#ff6a00;--orange-texte:#b94700;--orange-survol:#e75e00;--nuit:#17243b;--ivoire:#fff8f0;--peche:#ffeadb;--gris:#526077;--trait:#e4e7ed;--saisie:#c7cdd8;--ok:#1d7a46;--okfond:#e8f5ed;--erreur:#b42318;--erreurfond:#fdecea}
+*{box-sizing:border-box}
+body{margin:0;font:16px/1.55 system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--nuit);background:#eef0f4}
+h1,h2,h3,p{margin:0}h1,h2,h3{letter-spacing:-.03em;line-height:1.2}a{color:var(--orange-texte)}button,input,textarea{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--nuit);outline-offset:3px}
+.outil{position:sticky;top:0;z-index:50;background:var(--nuit);color:#fff;padding:10px 16px;display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center}
+.outil nav{display:flex;flex-wrap:wrap;gap:6px}.outil button{border:1px solid #ffffff55;background:transparent;color:#fff;border-radius:999px;padding:6px 12px;font-size:13px;cursor:pointer}
+.outil button.on{background:var(--orange);border-color:var(--orange);color:var(--nuit);font-weight:700}.outil .sep{margin-left:auto;display:flex;gap:6px;align-items:center;font-size:13px}
+.avertis{max-width:1500px;margin:14px auto 0;padding:0 16px;font-size:13px;color:var(--gris)}
+.etats{max-width:1500px;margin:10px auto 0;padding:0 16px;display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:13px}
+.etats span{color:var(--gris);font-weight:700}.etats button{border:1.5px solid var(--saisie);background:#fff;border-radius:999px;padding:5px 12px;font-size:13px;font-weight:700;cursor:pointer}.etats button.on{background:var(--nuit);color:#fff;border-color:var(--nuit)}
+.scene{margin:12px auto 0;background:#fff;border:1px solid var(--trait);border-radius:18px;overflow:hidden;container-type:inline-size;width:min(100%,1500px);box-shadow:0 10px 40px #17243b14}
+body.mobile .scene{width:390px}
+.ecran{display:none}.ecran.on{display:block}
+/* coque site public */
+.site-h{display:flex;align-items:center;gap:14px;padding:12px 16px;background:#fff;border-bottom:1px solid var(--trait)}
+.logo{display:flex;align-items:center;gap:9px;font-weight:800;font-size:18px}.logo i{display:grid;place-items:center;width:34px;height:34px;border-radius:11px;background:var(--orange);color:var(--nuit);font-style:normal;font-size:22px}
+.menu{display:none;gap:4px;margin-left:18px}.menu a{padding:8px 12px;border-radius:9px;text-decoration:none;color:var(--nuit);font-weight:600;font-size:15px}.menu a.on{background:var(--peche);color:var(--orange-texte)}
+.site-h .cta{margin-left:auto}
+.burger{margin-left:auto;border:1.5px solid var(--saisie);background:#fff;border-radius:10px;min-width:46px;min-height:46px;font-size:20px}
+.pied{background:var(--nuit);color:#cdd5e4;padding:26px 16px;display:grid;gap:14px;font-size:14px}.pied a{color:#fff}.pied .liens{display:flex;flex-wrap:wrap;gap:8px 18px}
+.bas-m{position:sticky;bottom:0;display:grid;background:#fff;border-top:1px solid var(--trait);padding:8px 16px;z-index:5}
+@container (min-width:900px){.menu{display:flex}.burger{display:none}.site-h{padding:14px 36px}.pied{padding:30px 36px;grid-template-columns:1fr auto;align-items:center}.bas-m{display:none}}
+/* éléments */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:50px;padding:10px 20px;border:0;border-radius:10px;background:var(--orange);color:var(--nuit);font-weight:800;font-size:16px;cursor:pointer;text-decoration:none;text-align:center}
+.btn:hover{background:var(--orange-survol)}.btn.sec{background:#fff;border:2px solid var(--nuit)}.btn.nuit{background:var(--nuit);color:#fff}.btn.pleine{width:100%}.btn.pet{min-height:44px;padding:6px 14px;font-size:15px}
+.surtitre{font-size:12px;letter-spacing:.11em;text-transform:uppercase;font-weight:800;color:var(--orange-texte)}
+.bandeau{background:var(--ivoire);border-bottom:1px solid var(--peche);padding:26px 16px;display:grid;gap:8px}.bandeau h1{font-size:clamp(28px,6cqw,40px)}.bandeau p{color:var(--gris);max-width:62ch}
+.sect{padding:26px 16px;display:grid;gap:18px}.sect.alt{background:#f6f7f9}.sect h2{font-size:clamp(22px,4cqw,30px)}
+.deux{display:grid;gap:18px;align-items:start}.grille3{display:grid;gap:14px}.grille2{display:grid;gap:14px}
+.carte{background:#fff;border:1px solid var(--trait);border-radius:14px;padding:18px;display:grid;gap:10px;align-content:start;min-width:0}.carte h3{font-size:18px}.carte p{color:var(--gris);font-size:15px}
+.ico{display:grid;place-items:center;width:44px;height:44px;border-radius:12px;background:var(--peche);color:var(--orange-texte);font-size:22px}
+.badge{display:inline-block;border-radius:999px;padding:3px 11px;font-size:12.5px;font-weight:800;white-space:nowrap}.b-ok{background:var(--okfond);color:var(--ok)}.b-att{background:var(--peche);color:var(--orange-texte)}
+details{background:#fff;border:1px solid var(--trait);border-radius:12px;padding:0}details+details{margin-top:8px}summary{cursor:pointer;font-weight:800;padding:14px 16px;min-height:52px;display:flex;align-items:center;list-style:none;justify-content:space-between;gap:10px}summary::after{content:"+";font-size:22px;color:var(--orange-texte)}details[open] summary::after{content:"–"}details p{padding:0 16px 16px;color:var(--gris)}
+.hero{display:grid;gap:16px;padding:26px 16px;background:var(--ivoire);border-bottom:1px solid var(--peche)}.hero h1{font-size:clamp(30px,7cqw,46px)}.hero .photo{min-height:200px}
+.photo{border-radius:14px;background:linear-gradient(135deg,#d7c3ab,#a98c6c 55%,#e9d9c4);color:#ffffffcc;font-size:11px;display:grid;place-items:end start;padding:8px 10px;min-height:120px}
+.preuves{display:grid;gap:10px;padding:16px;background:#fff;border-bottom:1px solid var(--trait)}.preuves div{display:flex;gap:12px;align-items:flex-start}.preuves b{display:block}.preuves p{font-size:14px;color:var(--gris)}
+.etapes{counter-reset:e;display:grid;gap:12px}.etapes .carte{position:relative;padding-left:62px}.etapes .carte::before{counter-increment:e;content:counter(e);position:absolute;left:16px;top:16px;width:32px;height:32px;border-radius:50%;background:var(--orange);color:var(--nuit);display:grid;place-items:center;font-weight:800}
+.exemple{background:var(--ivoire);border:2px solid var(--peche);border-radius:14px;padding:16px;display:grid;gap:6px}.exemple div{display:flex;justify-content:space-between;gap:10px}.exemple .tot{font-weight:800;font-size:19px;border-top:1px solid var(--peche);padding-top:8px}
+.cta-bande{background:var(--nuit);color:#fff;padding:28px 16px;display:grid;gap:12px}.cta-bande p{color:#cdd5e4}.cta-bande h2{color:#fff}
+.alerte{display:flex;gap:10px;border-radius:12px;padding:12px 14px;font-size:14.5px;border:1px solid}.alerte.err{background:var(--erreurfond);border-color:#f2b8b2;color:#7a1a12}.alerte.ok{background:var(--okfond);border-color:#b8dfc7;color:#14532d}.alerte.att{background:#fff4e5;border-color:#f6d9a8;color:#7a4a00}.alerte.info{background:var(--ivoire);border-color:var(--peche)}
+label.champ{display:grid;gap:6px;font-weight:700;font-size:15px}input[type=text],textarea{width:100%;min-height:50px;border:1.5px solid var(--saisie);border-radius:11px;padding:10px 13px;background:#fff;font-weight:500}textarea{min-height:130px;resize:vertical}
+input.err,textarea.err{border-color:var(--erreur);box-shadow:0 0 0 3px var(--erreurfond)}.msg-err{color:var(--erreur);font-size:14px;font-weight:600}
+.coord{display:grid;gap:12px}.coord div{display:flex;gap:12px;align-items:flex-start;font-size:15px}.coord .ico{width:38px;height:38px;font-size:18px;flex:none}
+/* lecture */
+.lecture{display:grid;gap:18px;padding:22px 16px}.sommaire{display:none}.som{display:grid;gap:8px}.texte h2{font-size:21px;margin:22px 0 8px}.texte h2:first-child{margin-top:0}.texte p{color:#2d3a52;margin-bottom:10px}
+.texte{display:grid;align-content:start;min-width:0}
+.ligne{display:flex;justify-content:space-between;gap:12px;font-size:15px;padding:9px 0;border-bottom:1px dashed var(--trait)}.ligne:last-child{border-bottom:0}
+/* profil public */
+.pp-hero{display:flex;gap:16px;align-items:center;flex-wrap:wrap}.avatar{display:grid;place-items:center;width:88px;height:88px;border-radius:50%;background:var(--orange);color:var(--nuit);font-size:38px;font-weight:800;flex:none}
+.pp-badge{display:inline-block;background:var(--okfond);color:var(--ok);border-radius:999px;padding:4px 12px;font-weight:800;font-size:13px}
+.cartes{display:grid;gap:14px}.lg{background:#fff;border:1px solid var(--trait);border-radius:14px;overflow:hidden;display:grid}.lg .photo{border-radius:0;min-height:150px}.lg .c{padding:14px;display:grid;gap:4px}.lg .prix b{font-size:19px}
+@container (min-width:700px){.deux{grid-template-columns:1fr 1fr}.grille3{grid-template-columns:repeat(3,1fr)}.grille2{grid-template-columns:1fr 1fr}.cartes{grid-template-columns:repeat(2,1fr)}.hero{grid-template-columns:1.1fr .9fr;align-items:center}.preuves{grid-template-columns:repeat(3,1fr)}.cta-bande{grid-template-columns:1fr auto;align-items:center}}
+@container (min-width:900px){.bandeau,.sect,.hero,.preuves,.cta-bande{padding-left:36px;padding-right:36px}.bandeau{padding-top:34px;padding-bottom:34px}.sect{padding-top:36px;padding-bottom:36px}.lecture{grid-template-columns:260px minmax(0,1fr);gap:36px;padding:32px 36px}.sommaire{display:grid;gap:8px;align-content:start;position:sticky;top:16px}.sommaire a{text-decoration:none;color:var(--nuit);font-weight:600;padding:6px 0 6px 12px;border-left:3px solid var(--trait)}.sommaire a:hover{border-color:var(--orange)}.texte{max-width:78ch}.contact-g{grid-template-columns:minmax(0,1fr) 420px!important}}
+@container (min-width:1200px){.texte{columns:2;column-gap:56px;max-width:none}.texte h2{break-after:avoid}.texte>div>*{break-inside:avoid}.texte>.alerte{column-span:all}.texte .carte{break-inside:avoid}}
+@container (min-width:1300px){.grille3.g4{grid-template-columns:repeat(4,1fr)}.cartes{grid-template-columns:repeat(3,1fr)}}
+.note{max-width:1500px;margin:12px auto 0;padding:0 16px}
+.note details{background:#fff;border:1px solid var(--trait);border-radius:12px;padding:12px 16px}.note summary{padding:0;min-height:0}.note summary::after{content:none}
+.note dl{display:grid;gap:10px;margin:12px 0 0;font-size:14.5px}.note dt{font-weight:800}.note dd{margin:0;color:var(--gris)}
+.points-v{max-width:1500px;margin:22px auto 60px;padding:0 16px}.points-v .carte{background:#fff}.points-v ol{margin:0;padding-left:20px;display:grid;gap:8px}
+</style>
+</head>
+<body>
+<div class="outil">
+  <b>Maquette Pages d'information — Avelis Séjours</b>
+  <nav id="nav" aria-label="Écrans"><button data-e="partenaire" class="on">1 · Devenir partenaire</button><button data-e="apropos">2 · À propos</button><button data-e="aide">3 · Aide</button><button data-e="contact">4 · Contact</button><button data-e="legal">5 · Conditions · Confidentialité · Mentions</button><button data-e="profil">6 · Profil public du gérant</button></nav>
+  <span class="sep">Affichage :<button id="b-mob" class="on">Téléphone</button><button id="b-ord">Ordinateur</button></span>
+</div>
+<p class="avertis">Maquette de travail, non validée : noms, montants et photos sont des exemples. Les boutons « État » montrent chaque situation. Les textes juridiques restent ceux du dépôt (brouillons à faire valider par un juriste).</p>
+<div class="etats" id="etats"></div>
+
+<div class="scene" id="scene">
+<!-- coque -->
+<header class="site-h"><span class="logo"><i>A</i>Avelis Séjours</span><nav class="menu" id="menu"><a href="#" data-m="accueil">Accueil</a><a href="#" data-m="logements">Logements</a><a href="#" data-m="apropos">À propos</a><a href="#" data-m="partenaire">Devenir partenaire</a><a href="#" data-m="aide">Aide</a><a href="#" data-m="contact">Contact</a></nav><a class="btn pet cta" href="#" style="display:none" id="cta-h">Se connecter</a><button class="burger" aria-label="Menu">☰</button></header>
+
+<!-- 1 PARTENAIRE -->
+<section class="ecran on" id="e-partenaire">
+  <div class="hero"><div style="display:grid;gap:12px"><span class="surtitre">Gérants de résidences meublées</span><h1>Votre résidence mérite d'être choisie.</h1><p style="color:var(--gris)">Présentez vos logements aux voyageurs, organisez vos disponibilités et suivez vos réservations avec Avelis Séjours.</p><div style="display:grid;gap:10px;justify-items:start"><a class="btn" href="#">Devenir gérant partenaire →</a><a href="#" style="font-weight:700">Échanger avec notre équipe ↗</a></div><p style="font-size:13px;color:var(--gris)">Inscription gratuite · Identité contrôlée avant publication</p></div><div class="photo">Photo d'un appartement</div></div>
+  <div class="preuves"><div><span class="ico">🏢</span><span><b>Vos logements, votre espace</b><p>Annonces et disponibilités réunies.</p></span></div><div><span class="ico">💳</span><span><b>Des paiements suivis</b><p>Mobile Money et carte selon les moyens disponibles.</p></span></div><div><span class="ico">🛡</span><span><b>Un cadre clair pour démarrer</b><p>Contrôle du dossier et conditions expliquées.</p></span></div></div>
+  <div class="sect"><div style="display:grid;gap:6px"><span class="surtitre">Faites grandir votre activité</span><h2>Plus de visibilité. Une gestion plus sereine.</h2></div>
+    <div class="grille3"><div class="carte"><span class="ico">✦</span><h3>Présentez ce qui vous distingue</h3><p>Photos, équipements, tarifs et règlement : donnez aux voyageurs les repères pour choisir votre logement.</p></div><div class="carte"><span class="ico">📅</span><h3>Gardez la main sur votre calendrier</h3><p>Suivez les séjours et renseignez aussi vos réservations prises par téléphone pour tenir vos disponibilités à jour.</p></div><div class="carte"><span class="ico">🔑</span><h3>Préparez chaque arrivée</h3><p>Retrouvez les réservations confirmées et les informations nécessaires pour organiser l'accueil de vos clients.</p></div></div></div>
+  <div class="sect alt" id="demarrer"><div style="display:grid;gap:6px"><span class="surtitre">Rejoindre Avelis Séjours</span><h2>De votre dossier à vos premières annonces.</h2></div>
+    <div class="etapes grille3"><div class="carte"><h3>Créez votre profil</h3><p>Votre identité et vos coordonnées, une seule fois.</p></div><div class="carte"><h3>Présentez votre résidence</h3><p>Photos, équipements, tarifs et règlement.</p></div><div class="carte"><h3>Soumettez pour validation</h3><p>Notre équipe contrôle votre dossier avant publication.</p></div></div></div>
+  <div class="sect" id="engagements"><div style="display:grid;gap:6px"><span class="surtitre">Confiance</span><h2>Un contrôle pour publier. Des badges pour aller plus loin.</h2></div>
+    <div class="grille3"><div class="carte"><span class="badge b-ok">Obligatoire</span><h3>Identité validée</h3><p>Pièce d'identité contrôlée pour publier.</p></div><div class="carte"><span class="badge b-att">Facultatif</span><h3>Gérant certifié</h3><p>Avec le certificat de résidence, après contrôle.</p></div><div class="carte"><span class="badge b-att">Facultatif</span><h3>Gestion vérifiée</h3><p>Badge d'une résidence, avec le justificatif de gestion.</p></div></div></div>
+  <div class="sect alt"><div class="deux"><div style="display:grid;gap:10px"><span class="surtitre">Tarifs</span><h2>Vous savez comment vous êtes payé.</h2><p style="color:var(--gris)">Avelis Séjours retient une commission sur les réservations payées en ligne <span data-s="pa-taux">de <b>10 %</b></span>. Les paiements et reversements se suivent depuis votre espace gérant.</p></div>
+    <div class="exemple"><b>Exemple sur une réservation de 50 000 FCFA</b><div data-s="pa-taux"><span>Commission</span><b>5 000 FCFA</b></div><div class="tot" data-s="pa-taux"><span>Vous recevez</span><b>45 000 FCFA</b></div><p data-s="pa-sans" style="color:var(--gris);font-size:14px">Le taux de commission sera communiqué à l'inscription.</p></div></div></div>
+  <div class="sect" id="aide"><div style="display:grid;gap:6px"><span class="surtitre">Aide</span><h2>Vos questions avant de vous lancer.</h2></div>
+    <div><details open><summary>Dois-je renvoyer mon identité pour chaque résidence ?</summary><p>Non. Une fois validée, elle sert pour toutes vos résidences.</p></details><details><summary>Le certificat de résidence est-il obligatoire ?</summary><p>Non. Il permet la mention « Gérant certifié ».</p></details><details><summary>Puis-je gérer plusieurs résidences ?</summary><p>Oui.</p></details><details><summary>Puis-je enregistrer mes réservations téléphoniques ?</summary><p>Oui, depuis votre espace gérant.</p></details></div></div>
+  <div class="cta-bande"><div><h2>Faisons découvrir votre prochaine adresse.</h2><p>Inscription gratuite. Identité contrôlée avant publication.</p></div><a class="btn" href="#">Créer mon compte gérant →</a></div>
+  <div class="bas-m"><a class="btn pleine" href="#">Devenir gérant partenaire →</a></div>
+</section>
+
+<!-- 2 À PROPOS -->
+<section class="ecran" id="e-apropos">
+  <div class="bandeau"><span class="surtitre">Qui sommes-nous</span><h1>À propos d'Avelis Séjours</h1><p>Une plateforme qui rend la réservation de résidences meublées simple, claire et sûre.</p></div>
+  <div class="sect"><div class="deux"><div style="display:grid;gap:12px"><span class="surtitre">Notre mission</span><h2>Réserver une résidence meublée en toute confiance</h2><p style="color:var(--gris)">Avelis Séjours met en relation des voyageurs et des gérants de résidences meublées en Côte d'Ivoire. Nous vérifions les résidences avant de les publier, nous sécurisons le paiement, et nous reversons le gérant après l'arrivée du client.</p><p style="color:var(--gris)">Le prix total est affiché avant de payer, les règles d'annulation sont claires, et chaque réservation est suivie de bout en bout.</p><a class="btn sec" href="#" style="justify-self:start">Nous écrire</a></div><div class="photo" style="min-height:220px">Illustration</div></div></div>
+  <div class="sect alt"><div style="display:grid;gap:6px"><span class="surtitre">Nos engagements</span><h2>Ce que vous pouvez attendre de nous</h2></div><div class="grille3"><div class="carte"><span class="ico">🛡</span><h3>Résidences vérifiées</h3><p>Identité du gérant et annonce contrôlées avant publication. La certification du gérant et le badge de gestion de chaque résidence sont distincts et facultatifs.</p></div><div class="carte"><span class="ico">₣</span><h3>Prix clair</h3><p>Le prix total est affiché avant de payer, sans frais cachés.</p></div><div class="carte"><span class="ico">💳</span><h3>Paiement sécurisé</h3><p>Wave, Orange Money, MTN Money ou carte, via un prestataire de paiement sécurisé.</p></div></div></div>
+  <div class="cta-bande"><div><h2>Une question ? Parlons-en.</h2><p>Notre équipe vous répond sous 24 h (jours ouvrés).</p></div><a class="btn" href="#">Nous contacter</a></div>
+</section>
+
+<!-- 3 AIDE -->
+<section class="ecran" id="e-aide">
+  <div class="bandeau"><span class="surtitre">Aide</span><h1>Questions fréquentes</h1><p>Les réponses aux questions les plus posées.</p></div>
+  <div class="sect"><div class="deux contact-g" style="grid-template-columns:1fr">
+    <div><details open><summary>Comment payer ?</summary><p>Par Wave, Orange Money, MTN Money ou carte bancaire, sur la page sécurisée de notre partenaire de paiement. Vous payez l'acompte ou le total, selon la résidence.</p></details><details><summary>Mes dates sont-elles gardées ?</summary><p>Oui, pendant 2 heures. Sans paiement dans ce délai, elles sont libérées automatiquement.</p></details><details><summary>Puis-je annuler ?</summary><p>Oui. Remboursement intégral jusqu'à 24 heures avant l'arrivée. Ensuite, une nuit est retenue et le reste est remboursé.</p></details><details><summary>Mon paiement est passé mais ma réservation n'est pas confirmée ?</summary><p>Ne payez pas une deuxième fois. La confirmation arrive dès que le paiement est vérifié. Si les dates ne sont plus libres, vous êtes remboursé automatiquement.</p></details><details><summary>Quand le gérant est-il payé ?</summary><p>Après l'arrivée du client. Avelis retient sa commission puis reverse le reste au gérant.</p></details><details><summary>Comment devenir gérant ?</summary><p>Créez un compte gérant, ajoutez votre résidence et vos pièces. Nous vérifions sous quelques jours.</p></details><p style="margin-top:12px;font-size:14px;color:var(--gris)">Une autre question ? <a href="#">Écrivez-nous</a></p></div>
+    <div class="carte"><h3>Nos coordonnées</h3><div class="coord"><div><span class="ico">☎</span><span>Téléphone<br><a href="#">07 07 05 55 08</a></span></div><div class="" data-s="co-complet"><span class="ico">💬</span><span>WhatsApp<br><a href="#">Nous écrire sur WhatsApp</a></span></div><div><span class="ico">✉</span><span>E-mail<br><a href="#">contact@exemple.ci</a></span></div><div data-s="co-complet"><span class="ico">📍</span><span>Adresse<br>Cocody, Abidjan</span></div><div><span class="ico">🕒</span><span>Réponse<br>sous 24 h (jours ouvrés)</span></div></div><p style="font-size:14px">Un problème avec une réservation ? Ouvrez-la depuis « Mes réservations » puis « Signaler un problème ».</p></div>
+  </div></div>
+</section>
+
+<!-- 4 CONTACT -->
+<section class="ecran" id="e-contact">
+  <div class="bandeau"><span class="surtitre">Aide et contact</span><h1>Contact</h1><p>Une question, un problème, une suggestion ? Nous vous répondons sous 24 h.</p></div>
+  <div class="sect"><div class="deux contact-g" style="grid-template-columns:1fr">
+    <form class="carte" onsubmit="return false"><h2 style="font-size:22px">Une question ? Écrivez-nous</h2>
+      <div class="alerte ok" data-s="ct-envoye">Merci ! Votre message est bien parti. Nous vous répondons sous 24 h.</div>
+      <div class="alerte err" data-s="ct-erreur">Votre message n'a pas pu être envoyé. Réessayez dans un instant ou appelez-nous.</div>
+      <label class="champ">Votre nom<input type="text" id="c-nom" placeholder="Awa Koné"></label><p class="msg-err" data-s="ct-champs">Indiquez votre nom.</p>
+      <label class="champ">Votre e-mail ou téléphone<input type="text" id="c-ct" placeholder="07 01 02 03 04"></label><p class="msg-err" data-s="ct-champs">Indiquez un e-mail ou un numéro valide.</p>
+      <label class="champ">Votre message<textarea id="c-msg"></textarea></label><p class="msg-err" data-s="ct-champs">Écrivez votre message (quelques mots suffisent).</p>
+      <button class="btn pleine">Envoyer</button></form>
+    <div style="display:grid;gap:14px;align-content:start"><div class="carte"><h3>Nos coordonnées</h3><div class="coord"><div><span class="ico">☎</span><span>Téléphone<br><a href="#">07 07 05 55 08</a></span></div><div><span class="ico">✉</span><span>E-mail<br><a href="#">contact@exemple.ci</a></span></div><div><span class="ico">🕒</span><span>Réponse<br>sous 24 h (jours ouvrés)</span></div></div></div>
+    <div class="carte" style="background:var(--ivoire);border-color:var(--peche)"><h3>Une réponse rapide ?</h3><p>Paiement, annulation, remboursement : les réponses sont dans les questions fréquentes.</p><a class="btn sec" href="#">Voir les questions fréquentes</a></div></div>
+  </div></div>
+</section>
+
+<!-- 5 LÉGAL -->
+<section class="ecran" id="e-legal">
+  <div class="bandeau"><span class="surtitre">Informations</span><h1 data-s="lg-cgu">Conditions générales d'utilisation</h1><h1 data-s="lg-conf">Politique de confidentialité</h1><h1 data-s="lg-ment">Mentions légales</h1></div>
+  <div class="lecture"><nav class="sommaire" aria-label="Sommaire"><b class="surtitre">Sur cette page</b>
+    <span data-s="lg-cgu" class="som"><a href="#">1. Rôle d'Avelis</a><a href="#">2. Réservation et paiement</a><a href="#">3. Annulation et remboursement</a><a href="#">4. Obligations</a><a href="#">5. Problèmes et litiges</a><a href="#">6. Avis</a></span>
+    <span data-s="lg-conf" class="som"><a href="#">Données collectées</a><a href="#">Pourquoi</a><a href="#">Qui y accède</a><a href="#">Vos droits</a><a href="#">Cookies</a></span>
+    <span data-s="lg-ment" class="som"><a href="#">Éditeur du site</a><a href="#">Paiement en ligne</a><a href="#">Contact</a></span></nav>
+    <div class="texte">
+      <div class="alerte att" style="margin-bottom:16px" data-s="lg-cgu lg-conf"><span><b>Brouillon de travail.</b> Ce texte doit être relu et validé par un juriste avant la mise en service.</span></div>
+      <div data-s="lg-cgu"><h2>1. Rôle d'Avelis</h2><p>Avelis met en relation des clients et des gérants de résidences meublées et encaisse le paiement pour le compte du gérant. Avelis détient temporairement les sommes encaissées jusqu'à leur reversement.</p><h2>2. Réservation et paiement</h2><p>Les dates sont gardées 2 heures. La réservation est confirmée seulement après la vérification du paiement de l'acompte ou du total. Le solde éventuel est réglé au gérant à l'arrivée.</p><h2>3. Annulation et remboursement</h2><p>Politique flexible : remboursement intégral jusqu'à 24 heures avant l'arrivée ; ensuite une nuit retenue ; en cas d'absence sans annulation, aucun remboursement. Si le gérant annule, le client est remboursé en totalité.</p><h2>4. Obligations</h2><p>Le client respecte le règlement de la résidence. Le gérant fournit un logement conforme à l'annonce.</p><h2>5. Problèmes et litiges</h2><p>Le client ou le gérant peut signaler un problème depuis la réservation ; l'équipe Avelis étudie la situation et répond.</p><h2>6. Avis</h2><p>Un avis ne peut être donné qu'après un séjour terminé, une seule fois.</p></div>
+      <div data-s="lg-conf"><h2>Données collectées</h2><p>Nom, téléphone, e-mail ; pour un séjour : dates et pièce d'identité du voyageur (conservée chiffrée).</p><p>Pour un gérant : coordonnées, adresse personnelle conservée chiffrée et pièce d'identité ; entreprise, photo ou logo et présentation publique si renseignés.</p><h2>Pourquoi</h2><p>Gérer les réservations et les paiements, sécuriser les séjours, respecter les obligations légales.</p><h2>Qui y accède</h2><p>Le gérant concerné par la réservation et l'équipe Avelis, selon leurs droits. Vos données ne sont pas vendues.</p><h2>Vos droits</h2><p>Vous pouvez demander l'accès, la correction ou la suppression de vos données en nous écrivant via la page Contact.</p><h2>Cookies</h2><p>Uniquement ceux nécessaires au fonctionnement du site (connexion, sécurité).</p></div>
+      <div data-s="lg-ment"><div class="carte"><div class="ligne"><span>Éditeur du site</span><b>SARL Exemple</b></div><div class="ligne"><span>Registre du commerce (RCCM)</span><b>CI-ABJ-2026-B-0001</b></div><div class="ligne"><span>Compte contribuable (NIF)</span><b>0000000A</b></div><div class="ligne"><span>Adresse</span><b>Cocody, Abidjan</b></div><div class="ligne"><span>Téléphone</span><b>07 07 05 55 08</b></div><div class="ligne"><span>E-mail</span><b>contact@exemple.ci</b></div></div><h2>Paiement en ligne</h2><p>Le paiement en ligne est assuré par un prestataire de paiement sécurisé : Avelis Séjours ne voit ni ne conserve votre numéro de carte.</p><p>Pour toute question, écrivez-nous depuis la page <a href="#">Contact</a>.</p></div>
+    </div></div>
+</section>
+
+<!-- 6 PROFIL PUBLIC -->
+<section class="ecran" id="e-profil">
+  <div class="sect" style="padding-bottom:6px"><div class="alerte info" data-s="pp-apercu"><span>Aperçu de votre profil public. Seules vos offres publiées sont présentées. <a href="#">Modifier mon profil</a></span></div>
+    <p style="font-size:13px;color:var(--gris)"><a href="#">Accueil</a> › Votre hébergeur › Confort Immobilier</p>
+    <div class="pp-hero"><span class="avatar">C</span><div style="display:grid;gap:6px"><span class="surtitre">Votre hébergeur en Côte d'Ivoire</span><h1 style="font-size:clamp(28px,6cqw,38px)">Confort Immobilier</h1><div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;font-size:15px"><span class="pp-badge" data-s="pp-certifie pp-apercu">✓ Gérant certifié</span><span>Cocody</span><span data-s="pp-certifie pp-apercu">3 offre(s) publiée(s)</span><span data-s="pp-vide">0 offre publiée</span></div></div></div></div>
+  <div class="sect" style="padding-top:6px"><div class="deux"><div class="carte"><h3>À propos de votre hébergeur</h3><p>Résidences meublées à Cocody et Marcory, accueil soigné et arrivées à toute heure.</p></div><div class="carte" data-s="pp-certifie pp-apercu" style="background:var(--ivoire);border-color:var(--peche)"><h3>Que signifie « Gérant certifié » ?</h3><p>Avelis a contrôlé la pièce d'identité et le certificat de résidence de ce gérant. Le badge de gestion de chaque résidence fait l'objet d'un contrôle séparé.</p></div></div></div>
+  <div class="sect alt"><h2>Les séjours proposés par Confort Immobilier</h2>
+    <div class="cartes" data-s="pp-certifie pp-apercu"><div class="lg"><div class="photo">Photo</div><div class="c"><span class="pp-badge" style="justify-self:start">✓ Droit de gestion vérifié</span><h3>Appartement</h3><p style="color:var(--gris);font-size:14px">Cocody · 4 voyageur(s)</p><p class="prix"><b>30 000 FCFA</b> <small>/ nuit</small></p><a href="#" style="font-weight:700">Découvrir ce logement →</a></div></div><div class="lg"><div class="photo">Photo</div><div class="c"><h3>Studio lumineux</h3><p style="color:var(--gris);font-size:14px">Marcory · 2 voyageur(s)</p><p class="prix"><b>18 000 FCFA</b> <small>/ nuit</small></p><a href="#" style="font-weight:700">Découvrir ce logement →</a></div></div><div class="lg"><div class="photo">Photo</div><div class="c"><h3>Chambre</h3><p style="color:var(--gris);font-size:14px">Cocody · 1 voyageur(s)</p><p class="prix"><b>12 000 FCFA</b> <small>/ nuit</small></p><a href="#" style="font-weight:700">Découvrir ce logement →</a></div></div></div>
+    <div class="carte" data-s="pp-vide" style="text-align:center;justify-items:center"><p>Vos offres apparaîtront ici après leur publication.</p></div></div>
+</section>
+
+<footer class="pied"><div style="display:grid;gap:8px"><span class="logo" style="color:#fff"><i>A</i>Avelis Séjours</span><span>SARL Exemple · RCCM CI-ABJ-2026-B-0001 · NIF 0000000A</span></div><div class="liens"><a href="#">Conditions</a><a href="#">Confidentialité</a><a href="#">Mentions légales</a><a href="#">Aide</a><a href="#">Contact</a></div></footer>
+</div>
+
+<div class="note"><details open><summary id="nt">Fiche écran</summary><dl id="nc"></dl></details></div>
+
+<div class="points-v"><section class="carte"><h2>Points à faire valider avant l'intégration</h2>
+<ol>
+<li><b>Aucun texte ne change</b> : les contenus, les engagements, les conditions, la confidentialité et les mentions sont repris tels quels (les textes juridiques restent des brouillons à faire valider par un juriste). Seule la présentation passe à la charte orange, sur toute la largeur.</li>
+<li><b>Devenir partenaire</b> : même ordre de sections, plus lisible (cartes ivoire et orange, étapes numérotées, exemple chiffré en encadré). Sans taux de commission réglé, l'exemple est remplacé par « Le taux de commission sera communiqué à l'inscription. » (aujourd'hui, la page n'affiche simplement pas de chiffre). Sur téléphone, le bouton « Devenir gérant partenaire » reste visible en bas de l'écran.</li>
+<li><b>À propos</b> : bandeau court, mission, trois engagements, appel à nous contacter.</li>
+<li><b>Aide</b> : questions en accordéon, gros titres tactiles (52 px), coordonnées à côté sur ordinateur. Pas de moteur de recherche (nouvelle fonction non demandée).</li>
+<li><b>Contact</b> : <u>recommandation</u> : retirer la liste complète des questions fréquentes de cette page (elle double la page Aide) et mettre à la place un encadré « Une réponse rapide ? » avec un lien. Le formulaire passe en premier, y compris sur téléphone. Messages d'erreur en phrases simples sous chaque champ.</li>
+<li><b>Conditions, Confidentialité, Mentions légales</b> : colonne de lecture confortable avec un sommaire à gauche sur ordinateur (sans plafond de largeur de page) ; mentions légales en tableau. Le bandeau « Brouillon de travail » reste affiché.</li>
+<li><b>Profil public du gérant</b> : photo ou initiale, badges, présentation, explication du badge « Gérant certifié », cartes de logements dans le même style que le catalogue. Mêmes informations publiques qu'aujourd'hui (jamais d'adresse personnelle ni de documents).</li>
+<li><b>Ce qui ne change pas</b> : routes, menu public, formulaire de contact (champs et envoi), pages modifiables depuis les Paramètres (texte libre à la place de la page), règles de publication du profil public.</li>
+</ol></section></div>
+
+<script>
+const ETATS={
+ partenaire:[['pa-taux','Taux de commission réglé'],['pa-sans','Taux non réglé']],
+ apropos:[['ap','Page'] ],
+ aide:[['co-complet','Coordonnées complètes'],['co-min','Coordonnées minimales']],
+ contact:[['ct-normal','Formulaire'],['ct-champs','Champs à corriger'],['ct-envoye','Message envoyé'],['ct-erreur','Envoi impossible']],
+ legal:[['lg-cgu','Conditions'],['lg-conf','Confidentialité'],['lg-ment','Mentions légales']],
+ profil:[['pp-certifie','Gérant certifié'],['pp-vide','Sans offre'],['pp-apercu','Aperçu du gérant']]};
+const NOTES={
+ partenaire:['Écran 1 · Devenir partenaire',{'But':'Convaincre un gérant de s\'inscrire et lui dire clairement ce qui l\'attend.','Ce que voit l\'utilisateur':'Titre, trois preuves, avantages, 3 étapes, trois niveaux de confiance (identité, certifié, gestion vérifiée), tarif avec exemple chiffré, questions, appel final.','Actions':'Devenir gérant partenaire (inscription gérant), Échanger avec l\'équipe (Contact).','Messages d\'erreur':'Aucun (page de lecture). Sans taux réglé : « Le taux de commission sera communiqué à l\'inscription. »'}],
+ apropos:['Écran 2 · À propos',{'But':'Faire comprendre qui est Avelis et pourquoi lui faire confiance.','Ce que voit l\'utilisateur':'Mission, trois engagements, appel à nous contacter.','Actions':'Nous écrire, Nous contacter.','Messages d\'erreur':'Aucun.'}],
+ aide:['Écran 3 · Aide (questions fréquentes)',{'But':'Répondre seul aux questions courantes.','Ce que voit l\'utilisateur':'Six questions en accordéon (délais et montants issus des réglages) ; coordonnées : seules celles renseignées dans Paramètres apparaissent.','Actions':'Ouvrir une question, appeler, écrire.','Messages d\'erreur':'Aucun.'}],
+ contact:['Écran 4 · Contact',{'But':'Écrire à l\'équipe en moins d\'une minute.','Ce que voit l\'utilisateur':'Formulaire (nom, e-mail ou téléphone, message), coordonnées, encadré vers les questions fréquentes.','Actions':'Envoyer.','Messages d\'erreur':'Messages sous chaque champ ; « Merci ! Votre message est bien parti. Nous vous répondons sous 24 h. » ; erreur d\'envoi en phrase simple (message existant de la plateforme conservé).'}],
+ legal:['Écran 5 · Conditions, Confidentialité, Mentions légales',{'But':'Lire un texte juridique sans fatigue.','Ce que voit l\'utilisateur':'Titre, sommaire (ordinateur), texte en colonne de lecture ; mentions : tableau des informations renseignées dans Paramètres seulement.','Actions':'Aller à une section, écrire via Contact.','Messages d\'erreur':'Aucun. Bandeau « Brouillon de travail » conservé tant que le juriste n\'a pas validé.'}],
+ profil:['Écran 6 · Profil public du gérant',{'But':'Rassurer le voyageur sur le gérant avant de réserver.','Ce que voit l\'utilisateur':'Initiale ou logo, nom public, badge certifié, commune, nombre d\'offres, présentation, explication du badge, logements publiés.','Actions':'Découvrir un logement ; le gérant voit en plus un bandeau « Aperçu » avec un lien pour modifier.','Messages d\'erreur':'Sans offre : « Vos offres apparaîtront ici après leur publication. »'}]};
+let ecran='partenaire',etat={};
+function majEtat(){document.querySelectorAll('.scene [data-s]').forEach(e=>{const l=e.dataset.s.split(' ');e.style.display=l.includes(etat[ecran])?'':'none';});
+ if(ecran==='contact'){['c-nom','c-ct','c-msg'].forEach(i=>document.getElementById(i).classList.toggle('err',etat.contact==='ct-champs'));}
+ document.querySelectorAll('#menu a').forEach(a=>a.classList.toggle('on',a.dataset.m===ecran));
+ document.querySelectorAll('#etats button').forEach(b=>b.classList.toggle('on',b.dataset.s===etat[ecran]));}
+function aller(id){ecran=id;etat[id]??=ETATS[id][0][0];document.querySelectorAll('.ecran').forEach(e=>e.classList.toggle('on',e.id==='e-'+id));document.querySelectorAll('#nav button').forEach(b=>b.classList.toggle('on',b.dataset.e===id));
+ document.getElementById('etats').innerHTML=ETATS[id].length>1?'<span>État :</span>'+ETATS[id].map(([k,l])=>`<button data-s="${k}" type="button">${l}</button>`).join(''):'';
+ const[t,d]=NOTES[id];document.getElementById('nt').textContent=t;document.getElementById('nc').innerHTML=Object.entries(d).map(([k,v])=>`<div><dt>${k}</dt><dd>${v}</dd></div>`).join('');majEtat();}
+document.getElementById('nav').addEventListener('click',e=>{const b=e.target.closest('button');if(b)aller(b.dataset.e)});
+document.getElementById('etats').addEventListener('click',e=>{const b=e.target.closest('button');if(b){etat[ecran]=b.dataset.s;majEtat();}});
+document.addEventListener('click',e=>{if(e.target.closest('a[href="#"]'))e.preventDefault();});
+const setVue=m=>{document.body.classList.toggle('mobile',m);document.getElementById('b-mob').classList.toggle('on',m);document.getElementById('b-ord').classList.toggle('on',!m);document.getElementById('cta-h').style.display=m?'none':''};
+document.getElementById('b-mob').onclick=()=>setVue(true);document.getElementById('b-ord').onclick=()=>setVue(false);
+setVue(window.innerWidth<700);aller('partenaire');
+</script>
+</body>
+</html>

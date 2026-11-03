@@ -1,0 +1,77 @@
+/* Avelis Séjours — pages d'information (contrat docs/contrats/pages-information-v3.md) : Devenir partenaire, À propos, Aide,
+ * Contact, Conditions, Confidentialité, Mentions légales, profil public du gérant. Jetons --avelis-* : accueil-reference.css. */
+
+/* ---------- Bandeau de page : ivoire, sobre ---------- */
+.charte .bandeau-page { background: var(--avelis-ivoire); color: var(--avelis-nuit); border-bottom: 1px solid var(--avelis-peche); padding: 26px 0; }
+.charte .bandeau-page h1 { font-size: clamp(28px, 4vw, 40px); letter-spacing: -.03em; }
+.charte .bandeau-page p { color: var(--avelis-gris); opacity: 1; max-width: 62ch; }
+.charte .bandeau-page .surtitre, .charte .bandeau-page .surtitre.clair { color: var(--avelis-orange-texte); }
+
+/* ---------- Sections et cartes ---------- */
+.charte .sect.alt { background: #f6f7f9; }
+.charte .av, .charte .carte-form, .charte .carte-p { border-color: var(--avelis-trait); border-radius: var(--avelis-rayon, 14px); }
+.charte .cta-par { background: var(--avelis-nuit); }
+.charte .cta-par h2 { color: #fff; }
+.charte .cta-par p { color: #cdd5e4; }
+
+/* ---------- Aide : questions en accordéon tactile ---------- */
+.charte .faq details { border-color: var(--avelis-trait); padding: 0 16px; }
+.charte .faq summary { min-height: 52px; list-style: none; justify-content: space-between; gap: 10px; }
+.charte .faq summary::-webkit-details-marker { display: none; }
+.charte .faq summary::after { content: "+"; font-size: 22px; color: var(--avelis-orange-texte); }
+.charte .faq details[open] summary::after { content: "–"; }
+.pi-rapide { background: var(--avelis-ivoire) !important; border-color: var(--avelis-peche) !important; }
+.pi-rapide .btn-sec { justify-self: stretch; }
+
+/* ---------- Contact : le formulaire passe en premier ---------- */
+@media (min-width: 900px) { .ct-grille { grid-template-columns: minmax(0, 1fr) 420px; gap: 28px; } }
+
+/* ---------- Textes de lecture : sommaire et deux colonnes en grand écran ---------- */
+.pi-lecture { display: grid; gap: 16px; }
+.pi-sommaire { display: none; }
+.pi-lecture .texte-legal { max-width: none; margin: 0; min-width: 0; }
+.pi-lecture .texte-legal h2 { scroll-margin-top: 90px; }
+@media (min-width: 900px) {
+    .pi-lecture:has(.pi-sommaire) { grid-template-columns: 260px minmax(0, 1fr); gap: 36px; align-items: start; }
+    .pi-sommaire { display: grid; gap: 8px; align-content: start; position: sticky; top: 90px; }
+    .pi-sommaire a { text-decoration: none; color: var(--avelis-nuit); font-weight: 600; padding: 6px 0 6px 12px; border-left: 3px solid var(--avelis-trait); }
+    .pi-sommaire a:hover { border-color: var(--avelis-orange); }
+    .pi-lecture .texte-legal { max-width: 78ch; }
+}
+@media (min-width: 1200px) {
+    .pi-lecture .texte-legal:not(:has(.carte-p)) { max-width: none; columns: 2; column-gap: 56px; display: block; }
+    .pi-lecture .texte-legal:not(:has(.carte-p)) > * { break-inside: avoid; margin-bottom: 10px; }
+    .pi-lecture .texte-legal:not(:has(.carte-p)) > h2 { break-after: avoid; }
+    .pi-lecture .texte-legal:not(:has(.carte-p)) > [role="status"], .pi-lecture .texte-legal:not(:has(.carte-p)) > [role="alert"] { column-span: all; }
+}
+
+/* ---------- Devenir partenaire : entête ivoire, barre d'action sur téléphone ---------- */
+.partenaire-v2 .pa-hero { background: var(--avelis-ivoire); color: var(--avelis-nuit); padding: 36px 0; border-bottom: 1px solid var(--avelis-peche); }
+.partenaire-v2 .pa-hero:after { display: none; }
+.partenaire-v2 .pa-hero > img { position: static; z-index: auto; display: block; width: min(100%, 560px); height: auto; aspect-ratio: 3 / 2; border-radius: 14px; margin: 0 auto 22px; object-fit: cover; }
+.partenaire-v2 .pa-hero p, .partenaire-v2 .pa-hero small { color: var(--avelis-gris); }
+.partenaire-v2 .pa-hero .pa-eyebrow { color: var(--avelis-orange-texte); }
+.partenaire-v2 .pa-hero .pa-lien { color: var(--avelis-orange-texte); border-bottom-color: var(--avelis-orange-texte); }
+.partenaire-v2 .pa-btn.pa-or, .partenaire-v2 .pa-btn { background: var(--avelis-orange); color: var(--avelis-nuit); }
+.partenaire-v2 .pa-btn:hover { background: var(--avelis-orange-survol, #e75e00); }
+.partenaire-v2 .pa-tarifs { background: var(--avelis-nuit); }
+.partenaire-v2 .pa-barre { display: none; }
+@media (max-width: 899px) {
+    .partenaire-v2 .pa-barre { display: block; position: sticky; bottom: 0; z-index: 5; background: #fff; border-top: 1px solid var(--avelis-trait); padding: 8px 16px; }
+    .partenaire-v2 .pa-barre .pa-btn { width: 100%; }
+}
+@media (min-width: 900px) {
+    .partenaire-v2 .pa-hero { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, .9fr); align-items: center; gap: 40px; padding: 48px clamp(22px, 5vw, 80px); }
+    .partenaire-v2 .pa-hero > img { order: 2; width: 100%; margin: 0; }
+    .partenaire-v2 .pa-hero .pa-cont { order: 1; padding-inline: 0; margin: 0; width: 100%; }
+}
+
+/* ---------- Profil public du gérant ---------- */
+.charte .pg-public-hero { background: var(--avelis-ivoire); border: 1px solid var(--avelis-peche); }
+.charte .pg-avatar { background: var(--avelis-orange); color: var(--avelis-nuit); }
+.charte .pg-badge, .charte .pg-badge.or { background: var(--avelis-ok-fond, #e8f5ed); color: var(--avelis-ok, #1d7a46); font-weight: 800; border-radius: 999px; padding: 4px 12px; }
+.charte .pg-public-intro aside { background: var(--avelis-ivoire); border: 1px solid var(--avelis-peche); border-radius: 14px; padding: 16px; }
+.charte .pg-public .lg { border-color: var(--avelis-trait); border-radius: 14px; overflow: hidden; }
+@media (min-width: 1500px) { .charte .pg-public .grid.xl\:grid-cols-3 { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+
+.charte .pg-public h2 { font-size: clamp(22px, 3vw, 28px); letter-spacing: -.03em; margin: 8px 0; }
