@@ -1,0 +1,279 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Maquette — Gérant : gestion · Avelis Séjours</title>
+<style>
+:root{--orange:#ff6a00;--orange-texte:#b94700;--orange-survol:#e75e00;--nuit:#17243b;--ivoire:#fff8f0;--peche:#ffeadb;--gris:#526077;--trait:#e4e7ed;--saisie:#c7cdd8;--ok:#1d7a46;--okfond:#e8f5ed;--erreur:#b42318;--erreurfond:#fdecea}
+*{box-sizing:border-box}
+body{margin:0;font:16px/1.55 system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--nuit);background:#eef0f4}
+h1,h2,h3,p{margin:0}h1,h2,h3{letter-spacing:-.03em;line-height:1.2}a{color:var(--orange-texte)}button,input,textarea,select{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--nuit);outline-offset:3px}
+.outil{position:sticky;top:0;z-index:50;background:var(--nuit);color:#fff;padding:10px 16px;display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center}
+.outil nav{display:flex;flex-wrap:wrap;gap:6px}.outil button{border:1px solid #ffffff55;background:transparent;color:#fff;border-radius:999px;padding:6px 12px;font-size:13px;cursor:pointer}
+.outil button.on{background:var(--orange);border-color:var(--orange);color:var(--nuit);font-weight:700}.outil .nouveau{border-color:#ffd9bd}.outil .sep{margin-left:auto;display:flex;gap:6px;align-items:center;font-size:13px}
+.avertis{max-width:1500px;margin:14px auto 0;padding:0 16px;font-size:13px;color:var(--gris)}
+.etats{max-width:1500px;margin:10px auto 0;padding:0 16px;display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:13px}
+.etats span{color:var(--gris);font-weight:700}.etats button{border:1.5px solid var(--saisie);background:#fff;border-radius:999px;padding:5px 12px;font-size:13px;font-weight:700;cursor:pointer}.etats button.on{background:var(--nuit);color:#fff;border-color:var(--nuit)}
+.scene{margin:12px auto 0;background:#f6f7f9;border:1px solid var(--trait);border-radius:18px;overflow:hidden;container-type:inline-size;width:min(100%,1500px);box-shadow:0 10px 40px #17243b14}
+body.mobile .scene{width:390px}
+.ecran{display:none}.ecran.on{display:grid}
+.coque{display:grid}
+.lateral{display:none;background:var(--nuit);color:#e6ebf4;padding:18px 14px;gap:4px;align-content:start}
+.logo{display:flex;align-items:center;gap:9px;font-weight:800;font-size:18px}.lateral .logo{margin:0 6px 14px;color:#fff}
+.logo i{display:grid;place-items:center;width:34px;height:34px;border-radius:11px;background:var(--orange);color:var(--nuit);font-style:normal;font-size:22px}
+.lateral a{display:flex;gap:10px;align-items:center;padding:10px 12px;border-radius:10px;color:#e6ebf4;text-decoration:none;font-weight:600;font-size:15px}
+.lateral a.on{background:#ffffff1f;box-shadow:inset 3px 0 var(--orange)}
+.lateral .moi{margin-top:auto;border-top:1px solid #ffffff26;padding:14px 8px 0;font-size:14px}
+.haut-m{display:flex;align-items:center;gap:10px;padding:12px 16px;background:var(--nuit);color:#fff}
+.contenu{padding:16px;display:grid;gap:16px;align-content:start;min-width:0;padding-bottom:30px}
+.bas-m{position:sticky;bottom:0;display:grid;grid-template-columns:repeat(4,1fr);background:#fff;border-top:1px solid var(--trait)}
+.bas-m a{display:grid;place-items:center;gap:1px;padding:8px 2px;font-size:11.5px;font-weight:700;color:var(--gris);text-decoration:none;min-height:60px}
+.bas-m a.on{color:var(--orange-texte);box-shadow:inset 0 3px var(--orange)}
+@container (min-width:900px){.coque{grid-template-columns:250px minmax(0,1fr);min-height:900px}.lateral{display:grid}.haut-m,.bas-m{display:none}.contenu{padding:28px 36px 40px}}
+.entete{display:grid;gap:10px}.entete h1{font-size:clamp(26px,5cqw,32px)}.petit{font-size:13px;color:var(--gris)}
+@container (min-width:900px){.entete{grid-template-columns:1fr auto;align-items:center}}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:50px;padding:10px 18px;border:0;border-radius:10px;background:var(--orange);color:var(--nuit);font-weight:800;font-size:16px;cursor:pointer;text-decoration:none;text-align:center}
+.btn:hover{background:var(--orange-survol)}.btn.sec{background:#fff;border:2px solid var(--nuit)}.btn.danger{background:#fff;border:2px solid var(--erreur);color:var(--erreur)}.btn.pleine{width:100%}.btn.pet{min-height:44px;padding:6px 14px;font-size:15px}
+.lien{background:none;border:0;padding:6px 0;font-weight:700;color:var(--orange-texte);text-decoration:underline;cursor:pointer}
+.carte{background:#fff;border:1px solid var(--trait);border-radius:14px;padding:18px;display:grid;gap:12px;align-content:start;min-width:0}.carte h2{font-size:19px}.carte h3{font-size:17px}
+.ligne{display:flex;justify-content:space-between;gap:12px;font-size:15px;padding:6px 0;border-bottom:1px dashed var(--trait)}.ligne:last-child{border-bottom:0}
+.badge{display:inline-block;border-radius:999px;padding:3px 11px;font-size:12.5px;font-weight:800;white-space:nowrap}.b-ok{background:var(--okfond);color:var(--ok)}.b-att{background:var(--peche);color:var(--orange-texte)}.b-nu{background:#e9ecf2;color:var(--gris)}.b-err{background:var(--erreurfond);color:var(--erreur)}
+.etape{display:grid;gap:10px;background:var(--ivoire);border:2px solid var(--orange);border-radius:14px;padding:16px}.surtitre{font-size:12px;letter-spacing:.11em;text-transform:uppercase;font-weight:800;color:var(--orange-texte)}.etape h2{font-size:20px}
+.alerte{display:flex;gap:10px;border-radius:12px;padding:12px 14px;font-size:14.5px;border:1px solid}.alerte.info{background:var(--ivoire);border-color:var(--peche)}.alerte.err{background:var(--erreurfond);border-color:#f2b8b2;color:#7a1a12}.alerte.ok{background:var(--okfond);border-color:#b8dfc7;color:#14532d}.alerte.att{background:#fff4e5;border-color:#f6d9a8;color:#7a4a00}
+label.champ{display:grid;gap:6px;font-weight:700;font-size:15px}label.champ small{font-weight:400;color:var(--gris);font-size:13px}
+input[type=text],input[type=tel],input[type=date],textarea,select{width:100%;min-height:50px;border:1.5px solid var(--saisie);border-radius:11px;padding:10px 13px;background:#fff;font-weight:500}textarea{min-height:96px;resize:vertical}
+input.err,textarea.err{border-color:var(--erreur);box-shadow:0 0 0 3px var(--erreurfond)}.msg-err{color:var(--erreur);font-size:14px;font-weight:600}
+.deux{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.cols{display:grid;gap:16px;align-items:start}.col{display:grid;gap:16px;align-content:start;min-width:0}
+.cartes{display:grid;gap:14px}
+.kpi{display:grid;grid-template-columns:1fr 1fr;gap:12px}.kpi div{background:#fff;border:1px solid var(--trait);border-radius:14px;padding:14px;display:grid}.kpi b{font-size:28px}
+@container (min-width:700px){.kpi{grid-template-columns:repeat(4,1fr)}.cartes{grid-template-columns:repeat(2,1fr)}}
+@container (min-width:900px){.cols{grid-template-columns:minmax(0,1fr) 400px;gap:24px}.centre{justify-self:center;width:min(100%,760px)}}
+@container (min-width:1300px){.cartes{grid-template-columns:repeat(3,1fr)}}
+.res-sel{display:grid;gap:10px}@container (min-width:700px){.res-sel{grid-template-columns:1fr 1fr;max-width:720px}}
+.onglets{display:grid;grid-template-columns:1fr 1fr;background:#e9ecf1;border-radius:12px;padding:4px;max-width:520px}.onglets button{border:0;background:transparent;border-radius:9px;min-height:46px;font-weight:800;cursor:pointer;color:var(--gris)}.onglets button.on{background:#fff;color:var(--nuit);box-shadow:0 1px 3px #17243b1f}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;text-align:center;font-size:13px}.cal b.j{color:var(--gris);font-size:12px}
+.cal .d{min-height:50px;border:1px solid var(--trait);border-radius:9px;display:grid;place-items:center;align-content:center;background:#fff;font-weight:700}.cal .d small{font-size:10px;font-weight:600;line-height:1.1}
+.cal .conf{background:#dff3e6;border-color:#9fd3b2}.cal .att{background:#fff0d6;border-color:#f0cb85}.cal .tel{background:#dbeafe;border-color:#9fc2ef}.cal .blo{background:#e2e5ec;border-color:#b9bfcc}
+@container (min-width:900px){.cal .d{min-height:66px}}
+.legende{display:flex;flex-wrap:wrap;gap:12px;font-size:13px}.legende i{display:inline-block;width:12px;height:12px;border-radius:4px;margin-right:5px;vertical-align:-1px}
+.photo{border-radius:12px;background:linear-gradient(135deg,#d7c3ab,#a98c6c 55%,#e9d9c4);color:#ffffffcc;font-size:11px;display:grid;place-items:end start;padding:6px 8px;min-height:92px}
+.liste{list-style:none;margin:0;padding:0;display:grid;gap:8px;font-size:15px}.liste li{display:flex;gap:9px}.liste li::before{content:"✓";color:var(--ok);font-weight:900}
+.pieces{display:grid;gap:12px}.piece{display:grid;gap:8px;border:1.5px solid var(--trait);border-radius:14px;padding:16px;background:#fff}.piece.ok{border-color:#b8dfc7;background:#f6fbf8}.piece.att{border-color:var(--peche)}.piece.err{border-color:#f2b8b2;background:#fffafa}
+.piece .tete{display:flex;gap:10px;justify-content:space-between;align-items:flex-start;flex-wrap:wrap}.piece h3{font-size:17px}
+.fichier{border:2px dashed var(--saisie);border-radius:12px;padding:14px;display:grid;gap:8px;justify-items:start;background:#fafbfc}
+.carte-map{border-radius:14px;min-height:150px;background:repeating-linear-gradient(45deg,#eaf0e4,#eaf0e4 14px,#dfe8d6 14px,#dfe8d6 28px);display:grid;place-items:center;position:relative;border:1px solid var(--trait)}
+.carte-map span{background:var(--orange);color:var(--nuit);border-radius:50% 50% 50% 0;width:34px;height:34px;display:grid;place-items:center;transform:rotate(-45deg);font-weight:900}.carte-map span b{transform:rotate(45deg)}
+.apps{display:grid;gap:8px}.apps a{display:flex;gap:10px;align-items:center;min-height:50px;padding:8px 14px;border:1.5px solid var(--trait);border-radius:12px;background:#fff;font-weight:700;text-decoration:none;color:var(--nuit)}
+.note{max-width:1500px;margin:12px auto 0;padding:0 16px}
+.note details{background:#fff;border:1px solid var(--trait);border-radius:12px;padding:12px 16px}.note summary{cursor:pointer;font-weight:800}
+.note dl{display:grid;gap:10px;margin:12px 0 0;font-size:14.5px}.note dt{font-weight:800}.note dd{margin:0;color:var(--gris)}
+.points-v{max-width:1500px;margin:22px auto 60px;padding:0 16px}.points-v .carte{background:#fff}.points-v ol{margin:0;padding-left:20px;display:grid;gap:8px}
+.tag-n{background:var(--orange);color:var(--nuit);border-radius:6px;padding:1px 7px;font-size:11px;font-weight:800;margin-left:6px;vertical-align:2px}
+
+.stepper{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}.stepper button{border:2px solid var(--trait);background:#fff;border-radius:12px;min-height:50px;font-weight:800;font-size:14px;cursor:pointer;padding:6px}.stepper button.on{border-color:var(--orange);background:var(--ivoire);color:var(--orange-texte)}.stepper button.fait{border-color:#b8dfc7;background:var(--okfond);color:var(--ok)}
+.log{display:grid;grid-template-columns:78px minmax(0,1fr);gap:12px;align-items:center;border:1px solid var(--trait);border-radius:12px;padding:10px;background:#fff}.log .photo{min-height:64px}
+.radio{display:grid;gap:8px}.radio label{display:flex;gap:10px;align-items:flex-start;border:1.5px solid var(--saisie);border-radius:12px;padding:12px;font-weight:700;cursor:pointer}.radio label small{display:block;font-weight:400;color:var(--gris)}
+.offres{display:grid;gap:10px}.offre{border:2px solid var(--saisie);border-radius:14px;padding:14px;background:#fff;display:grid;gap:2px;cursor:pointer;text-align:left}.offre.on{border-color:var(--orange);background:var(--ivoire)}.offre b{font-size:22px}
+.tableau{display:grid;gap:8px}.tableau .l{display:grid;gap:4px;border:1px solid var(--trait);border-radius:12px;padding:12px;background:#fff}.tableau .l .m{display:flex;justify-content:space-between;gap:10px;font-size:14.5px}
+.case{display:flex;gap:10px;align-items:flex-start;font-weight:600}.case input{width:22px;height:22px;margin-top:2px}
+@container (min-width:700px){.offres{grid-template-columns:repeat(3,1fr)}.tableau .l{grid-template-columns:1.4fr repeat(3,1fr) 1fr;align-items:center}.tableau .l .m{display:block}.tableau .l .m small{display:block;color:var(--gris);font-size:12px}.tableau .tete{display:grid}}
+.tableau .tete{display:none;grid-template-columns:1.4fr repeat(3,1fr) 1fr;gap:4px;padding:0 12px;font-size:12.5px;font-weight:800;color:var(--gris)}
+</style></head>
+<body>
+<div class="outil">
+  <b>Maquette Gérant : gestion — Avelis Séjours</b>
+  <nav id="nav" aria-label="Écrans"><button data-e="residences" class="on">1 · Mes résidences</button><button data-e="e1">2 · Résidence (étape 1)</button><button data-e="e2">3 · Logements (étape 2)</button><button data-e="e3">4 · Envoi (étape 3)</button><button data-e="profil">5 · Mon profil gérant</button><button data-e="argent">6 · Argent</button><button data-e="mises">7 · Mises en avant</button><button data-e="personnel">8 · Mon personnel</button><button data-e="aide">9 · Aide du gérant</button></nav>
+  <span class="sep">Affichage :<button id="b-mob" class="on">Téléphone</button><button id="b-ord">Ordinateur</button></span>
+</div>
+<p class="avertis">Maquette de travail, non validée : noms, dates, montants et photos sont des exemples. Les boutons « État » montrent chaque situation. « Signaler un problème » du gérant est déjà refait (même écran que le voyageur, lot 3).</p>
+<div class="etats" id="etats"></div>
+
+<div class="scene" id="scene"><div class="coque">
+<aside class="lateral" id="lateral"><div class="logo"><i>A</i>Avelis Séjours</div>
+  <a href="#" data-n="x">◉ Aujourd'hui</a><a href="#" data-n="x">▦ Calendrier</a><a href="#" data-n="x">☰ Réservations</a><a href="#" data-n="argent">₣ Argent</a><a href="#" data-n="residences">⌂ Mes résidences</a><a href="#" data-n="profil">☺ Mon profil gérant</a><a href="#" data-n="x">🛡 Ma vérification</a><a href="#" data-n="mises">★ Mises en avant</a><a href="#" data-n="personnel">👥 Mon personnel</a><a href="#" data-n="aide">? Aide du gérant</a>
+  <div class="moi"><b>Confort Immobilier</b><br><span class="petit" style="color:#b9c3d6">Gérant</span></div></aside>
+<div>
+<header class="haut-m"><span class="logo"><i>A</i>Avelis Séjours</span></header>
+<main class="contenu">
+
+<!-- 1 MES RÉSIDENCES -->
+<section class="ecran on" id="e-residences">
+  <div class="entete"><div><h1>Mes résidences</h1></div><a class="btn" href="#">+ Ajouter une résidence</a></div>
+  <div class="alerte ok" data-s="r-envoyee"><span><b>Votre résidence « Résidence Papaye » a bien été envoyée pour validation.</b> Elle sera visible après accord d'Avelis. Aucun nouvel envoi n'est nécessaire.</span></div>
+  <div class="cartes" data-s="r-liste r-envoyee r-refusee"><article class="carte"><div style="display:flex;justify-content:space-between;gap:8px;align-items:flex-start"><h2>Résidence Papaye</h2><span class="badge b-ok">✓ Gérant vérifié</span></div><p class="petit">Cocody, Djibi · 3 logements</p><a class="lien" style="justify-self:start" href="#">Modifier</a><a class="lien" style="justify-self:start" href="#">📍 Accès à la résidence</a></article>
+    <article class="carte"><div style="display:flex;justify-content:space-between;gap:8px;align-items:flex-start"><h2>Villa Marcory</h2><span class="badge b-att" data-s="r-liste r-refusee">Brouillon</span><span class="badge b-att" data-s="r-envoyee">En attente de vérification</span></div><p class="petit">Marcory · 1 logement</p><a class="lien" style="justify-self:start" data-s="r-envoyee" href="#">Suivre mon dossier →</a><div class="alerte err" data-s="r-refusee"><span>Refusée : photos du logement à compléter. Corrigez puis renvoyez.</span></div><a class="lien" style="justify-self:start" data-s="r-liste r-refusee" href="#">Modifier</a></article></div>
+  <div class="carte" data-s="r-vide" style="text-align:center;justify-items:center;padding:34px 18px"><div style="font-size:38px">⌂</div><p style="font-weight:800;font-size:18px">Vous n'avez pas encore de résidence.</p><a class="btn" href="#">Ajouter ma résidence</a></div>
+</section>
+
+<!-- 2 ÉDITEUR ÉTAPE 1 -->
+<section class="ecran" id="e-e1">
+  <div class="entete"><div><h1>Ma résidence</h1></div><span class="badge b-att">Brouillon</span></div>
+  <div class="stepper"><button class="on">1 Ma résidence</button><button>2 Mes logements</button><button>3 Vérification et envoi</button></div>
+  <div class="cols"><form class="carte" onsubmit="return false"><h2>1 · Ma résidence</h2>
+    <div class="alerte ok" data-s="e1-ok"><span>Résidence enregistrée.</span></div>
+    <label class="champ">Nom<input type="text" value="Résidence Papaye" id="e1-nom"></label><p class="msg-err" data-s="e1-erreur">Indiquez le nom de la résidence.</p>
+    <div class="deux"><label class="champ">Commune<input type="text" value="Cocody"></label><label class="champ">Quartier<input type="text" value="Djibi"></label></div>
+    <label class="champ">Adresse écrite <small>Facultatif. Visible du voyageur seulement après confirmation.</small><input type="text" value="Rue des Jardins"></label>
+    <a class="btn sec pleine" href="#">📍 Accès à la résidence : position et repères pour vos voyageurs</a>
+    <label class="champ">Règlement de la maison<textarea>Pas de fête après 22 h. Non-fumeur.</textarea></label>
+    <h3>Comment le voyageur paie</h3><div class="radio"><label><input type="radio" name="pm" checked> Le total en ligne <small>Le voyageur paie tout le séjour à la réservation.</small></label><label><input type="radio" name="pm"> Un acompte en ligne <small>Le reste est réglé à l'arrivée.</small></label></div>
+    <label class="champ">Acompte (%)<small>Minimum fixé par Avelis : 15 %.</small><input type="text" value="30"></label>
+    <button class="btn pleine">Enregistrer la résidence</button><a class="btn sec pleine" href="#">Étape suivante : mes logements →</a></form>
+    <aside class="col"><div class="carte" style="background:var(--ivoire);border-color:var(--peche)"><h2>Deux documents pour publier</h2><ul class="liste"><li>Votre pièce d'identité : <span class="badge b-ok">Validée</span></li><li>Le contrat de bail de cette résidence : <span class="badge b-att">À fournir</span></li></ul><a class="btn sec pleine" href="#">Aller à Ma vérification</a></div></aside></div>
+</section>
+
+<!-- 3 ÉDITEUR ÉTAPE 2 -->
+<section class="ecran" id="e-e2">
+  <div class="entete"><div><h1>Mes logements</h1></div><a class="btn" href="#">+ Ajouter un logement</a></div>
+  <div class="stepper"><button class="fait">1 Ma résidence</button><button class="on">2 Mes logements</button><button>3 Vérification et envoi</button></div>
+  <div class="cols"><div class="col"><div class="carte" data-s="e2-liste"><h2>2 · Mes logements</h2>
+    <div class="log"><div class="photo">Photo</div><div><b>Appartement</b><div class="petit">4 personnes · 30 000 FCFA / nuit · week-end 35 000</div><div style="display:flex;gap:12px"><a class="lien" href="#">Modifier</a><a class="lien" href="#" style="color:var(--erreur)">Désactiver</a></div></div></div>
+    <div class="log"><div class="photo">Photo</div><div><b>Studio lumineux</b> <span class="badge b-nu">Désactivé</span><div class="petit">2 personnes · 18 000 FCFA / nuit</div><a class="lien" href="#">Réactiver</a></div></div>
+    <a class="btn sec pleine" href="#">← Ma résidence</a><a class="btn pleine" href="#">Étape suivante : envoi →</a></div>
+    <p class="petit" data-s="e2-vide">Aucun logement pour l'instant : ajoutez le premier.</p></div>
+    <form class="carte" onsubmit="return false" data-s="e2-form e2-erreur"><h2>Un logement</h2>
+      <label class="champ">Nom<input type="text" value="Appartement"></label><div class="deux"><label class="champ">Type<select><option>Appartement</option></select></label><label class="champ">Personnes<input type="text" value="4"></label></div>
+      <div class="deux"><label class="champ">Prix par nuit (FCFA)<input type="text" id="e2-prix" value="30 000"></label><label class="champ">Prix week-end <small>facultatif</small><input type="text" value="35 000"></label></div><p class="msg-err" data-s="e2-erreur">Indiquez un prix entier en FCFA (par exemple 30 000).</p>
+      <b>Prix des fêtes (facultatif)</b><button type="button" class="btn sec pet" style="justify-self:start">+ Ajouter une période de fête</button>
+      <label class="champ">Photos (2/20) <small>JPEG, PNG ou WebP, 5 Mo au maximum.</small></label><div class="deux"><div class="photo">Photo 1</div><div class="photo">Photo 2</div></div><button class="btn sec pet" type="button" style="justify-self:start">📷 Ajouter des photos</button>
+      <button class="btn pleine">Enregistrer le logement</button><a class="btn sec pleine" href="#">Annuler</a></form></div>
+</section>
+
+<!-- 4 ÉDITEUR ÉTAPE 3 -->
+<section class="ecran" id="e-e3">
+  <div class="entete"><div><h1>Vérification et envoi</h1></div><span class="badge b-att">Brouillon</span></div>
+  <div class="stepper"><button class="fait">1 Ma résidence</button><button class="fait">2 Mes logements</button><button class="on">3 Vérification et envoi</button></div>
+  <div class="alerte err" data-s="e3-bail"><span>Ajoutez le contrat de bail de la résidence (ou un justificatif de gestion) avant l'envoi. C'est l'un des deux documents demandés pour publier.</span></div>
+  <div class="alerte err" data-s="e3-identite"><span>Votre pièce d'identité doit être validée dans votre profil gérant avant l'envoi.</span></div>
+  <div class="alerte ok" data-s="e3-pret"><span>Tout est prêt : vous pouvez envoyer votre résidence à Avelis.</span></div>
+  <div class="cols"><div class="col"><div class="carte"><h2>3 · Vérifier avant d'envoyer</h2><div class="ligne"><span>Résidence</span><b>Résidence Papaye · Cocody</b></div><div class="ligne"><span>Logements</span><b>2 (1 actif)</b></div><div class="ligne"><span>Photos</span><b>2</b></div><div class="ligne"><span>Ma pièce d'identité</span><span class="badge b-ok" data-s="e3-bail e3-pret">Validée</span><span class="badge b-att" data-s="e3-identite">En contrôle</span></div>
+    <div class="ligne"><span>Contrat de bail</span><span class="badge b-att" data-s="e3-bail">À fournir</span><span class="badge b-ok" data-s="e3-pret e3-identite">Reçu</span></div></div>
+    <div class="carte" data-s="e3-bail"><h3>Contrat de bail ou justificatif de gestion <span class="badge b-att">Obligatoire pour publier</span></h3><p class="petit">Le contrat de bail, un titre de propriété ou un mandat de gestion. Photo ou PDF, 5 Mo au maximum.</p><div class="deux"><button class="btn sec pet">📷 Prendre une photo</button><button class="btn sec pet">Choisir un fichier</button></div></div>
+    <button class="btn pleine">Envoyer pour validation</button><a class="btn sec pleine" href="#">← Mes logements</a></div>
+    <aside class="col"><div class="carte" style="background:var(--ivoire);border-color:var(--peche)"><h2>Après votre envoi</h2><p class="petit">Vous revenez à « Mes résidences » avec une confirmation et le statut « En attente de validation ». Avelis contrôle votre pièce d'identité, le contrat de bail et l'annonce. Quand tout est validé, la résidence est mise en ligne avec le badge « Gérant vérifié ».</p></div></aside></div>
+</section>
+
+<!-- 5 PROFIL GÉRANT -->
+<section class="ecran" id="e-profil">
+  <div class="entete"><div><h1>Mon profil gérant</h1></div><a class="btn sec" href="#">Voir mon profil public ↗</a></div>
+  <div class="alerte ok" data-s="p-ok"><span>Profil enregistré.</span></div>
+  <div class="alerte info" data-s="p-normal p-ok p-erreur"><span>Votre pièce d'identité et vos contrats de bail se déposent dans <a href="#">Ma vérification</a> (une page, deux documents).</span></div>
+  <div class="cols"><form class="carte" onsubmit="return false"><h2>Vos informations <small class="petit">(privées)</small></h2>
+    <label class="champ">Nom complet *<input type="text" value="Koné Mamadou"></label><label class="champ">Téléphone du compte *<input type="text" value="07 07 05 55 08"></label><label class="champ">E-mail du compte *<input type="text" value="mamadou@exemple.ci"></label>
+    <label class="champ">Adresse personnelle * <small>Conservée chiffrée, jamais publique.</small><input type="text" id="p-adr" value=""></label><p class="msg-err" data-s="p-erreur">Indiquez votre adresse personnelle.</p><label class="champ">Entreprise <small>facultatif</small><input type="text"></label>
+    <h2 style="margin-top:6px">Votre présentation publique</h2>
+    <label class="champ">Nom affiché *<input type="text" value="Confort Immobilier"></label><label class="champ">Commune affichée <small>facultatif</small><input type="text" value="Cocody"></label>
+    <label class="champ">Photo ou logo <small>facultatif · JPEG, PNG ou WebP</small></label><div style="display:flex;gap:12px;align-items:center"><span style="display:grid;place-items:center;width:64px;height:64px;border-radius:50%;background:var(--orange);color:var(--nuit);font-size:28px;font-weight:800">C</span><button type="button" class="btn sec pet">Choisir une image</button></div>
+    <label class="champ">Présentation <small>facultatif</small><textarea>Résidences meublées à Cocody et Marcory, accueil soigné.</textarea></label>
+    <button class="btn pleine">Enregistrer mon profil</button></form>
+    <aside class="col"><div class="carte" style="background:var(--ivoire);border-color:var(--peche)"><h2>Votre situation</h2><p><b>Gérant vérifié</b></p><p class="petit">Pièce d'identité validée · contrat de bail validé pour Résidence Papaye.</p></div><div class="carte"><h3>Ce que voit le public</h3><p class="petit">Nom affiché, commune, présentation, photo ou logo, offres publiées. Jamais votre adresse personnelle, vos documents, votre téléphone ni votre e-mail.</p></div></aside></div>
+</section>
+
+<!-- 6 ARGENT -->
+<section class="ecran" id="e-argent">
+  <div class="entete"><div><h1>Argent</h1><p class="petit">Ce qu'Avelis vous doit, et ce qui vous a été reversé</p></div></div>
+  <div class="kpi" data-s="g-liste g-vide"><div><b data-s="g-liste">45 000</b><b data-s="g-vide">0</b><span class="petit">Avelis vous doit (à reverser) · FCFA</span></div><div><b data-s="g-liste">120 000</b><b data-s="g-vide">0</b><span class="petit">Déjà reversé · FCFA</span></div><div><b data-s="g-liste">18 000</b><b data-s="g-vide">0</b><span class="petit">Commissions retenues · FCFA</span></div><div><b data-s="g-liste">51 000</b><b data-s="g-vide">0</b><span class="petit">À encaisser vous-même · FCFA</span></div></div>
+  <div class="carte" data-s="g-liste"><h2>Séjours</h2><div class="tableau"><div class="tete"><span>Séjour</span><span>Encaissé par Avelis</span><span>Commission</span><span>Votre part</span><span>État</span></div>
+    <div class="l"><div><b>Awa Koné · 4 déc.</b><div class="petit">Appartement</div></div><div class="m"><small>Encaissé</small>9 000</div><div class="m"><small>Commission</small>900</div><div class="m"><small>Votre part</small><b>8 100</b></div><div><span class="badge b-att">À reverser</span></div></div>
+    <div class="l"><div><b>Moussa Traoré · 12 nov.</b><div class="petit">Studio</div></div><div class="m"><small>Encaissé</small>18 000</div><div class="m"><small>Commission</small>1 800</div><div class="m"><small>Votre part</small><b>16 200</b></div><div><span class="badge b-ok">Reversé</span><div class="petit">Wave · 16 nov.</div></div></div>
+    <div class="l"><div><b>Fatou Diallo · 20 déc.</b><div class="petit">Appartement</div></div><div class="m"><small>Encaissé</small>9 000</div><div class="m"><small>Commission</small>—</div><div class="m"><small>Votre part</small>—</div><div><span class="badge b-nu">Après l'arrivée</span><div class="petit">part prévue : 8 100</div></div></div></div>
+    <p class="petit">Montants en FCFA. Vous ne voyez que vos propres séjours.</p></div>
+  <div class="carte" data-s="g-vide" style="text-align:center;justify-items:center"><p style="font-weight:800">Aucun séjour payé pour l'instant.</p><p class="petit">Vos reversements apparaîtront ici après les premières arrivées.</p></div>
+  <div class="alerte info"><span>Avelis vous reverse votre part <b>après l'arrivée du client</b>, par Mobile Money. Le solde du séjour est payé directement par le client à l'arrivée, sans commission supplémentaire.</span></div>
+</section>
+
+<!-- 7 MISES EN AVANT -->
+<section class="ecran" id="e-mises">
+  <div class="entete"><div><h1>Mes mises en avant</h1></div><a class="btn" href="#">+ Nouvelle mise en avant</a></div>
+  <div class="alerte att" data-s="m-attente"><span>Achat « 7 jours » pour Résidence Papaye en attente de paiement. <a href="#">Vérifier le paiement</a></span></div>
+  <div class="cartes" data-s="m-liste m-attente"><article class="carte"><div style="display:flex;justify-content:space-between;gap:8px"><b>Résidence Papaye</b><span class="badge b-ok">En cours</span></div><p class="petit">Du 1 déc. au 8 déc. 2026 · 7 jours · 5 000 FCFA</p><p class="petit">Annonce « Sponsorisé » en tête des recherches jusqu'au 8 déc.</p></article>
+    <article class="carte"><div style="display:flex;justify-content:space-between;gap:8px"><b>Villa Marcory</b><span class="badge b-nu">Terminée</span></div><p class="petit">Du 5 nov. au 12 nov. 2026 · 7 jours · 5 000 FCFA</p></article></div>
+  <div class="carte" data-s="m-vide"><p style="font-weight:800">Vous n'avez pas encore mis votre résidence en avant.</p><p class="petit">Une mise en avant place votre annonce en tête des recherches avec la mention « Sponsorisé ».</p></div>
+  <div class="carte" data-s="m-acheter"><h2>Faites passer votre résidence en tête ⭐</h2><h3>1 · Choisissez la résidence</h3><select><option>Résidence Papaye (Cocody)</option></select><h3>2 · Choisissez la durée</h3><div class="offres"><button class="offre on"><span>7 jours</span><b>5 000 FCFA</b></button><button class="offre"><span>15 jours</span><b>9 000 FCFA</b></button><button class="offre"><span>30 jours</span><b>15 000 FCFA</b></button></div><button class="btn pleine">Payer 5 000 FCFA</button></div>
+</section>
+
+<!-- 8 PERSONNEL -->
+<section class="ecran" id="e-personnel">
+  <div class="entete"><div><h1>Mon personnel</h1><p class="petit">Les personnes qui vous aident au quotidien</p></div></div>
+  <div class="cols"><div class="col"><div class="alerte ok" data-s="s-envoyee"><span>Invitation envoyée à Koffi Yao. Elle est valable 7 jours.</span></div>
+    <div class="carte" data-s="s-liste s-envoyee"><h2>Mon personnel</h2><div class="ligne"><span><b>Koffi Yao</b><br><span class="petit">Résidence Papaye · calendrier, arrivées et départs</span></span><a class="lien" href="#" style="color:var(--erreur)">Retirer</a></div><div class="ligne"><span><b>Aya Touré</b> <span class="badge b-att">Invitation envoyée</span><br><span class="petit">Résidence Papaye · arrivées et départs</span></span><a class="lien" href="#">Renvoyer</a></div></div>
+    <div class="carte" data-s="s-vide"><p style="font-weight:800">Vous n'avez invité personne pour l'instant.</p><p class="petit">Invitez un gardien ou un assistant : il verra seulement ce que vous autorisez.</p></div></div>
+    <form class="carte" onsubmit="return false"><h2>Inviter une personne</h2><label class="champ">Résidence<select><option>Résidence Papaye</option></select></label><label class="champ">Nom<input type="text"></label><label class="champ">E-mail<input type="text" id="s-mail"></label><p class="msg-err" data-s="s-erreur">Indiquez une adresse e-mail valide.</p><label class="champ">Téléphone<input type="text"></label>
+      <b>Ce que cette personne peut faire</b><label class="case"><input type="checkbox" checked> Gérer le calendrier</label><label class="case"><input type="checkbox" checked> Enregistrer les arrivées et départs</label><button class="btn pleine">Envoyer l'invitation</button></form></div>
+</section>
+
+<!-- 9 AIDE -->
+<section class="ecran" id="e-aide">
+  <div class="entete"><div><h1>Aide du gérant</h1></div></div>
+  <div class="centre"><details open><summary>Dois-je renvoyer ma pièce pour chaque résidence ?</summary><p>Non. Votre pièce d'identité se dépose une fois ; le contrat de bail se dépose pour chaque résidence.</p></details><details><summary>Quels documents faut-il pour publier ?</summary><p>Deux seulement : votre pièce d'identité (une fois) et le contrat de bail, ou tout justificatif de gestion, de chaque résidence. Après contrôle par Avelis, le badge « Gérant vérifié » apparaît.</p></details><details><summary>Comment aider mes voyageurs à trouver la résidence ?</summary><p>Dans « Mes résidences », ouvrez « Accès à la résidence » : placez-vous devant la résidence, touchez « Utiliser ma position actuelle » et écrivez deux ou trois repères.</p></details><details><summary>Que se passe-t-il après l'envoi de ma résidence ?</summary><p>Vous revenez à « Mes résidences » avec une confirmation. Votre dossier reste en attente de validation.</p></details><details><summary>Comment enregistrer un client appelé au téléphone ?</summary><p>Calendrier ▸ « Réservation par téléphone ». Elle bloque les dates, sans paiement ni commission.</p></details><details><summary>Quand suis-je payé ?</summary><p>Après l'arrivée du client, Avelis vous reverse votre part. Voir l'écran « Argent ».</p></details><details><summary>Un client ne vient pas ?</summary><p>Dans « Aujourd'hui », utilisez « Client absent » à partir de la date d'arrivée.</p></details><p style="margin-top:12px"><a class="btn sec" href="#">Écrire à l'équipe</a></p></div>
+</section>
+
+</main>
+<nav class="bas-m" id="bas"><a href="#" data-n="x">◉<span>Aujourd'hui</span></a><a href="#" data-n="x">▦<span>Calendrier</span></a><a href="#" data-n="argent">₣<span>Argent</span></a><a href="#" data-n="residences">⌂<span>Résidences</span></a></nav>
+</div></div></div>
+
+<div class="note"><details open><summary id="nt">Fiche écran</summary><dl id="nc"></dl></details></div>
+
+<div class="points-v"><section class="carte"><h2>Points à faire valider avant l'intégration</h2>
+<ol>
+<li><b>Contenu inchangé</b> : mêmes champs, mêmes règles, mêmes montants et mêmes messages. Seule la présentation passe à la charte orange, sur toute la largeur (cartes en colonnes sur grand écran).</li>
+<li><b>Mes résidences</b> : cartes avec le badge « Gérant vérifié », statut (brouillon, en attente, refusée avec le motif), liens « Modifier » et « Accès à la résidence », confirmation après envoi.</li>
+<li><b>Éditeur en trois étapes</b> : étapes en grandes pastilles (en cours, faite), un seul bouton principal par étape ; choix du paiement (total ou acompte) en deux grandes cases ; étape 3 avec un récapitulatif et l'état des deux documents.</li>
+<li><b>Mon profil gérant</b> : <u>recommandation</u> : retirer l'onglet « Mes documents » (la pièce d'identité se dépose maintenant dans « Ma vérification », un seul endroit) et garder deux blocs : informations privées et présentation publique, avec un lien vers Ma vérification.</li>
+<li><b>Argent</b> : quatre compteurs ; les séjours en cartes sur téléphone et en tableau sur ordinateur ; mêmes états (à reverser, reversé, après l'arrivée). Aucune règle financière ne change.</li>
+<li><b>Mises en avant</b> et <b>Mon personnel</b> : cartes, grandes cases pour les droits, durées en grosses cartes (7, 15, 30 jours : les offres réelles viennent des Paramètres, ce sont des exemples).</li>
+<li><b>Aide du gérant</b> : questions en accordéon tactile ; les textes à jour (deux documents, accès à la résidence).</li>
+<li><b>Signaler un problème</b> (gérant) : déjà refait au lot 3 (même écran que le voyageur), rien à ajouter ici.</li>
+<li><b>Hors de ce lot</b> : l'administration (lots 7 et 8) et le nettoyage des anciens styles (lot 9).</li>
+</ol></section></div>
+
+<script>
+const ETATS={
+ residences:[['r-liste','Liste'],['r-envoyee','Après envoi'],['r-refusee','Refusée'],['r-vide','Aucune résidence']],
+ e1:[['e1-normal','Formulaire'],['e1-ok','Enregistré'],['e1-erreur','Nom manquant']],
+ e2:[['e2-liste','Liste des logements'],['e2-form','Ajouter / modifier'],['e2-erreur','Prix invalide'],['e2-vide','Aucun logement']],
+ e3:[['e3-bail','Bail manquant'],['e3-identite','Identité en contrôle'],['e3-pret','Prêt à envoyer']],
+ profil:[['p-normal','Formulaire'],['p-ok','Enregistré'],['p-erreur','Champ manquant']],
+ argent:[['g-liste','Avec séjours'],['g-vide','Aucun séjour']],
+ mises:[['m-liste','Liste'],['m-attente','Paiement en attente'],['m-vide','Aucune'],['m-acheter','Acheter']],
+ personnel:[['s-liste','Liste'],['s-envoyee','Invitation envoyée'],['s-vide','Personne'],['s-erreur','E-mail invalide']],
+ aide:[['a','Page']]};
+const NOTES={
+ residences:['Écran 1 · Mes résidences',{'But':'Retrouver ses résidences, leur statut, et savoir quoi faire ensuite.','Ce que voit l\'utilisateur':'Une carte par résidence : statut (brouillon, en attente, refusée avec le motif, vérifiée), nombre de logements, liens.','Actions':'Ajouter, modifier, accès à la résidence, suivre mon dossier.','Messages d\'erreur':'Refus : le motif de l\'équipe. Aucune résidence : bouton pour ajouter la première.'}],
+ e1:['Écran 2 · Ma résidence (étape 1)',{'But':'Décrire la résidence et choisir comment le voyageur paie.','Ce que voit l\'utilisateur':'Nom, commune, quartier, adresse écrite, lien vers l\'accès, règlement, paiement (total ou acompte), état des deux documents.','Actions':'Enregistrer, étape suivante, aller à Ma vérification.','Messages d\'erreur':'Messages existants sous chaque champ (nom manquant, acompte sous le minimum…).'}],
+ e2:['Écran 3 · Mes logements (étape 2)',{'But':'Ajouter les logements avec prix et photos.','Ce que voit l\'utilisateur':'Liste des logements (actifs ou non), formulaire : nom, type, personnes, prix, prix week-end, fêtes, photos.','Actions':'Ajouter, modifier, désactiver, réactiver, ajouter des photos.','Messages d\'erreur':'Prix invalide, photo trop lourde ou illisible : messages existants.'}],
+ e3:['Écran 4 · Vérification et envoi (étape 3)',{'But':'Vérifier le dossier et l\'envoyer.','Ce que voit l\'utilisateur':'Récapitulatif, état de la pièce d\'identité et du contrat de bail, dépôt du bail si absent, explication de la suite.','Actions':'Envoyer pour validation, ajouter le bail, revenir.','Messages d\'erreur':'Bail manquant ; identité pas encore validée (messages de ce lot).'}],
+ profil:['Écran 5 · Mon profil gérant',{'But':'Tenir à jour ses informations et sa présentation publique.','Ce que voit l\'utilisateur':'Informations privées, présentation publique (nom affiché, commune, logo, texte), situation (vérifié ou non), ce que voit le public.','Actions':'Enregistrer, voir mon profil public, aller à Ma vérification.','Messages d\'erreur':'Champs obligatoires, doublons de téléphone ou e-mail, image trop lourde : messages existants.'}],
+ argent:['Écran 6 · Argent',{'But':'Savoir ce qu\'Avelis doit et ce qui a été reversé.','Ce que voit l\'utilisateur':'Quatre compteurs, liste des séjours payés avec commission, part et état.','Actions':'Lecture seule.','Messages d\'erreur':'Aucun ; sans séjour : message d\'attente.'}],
+ mises:['Écran 7 · Mises en avant',{'But':'Mettre une résidence en tête des recherches.','Ce que voit l\'utilisateur':'Liste des mises en avant avec état et dates, achats en attente de paiement, choix de la résidence et de la durée.','Actions':'Nouvelle mise en avant, payer, vérifier le paiement.','Messages d\'erreur':'Messages existants (aucune offre, paiement non confirmé, suspendue par Avelis).'}],
+ personnel:['Écran 8 · Mon personnel',{'But':'Donner un accès limité à ses collaborateurs.','Ce que voit l\'utilisateur':'Liste du personnel et invitations, formulaire d\'invitation avec les droits (calendrier, arrivées et départs).','Actions':'Inviter, renvoyer, retirer.','Messages d\'erreur':'E-mail ou nom manquant : messages existants.'}],
+ aide:['Écran 9 · Aide du gérant',{'But':'Répondre seul aux questions du gérant.','Ce que voit l\'utilisateur':'Questions en accordéon, bouton pour écrire à l\'équipe.','Actions':'Ouvrir une question, écrire.','Messages d\'erreur':'Aucun.'}]};
+let ecran='residences',etat={};
+function majEtat(){document.querySelectorAll('.scene .ecran [data-s]').forEach(e=>{e.style.display=e.dataset.s.split(' ').includes(etat[ecran])?'':'none';});
+ const e=etat[ecran];
+ if(ecran==='e1')document.getElementById('e1-nom').classList.toggle('err',e==='e1-erreur');
+ if(ecran==='e2')document.getElementById('e2-prix').classList.toggle('err',e==='e2-erreur');
+ if(ecran==='profil')document.getElementById('p-adr').classList.toggle('err',e==='p-erreur');
+ if(ecran==='personnel')document.getElementById('s-mail').classList.toggle('err',e==='s-erreur');
+ if(ecran==='argent'){document.querySelectorAll('#e-argent .kpi').forEach(x=>x.style.display='');}
+ if(ecran==='e2'){document.querySelectorAll('#e-e2 .cols>.col').forEach(x=>{});}
+ document.querySelectorAll('#etats button').forEach(b=>b.classList.toggle('on',b.dataset.s===etat[ecran]));
+ const nav={residences:'residences',e1:'residences',e2:'residences',e3:'residences',profil:'profil',argent:'argent',mises:'mises',personnel:'personnel',aide:'aide'}[ecran];
+ document.querySelectorAll('#lateral a,#bas a').forEach(a=>a.classList.toggle('on',a.dataset.n===nav));}
+function aller(id){ecran=id;etat[id]??=ETATS[id][0][0];document.querySelectorAll('.ecran').forEach(e=>e.classList.toggle('on',e.id==='e-'+id));document.querySelectorAll('#nav button').forEach(b=>b.classList.toggle('on',b.dataset.e===id));
+ document.getElementById('etats').innerHTML=ETATS[id].length>1?'<span>État :</span>'+ETATS[id].map(([k,l])=>`<button data-s="${k}" type="button">${l}</button>`).join(''):'';
+ const[t,d]=NOTES[id];document.getElementById('nt').textContent=t;document.getElementById('nc').innerHTML=Object.entries(d).map(([k,v])=>`<div><dt>${k}</dt><dd>${v}</dd></div>`).join('');majEtat();}
+document.getElementById('nav').addEventListener('click',e=>{const b=e.target.closest('button');if(b)aller(b.dataset.e)});
+document.getElementById('etats').addEventListener('click',e=>{const b=e.target.closest('button');if(b){etat[ecran]=b.dataset.s;majEtat();}});
+document.addEventListener('click',e=>{const n=e.target.closest('[data-n]');if(n){e.preventDefault();const m={residences:'residences',profil:'profil',argent:'argent',mises:'mises',personnel:'personnel',aide:'aide'}[n.dataset.n];if(m)aller(m);return}
+ if(e.target.closest('.offre')){document.querySelectorAll('.offre').forEach(o=>o.classList.remove('on'));e.target.closest('.offre').classList.add('on');return}
+ if(e.target.closest('a[href="#"]'))e.preventDefault();});
+const setVue=m=>{document.body.classList.toggle('mobile',m);document.getElementById('b-mob').classList.toggle('on',m);document.getElementById('b-ord').classList.toggle('on',!m)};
+document.getElementById('b-mob').onclick=()=>setVue(true);document.getElementById('b-ord').onclick=()=>setVue(false);
+setVue(window.innerWidth<700);aller('residences');
+</script>
+</body>
+</html>

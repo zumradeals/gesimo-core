@@ -1,7 +1,7 @@
 @php $fr = fn (int $m) => \App\Noyau\Services\Format::fcfa($m); @endphp
-<div style="display:grid;gap:16px">
-    <div class="adm-top"><div><h1>Argent</h1><p class="petit">Ce qu'Avelis vous doit, et ce qui vous a été reversé</p></div></div>
-    <div class="kpi">
+<div class="mr-page ev-page">
+    <div class="mr-entete"><div><h1>Argent</h1><p class="petit">Ce qu'Avelis vous doit, et ce qui vous a été reversé</p></div></div>
+    <div class="kpi gq-kpi">
         <div class="k"><span class="k-i g"><x-ui.icone nom="argent" classe="ic" /></span><b>{{ number_format($aRecevoir, 0, ',', "\u{202F}") }}</b><span>Avelis vous doit (à reverser)</span><small>FCFA</small></div>
         <div class="k"><span class="k-i b"><x-ui.icone nom="carte" classe="ic" /></span><b>{{ number_format($dejaRecu, 0, ',', "\u{202F}") }}</b><span>Déjà reversé</span><small>FCFA</small></div>
         <div class="k"><span class="k-i o"><x-ui.icone nom="balance" classe="ic" /></span><b>{{ number_format($commissions, 0, ',', "\u{202F}") }}</b><span>Commissions retenues</span><small>FCFA</small></div>

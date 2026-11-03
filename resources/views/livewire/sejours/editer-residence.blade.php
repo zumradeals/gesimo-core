@@ -1,7 +1,7 @@
 @php $fr = fn (int $m) => \App\Noyau\Services\Format::fcfa($m); @endphp
-<div class="grid gap-5">
-    <div class="flex flex-wrap items-center justify-between gap-2">
-        <div class="adm-top"><div><h1>{{ $residence ? $residence->nom : 'Ma résidence' }}</h1></div></div>
+<div class="mr-page ev-page">
+    <div class="mr-entete">
+        <div><h1>{{ $residence ? $residence->nom : 'Ma résidence' }}</h1></div>
         @if($residence) @include('livewire.sejours.partiels.statut-residence', ['r' => $residence]) @endif
     </div>
 
@@ -17,7 +17,7 @@
         @endforeach
     </div>
 
-    <div style="max-width:880px;display:grid;gap:16px">
+    <div class="gq-editeur">
         {{-- 1. Résidence --}}
         @if($etape === 1)
         <form wire:submit="enregistrerResidence" class="carte-p">

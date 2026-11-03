@@ -1,5 +1,4 @@
-<div class="carte grid gap-1 md:max-w-3xl">
-<h1 class="mb-2 text-2xl font-extrabold">Aide du gérant</h1>
+<div class="mr-page ev-page"><div class="mr-entete"><div><h1>Aide du gérant</h1></div></div><div class="mr-carte faq gq-aide">
 @foreach([
 ['Dois-je renvoyer ma pièce pour chaque résidence ?','Non. Fournissez votre pièce d’identité dans « Mon profil gérant ». Après validation par Avelis, elle sert pour toutes vos résidences.'],
 ['Quels documents faut-il pour publier ?','Deux seulement : votre pièce d’identité (une fois) et le contrat de bail, ou tout justificatif de gestion, de chaque résidence. Après contrôle par Avelis, le badge « Gérant vérifié » apparaît. Le certificat de résidence n’est plus demandé.'],
@@ -11,6 +10,6 @@
 ['Je dois annuler une réservation ?','Utilisez « Annuler » dans « Arrivées » : le client est remboursé en totalité.'],
 ['Un problème avec un client ?','Ouvrez la réservation puis « Signaler un problème » : l\'équipe Avelis vous répond.'],
 ] as [$q, $r])
-<details class="border-b border-dashed border-trait py-2"><summary class="min-h-[44px] cursor-pointer py-2 font-bold">{{ $q }}</summary><p class="pb-2 text-gris-doux">{{ $r }}</p></details>
+<details><summary>{{ $q }}</summary><p>{{ $r }}</p></details>
 @endforeach
-<a href="{{ route('contact') }}" class="btn btn-second mt-2 md:w-auto">Écrire à l'équipe</a></div>
+<a href="{{ route('contact') }}" class="btn-sec">Écrire à l'équipe</a></div></div>

@@ -1,4 +1,4 @@
-<div class="mx-auto grid max-w-xl gap-4" @if($etat === 'verification') wire:poll.4s="actualiser" @endif>
+<div class="mr-page ev-page"><div class="ev-centre" style="max-width:640px" @if($etat === 'verification') wire:poll.4s="actualiser" @endif>
     <div class="carte-p">
         @if($etat === 'ok')
             <div class="flex h-16 w-16 items-center justify-center rounded-full bg-green-100 text-3xl text-green-800">✔</div>
@@ -21,4 +21,5 @@
             <button wire:click="actualiser" class="btn-sec pleine">Vérifier maintenant</button>
         @endif
     </div>
+</div>
 </div>

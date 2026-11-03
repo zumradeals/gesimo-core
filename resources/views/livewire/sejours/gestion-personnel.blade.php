@@ -1,12 +1,12 @@
-<div class="grid gap-4">
-    <div class="adm-top"><div><h1>Mon personnel</h1></div></div>
+<div class="mr-page ev-page">
+    <div class="mr-entete"><div><h1>Mon personnel</h1><p class="petit">Les personnes qui vous aident au quotidien</p></div></div>
     @if($message)<x-ui.alerte type="succes">{{ $message }}</x-ui.alerte>@endif
     @if($erreur)<x-ui.alerte type="erreur">{{ $erreur }}</x-ui.alerte>@endif
 
     @if($residences->isEmpty())
         <x-ui.alerte type="attention">Ajoutez d'abord une résidence avant d'inviter du personnel.</x-ui.alerte>
     @else
-    <div class="grid gap-4 lg:grid-cols-2 lg:items-start">
+    <div class="ev-grille">
         <form wire:submit="inviter" class="carte-p">
             <h2>Inviter une personne</h2>
             <div class="champ"><label class="etiquette" for="residence">Résidence</label>

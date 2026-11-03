@@ -1,11 +1,10 @@
 @php $fr = fn (int $m) => \App\Noyau\Services\Format::fcfa($m); @endphp
-<div class="grid gap-4">
-    <div class="adm-top"><div><h1>Mes mises en avant</h1></div></div>
-    <a href="{{ route('gerant.mise-en-avant.acheter') }}" class="btn-pl">+ Nouvelle mise en avant</a>
+<div class="mr-page ev-page">
+    <div class="mr-entete"><div><h1>Mes mises en avant</h1></div><a href="{{ route('gerant.mise-en-avant.acheter') }}" class="btn-pl">+ Nouvelle mise en avant</a></div>
     @foreach($enAttente as $m)
         <x-ui.alerte type="attention">Achat « {{ $m->offre }} » pour {{ $m->residence->nom }} en attente de paiement. <a class="font-bold underline" href="{{ route('gerant.mise-en-avant.retour', $m) }}">Vérifier le paiement</a></x-ui.alerte>
     @endforeach
-    <div class="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+    <div class="gq-cartes">
         @forelse($mises as $m)
             @php $etat = $m->etat(); @endphp
             <article class="carte-p">
