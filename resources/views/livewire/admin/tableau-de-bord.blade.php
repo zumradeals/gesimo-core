@@ -6,9 +6,9 @@
     $detailTotal = collect([$nbAValider ? $nbAValider.' résidence'.($nbAValider > 1 ? 's' : '') : null, $nbLitiges ? $nbLitiges.' litige'.($nbLitiges > 1 ? 's' : '') : null, $nbAlertes ? $nbAlertes.' alerte'.($nbAlertes > 1 ? 's' : '') : null])->filter()->implode(' · ');
     $signe = fn (int $n) => ($n > 0 ? '▲ +' : ($n < 0 ? '▼ ' : '')).$n;
 @endphp
-<div style="display:grid;gap:20px">
-    <div class="adm-top">
-        <div><h1>Bonjour {{ $prenom }} 👋</h1><p class="petit">{{ now()->translatedFormat('l j F Y') }} · {{ $total > 0 ? 'voici ce qui demande votre attention' : 'tout est à jour' }}</p></div>
+<div class="mr-page ev-page">
+    <div class="mr-entete">
+        <div><h1>Bonjour {{ $prenom }}</h1><p class="petit">{{ now()->translatedFormat('l j F Y') }} · {{ $total > 0 ? 'voici ce qui demande votre attention' : 'tout est à jour' }}</p></div>
         <div class="adm-act"><a href="{{ route('admin.journal') }}" class="btn-sec">Journal</a>@can('modifier-parametres')<a href="{{ route('admin.reglages') }}" class="btn-pl">Réglages</a>@endcan</div>
     </div>
 
@@ -16,7 +16,7 @@
         <x-ui.alerte type="attention">L'installation n'est pas terminée. <a class="font-bold underline" href="{{ route('installation') }}">Terminer l'installation</a></x-ui.alerte>
     @endif
 
-    <div class="kpi">
+    <div class="kpi gq-kpi">
         <a href="{{ route('admin.controle') }}" class="k"><span class="k-i v"><x-ui.icone nom="alerte" classe="ic" /></span><b>{{ $total }}</b><span>À traiter</span><small>{{ $detailTotal ?: 'rien en attente' }}</small></a>
         <a href="{{ route('admin.reservations') }}" class="k"><span class="k-i b"><x-ui.icone nom="liste" classe="ic" /></span><b>{{ $resa7 }}</b><span>Réservations (7 jours)</span><small class="var {{ $resa7Evolution > 0 ? 'hausse' : ($resa7Evolution < 0 ? 'baisse' : '') }}">{{ $resa7Evolution === 0 ? 'stable vs semaine passée' : $signe($resa7Evolution).' vs semaine passée' }}</small></a>
         <a href="{{ route('admin.paiements') }}" class="k"><span class="k-i o"><x-ui.icone nom="argent" classe="ic" /></span><b>{{ number_format($commissionsSemaine, 0, ',', "\u{202F}") }}</b><span>Commissions (7 jours, FCFA)</span><small class="var {{ ($commissionsEvolution ?? 0) > 0 ? 'hausse' : (($commissionsEvolution ?? 0) < 0 ? 'baisse' : '') }}">{{ $commissionsEvolution === null ? 'pas de comparaison' : ($commissionsEvolution > 0 ? '▲ +' : ($commissionsEvolution < 0 ? '▼ ' : '')).$commissionsEvolution.' % vs semaine passée' }}</small></a>
@@ -27,8 +27,8 @@
         <section class="carte-a">
             <h2>À traiter maintenant</h2>
             @if($total === 0)<p class="petit">Rien à traiter pour le moment. 👍</p>@endif
-            @foreach($litiges as $l)<div class="tache"><span class="pt-t rouge"></span><div><b>Litige n° {{ $l->id }}</b><small>{{ \Illuminate\Support\Str::limit($l->motif, 60) }} · réservation #{{ $l->reservation_id }}</small></div><a href="{{ route('admin.litiges') }}">Ouvrir</a></div>@endforeach
-            @foreach($aValider as $r)<div class="tache"><span class="pt-t or"></span><div><b>{{ $r->nom }}</b><small>Résidence à valider</small></div><a href="{{ route('admin.residence', $r) }}">Ouvrir</a></div>@endforeach
+            @foreach($litiges as $l)<div class="tache"><span class="pt-t rouge"></span><div><b>Litige n° {{ $l->id }}</b><small>{{ \Illuminate\Support\Str::limit($l->motif, 60) }} · réservation #{{ $l->reservation_id }}</small></div><a href="{{ route('admin.litiges') }}">Traiter</a></div>@endforeach
+            @foreach($aValider as $r)<div class="tache"><span class="pt-t or"></span><div><b>{{ $r->nom }}</b><small>Résidence à valider</small></div><a href="{{ route('admin.residence', $r) }}">Contrôler</a></div>@endforeach
             @foreach($alertes as $a)<div class="tache"><span class="pt-t or"></span><div><b>{{ \App\Paiement\Models\AlerteAdmin::libelleType($a->type) }}</b><small>Alerte argent</small></div><a href="{{ route('admin.controle') }}">Ouvrir</a></div>@endforeach
         </section>
         <section class="carte-a">

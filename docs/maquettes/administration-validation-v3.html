@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Maquette — Administration : validation et litiges · Avelis Séjours</title>
+<style>
+:root{--orange:#ff6a00;--orange-texte:#b94700;--orange-survol:#e75e00;--nuit:#17243b;--ivoire:#fff8f0;--peche:#ffeadb;--gris:#526077;--trait:#e4e7ed;--saisie:#c7cdd8;--ok:#1d7a46;--okfond:#e8f5ed;--erreur:#b42318;--erreurfond:#fdecea}
+*{box-sizing:border-box}
+body{margin:0;font:16px/1.55 system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--nuit);background:#eef0f4}
+h1,h2,h3,p{margin:0}h1,h2,h3{letter-spacing:-.03em;line-height:1.2}a{color:var(--orange-texte)}button,input,textarea,select{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--nuit);outline-offset:3px}
+.outil{position:sticky;top:0;z-index:50;background:var(--nuit);color:#fff;padding:10px 16px;display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center}
+.outil nav{display:flex;flex-wrap:wrap;gap:6px}.outil button{border:1px solid #ffffff55;background:transparent;color:#fff;border-radius:999px;padding:6px 12px;font-size:13px;cursor:pointer}
+.outil button.on{background:var(--orange);border-color:var(--orange);color:var(--nuit);font-weight:700}.outil .nouveau{border-color:#ffd9bd}.outil .sep{margin-left:auto;display:flex;gap:6px;align-items:center;font-size:13px}
+.avertis{max-width:1500px;margin:14px auto 0;padding:0 16px;font-size:13px;color:var(--gris)}
+.etats{max-width:1500px;margin:10px auto 0;padding:0 16px;display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:13px}
+.etats span{color:var(--gris);font-weight:700}.etats button{border:1.5px solid var(--saisie);background:#fff;border-radius:999px;padding:5px 12px;font-size:13px;font-weight:700;cursor:pointer}.etats button.on{background:var(--nuit);color:#fff;border-color:var(--nuit)}
+.scene{margin:12px auto 0;background:#f6f7f9;border:1px solid var(--trait);border-radius:18px;overflow:hidden;container-type:inline-size;width:min(100%,1500px);box-shadow:0 10px 40px #17243b14}
+body.mobile .scene{width:390px}
+.ecran{display:none}.ecran.on{display:grid}
+.coque{display:grid}
+.lateral{display:none;background:var(--nuit);color:#e6ebf4;padding:18px 14px;gap:4px;align-content:start}
+.logo{display:flex;align-items:center;gap:9px;font-weight:800;font-size:18px}.lateral .logo{margin:0 6px 14px;color:#fff}
+.logo i{display:grid;place-items:center;width:34px;height:34px;border-radius:11px;background:var(--orange);color:var(--nuit);font-style:normal;font-size:22px}
+.lateral a{display:flex;gap:10px;align-items:center;padding:10px 12px;border-radius:10px;color:#e6ebf4;text-decoration:none;font-weight:600;font-size:15px}
+.lateral a.on{background:#ffffff1f;box-shadow:inset 3px 0 var(--orange)}
+.lateral .moi{margin-top:auto;border-top:1px solid #ffffff26;padding:14px 8px 0;font-size:14px}
+.haut-m{display:flex;align-items:center;gap:10px;padding:12px 16px;background:var(--nuit);color:#fff}
+.contenu{padding:16px;display:grid;gap:16px;align-content:start;min-width:0;padding-bottom:30px}
+.bas-m{position:sticky;bottom:0;display:grid;grid-template-columns:repeat(4,1fr);background:#fff;border-top:1px solid var(--trait)}
+.bas-m a{display:grid;place-items:center;gap:1px;padding:8px 2px;font-size:11.5px;font-weight:700;color:var(--gris);text-decoration:none;min-height:60px}
+.bas-m a.on{color:var(--orange-texte);box-shadow:inset 0 3px var(--orange)}
+@container (min-width:900px){.coque{grid-template-columns:250px minmax(0,1fr);min-height:900px}.lateral{display:grid}.haut-m,.bas-m{display:none}.contenu{padding:28px 36px 40px}}
+.entete{display:grid;gap:10px}.entete h1{font-size:clamp(26px,5cqw,32px)}.petit{font-size:13px;color:var(--gris)}
+@container (min-width:900px){.entete{grid-template-columns:1fr auto;align-items:center}}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:50px;padding:10px 18px;border:0;border-radius:10px;background:var(--orange);color:var(--nuit);font-weight:800;font-size:16px;cursor:pointer;text-decoration:none;text-align:center}
+.btn:hover{background:var(--orange-survol)}.btn.sec{background:#fff;border:2px solid var(--nuit)}.btn.danger{background:#fff;border:2px solid var(--erreur);color:var(--erreur)}.btn.pleine{width:100%}.btn.pet{min-height:44px;padding:6px 14px;font-size:15px}
+.lien{background:none;border:0;padding:6px 0;font-weight:700;color:var(--orange-texte);text-decoration:underline;cursor:pointer}
+.carte{background:#fff;border:1px solid var(--trait);border-radius:14px;padding:18px;display:grid;gap:12px;align-content:start;min-width:0}.carte h2{font-size:19px}.carte h3{font-size:17px}
+.ligne{display:flex;justify-content:space-between;gap:12px;font-size:15px;padding:6px 0;border-bottom:1px dashed var(--trait)}.ligne:last-child{border-bottom:0}
+.badge{display:inline-block;border-radius:999px;padding:3px 11px;font-size:12.5px;font-weight:800;white-space:nowrap}.b-ok{background:var(--okfond);color:var(--ok)}.b-att{background:var(--peche);color:var(--orange-texte)}.b-nu{background:#e9ecf2;color:var(--gris)}.b-err{background:var(--erreurfond);color:var(--erreur)}
+.etape{display:grid;gap:10px;background:var(--ivoire);border:2px solid var(--orange);border-radius:14px;padding:16px}.surtitre{font-size:12px;letter-spacing:.11em;text-transform:uppercase;font-weight:800;color:var(--orange-texte)}.etape h2{font-size:20px}
+.alerte{display:flex;gap:10px;border-radius:12px;padding:12px 14px;font-size:14.5px;border:1px solid}.alerte.info{background:var(--ivoire);border-color:var(--peche)}.alerte.err{background:var(--erreurfond);border-color:#f2b8b2;color:#7a1a12}.alerte.ok{background:var(--okfond);border-color:#b8dfc7;color:#14532d}.alerte.att{background:#fff4e5;border-color:#f6d9a8;color:#7a4a00}
+label.champ{display:grid;gap:6px;font-weight:700;font-size:15px}label.champ small{font-weight:400;color:var(--gris);font-size:13px}
+input[type=text],input[type=tel],input[type=date],textarea,select{width:100%;min-height:50px;border:1.5px solid var(--saisie);border-radius:11px;padding:10px 13px;background:#fff;font-weight:500}textarea{min-height:96px;resize:vertical}
+input.err,textarea.err{border-color:var(--erreur);box-shadow:0 0 0 3px var(--erreurfond)}.msg-err{color:var(--erreur);font-size:14px;font-weight:600}
+.deux{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.cols{display:grid;gap:16px;align-items:start}.col{display:grid;gap:16px;align-content:start;min-width:0}
+.cartes{display:grid;gap:14px}
+.kpi{display:grid;grid-template-columns:1fr 1fr;gap:12px}.kpi div{background:#fff;border:1px solid var(--trait);border-radius:14px;padding:14px;display:grid}.kpi b{font-size:28px}
+@container (min-width:700px){.kpi{grid-template-columns:repeat(4,1fr)}.cartes{grid-template-columns:repeat(2,1fr)}}
+@container (min-width:900px){.cols{grid-template-columns:minmax(0,1fr) 400px;gap:24px}.centre{justify-self:center;width:min(100%,760px)}}
+@container (min-width:1300px){.cartes{grid-template-columns:repeat(3,1fr)}}
+.res-sel{display:grid;gap:10px}@container (min-width:700px){.res-sel{grid-template-columns:1fr 1fr;max-width:720px}}
+.onglets{display:grid;grid-template-columns:1fr 1fr;background:#e9ecf1;border-radius:12px;padding:4px;max-width:520px}.onglets button{border:0;background:transparent;border-radius:9px;min-height:46px;font-weight:800;cursor:pointer;color:var(--gris)}.onglets button.on{background:#fff;color:var(--nuit);box-shadow:0 1px 3px #17243b1f}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;text-align:center;font-size:13px}.cal b.j{color:var(--gris);font-size:12px}
+.cal .d{min-height:50px;border:1px solid var(--trait);border-radius:9px;display:grid;place-items:center;align-content:center;background:#fff;font-weight:700}.cal .d small{font-size:10px;font-weight:600;line-height:1.1}
+.cal .conf{background:#dff3e6;border-color:#9fd3b2}.cal .att{background:#fff0d6;border-color:#f0cb85}.cal .tel{background:#dbeafe;border-color:#9fc2ef}.cal .blo{background:#e2e5ec;border-color:#b9bfcc}
+@container (min-width:900px){.cal .d{min-height:66px}}
+.legende{display:flex;flex-wrap:wrap;gap:12px;font-size:13px}.legende i{display:inline-block;width:12px;height:12px;border-radius:4px;margin-right:5px;vertical-align:-1px}
+.photo{border-radius:12px;background:linear-gradient(135deg,#d7c3ab,#a98c6c 55%,#e9d9c4);color:#ffffffcc;font-size:11px;display:grid;place-items:end start;padding:6px 8px;min-height:92px}
+.liste{list-style:none;margin:0;padding:0;display:grid;gap:8px;font-size:15px}.liste li{display:flex;gap:9px}.liste li::before{content:"✓";color:var(--ok);font-weight:900}
+.pieces{display:grid;gap:12px}.piece{display:grid;gap:8px;border:1.5px solid var(--trait);border-radius:14px;padding:16px;background:#fff}.piece.ok{border-color:#b8dfc7;background:#f6fbf8}.piece.att{border-color:var(--peche)}.piece.err{border-color:#f2b8b2;background:#fffafa}
+.piece .tete{display:flex;gap:10px;justify-content:space-between;align-items:flex-start;flex-wrap:wrap}.piece h3{font-size:17px}
+.fichier{border:2px dashed var(--saisie);border-radius:12px;padding:14px;display:grid;gap:8px;justify-items:start;background:#fafbfc}
+.carte-map{border-radius:14px;min-height:150px;background:repeating-linear-gradient(45deg,#eaf0e4,#eaf0e4 14px,#dfe8d6 14px,#dfe8d6 28px);display:grid;place-items:center;position:relative;border:1px solid var(--trait)}
+.carte-map span{background:var(--orange);color:var(--nuit);border-radius:50% 50% 50% 0;width:34px;height:34px;display:grid;place-items:center;transform:rotate(-45deg);font-weight:900}.carte-map span b{transform:rotate(45deg)}
+.apps{display:grid;gap:8px}.apps a{display:flex;gap:10px;align-items:center;min-height:50px;padding:8px 14px;border:1.5px solid var(--trait);border-radius:12px;background:#fff;font-weight:700;text-decoration:none;color:var(--nuit)}
+.note{max-width:1500px;margin:12px auto 0;padding:0 16px}
+.note details{background:#fff;border:1px solid var(--trait);border-radius:12px;padding:12px 16px}.note summary{cursor:pointer;font-weight:800}
+.note dl{display:grid;gap:10px;margin:12px 0 0;font-size:14.5px}.note dt{font-weight:800}.note dd{margin:0;color:var(--gris)}
+.points-v{max-width:1500px;margin:22px auto 60px;padding:0 16px}.points-v .carte{background:#fff}.points-v ol{margin:0;padding-left:20px;display:grid;gap:8px}
+.tag-n{background:var(--orange);color:var(--nuit);border-radius:6px;padding:1px 7px;font-size:11px;font-weight:800;margin-left:6px;vertical-align:2px}
+
+.stepper{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}.stepper button{border:2px solid var(--trait);background:#fff;border-radius:12px;min-height:50px;font-weight:800;font-size:14px;cursor:pointer;padding:6px}.stepper button.on{border-color:var(--orange);background:var(--ivoire);color:var(--orange-texte)}.stepper button.fait{border-color:#b8dfc7;background:var(--okfond);color:var(--ok)}
+.log{display:grid;grid-template-columns:78px minmax(0,1fr);gap:12px;align-items:center;border:1px solid var(--trait);border-radius:12px;padding:10px;background:#fff}.log .photo{min-height:64px}
+.radio{display:grid;gap:8px}.radio label{display:flex;gap:10px;align-items:flex-start;border:1.5px solid var(--saisie);border-radius:12px;padding:12px;font-weight:700;cursor:pointer}.radio label small{display:block;font-weight:400;color:var(--gris)}
+.offres{display:grid;gap:10px}.offre{border:2px solid var(--saisie);border-radius:14px;padding:14px;background:#fff;display:grid;gap:2px;cursor:pointer;text-align:left}.offre.on{border-color:var(--orange);background:var(--ivoire)}.offre b{font-size:22px}
+.tableau{display:grid;gap:8px}.tableau .l{display:grid;gap:4px;border:1px solid var(--trait);border-radius:12px;padding:12px;background:#fff}.tableau .l .m{display:flex;justify-content:space-between;gap:10px;font-size:14.5px}
+.case{display:flex;gap:10px;align-items:flex-start;font-weight:600}.case input{width:22px;height:22px;margin-top:2px}
+@container (min-width:700px){.offres{grid-template-columns:repeat(3,1fr)}.tableau .l{grid-template-columns:1.4fr repeat(3,1fr) 1fr;align-items:center}.tableau .l .m{display:block}.tableau .l .m small{display:block;color:var(--gris);font-size:12px}.tableau .tete{display:grid}}
+.tableau .tete{display:none;grid-template-columns:1.4fr repeat(3,1fr) 1fr;gap:4px;padding:0 12px;font-size:12.5px;font-weight:800;color:var(--gris)}
+</style></head>
+<body>
+<div class="outil">
+  <b>Maquette Administration : validation et litiges — Avelis Séjours</b>
+  <nav id="nav" aria-label="Écrans"><button data-e="tableau" class="on">1 · Tableau de bord</button><button data-e="residences">2 · Résidences à valider</button><button data-e="valider">3 · Valider une résidence</button><button data-e="gerant">4 · Dossier d'un gérant</button><button data-e="reservations">5 · Réservations</button><button data-e="litiges">6 · Litiges</button></nav>
+  <span class="sep">Affichage :<button id="b-mob" class="on">Téléphone</button><button id="b-ord">Ordinateur</button></span>
+</div>
+<p class="avertis">Maquette de travail, non validée : noms, dates et montants sont des exemples. Les boutons « État » montrent chaque situation. Les écrans d'argent et de réglages (Paiements, Reversements, Contrôle, Journal, Paramètres…) sont le lot 8.</p>
+<div class="etats" id="etats"></div>
+
+<div class="scene" id="scene"><div class="coque">
+<aside class="lateral" id="lateral"><div class="logo"><i>A</i>Avelis Séjours</div><span class="petit" style="color:#b9c3d6;margin:-8px 6px 8px">Administration</span>
+  <a href="#" data-n="tableau">⌂ Tableau de bord</a><a href="#" data-n="residences">▣ Résidences à valider <span class="badge b-att" style="margin-left:auto">3</span></a><a href="#" data-n="reservations">☰ Réservations</a><a href="#" data-n="litiges">⚠ Litiges <span class="badge b-err" style="margin-left:auto">1</span></a><a href="#" data-n="x">▭ Paiements</a><a href="#" data-n="x">₣ Reversements</a><a href="#" data-n="x">⚖ Contrôle</a><a href="#" data-n="x">★ Mises en avant</a><a href="#" data-n="x">☰ Journal d'audit</a><a href="#" data-n="x">✉ Modèles d'e-mails</a><a href="#" data-n="x">⚙ Réglages</a>
+  <div class="moi"><b>Équipe Avelis</b><br><span class="petit" style="color:#b9c3d6">Administrateur</span></div></aside>
+<div>
+<header class="haut-m"><span class="logo"><i>A</i>Avelis Séjours</span></header>
+<main class="contenu">
+
+<!-- 1 TABLEAU -->
+<section class="ecran on" id="e-tableau">
+  <div class="entete"><div><h1>Bonjour Awa</h1><p class="petit">mardi 3 novembre 2026 · <span data-s="t-charge">voici ce qui demande votre attention</span><span data-s="t-calme">tout est à jour</span></p></div><div style="display:flex;gap:8px"><a class="btn sec" href="#">Journal</a><a class="btn" href="#">Réglages</a></div></div>
+  <div class="alerte att" data-s="t-charge"><span>L'installation n'est pas terminée. <a href="#">Terminer l'installation</a></span></div>
+  <div class="kpi"><div><b data-s="t-charge">5</b><b data-s="t-calme">0</b><span class="petit">À traiter</span><span class="petit" data-s="t-charge">3 résidences, 1 litige, 1 alerte</span></div><div><b>24</b><span class="petit">Réservations (7 jours)</span><span class="petit" style="color:var(--ok)">▲ +4</span></div><div><b>86 400</b><span class="petit">Commissions (7 jours, FCFA)</span></div><div><b>12 %</b><span class="petit">Taux d'expiration (30 jours)</span><span class="petit">8 % d'annulation</span></div></div>
+  <div class="cols"><div class="col"><div class="carte"><h2>À traiter maintenant</h2>
+    <div data-s="t-charge"><div class="ligne"><span><b>Litige n° 7</b><br><span class="petit">« La clé ne fonctionnait pas… » · réservation #38</span></span><a href="#">Traiter</a></div><div class="ligne"><span><b>Résidence Papaye</b><br><span class="petit">envoyée il y a 2 heures · bail à contrôler</span></span><a href="#">Contrôler</a></div><div class="ligne"><span><b>Villa Marcory</b><br><span class="petit">envoyée hier</span></span><a href="#">Contrôler</a></div></div>
+    <p class="petit" data-s="t-calme">Rien à traiter pour le moment.</p></div>
+    <div class="carte"><h2>Dernières réservations</h2><div class="ligne"><span>#38 · Awa Koné · Appartement</span><span class="badge b-ok">Confirmée</span></div><div class="ligne"><span>#41 · Fatou Diallo · Studio</span><span class="badge b-att">En attente</span></div><div class="ligne"><span>#42 · M. Traoré · Chambre</span><span class="badge b-nu">Téléphone</span></div></div></div>
+    <aside class="col"><div class="carte"><h2>Réservations par jour</h2><div style="display:flex;gap:6px;align-items:flex-end;height:110px"><i style="flex:1;background:var(--peche);height:40%"></i><i style="flex:1;background:var(--peche);height:60%"></i><i style="flex:1;background:var(--peche);height:30%"></i><i style="flex:1;background:var(--orange);height:90%"></i><i style="flex:1;background:var(--peche);height:55%"></i><i style="flex:1;background:var(--peche);height:70%"></i><i style="flex:1;background:var(--peche);height:45%"></i></div><p class="petit">7 derniers jours</p></div></aside></div>
+</section>
+
+<!-- 2 RÉSIDENCES À VALIDER -->
+<section class="ecran" id="e-residences">
+  <div class="entete"><div><h1>Résidences à valider (<span id="nb-r">3</span>)</h1></div></div>
+  <div class="cols"><div class="col">
+    <div class="carte" data-s="rv-liste"><h2>Dossiers des gérants à contrôler (1)</h2><p class="petit">L'identité se contrôle une fois par gérant.</p><a class="ligne" style="text-decoration:none;color:inherit" href="#"><span><b>Confort Immobilier</b><br><span class="petit">pièce d'identité déposée il y a 3 h</span></span><span class="badge b-att">À contrôler</span></a></div>
+    <div class="carte" data-s="rv-liste"><h2>Contrats de bail à contrôler (2)</h2><p class="petit">Le contrat de bail est obligatoire pour mettre une résidence en ligne.</p><a class="ligne" style="text-decoration:none;color:inherit" href="#"><span><b>Résidence Papaye</b><br><span class="petit">gérant : Confort Immobilier</span></span><span class="badge b-att">À contrôler</span></a><a class="ligne" style="text-decoration:none;color:inherit" href="#"><span><b>Villa Marcory</b><br><span class="petit">gérant : Mme Diallo</span></span><span class="badge b-att">À contrôler</span></a></div>
+    <div class="cartes" data-s="rv-liste"><article class="carte"><div style="display:flex;justify-content:space-between;gap:8px"><h3>Résidence Papaye</h3><span class="badge b-att">En attente</span></div><p class="petit">Cocody · gérant : Confort Immobilier · envoyée il y a 2 heures</p><div class="ligne"><span>Identité</span><span class="badge b-att">À contrôler</span></div><div class="ligne"><span>Contrat de bail</span><span class="badge b-att">À contrôler</span></div></article><article class="carte"><div style="display:flex;justify-content:space-between;gap:8px"><h3>Villa Marcory</h3><span class="badge b-att">En attente</span></div><p class="petit">Marcory · gérant : Mme Diallo · envoyée hier</p><div class="ligne"><span>Identité</span><span class="badge b-ok">Validée</span></div><div class="ligne"><span>Contrat de bail</span><span class="badge b-att">À contrôler</span></div></article></div>
+    <div class="alerte info" data-s="rv-vide"><span>Aucune résidence en attente de vérification.</span></div>
+    <h2 style="font-size:20px">Décisions récentes</h2><div class="cartes"><article class="carte"><div style="display:flex;justify-content:space-between"><h3>Résidence Les Palmiers</h3><span class="badge b-ok">✓ Gérant vérifié</span></div><p class="petit">Cocody · Confort Immobilier</p></article><article class="carte"><div style="display:flex;justify-content:space-between"><h3>Chambres du Plateau</h3><span class="badge b-err">Refusée</span></div><p class="petit">Plateau · M. Kouassi</p></article></div></div></div>
+</section>
+
+<!-- 3 VALIDER UNE RÉSIDENCE -->
+<section class="ecran" id="e-valider">
+  <p class="petit"><a href="#">‹ Résidences à valider</a></p>
+  <div class="entete"><div><h1>Résidence Papaye</h1></div><span class="badge b-att">En attente de vérification</span></div>
+  <div class="alerte err" data-s="va-erreur"><span>Contrôlez d'abord le contrat de bail (justificatif de gestion) de cette résidence : il est nécessaire pour la mettre en ligne.</span></div>
+  <div class="alerte ok" data-s="va-ok"><span>Résidence validée et mise en ligne.</span></div>
+  <div class="cols"><div class="col">
+    <div class="carte"><p class="petit">Gérant : Confort Immobilier · 07 07 05 55 08 · mamadou@exemple.ci</p><a href="#" style="font-weight:700">Contrôler le dossier d'identité du gérant →</a><p>Cocody, Djibi</p><p class="petit">Paiement : acompte de 30 % · annulation flexible</p><p class="petit">Règlement : Pas de fête après 22 h.</p></div>
+    <div class="carte"><h2>Photos</h2><div class="deux"><div class="photo">Photo 1</div><div class="photo">Photo 2</div></div></div>
+    <div class="carte"><h2>Logements</h2><div class="ligne"><span>Appartement <span class="petit">(appartement, 4 pers.)</span></span><span>30 000 FCFA</span></div><div class="ligne"><span>Studio lumineux <span class="petit">(studio, 2 pers.)</span></span><span>18 000 FCFA</span></div></div>
+    <div class="carte"><h2>Contrat de bail <span class="badge b-att">Obligatoire</span></h2><div data-s="va-pret va-erreur va-ok"><b>Contrat de bail — Papaye.pdf</b><p class="petit">Reçu le 2 nov. · <span class="badge b-att" data-s="va-pret va-erreur">À contrôler</span><span class="badge b-ok" data-s="va-ok">Validé</span></p><a href="#" style="font-weight:700">Consulter le document privé ↗</a><button class="btn sec pet" style="justify-self:start">Refuser ce document seul</button><label class="champ">Motif de refus du document<textarea></textarea></label></div>
+      <div class="alerte err" data-s="va-sansbail"><span>Aucun contrat de bail déposé : la résidence ne peut pas être mise en ligne. Le gérant a été prévenu.</span></div></div></div>
+    <aside class="col"><div class="carte"><h2>Décision sur l'annonce</h2>
+      <div class="pieces"><div class="ligne"><span>Pièce d'identité du gérant</span><span class="badge b-ok">Validée</span></div><div class="ligne"><span>Contrat de bail</span><span class="badge b-att" data-s="va-pret va-erreur">À contrôler</span><span class="badge b-err" data-s="va-sansbail">Absent</span><span class="badge b-ok" data-s="va-ok">Validé</span></div></div>
+      <label class="case"><input type="checkbox" checked> J'ai contrôlé le contrat de bail : le valider (badge « Gérant vérifié »)</label>
+      <button class="btn pleine">Valider et mettre en ligne</button>
+      <label class="champ">Motif du refus<textarea placeholder="Ex. Photos du logement à compléter"></textarea></label><button class="btn danger pleine">Refuser</button><p class="petit">Chaque décision est écrite dans le journal d'audit.</p></div></aside></div>
+</section>
+
+<!-- 4 DOSSIER GÉRANT -->
+<section class="ecran" id="e-gerant">
+  <p class="petit"><a href="#">‹ Dossiers à vérifier</a></p>
+  <div class="entete"><div><h1>Dossier gérant · Confort Immobilier</h1></div><span class="badge b-ok" data-s="g-valide">✓ Gérant vérifié</span></div>
+  <div class="alerte att" data-s="g-reprise"><span>Plusieurs pièces différentes proviennent d'anciennes résidences. Contrôlez les documents et acceptez explicitement l'identité à retenir. Aucune pièce n'a été choisie automatiquement.</span></div>
+  <div class="cols"><div class="col"><div class="carte"><h2>Informations privées</h2><label class="champ">Nom complet privé<input type="text" value="Koné Mamadou"></label><button class="btn sec pet" style="justify-self:start">Corriger le nom après contrôle</button></div>
+    <div class="carte"><div style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap"><h2>Pièce d'identité</h2><span class="badge b-att" data-s="g-controle g-reprise">En attente</span><span class="badge b-ok" data-s="g-valide">Accepté</span></div><a href="#" style="font-weight:700">Consulter le document privé ↗</a><div style="display:flex;gap:10px;flex-wrap:wrap" data-s="g-controle g-reprise"><button class="btn">Accepter ce document</button><button class="btn sec">Refuser ce document</button></div></div>
+    <div class="carte" data-s="g-valide g-reprise"><div style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap"><h2>Certificat de résidence</h2><span class="badge b-nu">Ancien dépôt · n'est plus demandé</span></div><p class="petit">Conservé à titre d'historique. Il n'a aucun effet sur la publication ni sur le badge.</p><a href="#" style="font-weight:700">Consulter le document privé ↗</a></div></div>
+    <aside class="col"><div class="carte"><h2>Ce que ce contrôle change</h2><p class="petit">La pièce d'identité acceptée est l'un des deux documents demandés pour publier. L'autre est le contrat de bail de chaque résidence, contrôlé depuis la fiche de la résidence.</p><label class="champ">Motif du refus documentaire<textarea></textarea></label></div></aside></div>
+</section>
+
+<!-- 5 RÉSERVATIONS -->
+<section class="ecran" id="e-reservations">
+  <div class="entete"><div><h1>Toutes les réservations</h1></div></div>
+  <label class="champ" style="max-width:320px">Statut<select><option>Tous</option><option>Confirmée</option><option>En attente</option><option>Annulée</option></select></label>
+  <div class="cartes" data-s="re-liste"><article class="carte"><div style="display:flex;justify-content:space-between"><b>#38 · Awa Koné</b><span class="badge b-ok">Confirmée</span></div><p class="petit">Appartement · 4 déc. → 10 déc. 2026</p><div class="ligne"><span>Total</span><b>60 000 FCFA</b></div></article><article class="carte"><div style="display:flex;justify-content:space-between"><b>#41 · Fatou Diallo</b><span class="badge b-att">En attente</span></div><p class="petit">Studio · 12 déc. → 14 déc. 2026</p><div class="ligne"><span>Total</span><b>36 000 FCFA</b></div></article><article class="carte"><div style="display:flex;justify-content:space-between"><b>#42 · M. Traoré</b><span class="badge b-nu">Téléphone</span></div><p class="petit">Chambre · 20 déc. → 22 déc. 2026</p><div class="ligne"><span>Total</span><b>24 000 FCFA</b></div></article></div>
+  <div class="carte" data-s="re-vide" style="text-align:center"><p style="font-weight:800">Aucune réservation avec ce statut.</p></div>
+</section>
+
+<!-- 6 LITIGES -->
+<section class="ecran" id="e-litiges">
+  <div class="entete"><div><h1>Litiges</h1></div></div>
+  <div class="alerte ok" data-s="l-clos"><span>Litige clos. Les deux parties ont reçu votre décision.</span></div>
+  <div class="alerte err" data-s="l-erreur"><span>Indiquez votre décision avant de clore le litige.</span></div>
+  <div class="cartes" data-s="l-liste l-erreur"><article class="carte"><div style="display:flex;justify-content:space-between"><b>Litige n° 7</b><span class="badge b-att">Ouvert</span></div><p class="petit">Réservation n° 38 · Appartement (Résidence Papaye) · ouvert par Awa Koné · contre Confort Immobilier</p><div class="carte" style="background:var(--ivoire);border-color:var(--peche)"><p>« La clé ne fonctionnait pas à mon arrivée, j'ai attendu 2 heures. »</p></div><label class="champ">Votre décision<textarea id="l-dec" placeholder="Expliquez la décision aux deux parties"></textarea></label><button class="btn pleine">Clore le litige</button><p class="petit">La réservation retrouve son statut d'avant. Un éventuel remboursement ne se fait pas ici : il passe par le circuit de remboursement existant (Contrôle).</p></article></div>
+  <div class="carte" data-s="l-vide" style="text-align:center"><p style="font-weight:800">Aucun litige ouvert.</p></div>
+  <h2 style="font-size:20px" data-s="l-liste l-clos">Litiges clos</h2><div class="cartes" data-s="l-liste l-clos"><article class="carte"><div style="display:flex;justify-content:space-between"><b>Litige n° 5</b><span class="badge b-ok">Résolu</span></div><p class="petit">Réservation n° 31 · décidé le 28 oct. · « Remboursement d'une nuit via le Contrôle. »</p></article></div>
+</section>
+
+</main>
+<nav class="bas-m" id="bas"><a href="#" data-n="tableau">⌂<span>Tableau</span></a><a href="#" data-n="residences">▣<span>Résidences</span></a><a href="#" data-n="reservations">☰<span>Réservations</span></a><a href="#" data-n="litiges">⚠<span>Litiges</span></a></nav>
+</div></div></div>
+
+<div class="note"><details open><summary id="nt">Fiche écran</summary><dl id="nc"></dl></details></div>
+
+<div class="points-v"><section class="carte"><h2>Points à faire valider avant l'intégration</h2>
+<ol>
+<li><b>Contenu et droits inchangés</b> : mêmes informations, mêmes décisions, mêmes droits (administrateur seulement), même journal d'audit. La présentation passe à la charte orange (menu bleu nuit, cartes, pleine largeur) ; sur téléphone, un menu du bas avec Tableau, Résidences, Réservations, Litiges.</li>
+<li><b>Mise en cohérence avec la règle du 4 novembre</b> (deux documents) : les textes de l'administration parlent encore de « certification facultative » et de « justificatif facultatif ». Ils deviennent : <i>Contrat de bail : obligatoire</i> ; le certificat de résidence n'est plus qu'un « ancien dépôt » conservé à titre d'historique. Aucun changement de règle : le blocage « pas de mise en ligne sans bail contrôlé » existe déjà.</li>
+<li><b>Valider une résidence</b> : ajout d'un petit récapitulatif des deux documents (identité, bail) et de leur état juste au-dessus du bouton « Valider et mettre en ligne », pour voir d'un coup d'œil ce qui manque.</li>
+<li><b>Résidences à valider</b> : trois blocs clairs (dossiers gérants, contrats de bail, résidences en attente avec l'état des deux documents), puis les décisions récentes.</li>
+<li><b>Tableau de bord</b> : « Bonjour Awa » sans émoji ; compteurs et liste « À traiter maintenant » avec un lien « Traiter » par ligne.</li>
+<li><b>Litiges</b> : la décision écrite reste obligatoire ; le texte rappelle que le remboursement passe par « Contrôle » (lot 8).</li>
+<li><b>Hors de ce lot</b> : Paiements, Reversements, Contrôle, Mises en avant, Journal, Modèles d'e-mails, Réglages, Installation (lot 8) ; nettoyage des anciens styles (lot 9).</li>
+</ol></section></div>
+
+<script>
+const ETATS={
+ tableau:[['t-charge','Avec des tâches'],['t-calme','Tout est à jour']],
+ residences:[['rv-liste','Avec des dossiers'],['rv-vide','Rien en attente']],
+ valider:[['va-pret','À contrôler'],['va-erreur','Bail non contrôlé'],['va-sansbail','Sans bail'],['va-ok','Validée']],
+ gerant:[['g-controle','Identité à contrôler'],['g-valide','Identité acceptée'],['g-reprise','Reprise à revoir']],
+ reservations:[['re-liste','Liste'],['re-vide','Aucune']],
+ litiges:[['l-liste','Un litige ouvert'],['l-erreur','Décision manquante'],['l-clos','Litige clos'],['l-vide','Aucun litige']]};
+const NOTES={
+ tableau:['Écran 1 · Tableau de bord',{'But':'Voir en un coup d\'œil ce qui demande une action de l\'équipe.','Ce que voit l\'utilisateur':'Compteurs (à traiter, réservations, commissions, taux), tâches à traiter, dernières réservations, courbe sur 7 jours.','Actions':'Traiter un litige, contrôler une résidence, Journal, Réglages.','Messages d\'erreur':'Aucun ; « Rien à traiter pour le moment. »'}],
+ residences:['Écran 2 · Résidences à valider',{'But':'Lister tout ce qui attend un contrôle humain.','Ce que voit l\'utilisateur':'Dossiers de gérants, contrats de bail, résidences en attente (état des deux documents), décisions récentes.','Actions':'Ouvrir un dossier ou une résidence.','Messages d\'erreur':'« Aucune résidence en attente de vérification. »'}],
+ valider:['Écran 3 · Valider une résidence',{'But':'Décider de la mise en ligne en connaissant l\'état des deux documents.','Ce que voit l\'utilisateur':'Gérant, adresse, paiement, photos, logements, contrat de bail à consulter, récapitulatif, décision.','Actions':'Consulter le bail, refuser le bail seul, valider et mettre en ligne, refuser l\'annonce (motif obligatoire).','Messages d\'erreur':'« Contrôlez d\'abord le contrat de bail… » ; « Validez d\'abord la pièce d\'identité dans le dossier du gérant. » ; « Indiquez le motif du refus. »'}],
+ gerant:['Écran 4 · Dossier d\'un gérant',{'But':'Contrôler la pièce d\'identité d\'un gérant.','Ce que voit l\'utilisateur':'Nom privé, pièce d\'identité, ancien certificat (historique), explication.','Actions':'Accepter, refuser (motif), corriger le nom après contrôle.','Messages d\'erreur':'Motif de refus obligatoire ; fichier indisponible : demander un nouveau document.'}],
+ reservations:['Écran 5 · Réservations',{'But':'Retrouver n\'importe quelle réservation.','Ce que voit l\'utilisateur':'Filtre par statut, une carte par réservation (sur ordinateur : tableau).','Actions':'Filtrer.','Messages d\'erreur':'Aucun résultat : message simple.'}],
+ litiges:['Écran 6 · Litiges',{'But':'Trancher un problème signalé et prévenir les deux parties.','Ce que voit l\'utilisateur':'Litiges ouverts (texte du voyageur ou du gérant), zone de décision, litiges clos.','Actions':'Clore le litige avec une décision écrite.','Messages d\'erreur':'Décision manquante ; remboursement renvoyé vers Contrôle.'}]};
+let ecran='tableau',etat={};
+function majEtat(){document.querySelectorAll('.scene .ecran [data-s]').forEach(e=>{e.style.display=e.dataset.s.split(' ').includes(etat[ecran])?'':'none';});
+ const e=etat[ecran];
+ if(ecran==='litiges')document.getElementById('l-dec').classList.toggle('err',e==='l-erreur');
+ if(ecran==='valider'){document.querySelectorAll('#e-valider .carte [data-s~="va-pret"]').forEach(()=>{});}
+ document.querySelectorAll('#etats button').forEach(b=>b.classList.toggle('on',b.dataset.s===etat[ecran]));
+ const nav={tableau:'tableau',residences:'residences',valider:'residences',gerant:'residences',reservations:'reservations',litiges:'litiges'}[ecran];
+ document.querySelectorAll('#lateral a,#bas a').forEach(a=>a.classList.toggle('on',a.dataset.n===nav));}
+function aller(id){ecran=id;etat[id]??=ETATS[id][0][0];document.querySelectorAll('.ecran').forEach(e=>e.classList.toggle('on',e.id==='e-'+id));document.querySelectorAll('#nav button').forEach(b=>b.classList.toggle('on',b.dataset.e===id));
+ document.getElementById('etats').innerHTML='<span>État :</span>'+ETATS[id].map(([k,l])=>`<button data-s="${k}" type="button">${l}</button>`).join('');
+ const[t,d]=NOTES[id];document.getElementById('nt').textContent=t;document.getElementById('nc').innerHTML=Object.entries(d).map(([k,v])=>`<div><dt>${k}</dt><dd>${v}</dd></div>`).join('');majEtat();}
+document.getElementById('nav').addEventListener('click',e=>{const b=e.target.closest('button');if(b)aller(b.dataset.e)});
+document.getElementById('etats').addEventListener('click',e=>{const b=e.target.closest('button');if(b){etat[ecran]=b.dataset.s;majEtat();}});
+document.addEventListener('click',e=>{const n=e.target.closest('[data-n]');if(n){e.preventDefault();const m={tableau:'tableau',residences:'residences',reservations:'reservations',litiges:'litiges'}[n.dataset.n];if(m)aller(m);return}
+ if(e.target.closest('a[href="#"]'))e.preventDefault();});
+const setVue=m=>{document.body.classList.toggle('mobile',m);document.getElementById('b-mob').classList.toggle('on',m);document.getElementById('b-ord').classList.toggle('on',!m)};
+document.getElementById('b-mob').onclick=()=>setVue(true);document.getElementById('b-ord').onclick=()=>setVue(false);
+setVue(window.innerWidth<700);aller('tableau');
+</script>
+</body>
+</html>

@@ -50,7 +50,7 @@ class Navigation
     public static function coque(Utilisateur $u, string $habillage): array
     {
         if ($habillage === 'admin') {
-            return ['menu' => self::admin($u), 'bas' => self::ADMIN_BAS, 'libelles' => ['admin.tableau' => 'Accueil', 'admin.paiements' => 'Argent'], 'role' => $u->estSuperAdmin() ? 'Super-administrateur' : 'Administrateur'];
+            return ['menu' => self::admin($u), 'bas' => self::ADMIN_BAS, 'libelles' => ['admin.tableau' => 'Tableau', 'admin.residences' => 'Résidences'], 'role' => $u->estSuperAdmin() ? 'Super-administrateur' : 'Administrateur'];
         }
         if ($habillage === 'gerant') {
             return ['menu' => self::gerant($u), 'bas' => $u->aRole(Role::Gerant) ? ['gerant.arrivees', 'gerant.calendrier', 'gerant.argent', 'gerant.residences'] : ['gerant.arrivees', 'gerant.calendrier'], 'libelles' => ['gerant.arrivees' => 'Aujourd\'hui', 'gerant.residences' => 'Résidences'], 'role' => $u->aRole(Role::Gerant) ? 'Gérant' : 'Personnel'];
@@ -154,5 +154,5 @@ class Navigation
     }
 
     /** Les cinq entrées du menu du bas (téléphone) ; le reste est derrière « Plus ». @return list<string> routes */
-    public const ADMIN_BAS = ['admin.tableau', 'admin.reservations', 'admin.paiements', 'admin.controle'];
+    public const ADMIN_BAS = ['admin.tableau', 'admin.residences', 'admin.reservations', 'admin.litiges'];
 }
