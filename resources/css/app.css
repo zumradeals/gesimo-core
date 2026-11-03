@@ -71,3 +71,4 @@ html.hors-ligne [data-reseau] { opacity: .5; pointer-events: none; }
 
 /* Une ancienne version du script ne doit pas réafficher cette bannière supprimée. */
 #pwa-maj { display: none !important; }
+@import "./pages-info.css";
