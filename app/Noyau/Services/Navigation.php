@@ -69,8 +69,9 @@ class Navigation
         if ($u->aRole(Role::Gerant)) {
             $menu[] = ['libelle' => 'Réservations', 'icone' => 'liste', 'route' => 'gerant.reservations', 'actif' => ['gerant.reservations', 'gerant.probleme']];
             $menu[] = ['libelle' => 'Argent', 'icone' => 'argent', 'route' => 'gerant.argent', 'actif' => ['gerant.argent']];
-            $menu[] = ['libelle' => 'Mes résidences', 'icone' => 'batiment', 'route' => 'gerant.residences', 'actif' => ['gerant.residences', 'gerant.residence.nouvelle', 'gerant.residence']];
+            $menu[] = ['libelle' => 'Mes résidences', 'icone' => 'batiment', 'route' => 'gerant.residences', 'actif' => ['gerant.residences', 'gerant.residence.nouvelle', 'gerant.residence', 'gerant.residence.acces']];
             $menu[] = ['libelle' => 'Mon profil gérant', 'icone' => 'compte', 'route' => 'gerant.profil', 'actif' => ['gerant.profil', 'gerant.profil.apercu']];
+            $menu[] = ['libelle' => 'Ma vérification', 'icone' => 'bouclier', 'route' => 'gerant.verification', 'actif' => ['gerant.verification']];
             $menu[] = ['libelle' => 'Mises en avant', 'icone' => 'etoile', 'route' => 'gerant.mises-en-avant', 'actif' => ['gerant.mises-en-avant', 'gerant.mise-en-avant.acheter', 'gerant.mise-en-avant.retour']];
             $menu[] = ['libelle' => 'Mon personnel', 'icone' => 'equipe', 'route' => 'gerant.personnel', 'actif' => ['gerant.personnel']];
             $menu[] = ['libelle' => 'Aide du gérant', 'icone' => 'aide', 'route' => 'gerant.aide', 'actif' => ['gerant.aide']];

@@ -13,7 +13,7 @@
     <div class="cont fiche-cont">
         <p class="fil"><a href="{{ route('accueil') }}">Accueil</a> › <a href="{{ route('recherche') }}">Logements</a> › {{ $r->commune }} › {{ $u->nom }}</p>
         <h1 class="h1-fiche">{{ $u->nom }}
-            @if($r->aBadgeGestion())<span class="etq vert">✔ Droit de gestion vérifié</span>@endif
+            @if($r->aBadgeGestion())<span class="etq vert">✔ Gérant vérifié</span>@endif
             @if($sponsorise)<span class="etq" style="background:var(--or);color:#3a2a00">★ Sponsorisé</span>@endif
         </h1>
         <p class="aide-l">{{ $r->nom }} · {{ $r->commune }}@if($r->quartier), {{ $r->quartier }}@endif · jusqu'à {{ $u->capacite }} personne{{ $u->capacite > 1 ? 's' : '' }}

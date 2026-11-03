@@ -341,7 +341,7 @@ class EditerResidence extends Component
         $this->etape = 3;
         $this->reinitialiser();
         $this->message = $this->enregistrerPieces($this->residence())
-            ? 'Justificatif enregistré pour contrôle. La publication de l’annonce est indépendante du badge.'
+            ? 'Contrat de bail enregistré pour contrôle par Avelis.'
             : 'Aucun nouveau justificatif sélectionné. Votre dossier est conservé.';
     }
 
@@ -375,11 +375,16 @@ class EditerResidence extends Component
         $this->etape = 3;
         $residence = $this->residence();
         if (! auth()->user()->profilGerant?->identiteValidee()) {
-            $this->erreur = 'Votre pièce d’identité doit être validée dans votre profil gérant avant l’envoi. Le certificat de résidence reste facultatif.';
+            $this->erreur = 'Votre pièce d’identité doit être validée dans votre profil gérant avant l’envoi.';
 
             return null;
         }
         $this->enregistrerPieces($residence);
+        if (! $residence->estVerifiee() && ! $residence->documents()->where('type', 'justificatif_droit_gestion')->whereNull('remplace_le')->where('statut', '<>', 'refuse')->exists()) {
+            $this->erreur = 'Ajoutez le contrat de bail de la résidence (ou un justificatif de gestion) avant l’envoi. C’est l’un des deux documents demandés pour publier.';
+
+            return null;
+        }
         if ($residence->photos()->doesntExist()) {
             $this->erreur = 'Il manque : au moins une photo.';
 

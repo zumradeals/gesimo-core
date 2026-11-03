@@ -13,7 +13,7 @@ class Residence extends Model
     protected $table = 'residence';
 
     protected $fillable = [
-        'gerant_id', 'nom', 'commune', 'quartier', 'adresse', 'latitude', 'longitude', 'reglement',
+        'gerant_id', 'nom', 'commune', 'quartier', 'adresse', 'reperes', 'latitude', 'longitude', 'reglement',
         'statut_verification', 'mode_paiement', 'pourcentage_acompte', 'politique_annulation',
         'soumise_le', 'badge_verifie', 'motif_refus', 'verifiee_par', 'verifiee_le', 'gestion_verifiee_le', 'gestion_verifiee_par',
     ];

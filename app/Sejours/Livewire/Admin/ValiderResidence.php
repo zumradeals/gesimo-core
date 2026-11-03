@@ -41,8 +41,12 @@ class ValiderResidence extends Component
             if (! $r->gerant->estActif() || ! $r->gerant->aRole(Role::Gerant) || ! $r->gerant->profilGerant?->identiteValidee()) {
                 throw ValidationException::withMessages(['decision' => 'Validez d’abord la pièce d’identité dans le dossier du gérant.']);
             }
+            $bailAccepte = $r->documents()->where('type', 'justificatif_droit_gestion')->where('statut', 'accepte')->whereNull('remplace_le')->exists();
+            if (! $bailAccepte && ! $this->badge) {
+                throw ValidationException::withMessages(['decision' => 'Contrôlez d’abord le contrat de bail (justificatif de gestion) de cette résidence : il est nécessaire pour la mettre en ligne.']);
+            }
             $r->update(['statut_verification' => 'verifiee', 'badge_verifie' => false, 'motif_refus' => null, 'verifiee_par' => auth()->id(), 'verifiee_le' => now()]);
-            if ($this->badge) {
+            if ($this->badge || $bailAccepte) {
                 $this->accepterGestion($r);
             }
             Audit::enregistrer('residence.validee', $r, ['badge' => $this->badge]);
